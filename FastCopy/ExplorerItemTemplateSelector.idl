@@ -1,0 +1,13 @@
+namespace FastCopy
+{
+    [bindable]
+    [default_interface]
+    runtimeclass ExplorerItemTemplateSelector : Microsoft.UI.Xaml.Controls.DataTemplateSelector
+    {
+        ExplorerItemTemplateSelector();
+
+        Microsoft.UI.Xaml.DataTemplate FolderTemplate{ get; set; };
+        Microsoft.UI.Xaml.DataTemplate FileTemplate{ get; set; };
+
+    }
+}

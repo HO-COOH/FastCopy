@@ -1,0 +1,32 @@
+namespace FastCopy
+{
+
+    enum ExplorerItemType
+    {
+        Folder,
+        File
+    };
+
+    [bindable]
+    [default_interface]
+    runtimeclass ExplorerItem : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        ExplorerItem(String name, ExplorerItemType type);
+        ExplorerItem(Windows.Storage.StorageFile file);
+        ExplorerItem(Windows.Storage.StorageFolder folder, Boolean recurse, Int32 level);
+        
+        ExplorerItemType Type{ get; set; };
+        
+        Windows.Foundation.Collections.IObservableVector<ExplorerItem> Children{ get; };
+        String Name{ get; set; };
+
+        String FileName{ get; };
+
+        Boolean IsFinished{ get; set; };
+        Boolean IsFailed{ get; set; };
+
+        UInt64 Size{ get; };
+
+        Windows.Foundation.IAsyncAction OpenLocation();
+    }
+}

@@ -1,0 +1,14 @@
+namespace FastCopy
+{
+    [default_interface]
+    runtimeclass SegmentedButton : Microsoft.UI.Xaml.Controls.UserControl
+    {
+        SegmentedButton();
+        
+        IInspectable Content1;
+        static Microsoft.UI.Xaml.DependencyProperty Content1Property{ get; };
+        
+        IInspectable Content2;
+        static Microsoft.UI.Xaml.DependencyProperty Content2Property{ get; };
+    }
+}

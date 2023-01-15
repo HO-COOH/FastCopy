@@ -1,0 +1,149 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="MainWindow.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="MainPage.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="SegmentedButton.xaml">
+      <Filter>Views\Controls</Filter>
+    </Page>
+    <Page Include="CopyDialog.xaml">
+      <Filter>Views</Filter>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="App.idl" />
+    <Midl Include="MainWindow.idl" />
+    <Midl Include="XCopyViewModel.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="ExplorerItem.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="ExplorerItemTemplateSelector.idl" />
+    <Midl Include="VectorToBoolConverter.idl">
+      <Filter>Converter</Filter>
+    </Midl>
+    <Midl Include="BoolToVisibilityConverter.idl">
+      <Filter>Converter</Filter>
+    </Midl>
+    <Midl Include="NumberToStringConverter.idl">
+      <Filter>Converter</Filter>
+    </Midl>
+    <Midl Include="SettingContainer.idl">
+      <Filter>Views\Controls</Filter>
+    </Midl>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+    <ClCompile Include="XCopyCommandGenerator.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="FastCopyCommandParser.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewModelLocator.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
+    <ClCompile Include="AcrylicHelper.cpp">
+      <Filter>ViewHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="ShellExtensionHelper.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="FileStats.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="XCopyCommandGenerator.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="FastCopyCommandParser.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewModelLocator.h">
+      <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="AcrylicHelper.h">
+      <Filter>ViewHelper</Filter>
+    </ClInclude>
+    <ClInclude Include="UIDispatcher.h">
+      <Filter>ViewHelper</Filter>
+    </ClInclude>
+    <ClInclude Include="ShellExtensionHelper.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="PropertyChangeHelper.hpp">
+      <Filter>ViewHelper</Filter>
+    </ClInclude>
+    <ClInclude Include="FileStats.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Wide310x150Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square150x150Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\LockScreenLogo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{7baed4ab-03d0-4aa9-ab8d-8d32b1d049f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ViewModel">
+      <UniqueIdentifier>{7a1f37d9-5bd1-4ddc-a929-9bc2bbb3492f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Converter">
+      <UniqueIdentifier>{58720fcd-fb1c-40af-be6c-e51951d2784e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ViewHelper">
+      <UniqueIdentifier>{82121ef0-1072-4756-886d-3c4730490467}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Views">
+      <UniqueIdentifier>{2c099d67-1422-4772-9dab-b66106ba8aac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{2083ba4c-5383-4f27-bfb8-15384dcdd147}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Views\Controls">
+      <UniqueIdentifier>{aa78688a-d716-4133-b14d-7e21353a28a3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="app.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="FastCopy_TemporaryKey.pfx" />
+    <None Include="..\x64\Release\FastCopy\FastCopyShellExtension.dll" />
+  </ItemGroup>
+</Project>

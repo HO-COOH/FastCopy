@@ -1,0 +1,9 @@
+namespace FastCopy
+{
+    [default_interface]
+    runtimeclass CopyDialog : Windows.UI.Xaml.Controls.Page
+    {
+        CopyDialog();
+        Int32 MyProperty;
+    }
+}

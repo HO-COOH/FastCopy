@@ -1,0 +1,27 @@
+namespace FastCopy
+{
+    [bindable]
+    [default_interface]
+    runtimeclass SettingContainer : Microsoft.UI.Xaml.Controls.Control
+    {
+        SettingContainer();
+
+        IInspectable Symbol;
+        static Microsoft.UI.Xaml.DependencyProperty SymbolProperty{ get; };
+
+        String Title;
+        static Microsoft.UI.Xaml.DependencyProperty TitleProperty{ get; };
+
+        String HelpText;
+        static Microsoft.UI.Xaml.DependencyProperty HelpTextProperty{ get; };
+
+        Microsoft.UI.Xaml.Visibility ShowReset;
+        static Microsoft.UI.Xaml.DependencyProperty ShowResetProperty{ get; };
+
+        IInspectable HeaderContent;
+        static Microsoft.UI.Xaml.DependencyProperty HeaderContentProperty{ get; };
+
+        IInspectable ExpanderContent;
+        static Microsoft.UI.Xaml.DependencyProperty ExpanderContentProperty{ get; };
+    }
+}

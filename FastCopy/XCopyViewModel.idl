@@ -1,0 +1,37 @@
+import "ExplorerItem.idl";
+
+namespace FastCopy
+{
+    enum Mode
+    {
+        Copy,
+        Move,
+        Custom
+    };
+
+    runtimeclass XCopyFlags
+    {
+        String Flag{get; };
+        String Description{ get; };
+        Boolean Enabled{ get; set; };
+
+        XCopyFlags(String flag, String description);
+    };
+
+    [bindable]
+    [default_interface]
+    runtimeclass XCopyViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        XCopyViewModel();
+
+        Windows.Foundation.Collections.IObservableVector<FastCopy.ExplorerItem> Sources{ get; };
+        Windows.Foundation.Collections.IObservableVector<FastCopy.ExplorerItem> Preview{ get; };
+        Windows.Foundation.Collections.IVector<IInspectable> Flags{ get; };
+        String Destination{ get; set; };
+        Mode Mode{ get; set; };
+        Boolean IsCustomEnabled{ get; };
+        Boolean IsExecutable{ get; };
+        Int32 ProcessCount{ get; set; };
+        void Execute();
+    }
+}
