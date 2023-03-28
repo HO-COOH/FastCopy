@@ -8,7 +8,7 @@
     mc:Ignorable="d">
 
     <StackPanel Orientation="Horizontal">
-        <ToggleButton CornerRadius="7,0,0,7" BorderThickness="1,1,0,1" Content="{x:Bind Content1}" />
-        <ToggleButton CornerRadius="0,7,7,0" BorderThickness="0,1,1,1" Content="{x:Bind Content2}"/>
+        <ToggleButton x:Name="Button1" CornerRadius="7,0,0,7" BorderThickness="1,1,0,1" Content="{x:Bind Content1}" Click="Button1_Click" />
+        <ToggleButton x:Name="Button2" CornerRadius="0,7,7,0" BorderThickness="0,1,1,1" Content="{x:Bind Content2}" Click="Button2_Click"/>
     </StackPanel>
 </UserControl>

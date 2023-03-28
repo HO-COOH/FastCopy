@@ -1,0 +1,10 @@
+import "ExplorerItem.idl";
+namespace FastCopy
+{
+    [default_interface]
+    runtimeclass ProgressItem : Microsoft.UI.Xaml.Controls.UserControl
+    {
+        ProgressItem();
+        FastCopy.ExplorerItem ViewModel{ get; };
+    }
+}

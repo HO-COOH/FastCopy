@@ -56,6 +56,12 @@ namespace winrt::FastCopy::implementation
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::ExplorerItem> Children() { return m_children; }
 
         winrt::Windows::Foundation::IAsyncAction OpenLocation();
+
+        //status
+        uint32_t SecondsRemain() { return 0; }
+        uint64_t SizeRemain() { return 0; }
+        double Progress() { return 0.5; }
+        winrt::hstring CurrentFile() { return L"test.file"; }
     };
 }
 

@@ -1,9 +1,11 @@
+import "XCopyViewModel.idl";
+
 namespace FastCopy
 {
     [default_interface]
-    runtimeclass CopyDialog : Windows.UI.Xaml.Controls.Page
+    runtimeclass CopyDialog : Microsoft.UI.Xaml.Controls.Page
     {
         CopyDialog();
-        Int32 MyProperty;
+        FastCopy.XCopyViewModel ViewModel{ get; };
     }
 }

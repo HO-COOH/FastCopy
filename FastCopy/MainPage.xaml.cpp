@@ -129,3 +129,12 @@ winrt::Windows::Foundation::IAsyncAction winrt::FastCopy::implementation::MainPa
 {
     co_await ChangeDestination();
 }
+
+#include "CopyDialog.g.h"
+void winrt::FastCopy::implementation::MainPage::ExecuteButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+    winrt::Microsoft::UI::Xaml::Window dialogWindow;
+    dialogWindow.Content(winrt::FastCopy::CopyDialog{});
+    dialogWindow.Activate();
+    ViewModel().Execute();
+}

@@ -27,6 +27,7 @@ namespace winrt::FastCopy::implementation
         winrt::Windows::Foundation::IAsyncAction ChangeDestination();
     public:
         winrt::Windows::Foundation::IAsyncAction ChangeDestinationButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void ExecuteButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
     };
 }
 

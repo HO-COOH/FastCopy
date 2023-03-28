@@ -16,6 +16,9 @@
     <Page Include="CopyDialog.xaml">
       <Filter>Views</Filter>
     </Page>
+    <Page Include="ProgressItem.xaml">
+      <Filter>Views\Controls</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />

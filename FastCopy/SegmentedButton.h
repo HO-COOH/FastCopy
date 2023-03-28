@@ -1,9 +1,5 @@
 ﻿#pragma once
 
-#include "winrt/Windows.UI.Xaml.h"
-#include "winrt/Windows.UI.Xaml.Markup.h"
-#include "winrt/Windows.UI.Xaml.Interop.h"
-#include "winrt/Windows.UI.Xaml.Controls.Primitives.h"
 #include "SegmentedButton.g.h"
 
 namespace winrt::FastCopy::implementation
@@ -19,6 +15,9 @@ namespace winrt::FastCopy::implementation
         winrt::Windows::Foundation::IInspectable Content2();
         void Content2(winrt::Windows::Foundation::IInspectable content2);
         static winrt::Microsoft::UI::Xaml::DependencyProperty Content2Property();
+
+        void Button1_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void Button2_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
     private:
         static winrt::Microsoft::UI::Xaml::DependencyProperty m_content1;
         static winrt::Microsoft::UI::Xaml::DependencyProperty m_content2;

@@ -47,4 +47,16 @@ namespace winrt::FastCopy::implementation
     {
         return m_content1;
     }
+
+
+    void SegmentedButton::Button1_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+    {
+        Button2().IsChecked(false);
+    }
+
+
+    void SegmentedButton::Button2_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+    {
+        Button1().IsChecked(false);
+    }
 }

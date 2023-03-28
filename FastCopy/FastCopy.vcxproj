@@ -156,6 +156,10 @@
     <ClInclude Include="MainWindow.xaml.h">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="ProgressItem.xaml.h">
+      <DependentUpon>ProgressItem.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="PropertyChangeHelper.hpp" />
     <ClInclude Include="SegmentedButton.h">
       <DependentUpon>SegmentedButton.xaml</DependentUpon>
@@ -187,6 +191,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MainWindow.xaml" />
+    <Page Include="ProgressItem.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="SegmentedButton.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -229,6 +236,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+    <ClCompile Include="ProgressItem.xaml.cpp">
+      <DependentUpon>ProgressItem.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="SegmentedButton.cpp">
       <DependentUpon>SegmentedButton.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -277,6 +288,10 @@
     </Midl>
     <Midl Include="NumberToStringConverter.idl">
       <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="ProgressItem.idl">
+      <DependentUpon>ProgressItem.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Midl>
     <Midl Include="SegmentedButton.idl">
       <DependentUpon>SegmentedButton.xaml</DependentUpon>

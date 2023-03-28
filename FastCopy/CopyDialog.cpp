@@ -4,23 +4,15 @@
 #include "CopyDialog.g.cpp"
 #endif
 
+#include "ViewModelLocator.h"
+
 using namespace winrt;
 using namespace Windows::UI::Xaml;
 
 namespace winrt::FastCopy::implementation
 {
-    int32_t CopyDialog::MyProperty()
-    {
-        throw hresult_not_implemented();
-    }
-
-    void CopyDialog::MyProperty(int32_t /* value */)
-    {
-        throw hresult_not_implemented();
-    }
-
-    void CopyDialog::ClickHandler(IInspectable const&, RoutedEventArgs const&)
-    {
-        Button().Content(box_value(L"Clicked"));
-    }
+	winrt::FastCopy::XCopyViewModel CopyDialog::ViewModel()
+	{
+		return ViewModelLocator::GetInstance().XCopyViewModel();
+	}
 }

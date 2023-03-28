@@ -556,8 +556,8 @@
             
             <!--                            Real resources begins here               -->
             <DataTemplate x:Key="FolderTemplate" x:DataType="local:ExplorerItem">
-                <TreeViewItem ItemsSource="{x:Bind Children}" IsExpanded="True">
-                    <StackPanel Orientation="Horizontal">
+                <TreeViewItem ItemsSource="{x:Bind Children}" IsExpanded="True" HorizontalAlignment="Left">
+                    <StackPanel Orientation="Horizontal" Margin="-40,0,0,0">
                         <SymbolIcon Symbol="Folder"/>
                         <TextBlock Margin="20,0,0,0" Text="{x:Bind Name}"/>
                         <SymbolIcon Symbol="Accept" Foreground="Green" Visibility="{x:Bind IsFinished, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
@@ -574,10 +574,10 @@
             </DataTemplate>
 
             <DataTemplate x:Key="FileTemplate" x:DataType="local:ExplorerItem">
-                <TreeViewItem>
-                    <StackPanel Orientation="Horizontal">
+                <TreeViewItem HorizontalAlignment="Left">
+                    <StackPanel Orientation="Horizontal" Margin="-40,0,0,0">
                         <SymbolIcon Symbol="Document"/>
-                        <TextBlock Margin="20,0,0,0" Text="{x:Bind Name}"/>
+                        <TextBlock Margin="5,0,0,0" Text="{x:Bind Name}"/>
                         <SymbolIcon Symbol="Accept" Foreground="Green" Visibility="{x:Bind IsFinished,Mode=OneWay}" />
                         <SymbolIcon Symbol="Clear" Foreground="Red" Visibility="{x:Bind IsFailed, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
                         <TextBlock Margin="10,0,0,0" Text="{x:Bind Size, Converter={StaticResource NumberToStringConverter}, Mode=OneWay}"/>
@@ -637,44 +637,95 @@
                 <ToggleSwitch x:Name="AdvancedMode" Style="{StaticResource ToggleSwitchLeftLabelStyle}" Margin="0,0,-45,0"/>
             </local:SettingContainer.HeaderContent>
             <local:SettingContainer.ExpanderContent>
-                <Grid HorizontalAlignment="Stretch">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+                <ScrollViewer MaxHeight="250">
+                    <Grid HorizontalAlignment="Stretch">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                    <Grid.Resources>
-                        <Style x:Key="SwitchTextStyle" TargetType="TextBlock">
-                            <Style.Setters>
-                                <Setter Property="Margin" Value="47,0,0,0"/>
-                            </Style.Setters>
-                        </Style>
-                    </Grid.Resources>
+                        <Grid.Resources>
+                            <Style x:Key="SwitchTextStyle" TargetType="TextBlock">
+                                <Style.Setters>
+                                    <Setter Property="Margin" Value="47,0,0,0"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style.Setters>
+                            </Style>
+                        </Grid.Resources>
+                        
+                        <!--进程数-->
+                        <TextBlock Text="xcopy的最大进程数" Style="{StaticResource SwitchTextStyle}" Grid.Row="0" Grid.Column="0"/>
+                        <NumberBox Value="{x:Bind ViewModel.ProcessCount, Mode=TwoWay}" 
+                                   SpinButtonPlacementMode="Compact" SmallChange="1" LargeChange="1" 
+                                   Minimum="1" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Width="100"/>
 
-                    <!-- /A -->
-                    <TextBlock Style="{StaticResource SwitchTextStyle}" Text="只复制有存档属性的文件，但不改变存档属性" VerticalAlignment="Center"  Grid.Row="0" Grid.Column="0"/>
-                    <ToggleSwitch Style="{StaticResource ToggleSwitchLeftLabelStyle}" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right"/>
+                        <!-- /A -->
+                        <TextBlock Style="{StaticResource SwitchTextStyle}" Text="只复制有存档属性的文件" VerticalAlignment="Center"  Grid.Row="1" Grid.Column="0"/>
+                        <local:SegmentedButton Content1="保留属性" Content2="不保留属性" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right"/>
 
-                    <!-- /S -->
-                    <TextBlock Style="{StaticResource SwitchTextStyle}" Text="复制目录和子目录"/>
+                        <!-- /D:m-d-y-->
+                        <TextBlock Style="{StaticResource SwitchTextStyle}" 
+                                   Text="复制在指定日期或指定日期以后改变的文件。如果没有提供日期，只复制那些源时间比目标时间新的文件" 
+                                   Grid.Row="2" Grid.Column="0"/>
+                        <Viewbox Width="250" Grid.Row="2" Grid.Column="1" Stretch="Fill" HorizontalAlignment="Right">
+                            <DatePicker HorizontalAlignment="Right" Language="zh-cn" FontSize="16"/>
+                        </Viewbox>
+                        
+                        <!-- /P 每复制一个文件都提示，没卵用-->
+                        
+                        <!-- /S /E -->
+                        <TextBlock Style="{StaticResource SwitchTextStyle}" Text="复制目录和子目录" Grid.Row="3" Grid.Column="0"/>
+                        <local:SegmentedButton Content1="包括空文件夹" Content2="不包括空文件夹" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right"/>
 
-                    <!-- /D:m-d-y-->
-                    <TextBlock Style="{StaticResource SwitchTextStyle}" Text="复制在指定日期或指定日期以后改变的文件。如果没有提供日期，只复制那些源时间比目标时间新的文件" Grid.Row="1" Grid.Column="0"/>
-                    <TimePicker Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right"/>
-                    
-                    
+                        <!-- /V -->
+                        <TextBlock Text="验证每个新文件的大小" Style="{StaticResource SwitchTextStyle}" Grid.Row="4" Grid.Column="0"/>
+                        <ToggleSwitch Style="{StaticResource ToggleSwitchLeftLabelStyle}" Grid.Row="4" Grid.Column="1"/>
+                        
+                        <!-- /I /-I-->
+                        <TextBlock Text="如果目标不存在又复制一个以上的文件，则假定目标是" Style="{StaticResource SwitchTextStyle}" Grid.Row="5" Grid.Column="0"/>
+                        <local:SegmentedButton Content1="目录" Content2="文件" Grid.Row="5" Grid.Column="1"/>
+                        
+                        <!-- /Q /F /L 显示相关，无卵用-->
+                        
+                        <!-- /G-->
+                        <TextBlock Text="允许将加密文件复制到不支持加密的目录" Style="{StaticResource SwitchTextStyle}" Grid.Row="6" Grid.Column="0"/>
+                        <ToggleSwitch Style="{StaticResource ToggleSwitchLeftLabelStyle}" Grid.Row="6" Grid.Column="1"/>
+                        
+                        <!-- /H-->
+                        <TextBlock Text="复制隐藏文件和系统文件" Style="{StaticResource SwitchTextStyle}" Grid.Row="7" Grid.Column="0"/>
+                        <ToggleSwitch Style="{StaticResource ToggleSwitchLeftLabelStyle}" Grid.Row="7" Grid.Column="1"/>
 
-                </Grid>
+                        <!-- /R-->
+                        <TextBlock Text="覆盖只读文件" Style="{StaticResource SwitchTextStyle}" Grid.Row="8" Grid.Column="0"/>
+                        <ToggleSwitch Style="{StaticResource ToggleSwitchLeftLabelStyle}" Grid.Row="8" Grid.Column="1"/>
+
+                        <!--<Border BorderThickness="1" Grid.Row="9" BorderBrush="Red" CornerRadius="3" HorizontalAlignment="Stretch" Grid.ColumnSpan="2">
+                            <Grid>
+                                <TextBlock Text="覆盖只读文件" Style="{StaticResource SwitchTextStyle}" Grid.Column="0"/>
+                                <ToggleSwitch Style="{StaticResource ToggleSwitchLeftLabelStyle}" Grid.Column="1"/>
+                            </Grid>
+                        </Border>-->
+                    </Grid>
+                </ScrollViewer>
             </local:SettingContainer.ExpanderContent>
         </local:SettingContainer>
 
-        <Grid HorizontalAlignment="Stretch" MaxWidth="1000">
+        <TextBox PlaceholderText="自定义补充命令" HorizontalAlignment="Stretch" Margin="0,5,0,0" MaxWidth="1000"/>
+        <TextBox x:Name="FinalCommandsPreview" HorizontalAlignment="Stretch"  Margin="0,5,0,0" MaxWidth="1000"/>
+
+        <Grid HorizontalAlignment="Stretch" MaxWidth="1000" Margin="0,5,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -712,7 +763,12 @@
                     </Grid>
                 </Expander.Header>
                 <Expander.Content>
-                    <TreeView x:Name="SourceTree" VerticalAlignment="Stretch" HorizontalAlignment="Left" ItemsSource="{x:Bind ViewModel.Sources}" ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}"/>
+                    <TreeView x:Name="SourceTree" 
+                              VerticalAlignment="Stretch" 
+                              HorizontalAlignment="Left" 
+                              HorizontalContentAlignment="Left" 
+                              ItemsSource="{x:Bind ViewModel.Sources}" 
+                              ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}"/>
                 </Expander.Content>
             </Expander>
 
@@ -726,13 +782,20 @@
                         </Grid.ColumnDefinitions>
 
                         <SymbolIcon Symbol="Send" Grid.Column="0"/>
-                        <TextBlock Margin="16,0,0,0" VerticalAlignment="Center" Text="目标预览" Grid.Column="1"/>
-                        <TextBlock Text="{x:Bind ViewModel.Destination, Mode=OneWay}" Margin="20,0,0,0"/>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <TextBlock Margin="16,0,0,0" VerticalAlignment="Center" Text="目标预览"/>
+                            <TextBlock Text="{x:Bind ViewModel.Destination, Mode=OneWay}" Margin="20,0,0,0"/>
+                        </StackPanel>
                         <Button x:Name="ChangeDestinationButton" Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,10,0" Click="ChangeDestinationButton_Click">打开</Button>
                     </Grid>
                 </Expander.Header>
                 <Expander.Content>
-                    <TreeView x:Name="Destination" VerticalAlignment="Stretch" ItemsSource="{x:Bind ViewModel.Preview}" ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}"/>
+                    <TreeView x:Name="Destination" 
+                              VerticalAlignment="Stretch" 
+                              HorizontalAlignment="Left" 
+                              HorizontalContentAlignment="Left" 
+                              ItemsSource="{x:Bind ViewModel.Preview}" 
+                              ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}"/>
                 </Expander.Content>
             </Expander>
         </Grid>
@@ -743,7 +806,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0" Background="Transparent" BorderThickness="0" Click="{x:Bind ViewModel.Execute}" IsEnabled="{x:Bind ViewModel.IsExecutable, Mode=OneWay}">
+            <Button x:Name="ExecuteButton" Grid.Column="0" Background="Transparent" BorderThickness="0" Click="ExecuteButton_Click" IsEnabled="{x:Bind ViewModel.IsExecutable, Mode=OneWay}">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Symbol="Play"/>
                     <TextBlock Margin="10,0,0,0" Text="开始复制"/>
@@ -790,9 +853,7 @@
                     </Expander.Content>
                 </Expander>
 
-                <StackPanel Orientation="Vertical" Grid.Column="1" Margin="20, 0, 10, 0">
-                    <NumberBox Header="Number of Threads: " Value="{x:Bind ViewModel.ProcessCount, Mode=TwoWay}" SpinButtonPlacementMode="Compact" SmallChange="1" LargeChange="1" Minimum="1"/>
-                </StackPanel>
+
             </Grid>
 
             </Grid>

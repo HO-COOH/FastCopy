@@ -7,6 +7,14 @@ namespace FastCopy
         File
     };
 
+    enum ItemStatus
+    {
+        Pending,   //IsIndeterminate=>True
+        Paused,     //IsIndeterminate=>True IsPaused=>True
+        Executing,  //IsIndeterminate=>False, set its Value
+        Failed      //IsIndeterminate=>True ShowError=>True
+    };
+
     [bindable]
     [default_interface]
     runtimeclass ExplorerItem : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
@@ -28,5 +36,13 @@ namespace FastCopy
         UInt64 Size{ get; };
 
         Windows.Foundation.IAsyncAction OpenLocation();
+
+        //Status related
+
+        String CurrentFile{ get; };
+
+        Double Progress{ get; }; //0~100 double value
+        UInt64 SizeRemain{ get; };
+        UInt32 SecondsRemain{ get; };
     }
 }

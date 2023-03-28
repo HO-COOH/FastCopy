@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CopyDialog.g.h"
+#include "XCopyViewModel.g.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -10,12 +11,10 @@ namespace winrt::FastCopy::implementation
         {
             // Xaml objects should not call InitializeComponent during construction.
             // See https://github.com/microsoft/cppwinrt/tree/master/nuget#initializecomponent
+            InitializeComponent();
         }
 
-        int32_t MyProperty();
-        void MyProperty(int32_t value);
-
-        void ClickHandler(Windows::Foundation::IInspectable const& sender, Windows::UI::Xaml::RoutedEventArgs const& args);
+        winrt::FastCopy::XCopyViewModel ViewModel();
     };
 }
 

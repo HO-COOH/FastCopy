@@ -82,7 +82,7 @@ winrt::Windows::Foundation::IAsyncAction App::OnLaunched(LaunchActivatedEventArg
         /*Debug code*/
         auto viewModel = ViewModelLocator::GetInstance().XCopyViewModel();
 
-        for (auto const item : { R"(E:\FastCopy\AppPackages\FastCopy\FastCopy_1.0.39.0_x64_Debug_Test\FastCopy_1.0.39.0_x64_Debug.msix)" })
+        for (auto const item : { R"(D:\SdkVersion.props)" })
         {
             winrt::FastCopy::ExplorerItem explorerItem{ winrt::to_hstring(item), ExplorerItemType::File };
             viewModel.Sources().Append(explorerItem);
