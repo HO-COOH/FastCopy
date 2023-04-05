@@ -24,3 +24,4 @@ namespace winrt::FastCopy::factory_implementation
     {
     };
 }
+
