@@ -131,7 +131,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="COMApiTest.cpp" />
     <ClCompile Include="Env.cpp" />
+    <ClCompile Include="FilesystemApiTest.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RobocopyTest.cpp" />
     <ClCompile Include="TestFactory.cpp" />
@@ -140,7 +142,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutoRegister.h" />
+    <ClInclude Include="COMApiTest.h" />
     <ClInclude Include="Env.h" />
+    <ClInclude Include="FilesystemApiTest.h" />
     <ClInclude Include="ITestBase.h" />
     <ClInclude Include="Process.h" />
     <ClInclude Include="RobocopyTest.h" />

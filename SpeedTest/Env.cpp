@@ -26,6 +26,11 @@ namespace Env
 				static std::wstring result = getFolderPathImpl(FOLDERID_System);
 				return result;
 			}
+			case Env::SpecialFolder::Windows:
+			{
+				static std::wstring result = getFolderPathImpl(FOLDERID_Windows);
+				return result;
+			}
 			default:
 				throw std::runtime_error{ "Unknwon" };
 		}

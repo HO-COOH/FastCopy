@@ -1,7 +1,7 @@
 #pragma once
 #include "ITestBase.h"
-class COMApiTest :
-    public ITestBase
-{
-};
+//class COMApiTest :
+//    public ITestBase
+//{
+//};
 

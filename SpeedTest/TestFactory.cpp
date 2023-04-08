@@ -22,6 +22,7 @@ void TestFactory::RunAllTest()
 	}
 	for (auto& test : s_tests)
 	{
+		std::cout << "Testing: " << test->GetName() << '\n';
 		auto before = std::chrono::steady_clock::now();
 		if (test->Run(s_paths) && verify())
 			s_testResults.push_back(TestResult{ test->GetName(), std::chrono::steady_clock::now() - before });
@@ -47,7 +48,7 @@ void TestFactory::MakeTestPaths()
 	char buffer[1024 * 4]{};
 	auto folder = Env::GetFolderPath(Env::SpecialFolder::Desktop) + Env::GetRandomName();
 	std::ranges::generate(buffer, [] {return rand() % 255; });
-
+	std::filesystem::create_directory(Env::GetFolderPath(Env::SpecialFolder::Desktop) + Env::GetRandomName());
 	while (totalBytes < randomFileTotalBytes) //1GB of 4K random files
 	{
 		createFile(folder + L"\\" + std::to_wstring(totalBytes), buffer);
@@ -59,6 +60,7 @@ void TestFactory::MakeTestPaths()
 			Env::GetTestDestinationPath(Env::GetRandomName(), randomFileTotalBytes)
 		}
 	);
+	std::filesystem::create_directory(Env::GetTestDestinationPath(Env::GetRandomName(), randomFileTotalBytes));
 	puts(std::format(
 		"Make test files ==> {} seconds\n",
 		std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - before)

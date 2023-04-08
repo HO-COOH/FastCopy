@@ -5,7 +5,8 @@ namespace Env
 	enum class SpecialFolder
 	{
 		Desktop,
-		System32
+		System32,
+		Windows
 	};
 
 	std::wstring const& GetFolderPath(SpecialFolder folder);
