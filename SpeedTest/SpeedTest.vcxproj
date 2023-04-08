@@ -133,16 +133,21 @@
   <ItemGroup>
     <ClCompile Include="Env.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="RobocopyTest.cpp" />
     <ClCompile Include="TestFactory.cpp" />
+    <ClCompile Include="Win32ApiTest.cpp" />
     <ClCompile Include="XCopyTest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutoRegister.h" />
     <ClInclude Include="Env.h" />
     <ClInclude Include="ITestBase.h" />
+    <ClInclude Include="Process.h" />
+    <ClInclude Include="RobocopyTest.h" />
     <ClInclude Include="TestFactory.h" />
     <ClInclude Include="TestOperation.h" />
     <ClInclude Include="TestResult.h" />
+    <ClInclude Include="Win32ApiTest.h" />
     <ClInclude Include="XCopyTest.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

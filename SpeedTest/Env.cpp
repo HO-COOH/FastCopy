@@ -21,8 +21,42 @@ namespace Env
 				static std::wstring result = getFolderPathImpl(FOLDERID_Desktop);
 				return result;
 			}
+			case Env::SpecialFolder::System32:
+			{
+				static std::wstring result = getFolderPathImpl(FOLDERID_System);
+				return result;
+			}
 			default:
 				throw std::runtime_error{ "Unknwon" };
 		}
+	}
+
+	static bool HasEnoughSpace(std::wstring_view drive, size_t bytes)
+	{
+		ULARGE_INTEGER availableBytes{};
+		return GetDiskFreeSpaceExW(
+			drive.data(),
+			&availableBytes,
+			nullptr,
+			nullptr
+		) && bytes <= availableBytes.QuadPart;
+	}
+
+	static std::wstring const& GetAvailableDrive(size_t bytes)
+	{
+		static std::wstring ret = L"E:";
+		return ret;
+	}
+
+	std::wstring const& GetTestDestinationPath(std::wstring_view subFolder, size_t bytes)
+	{
+		static std::wstring ret = std::wstring{ L"E:" } + subFolder.data();
+		return ret;
+	}
+
+	std::wstring const& GetRandomName()
+	{
+		static std::wstring ret = L"\\test";
+		return ret;
 	}
 }

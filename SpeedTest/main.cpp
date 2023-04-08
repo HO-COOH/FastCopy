@@ -19,4 +19,5 @@ int main()
 {
 	TestFactory::RunAllTest();
 	TestFactory::PrintResult();
+	TestFactory::Clear();
 }
