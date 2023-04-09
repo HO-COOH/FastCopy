@@ -19,12 +19,6 @@ public:
 	static void Register(std::unique_ptr<ITestBase>&& test);
 
 	/**
-	 * Called to generate test folders and files
-	 * 
-	 */
-	static void MakeTestPaths();
-
-	/**
 	 * Print sorted test results, eg: 
 	 *	#0 <TestName> ==> <seconds>
 	 * 
@@ -36,6 +30,13 @@ public:
 	 * 
 	 */
 	static void Clear();
+
+	template<typename TestCase>
+	TestFactory& operator<<(TestCase const& testCase)
+	{
+		testCase(s_paths);
+		return *this;
+	}
 private:
 
 	/**
@@ -53,6 +54,5 @@ private:
 	 * 
 	 */
 	static void clearTestination();
-	constexpr static auto randomFileTotalBytes = 1024ull * 1024 * 1024;
 };
 

@@ -9,9 +9,8 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="TestImplementation">
+      <UniqueIdentifier>{5ccf794d-8565-47e5-8065-cc0d9a45364f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -21,22 +20,28 @@
     <ClCompile Include="TestFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="XCopyTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Env.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Win32ApiTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RobocopyTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="COMApiTest.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>TestImplementation</Filter>
     </ClCompile>
     <ClCompile Include="FilesystemApiTest.cpp">
+      <Filter>TestImplementation</Filter>
+    </ClCompile>
+    <ClCompile Include="RobocopyTest.cpp">
+      <Filter>TestImplementation</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32ApiTest.cpp">
+      <Filter>TestImplementation</Filter>
+    </ClCompile>
+    <ClCompile Include="XCopyTest.cpp">
+      <Filter>TestImplementation</Filter>
+    </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCases.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -48,9 +53,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TestFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="XCopyTest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AutoRegister.h">
@@ -66,16 +68,31 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Win32ApiTest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RobocopyTest.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="COMApiTest.h">
-      <Filter>Header Files</Filter>
+      <Filter>TestImplementation</Filter>
     </ClInclude>
     <ClInclude Include="FilesystemApiTest.h">
+      <Filter>TestImplementation</Filter>
+    </ClInclude>
+    <ClInclude Include="COMApiTest.h">
+      <Filter>TestImplementation</Filter>
+    </ClInclude>
+    <ClInclude Include="RobocopyTest.h">
+      <Filter>TestImplementation</Filter>
+    </ClInclude>
+    <ClInclude Include="XCopyTest.h">
+      <Filter>TestImplementation</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="COMInitializeHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestCases.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

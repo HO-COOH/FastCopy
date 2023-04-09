@@ -7,7 +7,9 @@ class AutoRegisterImpl
 public:
 	AutoRegisterImpl()
 	{
+#ifndef _DEBUG
 		TestFactory::Register(std::make_unique<Self>());
+#endif
 	}
 };
 
