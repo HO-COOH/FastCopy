@@ -1,7 +1,7 @@
 #include "TestFactory.h"
 #include "TestResult.h"
 #include <ranges>
-#include "ITestBase.h"
+#include "ICopyBase.h"
 #include "Env.h"
 #include <filesystem>
 #include <format>
@@ -9,25 +9,35 @@
 #include "Config.h"
 
 std::vector<TestOperation> TestFactory::s_paths;
-std::vector<std::unique_ptr<ITestBase>> TestFactory::s_tests;
+std::vector<std::unique_ptr<ICopyBase>> TestFactory::s_implementations;
 std::vector<TestResult> TestFactory::s_testResults;
 
 void TestFactory::RunAllTest()
 {
-	for (auto& test : s_tests)
+	for (auto& test : s_implementations)
 	{
-		std::cout << "Testing: " << test->GetName() << '\n';
+		auto name = test->GetName();
+		std::cout << "Testing: " << name;
 		auto before = std::chrono::steady_clock::now();
 		if (test->Run(s_paths) && verify())
+		{
+			std::cout << "\t Success.";
 			s_testResults.push_back(TestResult{ test->GetName(), std::chrono::steady_clock::now() - before });
+		}
+		else
+		{
+			std::cout << "\t Failed.";
+		}
+		std::cout << "\t Clearing ";
 		clearTestination();
+		std::cout << "finished.\n";
 	}
 	std::ranges::sort(s_testResults);
 }
 
-void TestFactory::Register(std::unique_ptr<ITestBase>&& test)
+void TestFactory::Register(std::unique_ptr<ICopyBase>&& test)
 {
-	s_tests.push_back(std::move(test));
+	s_implementations.push_back(std::move(test));
 }
 
 void TestFactory::PrintResult()

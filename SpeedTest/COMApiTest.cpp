@@ -3,6 +3,7 @@
 #include <wil/com.h>
 #include <ShlObj_core.h>
 #include <execution>
+#include <filesystem>
 
 COMApiTest::COMApiTest()
 {
@@ -17,8 +18,10 @@ bool COMApiTest::Run(std::vector<TestOperation> const& paths)
         std::end(paths),
         [](TestOperation const& test)
         {
+            COMInitializeHelper s_helper;
             wil::com_ptr<IFileOperation> pfo;
-            if (!SUCCEEDED(CoCreateInstance(CLSID_FileOperation, NULL, CLSCTX_ALL, IID_PPV_ARGS(pfo.put()))))
+            auto hr = CoCreateInstance(CLSID_FileOperation, NULL, CLSCTX_ALL, IID_PPV_ARGS(pfo.put()));
+            if (!SUCCEEDED(hr))
                 return false;
 
             if (!SUCCEEDED(pfo->SetOperationFlags(FOF_NO_UI)))
@@ -27,7 +30,9 @@ bool COMApiTest::Run(std::vector<TestOperation> const& paths)
             wil::com_ptr<IShellItem> psiFrom, psiDest;
             if(!SUCCEEDED(SHCreateItemFromParsingName(test.source.data(), NULL, IID_PPV_ARGS(psiFrom.put()))))
                 return false;
-            if (!SUCCEEDED(SHCreateItemFromParsingName(test.destination.data(), NULL, IID_PPV_ARGS(psiDest.put()))))
+
+            auto destinationParent = std::filesystem::path{ test.destination }.parent_path().wstring();
+            if (!SUCCEEDED(SHCreateItemFromParsingName(destinationParent.data(), NULL, IID_PPV_ARGS(psiDest.put()))))
                 return false;
 
             if(!SUCCEEDED(pfo->CopyItem(psiFrom.get(), psiDest.get(), nullptr, nullptr)))

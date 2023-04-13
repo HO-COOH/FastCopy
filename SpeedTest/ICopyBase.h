@@ -5,7 +5,7 @@
 #include "TestOperation.h"
 
 //All test inherits this class
-class ITestBase
+class ICopyBase
 {
 public:
 	/**

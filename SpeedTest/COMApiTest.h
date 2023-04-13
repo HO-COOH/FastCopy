@@ -1,13 +1,13 @@
 #pragma once
-#include "ITestBase.h"
+#include "ICopyBase.h"
 #include "COMInitializeHelper.h"
 #include "AutoRegister.h"
-class COMApiTest : public ITestBase, private AutoRegister<COMApiTest>
+class COMApiTest : public ICopyBase, private AutoRegister<COMApiTest>
 {
 public:
 	COMApiTest();
 
-	// Inherited via ITestBase
+	// Inherited via ICopyBase
 	virtual bool Run(std::vector<TestOperation> const& paths) override;
 
 	virtual std::string GetName() const override;

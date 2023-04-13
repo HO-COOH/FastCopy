@@ -10,7 +10,7 @@ bool XCopyTest::Run(std::vector<TestOperation> const& paths)
 	{
 		processes.push_back(Process<wchar_t>{
 			XCopyTest::Application,
-			std::format(LR"({} {} /Y /E /C /I /H)", item.source, item.destination)
+			std::format(LR"("{}" "{}" /Y /E /C /I /H)", item.source, item.destination)
 		});
 	}
 	WaitForAllProcesses<wchar_t>(processes);

@@ -13,6 +13,8 @@ namespace Env
 
 	/**
 	 * Get available drive for copy destination.
+	 * @param subFolder The name of subfolder that will be created under an available drive
+	 * @param bytes The size that requires the disk to have for test
 	 */
 	std::wstring const& GetTestDestinationPath(std::wstring_view subFolder = L"", size_t bytes = 1024 * 1024 * 1024);
 

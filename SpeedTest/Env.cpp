@@ -1,6 +1,8 @@
 #include "Env.h"
 #include <ShlObj_core.h>
 #include <stdexcept>
+#include <format>
+#include <chrono>
 namespace Env
 {
 	static auto getFolderPathImpl(REFKNOWNFOLDERID id)
@@ -49,19 +51,35 @@ namespace Env
 
 	static std::wstring const& GetAvailableDrive(size_t bytes)
 	{
-		static std::wstring ret = L"E:";
+		static std::wstring ret = [bytes]
+		{
+			for (wchar_t drive = 'D'; drive <= 'Z'; ++drive)
+			{
+				auto driveStr = std::wstring{ drive } + L":";
+				if (HasEnoughSpace(driveStr, bytes))
+				{
+					return driveStr + L"\\";
+				}
+			}
+			throw std::runtime_error{ "No available drive for test" };
+		}();
 		return ret;
 	}
 
 	std::wstring const& GetTestDestinationPath(std::wstring_view subFolder, size_t bytes)
 	{
-		static std::wstring ret = std::wstring{ L"E:" } + subFolder.data();
+		static std::wstring ret = GetAvailableDrive(bytes) + subFolder.data();
 		return ret;
 	}
 
 	std::wstring const& GetRandomName()
 	{
-		static std::wstring ret = L"\\test";
+		static std::wstring ret = [] 
+		{
+			auto ret = std::format(L"{}", std::chrono::zoned_time{ std::chrono::current_zone(), std::chrono::system_clock::now() }.get_local_time());
+			std::ranges::replace_if(ret, [](auto c) {return c == L'.' || c == L':'; }, L'-');
+			return ret;
+		}();
 		return ret;
 	}
 }

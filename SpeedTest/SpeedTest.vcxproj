@@ -149,7 +149,7 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="Env.h" />
     <ClInclude Include="FilesystemApiTest.h" />
-    <ClInclude Include="ITestBase.h" />
+    <ClInclude Include="ICopyBase.h" />
     <ClInclude Include="Process.h" />
     <ClInclude Include="RobocopyTest.h" />
     <ClInclude Include="TestCases.h" />

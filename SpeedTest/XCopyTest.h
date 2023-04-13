@@ -1,12 +1,12 @@
 #pragma once
-#include "ITestBase.h"
+#include "ICopyBase.h"
 #include "AutoRegister.h"
 
 
 /**
  * This class calls Windows' built-in xcopy.exe
  */
-class XCopyTest : public ITestBase, private AutoRegister<XCopyTest>
+class XCopyTest : public ICopyBase, private AutoRegister<XCopyTest>
 {
 public:
 	virtual bool Run(std::vector<TestOperation> const& paths) override;

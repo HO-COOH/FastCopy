@@ -1,10 +1,10 @@
 #pragma once
-#include "ITestBase.h"
+#include "ICopyBase.h"
 #include "AutoRegister.h"
-class FilesystemApiTest : public ITestBase, private AutoRegister<FilesystemApiTest>
+class FilesystemApiTest : public ICopyBase, private AutoRegister<FilesystemApiTest>
 {
 public:
-	// Inherited via ITestBase
+	// Inherited via ICopyBase
 	virtual bool Run(std::vector<TestOperation> const& paths) override;
 	virtual std::string GetName() const override;
 };

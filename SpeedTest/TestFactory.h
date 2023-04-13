@@ -4,7 +4,7 @@
 #include "TestResult.h"
 #include "TestOperation.h"
 
-class ITestBase;
+class ICopyBase;
 class TestFactory
 {
 public:
@@ -16,7 +16,7 @@ public:
 	 * 
 	 * @param test A pointer to the test class
 	 */
-	static void Register(std::unique_ptr<ITestBase>&& test);
+	static void Register(std::unique_ptr<ICopyBase>&& test);
 
 	/**
 	 * Print sorted test results, eg: 
@@ -46,7 +46,7 @@ private:
 	 */
 	static bool verify();
 	static std::vector<TestOperation> s_paths;
-	static std::vector<std::unique_ptr<ITestBase>> s_tests;
+	static std::vector<std::unique_ptr<ICopyBase>> s_implementations;
 	static std::vector<TestResult> s_testResults;
 
 	/**

@@ -1,15 +1,15 @@
 #pragma once
-#include "ITestBase.h"
+#include "ICopyBase.h"
 #include "AutoRegister.h"
 
 /**
  * Calls windows' built-in robocopy.exe
  */
 class RobocopyTest :
-    public ITestBase, public AutoRegister<RobocopyTest>
+    public ICopyBase, public AutoRegister<RobocopyTest>
 {
 public:
-    // Inherited via ITestBase
+    // Inherited via ICopyBase
     virtual bool Run(std::vector<TestOperation> const& paths) override;
 
     virtual std::string GetName() const override;

@@ -46,7 +46,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ITestBase.h">
+    <ClInclude Include="ICopyBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TestResult.h">
@@ -94,5 +94,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
   </ItemGroup>
 </Project>
