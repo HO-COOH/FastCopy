@@ -7,19 +7,55 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <StackPanel>
-        <TextBlock Text="Copy" FontSize="20" Margin="24"/>
+    <Page.Resources>
+        <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="24"/>
+        </Style>
 
-        <ItemsRepeater ItemsSource="{x:Bind ViewModel.Sources}">
-            <ItemsRepeater.Layout>
-                <StackLayout Orientation="Vertical" Spacing="8"/>
-            </ItemsRepeater.Layout>
+        <Style x:Key="StatusTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Opacity" Value="0.8"/>
+        </Style>
+    </Page.Resources>
+    
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-            <ItemsRepeater.ItemTemplate>
-                <DataTemplate>
-                    <local:ProgressItem/>
-                </DataTemplate>
-            </ItemsRepeater.ItemTemplate>
-        </ItemsRepeater>
-    </StackPanel>
+        <TextBlock Style="{StaticResource HeaderTextStyle}">
+            <Run Text="{x:Bind ViewModel.Percent, Mode=OneWay}"/>% Complete
+        </TextBlock>
+
+
+        <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Center" Margin="0,-3,0,0">
+            <TextBlock Style="{StaticResource StatusTextStyle}">
+                <Run Text="{x:Bind ViewModel.OperationString}"/>
+                <Run Text="{x:Bind ViewModel.ItemCount, Mode=OneWay}"/>
+                <Run Text="items from "/>
+            </TextBlock>
+
+            <TextBlock Style="{StaticResource StatusTextStyle}" Foreground="LightGreen" Text="{x:Bind ViewModel.Source}" Margin="3,0,0,0"/>
+            <TextBlock Style="{StaticResource StatusTextStyle}" Text=" to "/>
+            <TextBlock Style="{StaticResource StatusTextStyle}" Foreground="LightGreen" Text="{x:Bind ViewModel.Destination}" Margin="3,0,0,0"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <Button Background="Transparent" BorderBrush="Transparent">
+                <Viewbox Width="15" Height="15">
+                    <SymbolIcon Symbol="Pause"/>
+                </Viewbox>
+            </Button>
+
+            <Button Background="Transparent" BorderBrush="Transparent">
+                <Viewbox Width="15" Height="15">
+                    <SymbolIcon Symbol="Cancel"/>
+                </Viewbox>
+            </Button>
+        </StackPanel>
+
+        <local:ProgressBarEx Margin="0,10,0,0" HorizontalAlignment="Stretch" Percent="{x:Bind ViewModel.Percent, Mode=OneWay}" Height="5" Color="Green" Grid.Row="2" />
+    </Grid>
 </Page>

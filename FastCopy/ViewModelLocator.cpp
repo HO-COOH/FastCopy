@@ -14,3 +14,10 @@ winrt::FastCopy::XCopyViewModel ViewModelLocator::XCopyViewModel()
 
     return m_viewModel;
 }
+
+winrt::FastCopy::RobocopyViewModel ViewModelLocator::RobocopyViewModel()
+{
+    if (!m_robocopyViewModel)
+        m_robocopyViewModel = winrt::FastCopy::RobocopyViewModel();
+    return m_robocopyViewModel;
+}

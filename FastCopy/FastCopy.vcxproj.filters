@@ -19,6 +19,12 @@
     <Page Include="ProgressItem.xaml">
       <Filter>Views\Controls</Filter>
     </Page>
+    <Page Include="CopyDialogWindow.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="ProgressBarEx.xaml">
+      <Filter>Views\Controls</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
@@ -42,6 +48,12 @@
     <Midl Include="SettingContainer.idl">
       <Filter>Views\Controls</Filter>
     </Midl>
+    <Midl Include="RobocopyViewModel.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
+    <Midl Include="ICopyBase.idl">
+      <Filter>ViewModel</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -64,6 +76,13 @@
     <ClCompile Include="FileStats.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="CommandLine.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowHelper.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcessIoCounter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -91,6 +110,17 @@
     <ClInclude Include="FileStats.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="CommandLine.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowHelper.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="ProcessIoCounter.h" />
+    <ClInclude Include="ProcessIOUpdater.hpp">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -114,6 +144,7 @@
     <Image Include="Assets\LockScreenLogo.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="bitmap1.bmp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Assets">
@@ -148,5 +179,8 @@
     <None Include="packages.config" />
     <None Include="FastCopy_TemporaryKey.pfx" />
     <None Include="..\x64\Release\FastCopy\FastCopyShellExtension.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
 </Project>

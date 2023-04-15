@@ -90,7 +90,11 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <ResourceCompile>
+      <ResourceOutputFileName>FastCopyShellExtension.res</ResourceOutputFileName>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -110,7 +114,11 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <ResourceCompile>
+      <ResourceOutputFileName>FastCopyShellExtension.res</ResourceOutputFileName>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -128,10 +136,14 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy $(SolutionDir)$(Platform)\Release\FastCopy\$(ProjectName).dll $(SolutionDir)$(Platform)\Debug\FastCopy\$(ProjectName).dll /Y</Command>
     </PostBuildEvent>
+    <ResourceCompile>
+      <ResourceOutputFileName>FastCopyShellExtension.res</ResourceOutputFileName>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -153,17 +165,44 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <ResourceCompile>
+      <ResourceOutputFileName>FastCopyShellExtension.res</ResourceOutputFileName>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="IconProvider.cpp" />
+    <ClCompile Include="Recorder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Source.def" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SharedMemoryItemDef.h" />
+    <ClInclude Include="CopyOperation.h" />
+    <ClInclude Include="IconProvider.h" />
+    <ClInclude Include="Recorder.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="FastCopyShellExtension.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Icons\212826788-9eeab669-783c-472b-98ed-ee049984cc19.ico" />
+    <Image Include="Icons\copy dark blue.ico" />
+    <Image Include="Icons\copy dark.ico" />
+    <Image Include="Icons\copy light blue.ico" />
+    <Image Include="Icons\copy light.ico" />
+    <Image Include="Icons\cut dark blue.ico" />
+    <Image Include="Icons\cut dark.ico" />
+    <Image Include="Icons\cut light blue.ico" />
+    <Image Include="Icons\cut light.ico" />
+    <Image Include="Icons\paste dark blue.ico" />
+    <Image Include="Icons\paste dark.ico" />
+    <Image Include="Icons\paste light blue.ico" />
+    <Image Include="Icons\paste light.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

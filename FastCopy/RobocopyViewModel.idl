@@ -1,0 +1,13 @@
+import "ICopyBase.idl";
+
+namespace FastCopy
+{
+    [bindable]
+    [default_interface]
+    runtimeclass RobocopyViewModel : ICopyBase
+    {
+        RobocopyViewModel();
+        
+        String RecordFile;
+    }
+}

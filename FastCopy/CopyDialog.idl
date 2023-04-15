@@ -1,4 +1,5 @@
 import "XCopyViewModel.idl";
+import "RobocopyViewModel.idl";
 
 namespace FastCopy
 {
@@ -6,6 +7,6 @@ namespace FastCopy
     runtimeclass CopyDialog : Microsoft.UI.Xaml.Controls.Page
     {
         CopyDialog();
-        FastCopy.XCopyViewModel ViewModel{ get; };
+        RobocopyViewModel ViewModel{ get; };
     }
 }

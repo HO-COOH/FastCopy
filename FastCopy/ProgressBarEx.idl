@@ -1,0 +1,19 @@
+// Copyright (c) Microsoft Corporation and Contributors.
+// Licensed under the MIT License.
+
+namespace FastCopy
+{
+    [default_interface]
+    runtimeclass ProgressBarEx : Microsoft.UI.Xaml.Controls.UserControl
+    {
+        ProgressBarEx();
+
+        Windows.UI.Color Color;
+        static Microsoft.UI.Xaml.DependencyProperty ColorProperty{ get; };
+
+        Double Percent;
+        static Microsoft.UI.Xaml.DependencyProperty PercentProperty{ get; };
+
+        Double Rest{ get; };
+    }
+}

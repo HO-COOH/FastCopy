@@ -1,0 +1,15 @@
+namespace FastCopy
+{
+	interface ICopyBase requires Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+	{
+		String OperationString{get; };
+		Int32 ItemCount{get; };
+		String Source{ get; };
+		String Destination{ get; };
+
+		Double Percent{ get; };
+		void Start();
+		void Pause();
+		void Cancel();
+	}
+}

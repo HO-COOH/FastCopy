@@ -18,6 +18,12 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Recorder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IconProvider.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -29,8 +35,63 @@
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SharedMemoryItemDef.h">
+    <ClInclude Include="CopyOperation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Recorder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IconProvider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="FastCopyShellExtension.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Icons\212826788-9eeab669-783c-472b-98ed-ee049984cc19.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icons\copy dark blue.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icons\copy dark.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icons\copy light blue.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icons\copy light.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icons\cut dark blue.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icons\cut dark.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icons\cut light blue.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icons\cut light.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icons\paste dark blue.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icons\paste dark.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icons\paste light blue.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icons\paste light.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

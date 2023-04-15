@@ -1,0 +1,11 @@
+// Copyright (c) Microsoft Corporation and Contributors.
+// Licensed under the MIT License.
+
+namespace FastCopy
+{
+    [default_interface]
+    runtimeclass CopyDialogWindow : Microsoft.UI.Xaml.Window
+    {
+        CopyDialogWindow();
+    }
+}

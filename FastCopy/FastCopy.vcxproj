@@ -127,8 +127,13 @@
       <DependentUpon>BoolToVisibilityConverter.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="CommandLine.h" />
     <ClInclude Include="CopyDialog.h">
       <DependentUpon>CopyDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="CopyDialogWindow.xaml.h">
+      <DependentUpon>CopyDialogWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="ExplorerItem.h">
@@ -156,11 +161,22 @@
     <ClInclude Include="MainWindow.xaml.h">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="ProcessIoCounter.h" />
+    <ClInclude Include="ProcessIOUpdater.hpp" />
+    <ClInclude Include="ProgressBarEx.xaml.h">
+      <DependentUpon>ProgressBarEx.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="ProgressItem.xaml.h">
       <DependentUpon>ProgressItem.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="PropertyChangeHelper.hpp" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="RobocopyViewModel.h">
+      <DependentUpon>RobocopyViewModel.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="SegmentedButton.h">
       <DependentUpon>SegmentedButton.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -176,6 +192,7 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="ViewModelLocator.h" />
+    <ClInclude Include="WindowHelper.h" />
     <ClInclude Include="XCopyCommandGenerator.h" />
     <ClInclude Include="XCopyViewModel.h">
       <DependentUpon>XCopyViewModel.idl</DependentUpon>
@@ -187,10 +204,16 @@
     <Page Include="CopyDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="CopyDialogWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MainWindow.xaml" />
+    <Page Include="ProgressBarEx.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="ProgressItem.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -204,8 +227,13 @@
       <DependentUpon>BoolToVisibilityConverter.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="CommandLine.cpp" />
     <ClCompile Include="CopyDialog.cpp">
       <DependentUpon>CopyDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="CopyDialogWindow.xaml.cpp">
+      <DependentUpon>CopyDialogWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ExplorerItem.cpp">
@@ -236,8 +264,17 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+    <ClCompile Include="ProcessIoCounter.cpp" />
+    <ClCompile Include="ProgressBarEx.xaml.cpp">
+      <DependentUpon>ProgressBarEx.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="ProgressItem.xaml.cpp">
       <DependentUpon>ProgressItem.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="RobocopyViewModel.cpp">
+      <DependentUpon>RobocopyViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="SegmentedButton.cpp">
@@ -254,6 +291,7 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ViewModelLocator.cpp" />
+    <ClCompile Include="WindowHelper.cpp" />
     <ClCompile Include="XCopyCommandGenerator.cpp" />
     <ClCompile Include="XCopyViewModel.cpp">
       <DependentUpon>XCopyViewModel.idl</DependentUpon>
@@ -272,12 +310,17 @@
       <DependentUpon>CopyDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="CopyDialogWindow.idl">
+      <DependentUpon>CopyDialogWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="ExplorerItem.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="ExplorerItemTemplateSelector.idl">
       <SubType>Designer</SubType>
     </Midl>
+    <Midl Include="ICopyBase.idl" />
     <Midl Include="MainPage.idl">
       <DependentUpon>MainPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -289,9 +332,16 @@
     <Midl Include="NumberToStringConverter.idl">
       <SubType>Designer</SubType>
     </Midl>
+    <Midl Include="ProgressBarEx.idl">
+      <DependentUpon>ProgressBarEx.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="ProgressItem.idl">
       <DependentUpon>ProgressItem.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="RobocopyViewModel.idl">
+      <SubType>Designer</SubType>
     </Midl>
     <Midl Include="SegmentedButton.idl">
       <DependentUpon>SegmentedButton.xaml</DependentUpon>
@@ -315,6 +365,7 @@
     <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Image Include="Assets\StoreLogo.png" />
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
+    <Image Include="bitmap1.bmp" />
   </ItemGroup>
   <!-- 
     Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
@@ -335,6 +386,9 @@
     <ProjectReference Include="..\FastCopyShellExtension\FastCopyShellExtension.vcxproj">
       <Project>{17f52e4d-1e98-4288-9aa1-20a384171876}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <!-- 
     Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution 

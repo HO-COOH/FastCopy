@@ -4,8 +4,8 @@
 #include "pch.h"
 
 #include "App.xaml.h"
-#include "MainWindow.xaml.h"
-#include "ShellExtensionHelper.h"
+#include "CopyDialogWindow.xaml.h"
+
 
 using namespace winrt;
 using namespace Windows::Foundation;
@@ -63,43 +63,14 @@ winrt::Windows::Foundation::IAsyncAction GetFromClipboard()
     }
 }
 
-
-winrt::Windows::Foundation::IAsyncAction App::OnLaunched(LaunchActivatedEventArgs const&)
+#include "CommandLine.h"
+void App::OnLaunched(LaunchActivatedEventArgs const&)
 {
-    window = make<MainWindow>();
+    auto const recordFile = Command::Get().RecordFile();
+    MessageBox(NULL, recordFile.data(), L"", 0);
+    ViewModelLocator::GetInstance().RobocopyViewModel().RecordFile(recordFile);
+
+    window = make<CopyDialogWindow>();
     window.Activate();
     m_helper.emplace(window);
-
-
-
-
-    auto cmd = GetCommandLine();
-    int argc{};
-    auto cmds = CommandLineToArgvW(cmd, &argc);
-    MessageBox(NULL, cmd, L"", 0);
-    if (argc <= 1 || std::wstring_view{ cmds[1] } != L"fastcopy://a/")
-    {
-        /*Debug code*/
-        auto viewModel = ViewModelLocator::GetInstance().XCopyViewModel();
-
-        for (auto const item : { R"(D:\SdkVersion.props)" })
-        {
-            winrt::FastCopy::ExplorerItem explorerItem{ winrt::to_hstring(item), ExplorerItemType::File };
-            viewModel.Sources().Append(explorerItem);
-        }
-        co_return;
-    }
-
-    if (std::wstring_view{ cmds[1] } == L"fastcopy://b/")
-    {
-        co_await GetFromClipboard();
-        co_return;
-    }
-    
-    auto viewModel = ViewModelLocator::GetInstance().XCopyViewModel();
-    ShellExtensionHelper helper;
-    for (auto const& item : helper.get("MyVector"))
-    {
-        viewModel.Sources().Append(winrt::FastCopy::ExplorerItem{ winrt::to_hstring(item.content.data()), ExplorerItemType::File});
-    }
 }

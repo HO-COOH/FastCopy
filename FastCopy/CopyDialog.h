@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "CopyDialog.g.h"
-#include "XCopyViewModel.g.h"
+#include "RobocopyViewModel.g.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -14,7 +14,7 @@ namespace winrt::FastCopy::implementation
             InitializeComponent();
         }
 
-        winrt::FastCopy::XCopyViewModel ViewModel();
+        winrt::FastCopy::RobocopyViewModel ViewModel();
     };
 }
 

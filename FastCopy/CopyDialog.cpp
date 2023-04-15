@@ -11,8 +11,8 @@ using namespace Windows::UI::Xaml;
 
 namespace winrt::FastCopy::implementation
 {
-	winrt::FastCopy::XCopyViewModel CopyDialog::ViewModel()
+	winrt::FastCopy::RobocopyViewModel CopyDialog::ViewModel()
 	{
-		return ViewModelLocator::GetInstance().XCopyViewModel();
+		return ViewModelLocator::GetInstance().RobocopyViewModel();
 	}
 }
