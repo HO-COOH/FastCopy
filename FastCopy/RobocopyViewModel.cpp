@@ -6,6 +6,8 @@
 #include <ppltasks.h>
 #include <fstream>
 #include <filesystem>
+#include "ReadableUnitConverter.h"
+#include "Global.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -16,13 +18,14 @@ namespace winrt::FastCopy::implementation
 	void RobocopyViewModel::RecordFile(winrt::hstring value)
 	{
 		m_recordFile = value;
-		concurrency::create_task(
-			[this]()
-			{
-				std::ifstream fs{ m_recordFile.data()};
+		//concurrency::create_task(
+		//	[this]()
+		//	{
+		//		std::ifstream fs{ m_recordFile.data()};
 
-			}
-		);
+		//	}
+		//);
+		SetHandle(OpenProcess(PROCESS_QUERY_INFORMATION, false, 34196));
 		Start();
 	}
 	winrt::hstring RobocopyViewModel::OperationString()
@@ -52,11 +55,28 @@ namespace winrt::FastCopy::implementation
 	}
 	double RobocopyViewModel::Percent()
 	{
-		return 51;
+		return m_percent;
 	}
 	void RobocopyViewModel::Start()
 	{
 		ProcessIOUpdater::Start(std::chrono::seconds{ 1 });
+		winrt::Windows::System::Threading::ThreadPoolTimer::CreatePeriodicTimer(
+			[this](auto timer)
+			{
+				if (m_percent < 100)
+				{
+					m_percent += 1.0;
+					if (Global::UIThread)
+					{
+						Global::UIThread.TryEnqueue([this] {
+							raisePropertyChange(L"Percent");
+							});
+					}
+				}
+				else
+					timer.Cancel();
+			}, std::chrono::milliseconds{30}
+		);
 	}
 	void RobocopyViewModel::Pause()
 	{
@@ -66,6 +86,9 @@ namespace winrt::FastCopy::implementation
 	}
 	void RobocopyViewModel::OnUpdate(ProcessIoCounter::IOCounterDiff diff)
 	{
-		OutputDebugString(std::format(L"{}\n", diff.read).data());
+		m_speedText = ReadableUnitConverter::Speed::ToString<wchar_t>(diff.read, diff.duration);
+		Global::UIThread.TryEnqueue([this] {
+			raisePropertyChange(L"SpeedText");
+		});
 	}
 }

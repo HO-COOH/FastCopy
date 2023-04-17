@@ -12,6 +12,11 @@ class ProcessIOUpdater
 
 	ProcessIoCounter m_counter;
 public:
+	void SetHandle(HANDLE handle)
+	{
+		m_counter.SetHandle(handle);
+	}
+
 	template<typename Duration>
 	void Start(Duration duration)
 	{
@@ -22,6 +27,4 @@ public:
 			}, duration
 		);
 	}
-
-
 };

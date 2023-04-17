@@ -53,10 +53,15 @@ namespace winrt::FastCopy::implementation
     private:
         winrt::Microsoft::UI::Composition::PointLight m_pointLight{ nullptr };
         winrt::Microsoft::UI::Composition::AmbientLight m_ambientLight{ nullptr };
+        winrt::Microsoft::UI::Composition::ScalarKeyFrameAnimation m_animation{ nullptr };
+        winrt::Microsoft::UI::Composition::CompositionPropertySet m_propertySet{ nullptr };
         static winrt::Microsoft::UI::Xaml::DependencyProperty s_colorProperty;
         static winrt::Microsoft::UI::Xaml::DependencyProperty s_percentProperty;
     public:
         void UserControl_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void UserControl_LayoutUpdated(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e);
+        void UserControl_SizeChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e);
+        void Bar_SizeChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e);
     };
 }
 

@@ -9,7 +9,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Loaded="UserControl_Loaded">
+    Loaded="UserControl_Loaded"
+    LayoutUpdated="UserControl_LayoutUpdated"
+    SizeChanged="UserControl_SizeChanged">
 
     <Grid CornerRadius="3">
         <Grid.Background>
@@ -20,7 +22,7 @@
             <ColumnDefinition x:Name="RestColumn"/>
         </Grid.ColumnDefinitions>
 
-        <Rectangle x:Name="Bar" RadiusX="3" RadiusY="3" Grid.Column="0">
+        <Rectangle x:Name="Bar" RadiusX="3" RadiusY="3" Grid.Column="0" SizeChanged="Bar_SizeChanged">
             <Rectangle.Fill>
                 <SolidColorBrush Color="{x:Bind Color}"/>
             </Rectangle.Fill>

@@ -1,5 +1,6 @@
 import "XCopyViewModel.idl";
 import "RobocopyViewModel.idl";
+import "ProgressBarEx.idl";
 
 namespace FastCopy
 {
@@ -8,5 +9,6 @@ namespace FastCopy
     {
         CopyDialog();
         RobocopyViewModel ViewModel{ get; };
+        FastCopy.ProgressBarEx ProgressBar{ get; };
     }
 }

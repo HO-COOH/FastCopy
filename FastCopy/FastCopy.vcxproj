@@ -146,6 +146,7 @@
     </ClInclude>
     <ClInclude Include="FastCopyCommandParser.h" />
     <ClInclude Include="FileStats.h" />
+    <ClInclude Include="Global.h" />
     <ClInclude Include="MainPage.xaml.h">
       <DependentUpon>MainPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -172,6 +173,7 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="PropertyChangeHelper.hpp" />
+    <ClInclude Include="ReadableUnitConverter.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RobocopyViewModel.h">
       <DependentUpon>RobocopyViewModel.idl</DependentUpon>
@@ -246,6 +248,7 @@
     </ClCompile>
     <ClCompile Include="FastCopyCommandParser.cpp" />
     <ClCompile Include="FileStats.cpp" />
+    <ClCompile Include="Global.cpp" />
     <ClCompile Include="MainPage.xaml.cpp">
       <DependentUpon>MainPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -273,6 +276,7 @@
       <DependentUpon>ProgressItem.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="ReadableUnitConverter.cpp" />
     <ClCompile Include="RobocopyViewModel.cpp">
       <DependentUpon>RobocopyViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -365,7 +369,6 @@
     <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Image Include="Assets\StoreLogo.png" />
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
-    <Image Include="bitmap1.bmp" />
   </ItemGroup>
   <!-- 
     Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging

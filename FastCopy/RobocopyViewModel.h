@@ -24,8 +24,12 @@ namespace winrt::FastCopy::implementation
         void Cancel();
 
         void OnUpdate(ProcessIoCounter::IOCounterDiff diff);
+
+        winrt::hstring SpeedText() { return m_speedText; }
     private:
         winrt::hstring m_recordFile;
+        winrt::hstring m_speedText;
+        double m_percent{};
     };
 }
 

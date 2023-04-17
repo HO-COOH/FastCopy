@@ -11,5 +11,7 @@ namespace FastCopy
 		void Start();
 		void Pause();
 		void Cancel();
+
+		String SpeedText{ get; };
 	}
 }

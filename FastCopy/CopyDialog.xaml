@@ -16,6 +16,39 @@
             <Setter Property="FontSize" Value="11"/>
             <Setter Property="Opacity" Value="0.8"/>
         </Style>
+
+        <Storyboard x:Name="ProgressBarAnimation">
+            <DoubleAnimation x:Name="WidthAnimation" Duration="0:0:0.5"
+                                         From="5"
+                                         
+                                         Storyboard.TargetName="ProgressBar"
+                                         Storyboard.TargetProperty="(ProgressBarEx.Width)"
+                             EnableDependentAnimation="True">
+                <DoubleAnimation.EasingFunction>
+                    <QuadraticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Duration="0:0:0.5"
+                             From="10"
+                             To="5"
+                             Storyboard.TargetName="ProgressBar"
+                             Storyboard.TargetProperty="(ProgressBarEx.Height)"
+                             EnableDependentAnimation="True">
+                <DoubleAnimation.EasingFunction>
+                    <QuadraticEase EasingMode="EaseOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <!--<DoubleAnimation Duration="0:0:1"
+                             From="10"
+                             To="60"
+                             Storyboard.TargetName="ProgressBar"
+                             Storyboard.TargetProperty="(ProgressBarEx.Percent)"
+                             EnableDependentAnimation="True">
+                <DoubleAnimation.EasingFunction>
+                    <CircleEase EasingMode="EaseInOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>-->
+        </Storyboard>
     </Page.Resources>
     
     <Grid Margin="15">
@@ -29,8 +62,10 @@
             <Run Text="{x:Bind ViewModel.Percent, Mode=OneWay}"/>% Complete
         </TextBlock>
 
+        <TextBlock x:Name="SpeedText" Text="{x:Bind ViewModel.SpeedText,Mode=OneWay}" Style="{StaticResource StatusTextStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Center" Margin="0,-3,0,0">
+
+        <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Center" Margin="0,0,0,0">
             <TextBlock Style="{StaticResource StatusTextStyle}">
                 <Run Text="{x:Bind ViewModel.OperationString}"/>
                 <Run Text="{x:Bind ViewModel.ItemCount, Mode=OneWay}"/>
@@ -56,6 +91,10 @@
             </Button>
         </StackPanel>
 
-        <local:ProgressBarEx Margin="0,10,0,0" HorizontalAlignment="Stretch" Percent="{x:Bind ViewModel.Percent, Mode=OneWay}" Height="5" Color="Green" Grid.Row="2" />
+        <local:ProgressBarEx x:Name="ProgressBar" Loaded="ProgressBar_Loaded" Margin="0,10,0,0" HorizontalAlignment="Stretch" 
+                             Percent="{x:Bind ViewModel.Percent, Mode=OneWay}" Height="5" Color="Green" Grid.Row="2" 
+                             SizeChanged="ProgressBar_SizeChanged"/>
+        
+        <!---Red: BB0000 -->
     </Grid>
 </Page>

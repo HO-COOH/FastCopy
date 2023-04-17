@@ -83,6 +83,10 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="ProcessIoCounter.cpp" />
+    <ClCompile Include="ReadableUnitConverter.cpp">
+      <Filter>Converter</Filter>
+    </ClCompile>
+    <ClCompile Include="Global.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -121,6 +125,10 @@
     <ClInclude Include="ProcessIOUpdater.hpp">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="ReadableUnitConverter.h">
+      <Filter>Converter</Filter>
+    </ClInclude>
+    <ClInclude Include="Global.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -144,7 +152,6 @@
     <Image Include="Assets\LockScreenLogo.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="bitmap1.bmp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Assets">

@@ -67,7 +67,7 @@ winrt::Windows::Foundation::IAsyncAction GetFromClipboard()
 void App::OnLaunched(LaunchActivatedEventArgs const&)
 {
     auto const recordFile = Command::Get().RecordFile();
-    MessageBox(NULL, recordFile.data(), L"", 0);
+    //MessageBox(NULL, recordFile.data(), L"", 0);
     ViewModelLocator::GetInstance().RobocopyViewModel().RecordFile(recordFile);
 
     window = make<CopyDialogWindow>();

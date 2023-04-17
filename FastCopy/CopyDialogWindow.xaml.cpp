@@ -8,6 +8,7 @@
 #endif
 
 #include "WindowHelper.h"
+#include "Global.h"
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
@@ -31,5 +32,6 @@ namespace winrt::FastCopy::implementation
         appWindow.TitleBar().ExtendsContentIntoTitleBar(true);
         appWindow.TitleBar().ButtonBackgroundColor(winrt::Windows::UI::Colors::Transparent());
         appWindow.TitleBar().ButtonInactiveBackgroundColor(winrt::Windows::UI::Colors::Transparent());
+        Global::UIThread = DispatcherQueue();
     }
 }

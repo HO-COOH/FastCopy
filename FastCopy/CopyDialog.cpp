@@ -6,6 +6,7 @@
 
 #include "ViewModelLocator.h"
 
+
 using namespace winrt;
 using namespace Windows::UI::Xaml;
 
@@ -15,4 +16,21 @@ namespace winrt::FastCopy::implementation
 	{
 		return ViewModelLocator::GetInstance().RobocopyViewModel();
 	}
+
+
+	void CopyDialog::ProgressBar_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	{
+		if (ProgressBar().ActualWidth() != 0 && !std::isnan(ProgressBar().ActualWidth()))
+		{
+			WidthAnimation().To(ProgressBar().ActualWidth());
+			ProgressBarAnimation().Begin();
+		}
+	}
+
+}
+
+
+void winrt::FastCopy::implementation::CopyDialog::ProgressBar_SizeChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e)
+{
+
 }

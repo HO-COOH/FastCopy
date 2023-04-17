@@ -38,6 +38,9 @@ namespace winrt::FastCopy::implementation
 	{
 		auto visual = winrt::Microsoft::UI::Xaml::Hosting::ElementCompositionPreview::GetElementVisual(Bar());
 		auto compositor = visual.Compositor();
+		m_propertySet = compositor.CreatePropertySet();
+		m_propertySet.InsertScalar(L"width", 50);
+
 		m_pointLight = compositor.CreatePointLight();
 		m_pointLight.Color(winrt::Microsoft::UI::Colors::White());
 		m_pointLight.CoordinateSpace(visual);
@@ -49,11 +52,13 @@ namespace winrt::FastCopy::implementation
 				(float)30
 			});
 
-		auto animation = compositor.CreateScalarKeyFrameAnimation();
-		animation.InsertKeyFrame(1.0f, 2 * Bar().ActualWidth());
-		animation.Duration(std::chrono::seconds{ 3 });
-		animation.IterationBehavior(winrt::Microsoft::UI::Composition::AnimationIterationBehavior::Forever);
-		animation.Target(L"Offset.X");
+		m_animation = compositor.CreateScalarKeyFrameAnimation();
+		//m_animation.InsertKeyFrame(1.0f, 2 * Bar().ActualWidth());
+		m_animation.SetReferenceParameter(L"propertySet", m_propertySet);
+		m_animation.InsertExpressionKeyFrame(1.0f, L"propertySet.width");
+		m_animation.Duration(std::chrono::seconds{ 3 });
+		m_animation.IterationBehavior(winrt::Microsoft::UI::Composition::AnimationIterationBehavior::Forever);
+		m_animation.Target(L"Offset.X");
 
 		auto intensityAnimation = compositor.CreateScalarKeyFrameAnimation();
 		intensityAnimation.Target(L"Intensity");
@@ -66,7 +71,7 @@ namespace winrt::FastCopy::implementation
 
 
 		auto group = compositor.CreateAnimationGroup();
-		group.Add(animation);
+		group.Add(m_animation);
 		group.Add(intensityAnimation);
 
 		//m_pointLight.StartAnimation(L"Offset.X", animation);
@@ -77,4 +82,13 @@ namespace winrt::FastCopy::implementation
 		m_ambientLight.Color(winrt::Microsoft::UI::Colors::White());
 		m_ambientLight.Targets().Add(visual);
 	}
+
+	void ProgressBarEx::Bar_SizeChanged(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const&)
+	{
+		auto const width = Bar().ActualWidth();
+		if (m_propertySet && width != 0 && !std::isnan(width))
+			m_propertySet.InsertScalar(L"width", width);
+	}
 }
+
+
