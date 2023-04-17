@@ -9,9 +9,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Loaded="UserControl_Loaded"
-    LayoutUpdated="UserControl_LayoutUpdated"
-    SizeChanged="UserControl_SizeChanged">
+    Loaded="UserControl_Loaded">
 
     <Grid CornerRadius="3">
         <Grid.Background>

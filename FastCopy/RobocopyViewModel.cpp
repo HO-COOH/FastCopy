@@ -70,7 +70,7 @@ namespace winrt::FastCopy::implementation
 					{
 						Global::UIThread.TryEnqueue([this] {
 							raisePropertyChange(L"Percent");
-							});
+						});
 					}
 				}
 				else
