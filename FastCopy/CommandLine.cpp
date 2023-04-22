@@ -21,9 +21,11 @@ Command& Command::Get()
     return s_instance;
 }
 
-CopyOperation Command::GetOperation()
+winrt::hstring Command::GetDestination()
 {
-    return CopyOperation();
+    auto& args = GetCommandArgs();
+    constexpr static std::wstring_view protocol = L"fastcopy://";
+    return args.size() == 1 ? winrt::hstring{ LR"(E:\test)" } :  winrt::hstring{ args[1].substr(protocol.size()) };
 }
 
 static auto GetLocalDataFolder()

@@ -23,8 +23,15 @@ namespace winrt::FastCopy::implementation
 		if (ProgressBar().ActualWidth() != 0 && !std::isnan(ProgressBar().ActualWidth()))
 		{
 			WidthAnimation().To(ProgressBar().ActualWidth());
-			ProgressBarAnimation().Begin();
+			ProgressBarEntranceAnimation().Begin();
 		}
+
+		ViewModelLocator::GetInstance().RobocopyViewModel().Finished(
+			[](auto, FinishState state)
+			{
+				OutputDebugString(L"Called finished\n");
+			}
+		);
 	}
 
 }

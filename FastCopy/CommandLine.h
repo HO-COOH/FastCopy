@@ -9,6 +9,6 @@ class Command
 {
 public:
 	static Command& Get();
-	CopyOperation GetOperation();
+	winrt::hstring GetDestination();
 	std::wstring RecordFile();
 };

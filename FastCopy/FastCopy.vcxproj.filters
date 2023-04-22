@@ -82,11 +82,14 @@
     <ClCompile Include="WindowHelper.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="ProcessIoCounter.cpp" />
-    <ClCompile Include="ReadableUnitConverter.cpp">
-      <Filter>Converter</Filter>
-    </ClCompile>
     <ClCompile Include="Global.cpp" />
+    <ClCompile Include="UIThreadWrapper.cpp" />
+    <ClCompile Include="RobocopyProcess.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcessIoCounter.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -121,7 +124,6 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="ProcessIoCounter.h" />
     <ClInclude Include="ProcessIOUpdater.hpp">
       <Filter>Utils</Filter>
     </ClInclude>
@@ -129,6 +131,13 @@
       <Filter>Converter</Filter>
     </ClInclude>
     <ClInclude Include="Global.h" />
+    <ClInclude Include="UIThreadWrapper.h" />
+    <ClInclude Include="RobocopyProcess.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcessIoCounter.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">

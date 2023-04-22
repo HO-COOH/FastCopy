@@ -63,9 +63,17 @@ class __declspec(uuid("3282E233-C5D3-4533-9B25-44B8AAAFACFA")) TestExplorerComma
 
     void init(IShellItemArray* items)
     {
+
+        DWORD count{};
+        if (!items)
+            count = 0;
+        else
+            items->GetCount(&count);
+
+        //MessageBox(NULL, std::to_wstring(count).data(), L"", 0);
         if (!m_hasInit)
         {
-            if (hasInvokedCopyOrCut())
+            if (count == 0 && hasInvokedCopyOrCut())
             {
                 if (ptrs.empty())
                     ptrs.push_back(Microsoft::WRL::Make<SubCommand>(CopyOperation::Paste));
@@ -75,11 +83,8 @@ class __declspec(uuid("3282E233-C5D3-4533-9B25-44B8AAAFACFA")) TestExplorerComma
             }
         }
 
-        if (!items)
-            return;
 
-        DWORD count{};
-        items->GetCount(&count);
+
         if (count != 0)
         {
             ptrs.emplace_back(Microsoft::WRL::Make<SubCommand>(CopyOperation::Copy));
@@ -217,12 +222,12 @@ class SubCommand final :
         return S_OK;
     }
 
-    HRESULT callMainProgramImpl()
+    HRESULT callMainProgramImpl(std::wstring_view arg)
     {
         auto result = ShellExecute(
             NULL,
             L"open",
-            L"fastcopy://",
+            std::format(L"fastcopy://{}", arg).data(),
             nullptr,
             nullptr,
             SW_SHOW
@@ -261,14 +266,24 @@ public:
     }
     HRESULT Invoke( IShellItemArray* selection,  IBindCtx*) noexcept
     {
+        /*
+            if no files are selected, selection contains 1 element to the current invoked folder
+        */
         switch (m_op)
         {
             case CopyOperation::Copy:
             case CopyOperation::Move:   return recordFilesImpl(selection);
-            case CopyOperation::Paste:  return callMainProgramImpl();
+            case CopyOperation::Paste:
+            {
+                IShellItem* psi;
+                selection->GetItemAt(0, &psi);
+                LPWSTR path;
+                psi->GetDisplayName(SIGDN_FILESYSPATH, &path);
+                return callMainProgramImpl(path);
+            }
             case CopyOperation::Delete:
                 recordFilesImpl(selection);
-                return callMainProgramImpl();
+                return callMainProgramImpl(L"");
             default:
                 assert(false);
         }

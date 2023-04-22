@@ -175,6 +175,7 @@
     <ClInclude Include="PropertyChangeHelper.hpp" />
     <ClInclude Include="ReadableUnitConverter.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="RobocopyProcess.h" />
     <ClInclude Include="RobocopyViewModel.h">
       <DependentUpon>RobocopyViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -189,6 +190,7 @@
     </ClInclude>
     <ClInclude Include="ShellExtensionHelper.h" />
     <ClInclude Include="UIDispatcher.h" />
+    <ClInclude Include="UIThreadWrapper.h" />
     <ClInclude Include="VectorToBoolConverter.h">
       <DependentUpon>VectorToBoolConverter.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -276,7 +278,7 @@
       <DependentUpon>ProgressItem.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="ReadableUnitConverter.cpp" />
+    <ClCompile Include="RobocopyProcess.cpp" />
     <ClCompile Include="RobocopyViewModel.cpp">
       <DependentUpon>RobocopyViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -290,6 +292,7 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ShellExtensionHelper.cpp" />
+    <ClCompile Include="UIThreadWrapper.cpp" />
     <ClCompile Include="VectorToBoolConverter.cpp">
       <DependentUpon>VectorToBoolConverter.idl</DependentUpon>
       <SubType>Code</SubType>

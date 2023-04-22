@@ -28,10 +28,7 @@ int IconProvider::GetForOperation(CopyOperation op) const
             case CopyOperation::Copy:   return IDI_ICON2;
             case CopyOperation::Move:   return IDI_ICON6;
             case CopyOperation::Paste:  return IDI_ICON10;
-            case CopyOperation::Delete: return 0;
-                break;
-            default:
-                break;
+            case CopyOperation::Delete: return IDI_ICON14;
         }
     }
     else
@@ -41,10 +38,8 @@ int IconProvider::GetForOperation(CopyOperation op) const
             case CopyOperation::Copy:   return IDI_ICON4;
             case CopyOperation::Move:   return IDI_ICON8;
             case CopyOperation::Paste:  return IDI_ICON12;
-            case CopyOperation::Delete: return 0;
-                break;
-            default:
-                break;
+            case CopyOperation::Delete: return IDI_ICON15;
         }
     }
+    return 0;
 }

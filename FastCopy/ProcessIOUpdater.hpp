@@ -23,7 +23,7 @@ public:
 		winrt::Windows::System::Threading::ThreadPoolTimer::CreatePeriodicTimer(
 			[this](auto)
 			{
-				getSelf().OnUpdate(m_counter.Update());
+				getSelf().OnUpdateCopySpeed(m_counter.Update());
 			}, duration
 		);
 	}

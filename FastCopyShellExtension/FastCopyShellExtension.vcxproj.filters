@@ -93,5 +93,11 @@
     <Image Include="Icons\paste light.ico">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Icons\delete dark.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Icons\delete light.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

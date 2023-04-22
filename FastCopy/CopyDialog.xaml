@@ -17,12 +17,12 @@
             <Setter Property="Opacity" Value="0.8"/>
         </Style>
 
-        <Storyboard x:Name="ProgressBarAnimation">
-            <DoubleAnimation x:Name="WidthAnimation" Duration="0:0:0.5"
-                                         From="5"
-                                         
-                                         Storyboard.TargetName="ProgressBar"
-                                         Storyboard.TargetProperty="(ProgressBarEx.Width)"
+        <Storyboard x:Name="ProgressBarEntranceAnimation">
+            <DoubleAnimation x:Name="WidthAnimation" 
+                             Duration="0:0:0.5"
+                             From="5"
+                             Storyboard.TargetName="ProgressBar"
+                             Storyboard.TargetProperty="(ProgressBarEx.Width)"
                              EnableDependentAnimation="True">
                 <DoubleAnimation.EasingFunction>
                     <QuadraticEase EasingMode="EaseOut"/>
@@ -38,16 +38,10 @@
                     <QuadraticEase EasingMode="EaseOut"/>
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
-            <!--<DoubleAnimation Duration="0:0:1"
-                             From="10"
-                             To="60"
-                             Storyboard.TargetName="ProgressBar"
-                             Storyboard.TargetProperty="(ProgressBarEx.Percent)"
-                             EnableDependentAnimation="True">
-                <DoubleAnimation.EasingFunction>
-                    <CircleEase EasingMode="EaseInOut"/>
-                </DoubleAnimation.EasingFunction>
-            </DoubleAnimation>-->
+        </Storyboard>
+
+        <Storyboard x:Name="ProgressBarExitAnimation">
+            
         </Storyboard>
     </Page.Resources>
     

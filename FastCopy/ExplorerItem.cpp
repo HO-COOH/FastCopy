@@ -40,7 +40,7 @@ namespace winrt::FastCopy::implementation
 
 	winrt::fire_and_forget ExplorerItem::calculateSize(winrt::Windows::Storage::IStorageItem item)
 	{
-		m_size = co_await FileStats::GetFolderSize(item);
+		m_size = co_await FileStats::GetFileSize(item);
 		if (UIDispatcher::g_dispatcher)
 			raisePropertyChange(L"Size");
 	}
@@ -49,8 +49,8 @@ namespace winrt::FastCopy::implementation
 	{
 		try {
 			m_size = m_type == ExplorerItemType::File ?
-				co_await FileStats::GetFolderSize(co_await winrt::Windows::Storage::StorageFile::GetFileFromPathAsync(path)) :
-				co_await FileStats::GetFolderSize(co_await winrt::Windows::Storage::StorageFolder::GetFolderFromPathAsync(path));
+				co_await FileStats::GetFileSize(co_await winrt::Windows::Storage::StorageFile::GetFileFromPathAsync(path)) :
+				co_await FileStats::GetFileSize(co_await winrt::Windows::Storage::StorageFolder::GetFolderFromPathAsync(path));
 			if (UIDispatcher::g_dispatcher)
 				raisePropertyChange(L"Size");
 		}

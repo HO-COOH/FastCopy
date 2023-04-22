@@ -29,9 +29,10 @@ namespace winrt::FastCopy::implementation
         presenter.IsMaximizable(false);
         presenter.IsMinimizable(true);
 
-        appWindow.TitleBar().ExtendsContentIntoTitleBar(true);
-        appWindow.TitleBar().ButtonBackgroundColor(winrt::Windows::UI::Colors::Transparent());
-        appWindow.TitleBar().ButtonInactiveBackgroundColor(winrt::Windows::UI::Colors::Transparent());
+        auto titleBar = appWindow.TitleBar();
+        titleBar.ExtendsContentIntoTitleBar(true);
+        titleBar.ButtonBackgroundColor(winrt::Windows::UI::Colors::Transparent());
+        titleBar.ButtonInactiveBackgroundColor(winrt::Windows::UI::Colors::Transparent());
         Global::UIThread = DispatcherQueue();
     }
 }

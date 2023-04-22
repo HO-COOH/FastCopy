@@ -1,8 +1,7 @@
 #pragma once
-#include <winrt/Microsoft.UI.Dispatching.h>
-
+#include "UIThreadWrapper.h"
 struct Global
 {
-	static inline winrt::Microsoft::UI::Dispatching::DispatcherQueue UIThread{ nullptr };
+	static inline UIThreadWrapper UIThread;
 };
 

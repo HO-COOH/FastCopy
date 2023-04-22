@@ -9,5 +9,6 @@ namespace FastCopy
         RobocopyViewModel();
         
         String RecordFile;
+        String SizeText{ get; };
     }
 }

@@ -199,6 +199,8 @@
     <Image Include="Icons\cut dark.ico" />
     <Image Include="Icons\cut light blue.ico" />
     <Image Include="Icons\cut light.ico" />
+    <Image Include="Icons\delete dark.ico" />
+    <Image Include="Icons\delete light.ico" />
     <Image Include="Icons\paste dark blue.ico" />
     <Image Include="Icons\paste dark.ico" />
     <Image Include="Icons\paste light blue.ico" />

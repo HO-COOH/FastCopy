@@ -6,21 +6,24 @@
 
 namespace internal
 {
+	static inline HANDLE CloseHandlesExceptForProcess(PROCESS_INFORMATION pi)
+	{
+		CloseHandle(pi.hThread);
+		return pi.hProcess;
+	}
 	class ProcessBase
 	{
 	public:
 		[[maybe_unused]] int WaitForExit() const
 		{
-			WaitForSingleObject(m_pi.hProcess, INFINITE);
+			WaitForSingleObject(m_processHandle, INFINITE);
 			DWORD exitCode{};
-			GetExitCodeProcess(m_pi.hProcess, &exitCode);
-			CloseHandle(m_pi.hProcess);
-			CloseHandle(m_pi.hThread);
+			GetExitCodeProcess(m_processHandle, &exitCode);
+			CloseHandle(m_processHandle);
 			return exitCode;
 		}
 	protected:
-		HANDLE m_handle = INVALID_HANDLE_VALUE;
-		PROCESS_INFORMATION m_pi;
+		HANDLE m_processHandle;
 	};
 }
 
@@ -33,13 +36,15 @@ class Process<char> : public internal::ProcessBase
 public:
 	Process(std::string_view applicationName, std::string cmd = "")
 	{
-		m_startupInfo.cb = sizeof(m_startupInfo);
-		if (!applicationName.empty())
+		STARTUPINFOA info{};
+		info.cb = sizeof(info);
+		if (!applicationName.empty() && cmd.find(applicationName) == std::string::npos)
 		{
 			cmd.insert(0, " ");
 			cmd.insert(0, applicationName);
 		}
 		cmd.insert(0, applicationName);
+		PROCESS_INFORMATION m_pi{};
 		CreateProcessA(
 			applicationName.data(),
 			cmd.data(),
@@ -49,12 +54,11 @@ public:
 			0,
 			nullptr,
 			nullptr,
-			&m_startupInfo,
+			&info,
 			&m_pi
 		);
+		m_processHandle = internal::CloseHandlesExceptForProcess(m_pi);
 	}
-private:
-	STARTUPINFOA m_startupInfo{};
 };
 
 template<>
@@ -63,12 +67,14 @@ class Process<wchar_t> : public internal::ProcessBase
 public:
 	Process(std::wstring_view applicationName, std::wstring cmd = L"")
 	{
-		m_startupInfo.cb = sizeof(m_startupInfo);
-		if (!applicationName.empty())
+		STARTUPINFOW info{};
+		info.cb = sizeof(info);
+		if (!applicationName.empty() && cmd.find(applicationName) == std::wstring::npos)
 		{
 			cmd.insert(0, L" ");
 			cmd.insert(0, applicationName);
 		}
+		PROCESS_INFORMATION m_pi{};
 		CreateProcessW(
 			applicationName.data(),
 			cmd.data(),
@@ -78,12 +84,13 @@ public:
 			CREATE_NO_WINDOW,
 			nullptr,
 			nullptr,
-			&m_startupInfo,
+			&info,
 			&m_pi
 		);
+		m_processHandle = internal::CloseHandlesExceptForProcess(m_pi);
+
+
 	}
-private:
-	STARTUPINFOW m_startupInfo{};
 };
 
 /**
