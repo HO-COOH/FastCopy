@@ -99,13 +99,13 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SPDLOG_WCHAR_TO_UTF8_SUPPORT;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp20</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
     <ClCompile>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SPDLOG_WCHAR_TO_UTF8_SUPPORT;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -136,6 +136,7 @@
       <DependentUpon>CopyDialogWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="DebugLogger.h" />
     <ClInclude Include="ExplorerItem.h">
       <DependentUpon>ExplorerItem.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -188,7 +189,7 @@
       <DependentUpon>SettingContainer.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="ShellExtensionHelper.h" />
+    <ClInclude Include="TaskFile.h" />
     <ClInclude Include="UIDispatcher.h" />
     <ClInclude Include="UIThreadWrapper.h" />
     <ClInclude Include="VectorToBoolConverter.h">
@@ -240,6 +241,7 @@
       <DependentUpon>CopyDialogWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="DebugLogger.cpp" />
     <ClCompile Include="ExplorerItem.cpp">
       <DependentUpon>ExplorerItem.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -291,7 +293,7 @@
       <DependentUpon>SettingContainer.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="ShellExtensionHelper.cpp" />
+    <ClCompile Include="TaskFile.cpp" />
     <ClCompile Include="UIThreadWrapper.cpp" />
     <ClCompile Include="VectorToBoolConverter.cpp">
       <DependentUpon>VectorToBoolConverter.idl</DependentUpon>

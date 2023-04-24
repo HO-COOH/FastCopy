@@ -70,9 +70,6 @@
     <ClCompile Include="AcrylicHelper.cpp">
       <Filter>ViewHelper</Filter>
     </ClCompile>
-    <ClCompile Include="ShellExtensionHelper.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
     <ClCompile Include="FileStats.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
@@ -88,6 +85,12 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="ProcessIoCounter.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="TaskFile.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugLogger.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>
@@ -107,9 +110,6 @@
     </ClInclude>
     <ClInclude Include="UIDispatcher.h">
       <Filter>ViewHelper</Filter>
-    </ClInclude>
-    <ClInclude Include="ShellExtensionHelper.h">
-      <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="PropertyChangeHelper.hpp">
       <Filter>ViewHelper</Filter>
@@ -136,6 +136,12 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="ProcessIoCounter.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskFile.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugLogger.h">
       <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>

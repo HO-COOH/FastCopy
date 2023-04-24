@@ -12,56 +12,30 @@
 
 namespace winrt::FastCopy::implementation
 {
-	static RobocopyArgs GetRobocopyArg(winrt::hstring const& filePath, winrt::hstring const& destination)
-	{
-		std::wifstream file{ filePath.data() };
-		std::wstring line;
-		std::getline(file, line);
-
-		//switch (std::filesystem::path{ filePath.data() }.filename().wstring()[0])
-		//{
-		//	case L'C': return std::format(LR"("{}")",1);
-		//	case L'M': return L"Moving ";
-		//	case L'D': return L"Deleting ";
-		//	default:
-		//		throw std::runtime_error{ "Invalid operation" };
-		//}
-
-		RobocopyArgs args;
-		args.sourceDir = line;
-		args.destinationDir = destination;
-		return args;
-	}
 
 	winrt::hstring RobocopyViewModel::RecordFile()
 	{
-		return winrt::hstring();
+		throw std::logic_error{"Dead code"};
 	}
 	void RobocopyViewModel::RecordFile(winrt::hstring value)
 	{
-		m_recordFile = value;
-		//concurrency::create_task(
-		//	[this]()
-		//	{
-		//		std::ifstream fs{ m_recordFile.data()};
+		m_recordFile.emplace(value);
 
-		//	}
-		//);
-
-		Start();
-		concurrency::create_task([this]
+		m_countItemTask = concurrency::create_task([this]
 		{
-			m_itemCount = FileStats::GetNumFiles(m_recordFile);
+			m_recordFile->GetNumFiles();
+			m_iter = m_recordFile->begin();
 			Global::UIThread.TryEnqueue([this] {
 				raisePropertyChange(L"ItemCount");
 			});
+			Start();
 		});
 	}
 	winrt::hstring RobocopyViewModel::OperationString()
 	{
-		if (m_recordFile.empty())
+		if (m_recordFile)
 			return L" ";
-		switch (std::filesystem::path{ m_recordFile.data()}.filename().wstring()[0])
+		switch (std::filesystem::path{ m_recordFile->data()}.filename().wstring()[0])
 		{
 			case L'C': return L"Copying ";
 			case L'M': return L"Moving ";
@@ -72,57 +46,53 @@ namespace winrt::FastCopy::implementation
 	}
 	int RobocopyViewModel::ItemCount()
 	{
-		return m_itemCount;
+		return m_recordFile.has_value() ? m_recordFile->GetNumFiles() : 0;
 	}
 	winrt::hstring RobocopyViewModel::Source()
 	{
-		return L"Desktop";
+		if (m_recordFile && m_iter >= m_recordFile->begin() && m_iter < m_recordFile->end())
+			return m_iter->data();
+		return L"---";
 	}
 	winrt::hstring RobocopyViewModel::Destination()
 	{
-		return L"Documents";
+		return m_destination.empty() ? L"---" : m_destination;
 	}
 	void RobocopyViewModel::Destination(winrt::hstring value)
 	{
 		MessageBox(NULL, value.data(), L"", 0);
 		m_destination = value;
+		raisePropertyChange(L"Destination");
 	}
 	double RobocopyViewModel::Percent()
 	{
-		return m_percent;
+		if (!m_recordFile.has_value())
+			return 0;
+
+		return min(100.0, static_cast<float>(m_finishedFiles) / m_recordFile->GetNumFiles() * 100.0);
 	}
 	void RobocopyViewModel::Start()
 	{
-		SetHandle(OpenProcess(PROCESS_QUERY_INFORMATION, false, 30552));
-		ProcessIOUpdater::Start(std::chrono::seconds{ 1 });
-		winrt::Windows::System::Threading::ThreadPoolTimer::CreatePeriodicTimer(
-			[this](auto timer)
-			{
-				if (m_percent < 99)
-				{
-					m_percent += 1.0;
-					Global::UIThread.TryEnqueue([this] {
-						raisePropertyChange(L"Percent");
-					});
-				}
-				else
-				{
-					timer.Cancel();
-					m_finishEvent(*this, FinishState::Success);
-				}
-			}, std::chrono::milliseconds{30}
-		);
+		ProcessIOUpdater::Start(std::chrono::milliseconds{ 300 });
 
+		concurrency::create_task([this]
+		{
+			m_countItemTask.get();
 
-		m_process.emplace(GetRobocopyArg(m_recordFile, m_destination));
-		concurrency::create_task(
-			[this]
+			while (m_iter != m_recordFile->end())
 			{
+				Global::UIThread.TryEnqueue([this] {raisePropertyChange(L"Source"); });
+				m_process.emplace(getRobocopyArg());
+				SetHandle(m_process->Handle());
 				auto const ret = m_process->WaitForExit();
-				m_percent = 100.0;
-				Global::UIThread.TryEnqueue([this] { raisePropertyChange(L"Percent"); });
+				m_finishedFiles += m_recordFile->GetNumFiles(m_recordFile->IndexOf(m_iter));
+				Global::UIThread.TryEnqueue([this] 
+				{ 
+					raisePropertyChange(L"Percent"); 
+				});
+				++m_iter;
 			}
-		);
+		});
 	}
 	void RobocopyViewModel::Pause()
 	{
@@ -150,5 +120,21 @@ namespace winrt::FastCopy::implementation
 	void RobocopyViewModel::Finished(winrt::event_token const& token) noexcept
 	{
 		m_finishEvent.remove(token);
+	}
+	RobocopyArgs RobocopyViewModel::getRobocopyArg()
+	{
+		RobocopyArgs args;
+		if (std::filesystem::is_directory(*m_iter))
+		{
+			args.sourceDir = *m_iter;
+		}
+		else
+		{
+			std::filesystem::path path{ *m_iter };
+			args.sourceDir = path.parent_path().wstring();
+			args.files.push_back(path.filename().wstring());
+		}
+		args.destinationDir = m_destination;
+		return args;
 	}
 }

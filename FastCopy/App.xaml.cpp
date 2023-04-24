@@ -64,12 +64,14 @@ winrt::Windows::Foundation::IAsyncAction GetFromClipboard()
 }
 
 #include "CommandLine.h"
+#include "DebugLogger.h"
 void App::OnLaunched(LaunchActivatedEventArgs const&)
 {
     auto const recordFile = Command::Get().RecordFile();
-    //MessageBox(NULL, recordFile.data(), L"", 0);
     ViewModelLocator::GetInstance().RobocopyViewModel().Destination(Command::Get().GetDestination());
     ViewModelLocator::GetInstance().RobocopyViewModel().RecordFile(recordFile);
+
+    LOGI(L"App started, record file: {}", recordFile.data());
 
     window = make<CopyDialogWindow>();
     window.Activate();

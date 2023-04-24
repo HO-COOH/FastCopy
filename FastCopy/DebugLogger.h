@@ -1,10 +1,15 @@
 #pragma once
 #include <string_view>
-struct DebugLogger
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/rotating_file_sink.h>
+struct Logger
 {
-	void Log(std::wstring_view arg);
+public:
+	decltype(spdlog::rotating_logger_st("", "", 1, 1)) m_logger;
 
-	static DebugLogger& GetInstance();
+	static Logger& GetInstance();
+private:
+	Logger();
 };
 
-#define LOGI(...) DebugLogger::GetInstance().Log(__VA_ARGS__)
+#define LOGI(...) Logger::GetInstance().m_logger->log(spdlog::source_loc{__FILE__, __LINE__, __FUNCTION__}, spdlog::level::info, __VA_ARGS__)

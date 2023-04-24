@@ -11,8 +11,5 @@ namespace FileStats
 		co_return property.Size();
 	}
 
-	int32_t GetNumFiles(winrt::hstring path);
-
-
 };
 

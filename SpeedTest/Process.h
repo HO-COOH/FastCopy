@@ -22,6 +22,8 @@ namespace internal
 			CloseHandle(m_processHandle);
 			return exitCode;
 		}
+
+		[[nodiscard]] HANDLE Handle() const { return m_processHandle; }
 	protected:
 		HANDLE m_processHandle;
 	};
@@ -88,8 +90,6 @@ public:
 			&m_pi
 		);
 		m_processHandle = internal::CloseHandlesExceptForProcess(m_pi);
-
-
 	}
 };
 

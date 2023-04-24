@@ -49,6 +49,17 @@ namespace ReadableUnitConverter
 		template<typename Char>
 		static auto ToString(size_t bytes, std::chrono::nanoseconds duration)
 		{
+			if (duration.count() == 0)
+			{
+				if constexpr (std::is_same_v<Char, char>)
+				{
+					return decltype(Size::ToString<char>(1)){"---"};
+				}
+				else
+				{
+					return decltype(Size::ToString<wchar_t>(1)) {L"---"};
+				}
+			}
 			auto const bytesPerSec = bytes / (static_cast<double>(duration.count()) / 1e9);
 			return Size::ToString<Char>(bytesPerSec) + L"/s";
 		}

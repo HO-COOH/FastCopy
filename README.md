@@ -30,6 +30,18 @@ FastCopy
 ### Build pre-requisites
 - Visual Studio 2019+, with C++20 support
 - Windows App Sdk, with C++ template
+- Additional dependencies per project:
+  + FastCopy:
+    - spdlog
+  + SpeedTest:
+    - abseil
+
+[vcpkg](https://vcpkg.io/en/) is the recommended package manager to handle these dependencies. 
+You can install them with one command, and do no more.
+```
+vcpkg install spdlog:x64-windows
+vcpkg install abseil:x64-windows
+``` 
 
 ![image](https://user-images.githubusercontent.com/6630660/212826364-28155c87-c809-4ab8-b203-c8438fa64749.png)
 

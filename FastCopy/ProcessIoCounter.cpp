@@ -7,9 +7,8 @@ ProcessIoCounter::ProcessIoCounter(HANDLE handle) : m_handle{handle}
 
 ProcessIoCounter::IOCounterDiff ProcessIoCounter::Update()
 {
-	auto hr = GetProcessIoCounters(m_handle, m_counterCur);
-	if (!hr)
-		assert(false);
+	if (!GetProcessIoCounters(m_handle, m_counterCur))
+		return {};
 
 	IOCounterDiff const diff
 	{
