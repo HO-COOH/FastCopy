@@ -1,10 +1,79 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <mutex>
 class TaskFile
 {
 public:
-	using TaskFileIterator = std::vector<std::wstring>::iterator;
+	template<typename Iterator>
+	class TaskFileIterator
+	{
+		Iterator m_iter;
+		mutable std::mutex m_lock;
+	public:
+		TaskFileIterator() = default;
+		TaskFileIterator(Iterator iter) : m_iter{ iter } {}
+		TaskFileIterator& operator++()
+		{
+			std::lock_guard lock{ m_lock };
+			++m_iter;
+			return *this;
+		}
+
+		auto operator<=>(Iterator rhs) const
+		{
+			std::lock_guard lock{ m_lock };
+			return m_iter <=> rhs;
+		}
+
+		bool operator==(Iterator rhs) const
+		{
+			std::lock_guard lock{ m_lock };
+			return m_iter == rhs;
+		}
+
+		auto operator<=>(TaskFileIterator<Iterator> const& rhs) const
+		{
+			std::lock_guard lock{ m_lock };
+			return m_iter <=> rhs.m_iter;
+		}
+
+		bool operator==(TaskFileIterator<Iterator> const& rhs) const
+		{
+			std::lock_guard lock{ m_lock };
+			return m_iter == rhs.m_iter;
+		}
+
+		auto& operator*()
+		{
+			std::lock_guard lock{ m_lock };
+			return *m_iter;
+		}
+
+		auto& operator->()
+		{
+			std::lock_guard lock{ m_lock };
+			return &(*m_iter);
+		}
+
+		auto get() const
+		{
+			std::lock_guard lock{ m_lock };
+			return m_iter;
+		}
+
+		operator Iterator() const
+		{
+			return get();
+		}
+
+		TaskFileIterator& operator=(Iterator rhs)
+		{
+			std::lock_guard lock{ m_lock };
+			m_iter = rhs;
+			return *this;
+		}
+	};
 
 	TaskFile(winrt::hstring const& path) : m_path{ path } {}
 
@@ -15,7 +84,7 @@ public:
 	auto begin() { return lines.begin(); }
 	auto end() { return lines.end(); }
 
-	int IndexOf(TaskFileIterator const& iter);
+	int IndexOf(TaskFileIterator<typename std::vector<std::wstring>::iterator> const& iter);
 private:
 	winrt::hstring m_path;
 	std::vector<std::wstring> lines;

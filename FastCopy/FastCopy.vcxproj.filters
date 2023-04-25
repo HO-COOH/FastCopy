@@ -76,14 +76,8 @@
     <ClCompile Include="CommandLine.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="WindowHelper.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="UIThreadWrapper.cpp" />
-    <ClCompile Include="RobocopyProcess.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
     <ClCompile Include="ProcessIoCounter.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
@@ -92,6 +86,15 @@
     </ClCompile>
     <ClCompile Include="DebugLogger.cpp">
       <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="RobocopyProcess.cpp">
+      <Filter>Utils\Robocopy</Filter>
+    </ClCompile>
+    <ClCompile Include="RobocopyArgs.cpp">
+      <Filter>Utils\Robocopy</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowHelper.cpp">
+      <Filter>ViewHelper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -120,9 +123,6 @@
     <ClInclude Include="CommandLine.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="WindowHelper.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h" />
     <ClInclude Include="ProcessIOUpdater.hpp">
       <Filter>Utils</Filter>
@@ -132,9 +132,6 @@
     </ClInclude>
     <ClInclude Include="Global.h" />
     <ClInclude Include="UIThreadWrapper.h" />
-    <ClInclude Include="RobocopyProcess.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="ProcessIoCounter.h">
       <Filter>Utils</Filter>
     </ClInclude>
@@ -143,6 +140,15 @@
     </ClInclude>
     <ClInclude Include="DebugLogger.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="RobocopyProcess.h">
+      <Filter>Utils\Robocopy</Filter>
+    </ClInclude>
+    <ClInclude Include="RobocopyArgs.h">
+      <Filter>Utils\Robocopy</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowHelper.h">
+      <Filter>ViewHelper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -189,6 +195,9 @@
     </Filter>
     <Filter Include="Views\Controls">
       <UniqueIdentifier>{aa78688a-d716-4133-b14d-7e21353a28a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\Robocopy">
+      <UniqueIdentifier>{d57c3837-c8bd-4a05-a67d-f687fa8c68bc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

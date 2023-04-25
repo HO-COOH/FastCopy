@@ -42,7 +42,7 @@ namespace winrt::FastCopy::implementation
         winrt::hstring m_destination;
         uint64_t m_size{};
         std::optional<TaskFile> m_recordFile;
-        TaskFile::TaskFileIterator m_iter;
+        TaskFile::TaskFileIterator<typename std::vector<std::wstring>::iterator> m_iter;
         Concurrency::task<void> m_countItemTask;
         winrt::hstring m_speedText;
         int m_finishedFiles{};

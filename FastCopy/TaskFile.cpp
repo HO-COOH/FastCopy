@@ -46,7 +46,7 @@ int32_t TaskFile::GetNumFiles(int index)
 	return *numFiles[index];
 }
 
-int TaskFile::IndexOf(TaskFileIterator const& iter)
+int TaskFile::IndexOf(TaskFileIterator<typename std::vector<std::wstring>::iterator> const& iter)
 {
-	return std::distance(lines.begin(), iter);
+	return std::distance(lines.begin(), iter.get());
 }

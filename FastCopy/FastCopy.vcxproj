@@ -176,6 +176,7 @@
     <ClInclude Include="PropertyChangeHelper.hpp" />
     <ClInclude Include="ReadableUnitConverter.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="RobocopyArgs.h" />
     <ClInclude Include="RobocopyProcess.h" />
     <ClInclude Include="RobocopyViewModel.h">
       <DependentUpon>RobocopyViewModel.idl</DependentUpon>
@@ -280,6 +281,7 @@
       <DependentUpon>ProgressItem.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="RobocopyArgs.cpp" />
     <ClCompile Include="RobocopyProcess.cpp" />
     <ClCompile Include="RobocopyViewModel.cpp">
       <DependentUpon>RobocopyViewModel.idl</DependentUpon>

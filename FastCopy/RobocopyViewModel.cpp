@@ -9,6 +9,7 @@
 #include "ReadableUnitConverter.h"
 #include "Global.h"
 #include "FileStats.h"
+#include "RobocopyArgs.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -51,12 +52,12 @@ namespace winrt::FastCopy::implementation
 	winrt::hstring RobocopyViewModel::Source()
 	{
 		if (m_recordFile && m_iter >= m_recordFile->begin() && m_iter < m_recordFile->end())
-			return m_iter->data();
+			return std::filesystem::path{ *m_iter }.filename().wstring().data();
 		return L"---";
 	}
 	winrt::hstring RobocopyViewModel::Destination()
 	{
-		return m_destination.empty() ? L"---" : m_destination;
+		return m_destination.empty() ? L"---" : std::filesystem::path{ m_destination.data()}.filename().wstring().data();
 	}
 	void RobocopyViewModel::Destination(winrt::hstring value)
 	{
@@ -124,9 +125,11 @@ namespace winrt::FastCopy::implementation
 	RobocopyArgs RobocopyViewModel::getRobocopyArg()
 	{
 		RobocopyArgs args;
+		args.destinationDir = m_destination;
 		if (std::filesystem::is_directory(*m_iter))
 		{
 			args.sourceDir = *m_iter;
+			args.destinationDir += L"\\" + std::filesystem::path{ *m_iter }.filename().wstring();
 		}
 		else
 		{
@@ -134,7 +137,6 @@ namespace winrt::FastCopy::implementation
 			args.sourceDir = path.parent_path().wstring();
 			args.files.push_back(path.filename().wstring());
 		}
-		args.destinationDir = m_destination;
 		return args;
 	}
 }
