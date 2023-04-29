@@ -96,6 +96,12 @@
     <ClCompile Include="WindowHelper.cpp">
       <Filter>ViewHelper</Filter>
     </ClCompile>
+    <ClCompile Include="Taskbar.cpp">
+      <Filter>Utils\SystemIntegration</Filter>
+    </ClCompile>
+    <ClCompile Include="Notification.cpp">
+      <Filter>Utils\SystemIntegration</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -150,6 +156,12 @@
     <ClInclude Include="WindowHelper.h">
       <Filter>ViewHelper</Filter>
     </ClInclude>
+    <ClInclude Include="Taskbar.h">
+      <Filter>Utils\SystemIntegration</Filter>
+    </ClInclude>
+    <ClInclude Include="Notification.h">
+      <Filter>Utils\SystemIntegration</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -198,6 +210,9 @@
     </Filter>
     <Filter Include="Utils\Robocopy">
       <UniqueIdentifier>{d57c3837-c8bd-4a05-a67d-f687fa8c68bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\SystemIntegration">
+      <UniqueIdentifier>{6c418ea5-1724-4cd6-8219-02b54163c2e7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

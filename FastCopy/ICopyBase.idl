@@ -9,6 +9,7 @@ namespace FastCopy
 	interface ICopyBase requires Microsoft.UI.Xaml.Data.INotifyPropertyChanged
 	{
 		String OperationString{get; };
+		Int32 FinishedItemCount{ get; };
 		Int32 ItemCount{get; };
 		String Source{ get; };
 		String Destination;

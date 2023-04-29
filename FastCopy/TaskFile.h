@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <mutex>
+#include "../FastCopyShellExtension/CopyOperation.h"
 class TaskFile
 {
 public:
@@ -85,6 +86,8 @@ public:
 	auto end() { return lines.end(); }
 
 	int IndexOf(TaskFileIterator<typename std::vector<std::wstring>::iterator> const& iter);
+
+	CopyOperation GetOperation() const;
 private:
 	winrt::hstring m_path;
 	std::vector<std::wstring> lines;

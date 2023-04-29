@@ -17,9 +17,11 @@ namespace winrt::FastCopy::implementation
         winrt::hstring RecordFile();
         void RecordFile(winrt::hstring value);
 
+        winrt::Windows::Foundation::Uri DestinationUri();
 #pragma region ICopyBase
         winrt::hstring OperationString();
         int ItemCount();
+        int FinishedItemCount();
         winrt::hstring Source();
         winrt::hstring Destination();
         void Destination(winrt::hstring value);
@@ -47,6 +49,7 @@ namespace winrt::FastCopy::implementation
         winrt::hstring m_speedText;
         int m_finishedFiles{};
         RobocopyArgs getRobocopyArg();
+        Status m_status{ Status::Running };
     };
 }
 

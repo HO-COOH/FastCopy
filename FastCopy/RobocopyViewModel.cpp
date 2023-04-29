@@ -10,6 +10,8 @@
 #include "Global.h"
 #include "FileStats.h"
 #include "RobocopyArgs.h"
+#include "Taskbar.h"
+#include "Notification.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -32,15 +34,31 @@ namespace winrt::FastCopy::implementation
 			Start();
 		});
 	}
+
+	static auto backSlashToForwardSlash(std::wstring_view path)
+	{
+		std::wstring transformed;
+		std::transform(path.begin(), path.end(), std::back_inserter(transformed), [](wchar_t c)
+		{
+			return c == L'\\' ? L'/' : c;
+		});
+		return transformed;
+	}
+	winrt::Windows::Foundation::Uri RobocopyViewModel::DestinationUri()
+	{
+		return winrt::Windows::Foundation::Uri{ 
+			std::format(L"file://{}", backSlashToForwardSlash(m_destination))
+		};
+	}
 	winrt::hstring RobocopyViewModel::OperationString()
 	{
-		if (m_recordFile)
+		if (!m_recordFile)
 			return L" ";
-		switch (std::filesystem::path{ m_recordFile->data()}.filename().wstring()[0])
+		switch (m_recordFile->GetOperation())
 		{
-			case L'C': return L"Copying ";
-			case L'M': return L"Moving ";
-			case L'D': return L"Deleting ";
+			case CopyOperation::Copy: return L"Copying ";
+			case CopyOperation::Move: return L"Moving ";
+			case CopyOperation::Delete: return L"Deleting ";
 			default:
 				throw std::runtime_error{ "Invalid operation" };
 		}
@@ -48,6 +66,10 @@ namespace winrt::FastCopy::implementation
 	int RobocopyViewModel::ItemCount()
 	{
 		return m_recordFile.has_value() ? m_recordFile->GetNumFiles() : 0;
+	}
+	int RobocopyViewModel::FinishedItemCount()
+	{
+		return m_finishedFiles;
 	}
 	winrt::hstring RobocopyViewModel::Source()
 	{
@@ -70,7 +92,10 @@ namespace winrt::FastCopy::implementation
 		if (!m_recordFile.has_value())
 			return 0;
 
-		return min(100.0, static_cast<float>(m_finishedFiles) / m_recordFile->GetNumFiles() * 100.0);
+		auto const result = min(100.0, static_cast<float>(m_finishedFiles) / m_recordFile->GetNumFiles() * 100.0);
+		Taskbar::SetProgressState(Global::MainHwnd, Taskbar::ProgressState::Normal);
+		Taskbar::SetProgressValue(Global::MainHwnd, result);
+		return result;
 	}
 	void RobocopyViewModel::Start()
 	{
@@ -80,7 +105,7 @@ namespace winrt::FastCopy::implementation
 		{
 			m_countItemTask.get();
 
-			while (m_iter != m_recordFile->end())
+			while (m_iter != m_recordFile->end() && m_status == Status::Running)
 			{
 				Global::UIThread.TryEnqueue([this] {raisePropertyChange(L"Source"); });
 				m_process.emplace(getRobocopyArg());
@@ -89,17 +114,32 @@ namespace winrt::FastCopy::implementation
 				m_finishedFiles += m_recordFile->GetNumFiles(m_recordFile->IndexOf(m_iter));
 				Global::UIThread.TryEnqueue([this] 
 				{ 
-					raisePropertyChange(L"Percent"); 
+					raisePropertyChange(L"Percent");
+					raisePropertyChange(L"FinishedItemCount");
 				});
 				++m_iter;
+			}
+			if (m_iter == m_recordFile->end())
+			{
+				Notification::SendSuccess(std::format(L"Successfully {} {} files",
+					[this] {
+						switch (m_recordFile->GetOperation())
+						{
+							case CopyOperation::Copy: return L"copied";
+							case CopyOperation::Move: return L"moved";
+							case CopyOperation::Delete: return L"deleted";
+						}
+					}(), m_finishedFiles).data(), m_destination);
 			}
 		});
 	}
 	void RobocopyViewModel::Pause()
 	{
+		m_status = Status::Pause;
 	}
 	void RobocopyViewModel::Cancel()
 	{
+		m_status = Status::Cancel;
 	}
 	void RobocopyViewModel::OnUpdateCopySpeed(ProcessIoCounter::IOCounterDiff diff)
 	{

@@ -50,3 +50,15 @@ int TaskFile::IndexOf(TaskFileIterator<typename std::vector<std::wstring>::itera
 {
 	return std::distance(lines.begin(), iter.get());
 }
+
+CopyOperation TaskFile::GetOperation() const
+{
+	switch (std::filesystem::path{ m_path.data() }.filename().wstring()[0])
+	{
+		case L'C': return CopyOperation::Copy;
+		case L'M': return CopyOperation::Move;
+		case L'D': return CopyOperation::Delete;
+		default:
+			throw std::runtime_error{ "Invalid operation" };
+	}
+}

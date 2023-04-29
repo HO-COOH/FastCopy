@@ -10,5 +10,7 @@ namespace FastCopy
         
         String RecordFile;
         String SizeText{ get; };
+
+        Windows.Foundation.Uri DestinationUri{ get; };
     }
 }

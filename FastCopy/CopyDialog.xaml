@@ -62,23 +62,25 @@
         <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Center" Margin="0,0,0,0">
             <TextBlock Style="{StaticResource StatusTextStyle}">
                 <Run Text="{x:Bind ViewModel.OperationString}"/>
+                <Run Text="{x:Bind ViewModel.FinishedItemCount, Mode=OneWay}"/>
+                /
                 <Run Text="{x:Bind ViewModel.ItemCount, Mode=OneWay}"/>
                 <Run Text="items from "/>
             </TextBlock>
 
             <TextBlock Style="{StaticResource StatusTextStyle}" Foreground="LightGreen" Text="{x:Bind ViewModel.Source}" Margin="3,0,0,0"/>
             <TextBlock Style="{StaticResource StatusTextStyle}" Text=" to "/>
-            <TextBlock Style="{StaticResource StatusTextStyle}" Foreground="LightGreen" Text="{x:Bind ViewModel.Destination}" Margin="3,0,0,0"/>
+            <HyperlinkButton FontSize="11" Padding="2" Foreground="LightGreen" Content="{x:Bind ViewModel.Destination}" Margin="2,-3,0,0" Click="HyperlinkButton_Click"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center">
-            <Button Background="Transparent" BorderBrush="Transparent">
+            <Button Background="Transparent" BorderBrush="Transparent" Click="{x:Bind ViewModel.Pause}">
                 <Viewbox Width="15" Height="15">
                     <SymbolIcon Symbol="Pause"/>
                 </Viewbox>
             </Button>
 
-            <Button Background="Transparent" BorderBrush="Transparent">
+            <Button Background="Transparent" BorderBrush="Transparent" Click="{x:Bind ViewModel.Cancel}">
                 <Viewbox Width="15" Height="15">
                     <SymbolIcon Symbol="Cancel"/>
                 </Viewbox>
@@ -86,8 +88,7 @@
         </StackPanel>
 
         <local:ProgressBarEx x:Name="ProgressBar" Loaded="ProgressBar_Loaded" Margin="0,10,0,0" HorizontalAlignment="Stretch" 
-                             Percent="{x:Bind ViewModel.Percent, Mode=OneWay}" Height="5" Color="Green" Grid.Row="2" 
-                             SizeChanged="ProgressBar_SizeChanged"/>
+                             Percent="{x:Bind ViewModel.Percent, Mode=OneWay}" Height="5" Color="Green" Grid.Row="2"/>
         
         <!---Red: BB0000 -->
     </Grid>

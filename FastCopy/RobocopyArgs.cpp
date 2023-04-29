@@ -13,6 +13,10 @@ std::wstring RobocopyArgs::ToString() const
 		result += std::format(LR"("{}" )", file);
 	}
 	result += copySubDirectoriesExceptEmpty;
+	result += copySubDirectoriesIncludeEmpty;
+	result += moveFiles;
+	result += moveFilesAndDirs;
+	result += unbufferedIO;
 	result += multiThread;
 	return result;
 }

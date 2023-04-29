@@ -11,9 +11,18 @@ namespace internal
 		CloseHandle(pi.hThread);
 		return pi.hProcess;
 	}
+
+	/**
+	 * @brief Encapsulate a process handle, should be inherited by other class
+	 */
 	class ProcessBase
 	{
 	public:
+
+		/**
+		 * @brief Wait for the process handle to exit
+		 * @return the exit code of the process
+		 */
 		[[maybe_unused]] int WaitForExit() const
 		{
 			WaitForSingleObject(m_processHandle, INFINITE);

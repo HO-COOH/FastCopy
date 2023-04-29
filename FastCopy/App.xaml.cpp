@@ -65,8 +65,35 @@ winrt::Windows::Foundation::IAsyncAction GetFromClipboard()
 
 #include "CommandLine.h"
 #include "DebugLogger.h"
+#include <winrt/Microsoft.Windows.AppLifecycle.h>
+#include <winrt/Windows.System.h>
+
+std::pair<std::wstring_view, std::wstring_view> ParseToastArgument(std::wstring_view argument)
+{
+    auto const index = argument.find(L'=');
+    return { argument.substr(0, index), argument.substr(index + 1) };
+}
+
+static void LaunchByToastNotification(winrt::hstring argument)
+{
+    if (argument.empty())
+        return; //dismiss
+
+    auto const [action, arg] = ParseToastArgument(argument);
+    if (action == L"open")
+    {
+        winrt::Windows::System::Launcher::LaunchUriAsync(winrt::Windows::Foundation::Uri{ arg });
+    }
+}
 void App::OnLaunched(LaunchActivatedEventArgs const&)
 {
+    if (auto activateArg = winrt::Microsoft::Windows::AppLifecycle::AppInstance::GetCurrent().GetActivatedEventArgs(); 
+        activateArg && activateArg.Kind() == winrt::Microsoft::Windows::AppLifecycle::ExtendedActivationKind::ToastNotification)
+    {
+        LaunchByToastNotification(activateArg.Data().as<winrt::Windows::ApplicationModel::Activation::ToastNotificationActivatedEventArgs>().Argument());
+        return;
+    }
+
     auto const recordFile = Command::Get().RecordFile();
     ViewModelLocator::GetInstance().RobocopyViewModel().Destination(Command::Get().GetDestination());
     ViewModelLocator::GetInstance().RobocopyViewModel().RecordFile(recordFile);

@@ -33,6 +33,9 @@ struct Variable
 	}
 };
 
+/**
+ * @brief Represents arguments that robocopy.exe accepts
+ */
 struct RobocopyArgs
 {
 	std::wstring sourceDir;
@@ -43,7 +46,12 @@ struct RobocopyArgs
 	/*options*/
 	Flag copySubDirectoriesExceptEmpty{ L"/S" };
 	Flag copySubDirectoriesIncludeEmpty{ L"/E", true };
+	Flag moveFiles{ L"/MOV", false };
+	Flag moveFilesAndDirs{ L"/MOVE", false };
+	Flag unbufferedIO{ L"/J", false };
+
 	Variable<int> multiThread{ L"/MT", 32 };
+
 
 	std::wstring ToString() const;
 };

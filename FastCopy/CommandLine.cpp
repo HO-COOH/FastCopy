@@ -10,6 +10,13 @@ std::vector<std::wstring_view> const& GetCommandArgs()
         auto const cmd = GetCommandLine();
         int argc{};
         auto argv = CommandLineToArgvW(cmd, &argc);
+        std::wstring result;
+        for (auto i = 0; i < argc; ++i)
+        {
+            result += argv[i];
+            result += L'\n';
+        }
+        MessageBox(NULL, result.data(), nullptr, 0);
         return std::vector<std::wstring_view>(argv, argv + argc);
     }();
     return ret;

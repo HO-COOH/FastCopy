@@ -152,6 +152,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Notification.h" />
     <ClInclude Include="NumberToStringConverter.h">
       <DependentUpon>NumberToStringConverter.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -190,6 +191,7 @@
       <DependentUpon>SettingContainer.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Taskbar.h" />
     <ClInclude Include="TaskFile.h" />
     <ClInclude Include="UIDispatcher.h" />
     <ClInclude Include="UIThreadWrapper.h" />
@@ -258,6 +260,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Notification.cpp" />
     <ClCompile Include="NumberToStringConverter.cpp">
       <DependentUpon>NumberToStringConverter.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -295,6 +298,7 @@
       <DependentUpon>SettingContainer.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Taskbar.cpp" />
     <ClCompile Include="TaskFile.cpp" />
     <ClCompile Include="UIThreadWrapper.cpp" />
     <ClCompile Include="VectorToBoolConverter.cpp">
@@ -415,6 +419,7 @@
     <Import Project="..\packages\Microsoft.WindowsAppSDK.1.2.221116.1\build\native\Microsoft.WindowsAppSDK.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.2.221116.1\build\native\Microsoft.WindowsAppSDK.targets')" />
     <Import Project="..\packages\Microsoft.Graphics.Win2D.1.0.4\build\native\Microsoft.Graphics.Win2D.targets" Condition="Exists('..\packages\Microsoft.Graphics.Win2D.1.0.4\build\native\Microsoft.Graphics.Win2D.targets')" />
     <Import Project="..\packages\Microsoft.Windows.SDK.BuildTools.10.0.22621.1\build\Microsoft.Windows.SDK.BuildTools.targets" Condition="Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.22621.1\build\Microsoft.Windows.SDK.BuildTools.targets')" />
+    <Import Project="..\packages\Microsoft.Toolkit.Uwp.Notifications.7.1.3\build\native\Microsoft.Toolkit.Uwp.Notifications.targets" Condition="Exists('..\packages\Microsoft.Toolkit.Uwp.Notifications.7.1.3\build\native\Microsoft.Toolkit.Uwp.Notifications.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -428,5 +433,6 @@
     <Error Condition="!Exists('..\packages\Microsoft.Graphics.Win2D.1.0.4\build\native\Microsoft.Graphics.Win2D.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Graphics.Win2D.1.0.4\build\native\Microsoft.Graphics.Win2D.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.22621.1\build\Microsoft.Windows.SDK.BuildTools.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.SDK.BuildTools.10.0.22621.1\build\Microsoft.Windows.SDK.BuildTools.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.22621.1\build\Microsoft.Windows.SDK.BuildTools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.SDK.BuildTools.10.0.22621.1\build\Microsoft.Windows.SDK.BuildTools.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Toolkit.Uwp.Notifications.7.1.3\build\native\Microsoft.Toolkit.Uwp.Notifications.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Toolkit.Uwp.Notifications.7.1.3\build\native\Microsoft.Toolkit.Uwp.Notifications.targets'))" />
   </Target>
 </Project>

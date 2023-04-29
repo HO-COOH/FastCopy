@@ -5,6 +5,9 @@
 #endif
 
 #include "ViewModelLocator.h"
+#include <winrt/Windows.System.h>
+#include "Notification.h"
+
 
 
 using namespace winrt;
@@ -25,19 +28,13 @@ namespace winrt::FastCopy::implementation
 			WidthAnimation().To(ProgressBar().ActualWidth());
 			ProgressBarEntranceAnimation().Begin();
 		}
-
-		ViewModelLocator::GetInstance().RobocopyViewModel().Finished(
-			[](auto, FinishState state)
-			{
-				OutputDebugString(L"Called finished\n");
-			}
-		);
 	}
 
-}
-
-
-void winrt::FastCopy::implementation::CopyDialog::ProgressBar_SizeChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e)
-{
+	void CopyDialog::HyperlinkButton_Click(
+		winrt::Windows::Foundation::IInspectable const& sender, 
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	{
+		winrt::Windows::System::Launcher::LaunchUriAsync(ViewModel().DestinationUri());
+	}
 
 }
