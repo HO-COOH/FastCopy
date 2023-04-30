@@ -67,6 +67,7 @@ winrt::Windows::Foundation::IAsyncAction GetFromClipboard()
 #include "DebugLogger.h"
 #include <winrt/Microsoft.Windows.AppLifecycle.h>
 #include <winrt/Windows.System.h>
+#include <filesystem>
 
 std::pair<std::wstring_view, std::wstring_view> ParseToastArgument(std::wstring_view argument)
 {
@@ -95,12 +96,27 @@ void App::OnLaunched(LaunchActivatedEventArgs const&)
     }
 
     auto const recordFile = Command::Get().RecordFile();
-    ViewModelLocator::GetInstance().RobocopyViewModel().Destination(Command::Get().GetDestination());
-    ViewModelLocator::GetInstance().RobocopyViewModel().RecordFile(recordFile);
+    auto viewModel = ViewModelLocator::GetInstance().RobocopyViewModel();
+
+    auto const destination = Command::Get().GetDestination();
+    if (destination.empty())
+        return;
+    //MessageBox(NULL, destination.data(), L"", 0);
+    viewModel.Destination(destination);
+    viewModel.RecordFile(recordFile);
+
+    viewModel.Finished([recordFile](auto, FinishState state) {
+#ifndef _DEBUG
+        if (state == FinishState::Success)
+            std::filesystem::remove(recordFile.data());
+#endif
+    });
 
     LOGI(L"App started, record file: {}", recordFile.data());
 
     window = make<CopyDialogWindow>();
     window.Activate();
     m_helper.emplace(window);
+
+
 }

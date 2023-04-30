@@ -88,6 +88,8 @@ public:
 	int IndexOf(TaskFileIterator<typename std::vector<std::wstring>::iterator> const& iter);
 
 	CopyOperation GetOperation() const;
+
+	winrt::hstring GetPath() const { return m_path; }
 private:
 	winrt::hstring m_path;
 	std::vector<std::wstring> lines;

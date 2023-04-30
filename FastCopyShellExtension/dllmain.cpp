@@ -227,7 +227,7 @@ class SubCommand final :
         auto result = ShellExecute(
             NULL,
             L"open",
-            std::format(L"fastcopy://{}", arg).data(),
+            std::format(LR"(fastcopy://"{}")", arg).data(),
             nullptr,
             nullptr,
             SW_SHOW

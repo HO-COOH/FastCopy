@@ -26,5 +26,4 @@ namespace winrt::FastCopy::implementation
         UIDispatcher::g_mainWindow = *this;
     }
 
-
 }

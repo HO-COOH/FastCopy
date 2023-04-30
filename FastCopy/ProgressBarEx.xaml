@@ -22,7 +22,7 @@
 
         <Rectangle x:Name="Bar" RadiusX="3" RadiusY="3" Grid.Column="0" SizeChanged="Bar_SizeChanged">
             <Rectangle.Fill>
-                <SolidColorBrush Color="{x:Bind Color}"/>
+                <SolidColorBrush x:Name="Brush" Color="{x:Bind Color}"/>
             </Rectangle.Fill>
         </Rectangle>
     </Grid>

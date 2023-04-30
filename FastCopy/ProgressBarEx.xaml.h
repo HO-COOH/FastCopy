@@ -32,6 +32,7 @@ namespace winrt::FastCopy::implementation
         void Color(winrt::Windows::UI::Color value)
         {
             SetValue(s_colorProperty, winrt::box_value(value));
+            Brush().Color(value);
         }
 
         double Percent()

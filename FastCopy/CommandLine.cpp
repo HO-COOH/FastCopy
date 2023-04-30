@@ -2,21 +2,15 @@
 #include "CommandLine.h"
 #include <ranges>
 #include <ShlObj_core.h>
+#include <filesystem>
 
-std::vector<std::wstring_view> const& GetCommandArgs()
+static std::vector<std::wstring_view> const& GetCommandArgs()
 {
     static auto const ret = []
     {
         auto const cmd = GetCommandLine();
         int argc{};
         auto argv = CommandLineToArgvW(cmd, &argc);
-        std::wstring result;
-        for (auto i = 0; i < argc; ++i)
-        {
-            result += argv[i];
-            result += L'\n';
-        }
-        MessageBox(NULL, result.data(), nullptr, 0);
         return std::vector<std::wstring_view>(argv, argv + argc);
     }();
     return ret;
@@ -32,7 +26,13 @@ winrt::hstring Command::GetDestination()
 {
     auto& args = GetCommandArgs();
     constexpr static std::wstring_view protocol = L"fastcopy://";
-    return args.size() == 1 ? winrt::hstring{ LR"(E:\test)" } :  winrt::hstring{ args[1].substr(protocol.size()) };
+    
+    return args.size() == 1 ? winrt::hstring{ 
+#ifdef _DEBUG
+        LR"(E:\test\Intel Unison/)" 
+#endif
+    } :  winrt::hstring{ args[1].substr(protocol.size()) };
+
 }
 
 static auto GetLocalDataFolder()
@@ -46,8 +46,9 @@ static auto GetLocalDataFolder()
     //    return result;
     //}();
     //return ret;
-
-    return winrt::Windows::Storage::ApplicationData::Current().LocalCacheFolder().Path() + L"\\Local";
+    static auto ret = winrt::Windows::Storage::ApplicationData::Current().LocalCacheFolder().Path() + L"\\Local";
+    std::filesystem::remove_all((ret + L"\\Microsoft").data());
+    return ret;
 }
 #include <filesystem>
 #pragma comment(lib, "Shell32.lib")

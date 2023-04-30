@@ -137,6 +137,10 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="DebugLogger.h" />
+    <ClInclude Include="DoubleToStringConverter.h">
+      <DependentUpon>DoubleToStringConverter.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="ExplorerItem.h">
       <DependentUpon>ExplorerItem.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -245,6 +249,10 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="DebugLogger.cpp" />
+    <ClCompile Include="DoubleToStringConverter.cpp">
+      <DependentUpon>DoubleToStringConverter.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="ExplorerItem.cpp">
       <DependentUpon>ExplorerItem.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -328,6 +336,9 @@
     <Midl Include="CopyDialogWindow.idl">
       <DependentUpon>CopyDialogWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="DoubleToStringConverter.idl">
+      <SubType>Designer</SubType>
     </Midl>
     <Midl Include="ExplorerItem.idl">
       <SubType>Designer</SubType>

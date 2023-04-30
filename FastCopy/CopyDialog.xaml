@@ -40,9 +40,7 @@
             </DoubleAnimation>
         </Storyboard>
 
-        <Storyboard x:Name="ProgressBarExitAnimation">
-            
-        </Storyboard>
+        <local:DoubleToStringConverter x:Key="NumberToStringConverter"/>
     </Page.Resources>
     
     <Grid Margin="15">
@@ -53,7 +51,7 @@
         </Grid.RowDefinitions>
 
         <TextBlock Style="{StaticResource HeaderTextStyle}">
-            <Run Text="{x:Bind ViewModel.Percent, Mode=OneWay}"/>% Complete
+            <Run Text="{x:Bind ViewModel.Percent,Converter={StaticResource NumberToStringConverter}, ConverterParameter=2, Mode=OneWay}"/>% Complete
         </TextBlock>
 
         <TextBlock x:Name="SpeedText" Text="{x:Bind ViewModel.SpeedText,Mode=OneWay}" Style="{StaticResource StatusTextStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
@@ -68,19 +66,19 @@
                 <Run Text="items from "/>
             </TextBlock>
 
-            <TextBlock Style="{StaticResource StatusTextStyle}" Foreground="LightGreen" Text="{x:Bind ViewModel.Source}" Margin="3,0,0,0"/>
+            <TextBlock Style="{StaticResource StatusTextStyle}" Foreground="LightGreen" Text="{x:Bind ViewModel.Source, Mode=OneWay}" Margin="3,0,0,0"/>
             <TextBlock Style="{StaticResource StatusTextStyle}" Text=" to "/>
-            <HyperlinkButton FontSize="11" Padding="2" Foreground="LightGreen" Content="{x:Bind ViewModel.Destination}" Margin="2,-3,0,0" Click="HyperlinkButton_Click"/>
+            <Button FontSize="11" Padding="2" Foreground="LightGreen" Content="{x:Bind ViewModel.Destination, Mode=OneWay}" Background="Transparent" BorderThickness="0" Margin="2,-3,0,0" Click="HyperlinkButton_Click"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center">
-            <Button Background="Transparent" BorderBrush="Transparent" Click="{x:Bind ViewModel.Pause}">
+            <Button x:Name="PauseButton" Background="Transparent" BorderBrush="Transparent" Click="PauseButton_Click">
                 <Viewbox Width="15" Height="15">
-                    <SymbolIcon Symbol="Pause"/>
+                    <SymbolIcon x:Name="PauseIcon" Symbol="Pause"/>
                 </Viewbox>
             </Button>
 
-            <Button Background="Transparent" BorderBrush="Transparent" Click="{x:Bind ViewModel.Cancel}">
+            <Button Background="Transparent" BorderBrush="Transparent" Click="{x:Bind ViewModel.Cancel}" IsEnabled="False">
                 <Viewbox Width="15" Height="15">
                     <SymbolIcon Symbol="Cancel"/>
                 </Viewbox>

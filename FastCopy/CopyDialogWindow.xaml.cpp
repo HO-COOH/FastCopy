@@ -9,6 +9,7 @@
 
 #include "WindowHelper.h"
 #include "Global.h"
+#include "Taskbar.h"
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
@@ -34,5 +35,6 @@ namespace winrt::FastCopy::implementation
         titleBar.ButtonBackgroundColor(winrt::Windows::UI::Colors::Transparent());
         titleBar.ButtonInactiveBackgroundColor(winrt::Windows::UI::Colors::Transparent());
         Global::UIThread = DispatcherQueue();
+        Taskbar::SetProgressState(Global::MainHwnd, Taskbar::ProgressState::Indeterminate);
     }
 }

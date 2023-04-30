@@ -1,0 +1,9 @@
+namespace FastCopy
+{
+    [bindable]
+    [default_interface]
+    runtimeclass DoubleToStringConverter : Microsoft.UI.Xaml.Data.IValueConverter
+    {
+        DoubleToStringConverter();
+    }
+}

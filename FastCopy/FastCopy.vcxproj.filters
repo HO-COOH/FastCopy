@@ -54,6 +54,9 @@
     <Midl Include="ICopyBase.idl">
       <Filter>ViewModel</Filter>
     </Midl>
+    <Midl Include="DoubleToStringConverter.idl">
+      <Filter>Views\Converters</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -213,6 +216,9 @@
     </Filter>
     <Filter Include="Utils\SystemIntegration">
       <UniqueIdentifier>{6c418ea5-1724-4cd6-8219-02b54163c2e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Views\Converters">
+      <UniqueIdentifier>{9fc141b0-3d42-4510-9dff-5b85a5c7ccb8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

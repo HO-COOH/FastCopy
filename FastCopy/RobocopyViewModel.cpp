@@ -22,6 +22,9 @@ namespace winrt::FastCopy::implementation
 	}
 	void RobocopyViewModel::RecordFile(winrt::hstring value)
 	{
+		if (value.empty())
+			return;
+
 		m_recordFile.emplace(value);
 
 		m_countItemTask = concurrency::create_task([this]
@@ -73,17 +76,16 @@ namespace winrt::FastCopy::implementation
 	}
 	winrt::hstring RobocopyViewModel::Source()
 	{
-		if (m_recordFile && m_iter >= m_recordFile->begin() && m_iter < m_recordFile->end())
-			return std::filesystem::path{ *m_iter }.filename().wstring().data();
+		if (m_recordFile && m_iter && *m_iter >= m_recordFile->begin() && *m_iter < m_recordFile->end())
+			return std::filesystem::path{ **m_iter }.filename().wstring().data();
 		return L"---";
 	}
 	winrt::hstring RobocopyViewModel::Destination()
 	{
-		return m_destination.empty() ? L"---" : std::filesystem::path{ m_destination.data()}.filename().wstring().data();
+		return std::filesystem::path{ std::wstring_view{m_destination }.substr(0, m_destination.size() - 1) }.filename().wstring().data();
 	}
 	void RobocopyViewModel::Destination(winrt::hstring value)
 	{
-		MessageBox(NULL, value.data(), L"", 0);
 		m_destination = value;
 		raisePropertyChange(L"Destination");
 	}
@@ -92,34 +94,40 @@ namespace winrt::FastCopy::implementation
 		if (!m_recordFile.has_value())
 			return 0;
 
-		auto const result = min(100.0, static_cast<float>(m_finishedFiles) / m_recordFile->GetNumFiles() * 100.0);
+		auto const numFiles = m_recordFile->GetNumFiles();
+		if (numFiles == 0)
+			return 0;
+
+		auto const result = min(100.0, static_cast<float>(m_finishedFiles) / numFiles * 100.0);
 		Taskbar::SetProgressState(Global::MainHwnd, Taskbar::ProgressState::Normal);
 		Taskbar::SetProgressValue(Global::MainHwnd, result);
 		return result;
 	}
 	void RobocopyViewModel::Start()
 	{
+		if (!m_recordFile)
+			return;
 		ProcessIOUpdater::Start(std::chrono::milliseconds{ 300 });
-
+		m_status = Status::Running; 
 		concurrency::create_task([this]
 		{
 			m_countItemTask.get();
 
-			while (m_iter != m_recordFile->end() && m_status == Status::Running)
+			while (*m_iter != m_recordFile->end() && m_status == Status::Running)
 			{
 				Global::UIThread.TryEnqueue([this] {raisePropertyChange(L"Source"); });
 				m_process.emplace(getRobocopyArg());
 				SetHandle(m_process->Handle());
 				auto const ret = m_process->WaitForExit();
-				m_finishedFiles += m_recordFile->GetNumFiles(m_recordFile->IndexOf(m_iter));
+				m_finishedFiles += m_recordFile->GetNumFiles(m_recordFile->IndexOf(*m_iter));
 				Global::UIThread.TryEnqueue([this] 
 				{ 
 					raisePropertyChange(L"Percent");
 					raisePropertyChange(L"FinishedItemCount");
 				});
-				++m_iter;
+				++*m_iter;
 			}
-			if (m_iter == m_recordFile->end())
+			if (*m_iter == m_recordFile->end())
 			{
 				Notification::SendSuccess(std::format(L"Successfully {} {} files",
 					[this] {
@@ -130,6 +138,8 @@ namespace winrt::FastCopy::implementation
 							case CopyOperation::Delete: return L"deleted";
 						}
 					}(), m_finishedFiles).data(), m_destination);
+				std::filesystem::remove(m_recordFile->GetPath().data());
+				m_finishEvent(*this, FinishState::Success);
 			}
 		});
 	}
@@ -166,14 +176,16 @@ namespace winrt::FastCopy::implementation
 	{
 		RobocopyArgs args;
 		args.destinationDir = m_destination;
-		if (std::filesystem::is_directory(*m_iter))
+		args.moveFilesAndDirs.value = (m_recordFile->GetOperation() == CopyOperation::Move);
+		if (std::filesystem::is_directory(**m_iter))
 		{
-			args.sourceDir = *m_iter;
-			args.destinationDir += L"\\" + std::filesystem::path{ *m_iter }.filename().wstring();
+			args.sourceDir = **m_iter;
+			args.destinationDir += L"\\" + std::filesystem::path{ **m_iter }.filename().wstring();
+			args.copySubDirectoriesIncludeEmpty.value = true;
 		}
 		else
 		{
-			std::filesystem::path path{ *m_iter };
+			std::filesystem::path path{ **m_iter };
 			args.sourceDir = path.parent_path().wstring();
 			args.files.push_back(path.filename().wstring());
 		}
