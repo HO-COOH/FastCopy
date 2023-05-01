@@ -105,6 +105,12 @@
     <ClCompile Include="Notification.cpp">
       <Filter>Utils\SystemIntegration</Filter>
     </ClCompile>
+    <ClCompile Include="FileWrapper.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Fallback.cpp">
+      <Filter>Utils\Fallback</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -164,6 +170,12 @@
     </ClInclude>
     <ClInclude Include="Notification.h">
       <Filter>Utils\SystemIntegration</Filter>
+    </ClInclude>
+    <ClInclude Include="FileWrapper.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Fallback.h">
+      <Filter>Utils\Fallback</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -366,6 +378,9 @@
     </Filter>
     <Filter Include="Views\Converters">
       <UniqueIdentifier>{9fc141b0-3d42-4510-9dff-5b85a5c7ccb8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\Fallback">
+      <UniqueIdentifier>{585c7294-37bb-485f-9f1d-e00173bde03e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

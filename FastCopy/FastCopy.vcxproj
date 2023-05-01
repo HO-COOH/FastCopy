@@ -155,8 +155,10 @@
       <DependentUpon>ExplorerItemTemplateSelector.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Fallback.h" />
     <ClInclude Include="FastCopyCommandParser.h" />
     <ClInclude Include="FileStats.h" />
+    <ClInclude Include="FileWrapper.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="MainPage.xaml.h">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -267,8 +269,10 @@
       <DependentUpon>ExplorerItemTemplateSelector.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Fallback.cpp" />
     <ClCompile Include="FastCopyCommandParser.cpp" />
     <ClCompile Include="FileStats.cpp" />
+    <ClCompile Include="FileWrapper.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="MainPage.xaml.cpp">
       <DependentUpon>MainPage.xaml</DependentUpon>

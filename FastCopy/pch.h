@@ -26,7 +26,6 @@
 #include <winrt/Microsoft.UI.Xaml.Shapes.h>
 #include <winrt/Microsoft.UI.Dispatching.h>
 #include <wil/cppwinrt_helpers.h>
-#include <boost/interprocess/managed_shared_memory.hpp>
 #include <winrt/Windows.ApplicationModel.Activation.h>
 #include <winrt/Windows.Storage.h>
 #include <winrt/Windows.Storage.Pickers.h>

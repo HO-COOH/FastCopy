@@ -3,6 +3,7 @@
 #include <fstream>
 #include <filesystem>
 #include <codecvt>
+#include "FileWrapper.h"
 
 static int32_t getNumFilesInFolder(std::wstring_view path)
 {
@@ -18,7 +19,7 @@ int32_t TaskFile::GetNumFiles()
 	if (!lines.empty())
 		return totalFiles;
 
-	FILE* fs = _wfopen(m_path.data(), L"rb");
+	FileWrapper fs{ _wfopen(m_path.data(), L"rb") };
 	if (!fs)
 		return 0;
 
@@ -26,10 +27,12 @@ int32_t TaskFile::GetNumFiles()
 	while (true)
 	{
 		size_t length{};
-		if (fread(&length, sizeof(length), 1, fs) != 1)
+		if (!fs.read(&length, sizeof(length), 1))
 			break;
+
 		std::wstring line(length, {});
-		if (fread(line.data(), 2, length, fs) != length)
+		
+		if (!fs.read(line.data(), 2, length))
 			break;
 
 		if (std::filesystem::is_directory(line))
@@ -40,7 +43,6 @@ int32_t TaskFile::GetNumFiles()
 	}
 	numFiles.resize(lines.size());
 	totalFiles = count;
-	fclose(fs);
 	return count;
 }
 

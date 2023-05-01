@@ -1,6 +1,7 @@
 #pragma once
 #include <winrt/Microsoft.UI.Dispatching.h>
 #include <queue>
+#include <functional>
 class UIThreadWrapper
 {
 	winrt::Microsoft::UI::Dispatching::DispatcherQueue m_queue{ nullptr };

@@ -12,6 +12,7 @@
 #include "RobocopyArgs.h"
 #include "Taskbar.h"
 #include "Notification.h"
+#include "Fallback.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -116,9 +117,23 @@ namespace winrt::FastCopy::implementation
 			while (*m_iter != m_recordFile->end() && m_status == Status::Running)
 			{
 				Global::UIThread.TryEnqueue([this] {raisePropertyChange(L"Source"); });
-				m_process.emplace(getRobocopyArg());
-				SetHandle(m_process->Handle());
-				auto const ret = m_process->WaitForExit();
+				if (canUseRobocopy())
+				{
+					m_process.emplace(getRobocopyArg());
+					SetHandle(m_process->Handle());
+					auto const ret = m_process->WaitForExit();
+				}
+				else
+				{
+					//use fallback
+					std::wstring_view destinationView{ m_destination };
+					
+					Fallback::CopyAddSuffix(
+						**m_iter, 
+						std::wstring_view{ destinationView.substr(0, destinationView.find_last_not_of(L"/\\") + 1) },
+						m_recordFile->GetOperation() == CopyOperation::Move
+					);
+				}
 				m_finishedFiles += m_recordFile->GetNumFiles(m_recordFile->IndexOf(*m_iter));
 				Global::UIThread.TryEnqueue([this] 
 				{ 
@@ -190,5 +205,13 @@ namespace winrt::FastCopy::implementation
 			args.files.push_back(path.filename().wstring());
 		}
 		return args;
+	}
+
+	bool RobocopyViewModel::canUseRobocopy() const
+	{
+		auto const fileName = std::filesystem::path{ **m_iter }.filename().wstring();
+		return !std::filesystem::exists(
+			std::format(LR"({}\{})", m_destination.data(), fileName)
+		);
 	}
 }
