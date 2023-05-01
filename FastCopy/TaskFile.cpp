@@ -2,6 +2,7 @@
 #include "TaskFile.h"
 #include <fstream>
 #include <filesystem>
+#include <codecvt>
 
 static int32_t getNumFilesInFolder(std::wstring_view path)
 {
@@ -17,14 +18,20 @@ int32_t TaskFile::GetNumFiles()
 	if (!lines.empty())
 		return totalFiles;
 
-	std::wifstream fs{ m_path.data() };
-	if (!fs.is_open())
+	FILE* fs = _wfopen(m_path.data(), L"rb");
+	if (!fs)
 		return 0;
 
-	std::wstring line;
 	int32_t count{};
-	while (std::getline(fs, line))
+	while (true)
 	{
+		size_t length{};
+		if (fread(&length, sizeof(length), 1, fs) != 1)
+			break;
+		std::wstring line(length, {});
+		if (fread(line.data(), 2, length, fs) != length)
+			break;
+
 		if (std::filesystem::is_directory(line))
 			count += getNumFilesInFolder(line);
 		else
@@ -33,6 +40,7 @@ int32_t TaskFile::GetNumFiles()
 	}
 	numFiles.resize(lines.size());
 	totalFiles = count;
+	fclose(fs);
 	return count;
 }
 

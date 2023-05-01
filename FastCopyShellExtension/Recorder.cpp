@@ -31,8 +31,8 @@ Recorder::Recorder(CopyOperation op)
 {
 	std::filesystem::remove_all(GetLocalDataFolder());
 	std::filesystem::create_directory(GetLocalDataFolder());
-	m_fs = std::wofstream{ GetRecordFilePath(op) };
-	if (!m_fs.is_open())
+	m_fs = _wfopen(GetRecordFilePath(op).data(), L"wb");
+	if (!m_fs)
 		throw std::runtime_error{ "Cannot open file" };
 }
 
@@ -40,8 +40,18 @@ Recorder& Recorder::operator<<(IShellItem& item)
 {
 	wchar_t* name;
 	item.GetDisplayName(SIGDN_FILESYSPATH, &name);
-	m_fs << name << L'\n';
+	std::wstring_view buf = name;
+	size_t const length = buf.size();
+	fwrite(&length, sizeof(length), 1, m_fs);
+	fwrite(buf.data(), 2, length, m_fs);
+
 	return *this;
+}
+
+Recorder::~Recorder()
+{
+	if (m_fs)
+		fclose(m_fs);
 }
 
 static wchar_t toFlag(CopyOperation op)

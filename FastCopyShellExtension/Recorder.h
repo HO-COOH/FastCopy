@@ -8,10 +8,10 @@ class Recorder
 public:
 	Recorder(CopyOperation op);
 	Recorder& operator<<(IShellItem& item);
-
+	~Recorder();
 	static bool HasRecord();
 private:
-	std::wofstream m_fs;
+	FILE* m_fs;
 
 	/**
 	 * Return the file name of the record file
