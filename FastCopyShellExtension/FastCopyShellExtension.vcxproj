@@ -175,6 +175,8 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="IconProvider.cpp" />
     <ClCompile Include="Recorder.cpp" />
+    <ClCompile Include="ShellItem.cpp" />
+    <ClCompile Include="ShellItemArray.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -185,6 +187,8 @@
     <ClInclude Include="IconProvider.h" />
     <ClInclude Include="Recorder.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="ShellItem.h" />
+    <ClInclude Include="ShellItemArray.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="FastCopyShellExtension.rc" />

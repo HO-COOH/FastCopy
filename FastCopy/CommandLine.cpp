@@ -4,14 +4,19 @@
 #include <ShlObj_core.h>
 #include <filesystem>
 
-static std::vector<std::wstring_view> const& GetCommandArgs()
+static std::vector<std::wstring> const& GetCommandArgs()
 {
     static auto const ret = []
     {
         auto const cmd = GetCommandLine();
         int argc{};
         auto argv = CommandLineToArgvW(cmd, &argc);
-        return std::vector<std::wstring_view>(argv, argv + argc);
+        auto ret = std::vector<std::wstring>(argv, argv + argc);
+        if (ret.size() > 1 && ret[1].back() == L'/')
+        {
+            ret[1] = ret[1].substr(0, ret[1].find_last_not_of(L"/\\\"") + 1);
+        }
+        return ret;
     }();
     return ret;
 }

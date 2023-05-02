@@ -13,6 +13,7 @@
 #include "CopyOperation.h"
 #include "Recorder.h"
 #include "IconProvider.h"
+#include "ShellItemArray.h"
 
 
 #pragma comment(lib,"runtimeobject")
@@ -63,12 +64,7 @@ class __declspec(uuid("3282E233-C5D3-4533-9B25-44B8AAAFACFA")) TestExplorerComma
 
     void init(IShellItemArray* items)
     {
-
-        DWORD count{};
-        if (!items)
-            count = 0;
-        else
-            items->GetCount(&count);
+        DWORD const count = items ? ShellItemArray{ items }.size() : 0;
 
         //MessageBox(NULL, std::to_wstring(count).data(), L"", 0);
         if (!m_hasInit)

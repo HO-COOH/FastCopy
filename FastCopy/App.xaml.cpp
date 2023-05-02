@@ -91,8 +91,13 @@ void App::OnLaunched(LaunchActivatedEventArgs const&)
     if (auto activateArg = winrt::Microsoft::Windows::AppLifecycle::AppInstance::GetCurrent().GetActivatedEventArgs(); 
         activateArg && activateArg.Kind() == winrt::Microsoft::Windows::AppLifecycle::ExtendedActivationKind::ToastNotification)
     {
-        LaunchByToastNotification(activateArg.Data().as<winrt::Windows::ApplicationModel::Activation::ToastNotificationActivatedEventArgs>().Argument());
-        return;
+        LaunchByToastNotification(
+            activateArg
+            .Data()
+            .as<winrt::Windows::ApplicationModel::Activation::ToastNotificationActivatedEventArgs>()
+            .Argument()
+        );
+        exit(0);
     }
 
     auto const recordFile = Command::Get().RecordFile();

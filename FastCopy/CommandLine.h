@@ -2,8 +2,7 @@
 #include <vector>
 #include <string_view>
 #include "../FastCopyShellExtension/CopyOperation.h"
-
-std::vector<std::wstring_view> const& GetCommandArgs();
+#include <winrt/base.h>
 
 class Command
 {

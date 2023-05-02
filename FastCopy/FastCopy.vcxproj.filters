@@ -394,7 +394,4 @@
     <None Include="FastCopy_TemporaryKey.pfx" />
     <None Include="..\x64\Release\FastCopy\FastCopyShellExtension.dll" />
   </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Resource.rc" />
-  </ItemGroup>
 </Project>
