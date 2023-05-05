@@ -14,12 +14,27 @@
 #include "Recorder.h"
 #include "IconProvider.h"
 #include "ShellItemArray.h"
+#include "ShellItem.h"
 
 
 #pragma comment(lib,"runtimeobject")
 #pragma comment(lib, "Shlwapi.lib")
 
 
+void Print(IShellItemArray* items)
+{
+    if (!items)
+        return;
+
+    if (ShellItemArray{ items }.size() == 0)
+        return;
+
+    for (auto item : ShellItemArray{ items })
+    {
+        OutputDebugString(item.GetDisplayName());
+        OutputDebugString(L"\n");
+    }
+}
 
 class SubCommand;
 
@@ -62,34 +77,7 @@ class __declspec(uuid("3282E233-C5D3-4533-9B25-44B8AAAFACFA")) TestExplorerComma
         return Recorder::HasRecord();
     }
 
-    void init(IShellItemArray* items)
-    {
-        DWORD const count = items ? ShellItemArray{ items }.size() : 0;
-
-        //MessageBox(NULL, std::to_wstring(count).data(), L"", 0);
-        if (!m_hasInit)
-        {
-            if (count == 0 && hasInvokedCopyOrCut())
-            {
-                if (ptrs.empty())
-                    ptrs.push_back(Microsoft::WRL::Make<SubCommand>(CopyOperation::Paste));
-                else
-                    ptrs.insert(ptrs.begin() + 2, Microsoft::WRL::Make<SubCommand>(CopyOperation::Paste));
-                m_hasInit = true;
-            }
-        }
-
-
-
-        if (count != 0)
-        {
-            ptrs.emplace_back(Microsoft::WRL::Make<SubCommand>(CopyOperation::Copy));
-            ptrs.emplace_back(Microsoft::WRL::Make<SubCommand>(CopyOperation::Move));
-            ptrs.emplace_back(Microsoft::WRL::Make<SubCommand>(CopyOperation::Delete));
-            m_hasInit = true;
-        }
-
-    }
+    void init(IShellItemArray* items);
 public:
 
     TestExplorerCommandRoot() = default;
@@ -97,12 +85,10 @@ public:
     #pragma region IExplorerCommand
     HRESULT GetTitle( IShellItemArray* items,  PWSTR* name)
     {
-
         return SHStrDup(CommandRootTitle, name);
     }
     HRESULT GetIcon(IShellItemArray* items, PWSTR* icon) 
     { 
-        //MessageBoxW(NULL, path, L"", 0);
         SHStrDup(std::format(L"{},{}", GetCurrentDllPath(), -IDI_ICON1).data(), icon);
         return S_OK;
     }
@@ -183,37 +169,19 @@ public:
 };
 
 
-
 class SubCommand final : 
     public Microsoft::WRL::RuntimeClass<
         Microsoft::WRL::RuntimeClassFlags<Microsoft::WRL::ClassicCom>, 
         IExplorerCommand>
 {
     CopyOperation m_op;
-
-    auto& getName() const
-    {
-        auto const& nameConstants = CopyOperationNames::GetInstance();
-        switch (m_op)
-        {
-            case CopyOperation::Copy:   return nameConstants.Copy;
-            case CopyOperation::Move:   return nameConstants.Move;
-            case CopyOperation::Delete: return nameConstants.Delete;
-            case CopyOperation::Paste:  return nameConstants.Paste;
-            default: assert(false);
-        }
-    }
-
     HRESULT recordFilesImpl(IShellItemArray* selection)
     {
-        DWORD count;
-        selection->GetCount(&count);
         Recorder recorder{ m_op };
-        while (count--)
+        for (auto item : ShellItemArray{ selection })
         {
-            IShellItem* ptr;
-            if (SUCCEEDED(selection->GetItemAt(count, &ptr)))
-                recorder << *ptr;
+            if (item.GetPtr())
+                recorder << item;
         }
         return S_OK;
     }
@@ -230,12 +198,46 @@ class SubCommand final :
         );
         return S_OK;
     }
+
+    IShellItem* m_parent{};
 public:
     SubCommand(CopyOperation op) : m_op{op}
     {
     }
 
-    virtual const EXPCMDSTATE State( IShellItemArray* selection) { return ECS_ENABLED; }
+    auto& getName() const
+    {
+        auto const& nameConstants = CopyOperationNames::GetInstance();
+        switch (m_op)
+        {
+            case CopyOperation::Copy:   return nameConstants.Copy;
+            case CopyOperation::Move:   return nameConstants.Move;
+            case CopyOperation::Delete: return nameConstants.Delete;
+            case CopyOperation::Paste:  return nameConstants.Paste;
+            default: assert(false);
+        }
+    }
+
+    void SetParentForPasteForWindows10(IShellItem* parent)
+    {
+        m_parent = parent;
+    }
+
+    virtual const EXPCMDSTATE State( IShellItemArray* selection) 
+    { 
+        switch (m_op)
+        {
+            case CopyOperation::Copy:
+            case CopyOperation::Move:
+                return ShellItemArray{ selection }.size() != 0 ? ECS_ENABLED : ECS_DISABLED;
+            case CopyOperation::Paste:
+                return (Recorder::HasRecord() && (!selection || ShellItemArray{ selection }.size() == 0)) ? ECS_ENABLED : ECS_DISABLED;
+            case CopyOperation::Delete:
+                return ECS_DISABLED;
+            default:
+                return ECS_ENABLED;
+        }
+    }
 
     // IExplorerCommand
     HRESULT GetTitle( IShellItemArray* items,  PWSTR* name)
@@ -257,7 +259,11 @@ public:
     HRESULT GetCanonicalName(GUID* guidCommandName) { *guidCommandName = GUID_NULL;  return S_OK; }
     HRESULT GetState(IShellItemArray* selection, _In_ BOOL okToBeSlow, _Out_ EXPCMDSTATE* cmdState)
     {
-        *cmdState = State(selection);
+        auto const state = State(selection);
+        if (m_op == CopyOperation::Delete)
+            *cmdState = ECS_DISABLED;
+        else
+            *cmdState = state == ECS_DISABLED ? ECS_HIDDEN : ECS_ENABLED;
         return S_OK;
     }
     HRESULT Invoke( IShellItemArray* selection,  IBindCtx*) noexcept
@@ -271,11 +277,8 @@ public:
             case CopyOperation::Move:   return recordFilesImpl(selection);
             case CopyOperation::Paste:
             {
-                IShellItem* psi;
-                selection->GetItemAt(0, &psi);
-                LPWSTR path;
-                psi->GetDisplayName(SIGDN_FILESYSPATH, &path);
-                return callMainProgramImpl(path);
+                ShellItem psi{ selection ? ShellItemArray{ selection }[0] : m_parent };
+                return callMainProgramImpl(psi.GetDisplayName());
             }
             case CopyOperation::Delete:
                 recordFilesImpl(selection);
@@ -288,7 +291,6 @@ public:
     HRESULT GetFlags(EXPCMDFLAGS* flags) { *flags = ECF_DEFAULT; return S_OK; }
     HRESULT EnumSubCommands(IEnumExplorerCommand** enumCommands) { *enumCommands = nullptr; return E_NOTIMPL; }
 };
-
 
 #pragma region BoilerPlate
 CoCreatableClass(TestExplorerCommandRoot)
@@ -328,3 +330,42 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     return TRUE;
 }
 #pragma endregion
+
+void TestExplorerCommandRoot::init(IShellItemArray* items)
+{
+    DWORD const count = items ? ShellItemArray{ items }.size() : 0;
+
+    //MessageBox(NULL, std::to_wstring(count).data(), L"", 0);
+    if (!m_hasInit)
+    {
+        if (count == 0 && hasInvokedCopyOrCut())
+        {
+            if (ptrs.empty())
+                ptrs.push_back(Microsoft::WRL::Make<SubCommand>(CopyOperation::Paste));
+            else
+                ptrs.insert(ptrs.begin() + 2, Microsoft::WRL::Make<SubCommand>(CopyOperation::Paste));
+            m_hasInit = true;
+        }
+    }
+
+
+
+    if (count != 0)
+    {
+        ptrs.emplace_back(Microsoft::WRL::Make<SubCommand>(CopyOperation::Copy));
+        ptrs.emplace_back(Microsoft::WRL::Make<SubCommand>(CopyOperation::Move));
+        ptrs.emplace_back(Microsoft::WRL::Make<SubCommand>(CopyOperation::Delete));
+        m_hasInit = true;
+    }
+
+    if (!ptrs.empty() && std::none_of(ptrs.begin(), ptrs.end(), [items](Microsoft::WRL::ComPtr<SubCommand> const& subcommand) {
+        OutputDebugString(subcommand->getName().data());
+        OutputDebugString(std::to_wstring(subcommand->State(nullptr) == ECS_ENABLED).data());
+        OutputDebugString(L"\n");
+        return subcommand->State(nullptr) == ECS_ENABLED;
+        }))
+    {
+        ptrs.emplace_back(Microsoft::WRL::Make<SubCommand>(CopyOperation::Paste));
+        ptrs.back()->SetParentForPasteForWindows10(ShellItemArray{ items }.front().GetPtr());
+    }
+}

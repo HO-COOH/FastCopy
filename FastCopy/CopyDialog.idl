@@ -10,5 +10,7 @@ namespace FastCopy
         CopyDialog();
         RobocopyViewModel ViewModel{ get; };
         FastCopy.ProgressBarEx ProgressBar{ get; };
+
+        Microsoft.UI.Xaml.Controls.Grid MainPanel{ get; };
     }
 }

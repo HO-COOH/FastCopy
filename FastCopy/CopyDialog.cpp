@@ -56,3 +56,9 @@ namespace winrt::FastCopy::implementation
 	}
 
 }
+
+
+void winrt::FastCopy::implementation::CopyDialog::CheckBox_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	OutputDebugString(L"Checkbox clicked\n");
+}

@@ -142,6 +142,10 @@
       <DependentUpon>CopyDialogWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="DateTimeToStringConverter.h">
+      <DependentUpon>DateTimeToStringConverter.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="DebugLogger.h" />
     <ClInclude Include="DoubleToStringConverter.h">
       <DependentUpon>DoubleToStringConverter.idl</DependentUpon>
@@ -157,6 +161,14 @@
     </ClInclude>
     <ClInclude Include="Fallback.h" />
     <ClInclude Include="FastCopyCommandParser.h" />
+    <ClInclude Include="FileCompareViewModel.h">
+      <DependentUpon>FileCompareViewModel.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="FileInfoViewModel.h">
+      <DependentUpon>FileInfoViewModel.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="FileStats.h" />
     <ClInclude Include="FileWrapper.h" />
     <ClInclude Include="Global.h" />
@@ -256,6 +268,10 @@
       <DependentUpon>CopyDialogWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="DateTimeToStringConverter.cpp">
+      <DependentUpon>DateTimeToStringConverter.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="DebugLogger.cpp" />
     <ClCompile Include="DoubleToStringConverter.cpp">
       <DependentUpon>DoubleToStringConverter.idl</DependentUpon>
@@ -271,6 +287,14 @@
     </ClCompile>
     <ClCompile Include="Fallback.cpp" />
     <ClCompile Include="FastCopyCommandParser.cpp" />
+    <ClCompile Include="FileCompareViewModel.cpp">
+      <DependentUpon>FileCompareViewModel.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="FileInfoViewModel.cpp">
+      <DependentUpon>FileInfoViewModel.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="FileStats.cpp" />
     <ClCompile Include="FileWrapper.cpp" />
     <ClCompile Include="Global.cpp" />
@@ -347,6 +371,9 @@
       <DependentUpon>CopyDialogWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="DateTimeToStringConverter.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="DoubleToStringConverter.idl">
       <SubType>Designer</SubType>
     </Midl>
@@ -354,6 +381,12 @@
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="ExplorerItemTemplateSelector.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="FileCompareViewModel.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="FileInfoViewModel.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="ICopyBase.idl" />

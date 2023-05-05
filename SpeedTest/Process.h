@@ -57,7 +57,7 @@ public:
 		cmd.insert(0, applicationName);
 		PROCESS_INFORMATION m_pi{};
 		CreateProcessA(
-			applicationName.data(),
+			applicationName.data(),  //if string_view is empty(default constructed), data() will be nullptr, see https://en.cppreference.com/w/cpp/string/basic_string_view/basic_string_view
 			cmd.data(),
 			nullptr,
 			nullptr,

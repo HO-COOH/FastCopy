@@ -12,10 +12,22 @@ A GUI wrapper for Windows' built-in `robocopy` ~~and `xcopy`~~.
 ![](Screenshots/NewMenuPaste_Dark.png)
 ![](Screenshots/OldMenuCopy_Dark.png)
 
+- Integration with Windows Notification Center: a notification toast will pop up when the copy is finished
+![](screenshots/notification.png)
+
+- Integration with taskbar: a progress bar sync with the one inside the window
+
+<p align="center">
+    <image src="screenshots/taskbar-icon.png">
+</p>
+
 - Multi-language support
   + English
-  + Chinese
+  + Chinese (WIP)
 
+## Usage
+1. Using file explorer, select some files/folders, as many as you want >> right click >> move to **FastCopy** >> select **Copy** or **Move**
+2. Go to destination folder, right click at empty space >> move to **FastCopy** >> select **Paste**
 
 ## Development
 ### Project structure
@@ -28,7 +40,7 @@ FastCopy
     FastCopy.sln            --- The solution file for all the projects
 ```
 ### Build pre-requisites
-- Visual Studio 2019+, with C++20 support
+- Visual Studio 2019+, with C++20 support & Universal Windows development workload
 - Windows App Sdk, with C++ template
 - Additional dependencies per project:
   + FastCopy:
@@ -42,6 +54,12 @@ You can install them with one command, and do no more.
 vcpkg install spdlog:x64-windows
 vcpkg install abseil:x64-windows
 ``` 
+
+
+### Prototype
+[Figma link, you may need to ask for permission.](https://www.figma.com/file/e5hUvDWKO8gZiKXruuNSvL/Xcopy?type=design&node-id=217-31199&t=cKY9TdBJXXi7QdFL-0)
+
+![](screenshots/figma.png)
 
 ![image](https://user-images.githubusercontent.com/6630660/212826364-28155c87-c809-4ab8-b203-c8438fa64749.png)
 

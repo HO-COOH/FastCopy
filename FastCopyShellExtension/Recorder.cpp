@@ -4,6 +4,7 @@
 #include <ShlObj_core.h>
 #include <Windows.h>
 #include <filesystem>
+#include "ShellItem.h"
 
 static auto GetLocalDataFolder()
 {
@@ -36,11 +37,9 @@ Recorder::Recorder(CopyOperation op)
 		throw std::runtime_error{ "Cannot open file" };
 }
 
-Recorder& Recorder::operator<<(IShellItem& item)
+Recorder& Recorder::operator<<(ShellItem& item)
 {
-	wchar_t* name;
-	item.GetDisplayName(SIGDN_FILESYSPATH, &name);
-	std::wstring_view buf = name;
+	std::wstring_view buf{ item.GetDisplayName() };
 	size_t const length = buf.size();
 	fwrite(&length, sizeof(length), 1, m_fs);
 	fwrite(buf.data(), 2, length, m_fs);

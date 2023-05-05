@@ -23,7 +23,8 @@ namespace winrt::FastCopy::implementation
     {
         InitializeComponent();
 
-        CenterWindow(*this, { 450, 140 });
+        //CenterWindow(*this, { 450, 300 });
+        CenterWindow(*this, { 540, 350 });
         auto appWindow = GetAppWindow(*this);
         auto presenter = appWindow.Presenter().as<winrt::Microsoft::UI::Windowing::OverlappedPresenter>();
         presenter.IsResizable(false);
@@ -36,5 +37,24 @@ namespace winrt::FastCopy::implementation
         titleBar.ButtonInactiveBackgroundColor(winrt::Windows::UI::Colors::Transparent());
         Global::UIThread = DispatcherQueue();
         Taskbar::SetProgressState(Global::MainHwnd, Taskbar::ProgressState::Indeterminate);
+
+        //static bool hasSetSize = false;
+        //CopyDialog().Loaded([this](auto, auto)
+        //{
+        //    auto size = CopyDialog().DesiredSize();
+        //    CenterWindow(*this, { static_cast<int>(size.Width), static_cast<int>(size.Height) });
+        //    hasSetSize = true;
+        //    OutputDebugString(L"Size changed\n");
+        //});
+
+
+        //CopyDialog().MainPanel().SizeChanged([this](auto, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs e)
+        //{
+        //    if(!hasSetSize)
+        //    {
+        //        CenterWindow(*this, { static_cast<int>(e.NewSize().Width), static_cast<int>(e.NewSize().Height) });
+        //    }
+        //    hasSetSize = !hasSetSize;
+        //});
     }
 }

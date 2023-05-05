@@ -1,0 +1,14 @@
+import "FileInfoViewModel.idl";
+
+namespace FastCopy
+{
+    [bindable]
+    [default_interface]
+    runtimeclass FileCompareViewModel
+    {
+        FileCompareViewModel(String path1, String path2);
+
+        FastCopy.FileInfoViewModel File1{ get; };
+        FastCopy.FileInfoViewModel File2{ get; };
+    }
+}

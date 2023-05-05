@@ -1,13 +1,13 @@
 #pragma once
 #include <fstream>
 #include "CopyOperation.h"
-class IShellItem;
+class ShellItem;
 
 class Recorder
 {
 public:
 	Recorder(CopyOperation op);
-	Recorder& operator<<(IShellItem& item);
+	Recorder& operator<<(ShellItem& item);
 	~Recorder();
 	static bool HasRecord();
 private:

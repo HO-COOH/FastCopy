@@ -9,7 +9,7 @@ ShellItemArray::Iterator ShellItemArray::begin()
 
 ShellItemArray::Iterator ShellItemArray::end()
 {
-    return {};
+    return {nullptr, size() };
 }
 
 ShellItem ShellItemArray::front()
@@ -52,5 +52,6 @@ ShellItemArray::Iterator& ShellItemArray::Iterator::operator++()
 
 bool ShellItemArray::Iterator::operator==(Iterator const& rhs) const
 {
-    return m_ptr == rhs.m_ptr && m_index == rhs.m_index;
+    return rhs.m_ptr == nullptr ? m_index == rhs.m_index :
+        m_ptr == rhs.m_ptr && m_index == rhs.m_index;
 }

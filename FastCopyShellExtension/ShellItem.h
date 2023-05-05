@@ -9,5 +9,7 @@ public:
 
 	wchar_t* GetDisplayName();
 	ShellItem GetParent();
+
+	IShellItem* GetPtr() const { return m_ptr; }
 };
 

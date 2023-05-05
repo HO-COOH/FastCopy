@@ -1,0 +1,16 @@
+namespace FastCopy
+{
+    [bindable]
+    [default_interface]
+    runtimeclass FileInfoViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        FileInfoViewModel(String path);
+        
+        String Filename{ get; };
+        Windows.Foundation.DateTime CreationDate{ get; };
+        UInt64 Bytes{ get; };
+        Boolean Selected;
+
+        Microsoft.UI.Xaml.Media.ImageSource Bitmap{ get; };
+    }
+}

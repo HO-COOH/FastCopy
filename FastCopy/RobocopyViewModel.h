@@ -7,12 +7,17 @@
 #include "RobocopyProcess.h"
 #include "TaskFile.h"
 #include <ppltasks.h>
+#include "FileCompareViewModel.g.h"
+#include <winrt/Windows.Foundation.Collections.h>
 
 namespace winrt::FastCopy::implementation
 {
     struct RobocopyViewModel : RobocopyViewModelT<RobocopyViewModel>, PropertyChangeHelper<RobocopyViewModel>, ProcessIOUpdater<RobocopyViewModel>
     {
-        RobocopyViewModel() = default;
+        RobocopyViewModel()
+        {
+            m_duplicateFiles.Append({LR"(E:\android-studio-2021.2.1.15-windows_2.exe)", LR"(E:\527.56-desktop-win10-win11-64bit-international-dch-whql.exe)"});
+        }
 
         winrt::hstring RecordFile();
         void RecordFile(winrt::hstring value);
@@ -38,6 +43,8 @@ namespace winrt::FastCopy::implementation
 #pragma endregion
 
         void OnUpdateCopySpeed(ProcessIoCounter::IOCounterDiff diff);
+
+        winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::FileCompareViewModel> DuplicateFiles() { return m_duplicateFiles; }
     private:
         winrt::event<winrt::Windows::Foundation::EventHandler<winrt::FastCopy::FinishState>> m_finishEvent;
         std::optional<RobocopyProcess> m_process;
@@ -52,6 +59,7 @@ namespace winrt::FastCopy::implementation
         Status m_status{ Status::Running };
 
         bool canUseRobocopy() const;
+        winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::FileCompareViewModel> m_duplicateFiles = winrt::single_threaded_observable_vector<winrt::FastCopy::FileCompareViewModel>();
     };
 }
 

@@ -41,10 +41,22 @@
         </Storyboard>
 
         <local:DoubleToStringConverter x:Key="NumberToStringConverter"/>
+        <local:DateTimeToStringConverter x:Key="DateTimeToStringConverter"/>
+
+        <Style x:Key="DuplicateFilenameTextStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+
+        <Color x:Key="SeperatorLineColor">#d9d9d9</Color>
+        <Color x:Key="DuplicateFilenameColor">#6ccb5f</Color>
+        <x:Double x:Key="DuplicateFilenameBackgroundOpacity">0.15</x:Double>
+        <x:Double x:Key="SeperatorLineOpacity">0.1</x:Double>
     </Page.Resources>
     
-    <Grid Margin="15">
+    <Grid Margin="15" x:Name="MainPanel">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -89,5 +101,72 @@
                              Percent="{x:Bind ViewModel.Percent, Mode=OneWay}" Height="5" Color="Green" Grid.Row="2"/>
         
         <!---Red: BB0000 -->
+        <!--Duplicate files area-->
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Height="55" Padding="0,25,0,20" LineHeight="42" VerticalAlignment="Center">
+                <Run Text="Destination folder contains 3 duplicates"/>
+            </TextBlock>
+
+            <CheckBox Grid.Row="1" Content="Use source" Checked="CheckBox_Checked"/>
+            <CheckBox Grid.Row="1" Grid.Column="1" Content="Use destination"/>
+        </Grid>
+
+        <ItemsRepeater Grid.Row="4" Margin="0,24,0,0" ItemsSource="{x:Bind ViewModel.DuplicateFiles}">
+            <ItemsRepeater.Layout>
+                <StackLayout Orientation="Vertical"/>
+            </ItemsRepeater.Layout>
+            <ItemsRepeater.ItemTemplate>
+                <DataTemplate x:DataType="local:FileCompareViewModel">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.ColumnSpan="2" HorizontalAlignment="Left" CornerRadius="3">
+                            <StackPanel.Background>
+                                <SolidColorBrush Color="{StaticResource DuplicateFilenameColor}" Opacity="{StaticResource DuplicateFilenameBackgroundOpacity}"/>
+                            </StackPanel.Background>
+                            <TextBlock Padding="4,0,4,4" Text="{x:Bind File1.Filename}" Foreground="{StaticResource DuplicateFilenameColor}"/>
+                        </StackPanel>
+                        <CheckBox Grid.Row="1" Margin="0,5,0,0" IsChecked="{x:Bind File1.Selected, Mode=TwoWay}">
+                            <StackPanel Orientation="Horizontal" Margin="11,0,0,0">
+                                <Image Source="{x:Bind File1.Bitmap}" Width="48" Height="48" Stretch="Uniform"/>
+                                <StackPanel Margin="10,0,0,0" Orientation="Vertical">
+                                    <TextBlock Text="{x:Bind File1.CreationDate,Converter={StaticResource DateTimeToStringConverter}}"/>
+                                    <TextBlock Text="{x:Bind File1.Bytes}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </CheckBox>
+
+                        <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{x:Bind File2.Selected, Mode=TwoWay}">
+                            <StackPanel Orientation="Horizontal" Margin="11,0,0,0">
+                                <Image Source="{x:Bind File2.Bitmap}" Width="48" Height="48" Stretch="Uniform"/>
+                                <StackPanel Margin="10,0,0,0" Orientation="Vertical">
+                                    <TextBlock Text="{x:Bind File2.CreationDate, Converter={StaticResource DateTimeToStringConverter}}"/>
+                                    <TextBlock Text="{x:Bind File2.Bytes}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </CheckBox>
+
+                        <Line Margin="0,22,0,0" Grid.Row="2" Grid.ColumnSpan="2" X1="0" X2="500" Stroke="{StaticResource SeperatorLineColor}" Opacity="{StaticResource SeperatorLineOpacity}"/>
+                    </Grid>
+                </DataTemplate>
+            </ItemsRepeater.ItemTemplate>
+        </ItemsRepeater>
     </Grid>
 </Page>

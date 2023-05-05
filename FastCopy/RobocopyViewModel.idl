@@ -1,4 +1,5 @@
 import "ICopyBase.idl";
+import "FileCompareViewModel.idl";
 
 namespace FastCopy
 {
@@ -12,5 +13,7 @@ namespace FastCopy
         String SizeText{ get; };
 
         Windows.Foundation.Uri DestinationUri{ get; };
+
+        Windows.Foundation.Collections.IObservableVector<FastCopy.FileCompareViewModel> DuplicateFiles{ get; };
     }
 }

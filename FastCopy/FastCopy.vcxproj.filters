@@ -48,13 +48,22 @@
     <Midl Include="SettingContainer.idl">
       <Filter>Views\Controls</Filter>
     </Midl>
-    <Midl Include="RobocopyViewModel.idl">
-      <Filter>ViewModel</Filter>
-    </Midl>
     <Midl Include="ICopyBase.idl">
       <Filter>ViewModel</Filter>
     </Midl>
     <Midl Include="DoubleToStringConverter.idl">
+      <Filter>Views\Converters</Filter>
+    </Midl>
+    <Midl Include="RobocopyViewModel.idl">
+      <Filter>ViewModel\Robocopy</Filter>
+    </Midl>
+    <Midl Include="FileCompareViewModel.idl">
+      <Filter>ViewModel\Robocopy</Filter>
+    </Midl>
+    <Midl Include="FileInfoViewModel.idl">
+      <Filter>ViewModel\Robocopy</Filter>
+    </Midl>
+    <Midl Include="DateTimeToStringConverter.idl">
       <Filter>Views\Converters</Filter>
     </Midl>
   </ItemGroup>
@@ -381,6 +390,9 @@
     </Filter>
     <Filter Include="Utils\Fallback">
       <UniqueIdentifier>{585c7294-37bb-485f-9f1d-e00173bde03e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ViewModel\Robocopy">
+      <UniqueIdentifier>{a3f4d143-a3b2-4385-9a07-60ca6769cf1d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
