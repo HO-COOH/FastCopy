@@ -199,6 +199,10 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="PropertyChangeHelper.hpp" />
+    <ClInclude Include="ReadableSizeConverter.h">
+      <DependentUpon>ReadableSizeConverter.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="ReadableUnitConverter.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="RobocopyArgs.h" />
@@ -326,6 +330,10 @@
       <DependentUpon>ProgressItem.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="ReadableSizeConverter.cpp">
+      <DependentUpon>ReadableSizeConverter.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="RobocopyArgs.cpp" />
     <ClCompile Include="RobocopyProcess.cpp" />
     <ClCompile Include="RobocopyViewModel.cpp">
@@ -408,6 +416,9 @@
     <Midl Include="ProgressItem.idl">
       <DependentUpon>ProgressItem.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ReadableSizeConverter.idl">
+      <SubType>Designer</SubType>
     </Midl>
     <Midl Include="RobocopyViewModel.idl">
       <SubType>Designer</SubType>

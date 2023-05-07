@@ -12,6 +12,7 @@
 #include <filesystem>
 
 
+
 static HICON GetImage(std::wstring_view path)
 {
 	// Get the image list index of the icon
@@ -117,7 +118,7 @@ namespace winrt::FastCopy::implementation
 
     winrt::Windows::Foundation::DateTime FileInfoViewModel::CreationDate()
     {
-        return winrt::Windows::Foundation::DateTime();
+		return std::chrono::clock_cast<winrt::clock>(std::filesystem::last_write_time(std::filesystem::path{ m_path.data()}));
     }
     uint64_t FileInfoViewModel::Bytes()
     {
@@ -130,13 +131,13 @@ namespace winrt::FastCopy::implementation
 		{
 			m_selected = value;
 			raisePropertyChange(L"Selected");
+			m_selectionChanged(*this, value);
 		}
     }
 
 	winrt::Microsoft::UI::Xaml::Media::ImageSource FileInfoViewModel::Bitmap()
 	{
 		auto icon = GetImage(m_path.data());
-		auto source = HIconToWriteableBitmap(icon);
-		return source;
+		return HIconToWriteableBitmap(icon);
 	}
 }

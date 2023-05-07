@@ -1,0 +1,9 @@
+namespace FastCopy
+{
+    [bindable]
+    [default_interface]
+    runtimeclass ReadableSizeConverter : Microsoft.UI.Xaml.Data.IValueConverter
+    {
+        ReadableSizeConverter();
+    }
+}

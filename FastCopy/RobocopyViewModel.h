@@ -45,7 +45,18 @@ namespace winrt::FastCopy::implementation
         void OnUpdateCopySpeed(ProcessIoCounter::IOCounterDiff diff);
 
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::FileCompareViewModel> DuplicateFiles() { return m_duplicateFiles; }
+        winrt::Windows::Foundation::IReference<bool> UseSource();
+        void UseSource(winrt::Windows::Foundation::IReference<bool> value);
+        winrt::Windows::Foundation::IReference<bool> UseDestination();
+        void UseDestination(winrt::Windows::Foundation::IReference<bool> value);
+
+        void AddSource() { ++m_useSourceCount; raisePropertyChange(L"UseSource"); }
+        void RemoveSource() { --m_useSourceCount; raisePropertyChange(L"UseSource"); }
+        void AddDestination() { ++m_useDestinationCount; raisePropertyChange(L"UseDestination"); }
+        void RemoveDestination() { --m_useDestinationCount; raisePropertyChange(L"UseDestination"); }
     private:
+        int m_useSourceCount{};
+        int m_useDestinationCount{};
         winrt::event<winrt::Windows::Foundation::EventHandler<winrt::FastCopy::FinishState>> m_finishEvent;
         std::optional<RobocopyProcess> m_process;
         winrt::hstring m_destination;
@@ -58,6 +69,10 @@ namespace winrt::FastCopy::implementation
         RobocopyArgs getRobocopyArg();
         Status m_status{ Status::Running };
 
+        /**
+         * @brief When there are files with same filename, robocopy cannot change the filename that it is copied to
+         * returns false in such cases
+         */
         bool canUseRobocopy() const;
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::FileCompareViewModel> m_duplicateFiles = winrt::single_threaded_observable_vector<winrt::FastCopy::FileCompareViewModel>();
     };

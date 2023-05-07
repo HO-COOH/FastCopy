@@ -42,6 +42,7 @@
 
         <local:DoubleToStringConverter x:Key="NumberToStringConverter"/>
         <local:DateTimeToStringConverter x:Key="DateTimeToStringConverter"/>
+        <local:ReadableSizeConverter x:Key="ReadableSizeConverter"/>
 
         <Style x:Key="DuplicateFilenameTextStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="14"/>
@@ -112,12 +113,14 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Height="55" Padding="0,25,0,20" LineHeight="42" VerticalAlignment="Center">
+            <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Height="55" Padding="0,25,0,20" LineHeight="42" VerticalAlignment="Center" FontSize="12">
                 <Run Text="Destination folder contains 3 duplicates"/>
             </TextBlock>
 
-            <CheckBox Grid.Row="1" Content="Use source" Checked="CheckBox_Checked"/>
-            <CheckBox Grid.Row="1" Grid.Column="1" Content="Use destination"/>
+            <Line Margin="0,0,0,0" Grid.Row="1" Grid.ColumnSpan="2" X1="0" X2="500" Y1="0" Y2="0" Stroke="{StaticResource SeperatorLineColor}" Opacity="{StaticResource SeperatorLineOpacity}"/>
+            <CheckBox Grid.Row="1" Content="Use source" Checked="CheckBox_Checked" IsThreeState="True" IsChecked="{x:Bind ViewModel.UseSource, Mode=TwoWay}"/>
+            <CheckBox Grid.Row="1" Grid.Column="1" Content="Use destination" IsThreeState="True" IsChecked="{x:Bind ViewModel.UseDestination, Mode=TwoWay}"/>
+            <Line Margin="0,0,0,0" Grid.Row="1" Grid.ColumnSpan="2" X1="0" X2="500" Y1="45" Y2="45" Stroke="{StaticResource SeperatorLineColor}" Opacity="{StaticResource SeperatorLineOpacity}"/>
         </Grid>
 
         <ItemsRepeater Grid.Row="4" Margin="0,24,0,0" ItemsSource="{x:Bind ViewModel.DuplicateFiles}">
@@ -148,7 +151,7 @@
                                 <Image Source="{x:Bind File1.Bitmap}" Width="48" Height="48" Stretch="Uniform"/>
                                 <StackPanel Margin="10,0,0,0" Orientation="Vertical">
                                     <TextBlock Text="{x:Bind File1.CreationDate,Converter={StaticResource DateTimeToStringConverter}}"/>
-                                    <TextBlock Text="{x:Bind File1.Bytes}"/>
+                                    <TextBlock Text="{x:Bind File1.Bytes, Converter={StaticResource ReadableSizeConverter}}"/>
                                 </StackPanel>
                             </StackPanel>
                         </CheckBox>
@@ -158,7 +161,7 @@
                                 <Image Source="{x:Bind File2.Bitmap}" Width="48" Height="48" Stretch="Uniform"/>
                                 <StackPanel Margin="10,0,0,0" Orientation="Vertical">
                                     <TextBlock Text="{x:Bind File2.CreationDate, Converter={StaticResource DateTimeToStringConverter}}"/>
-                                    <TextBlock Text="{x:Bind File2.Bytes}"/>
+                                    <TextBlock Text="{x:Bind File2.Bytes,Converter={StaticResource ReadableSizeConverter}}"/>
                                 </StackPanel>
                             </StackPanel>
                         </CheckBox>

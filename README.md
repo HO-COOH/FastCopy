@@ -13,12 +13,12 @@ A GUI wrapper for Windows' built-in `robocopy` ~~and `xcopy`~~.
 ![](Screenshots/OldMenuCopy_Dark.png)
 
 - Integration with Windows Notification Center: a notification toast will pop up when the copy is finished
-![](screenshots/notification.png)
+![](Screenshots/notification.png)
 
 - Integration with taskbar: a progress bar sync with the one inside the window
 
 <p align="center">
-    <image src="screenshots/taskbar-icon.png">
+    <image src="Screenshots/taskbar-icon.png">
 </p>
 
 - Multi-language support
@@ -59,7 +59,7 @@ vcpkg install abseil:x64-windows
 ### Prototype
 [Figma link, you may need to ask for permission.](https://www.figma.com/file/e5hUvDWKO8gZiKXruuNSvL/Xcopy?type=design&node-id=217-31199&t=cKY9TdBJXXi7QdFL-0)
 
-![](screenshots/figma.png)
+![](Screenshots/figma.png)
 
 ![image](https://user-images.githubusercontent.com/6630660/212826364-28155c87-c809-4ab8-b203-c8438fa64749.png)
 

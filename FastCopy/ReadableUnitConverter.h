@@ -12,18 +12,18 @@ namespace ReadableUnitConverter
 		struct FormatString<char>
 		{
 			constexpr static auto B = "{} B";
-			constexpr static auto KB = "{} KB";
-			constexpr static auto MB = "{} MB";
-			constexpr static auto GB = "{} GB";
+			constexpr static auto KB = "{:.2f} KB";
+			constexpr static auto MB = "{:.2f} MB";
+			constexpr static auto GB = "{:.2f} GB";
 		};
 
 		template<>
 		struct FormatString<wchar_t>
 		{
 			constexpr static auto B = L"{} B";
-			constexpr static auto KB = L"{} KB";
-			constexpr static auto MB = L"{} MB";
-			constexpr static auto GB = L"{} GB";
+			constexpr static auto KB = L"{:.2f} KB";
+			constexpr static auto MB = L"{:.2f} MB";
+			constexpr static auto GB = L"{:.2f} GB";
 		};
 
 		constexpr static size_t ToKB = 1024;
@@ -36,10 +36,10 @@ namespace ReadableUnitConverter
 			if (bytes <= ToKB)
 				return std::format(FormatString<Char>::B, bytes);
 			else if (bytes <= ToMB)
-				return std::format(FormatString<Char>::KB, bytes / ToKB);
+				return std::format(FormatString<Char>::KB, static_cast<double>(bytes) / ToKB);
 			else if (bytes <= ToGB)
-				return std::format(FormatString<Char>::MB, bytes / ToMB);
-			else return std::format(FormatString<Char>::GB, bytes / ToGB);
+				return std::format(FormatString<Char>::MB, static_cast<double>(bytes) / ToMB);
+			else return std::format(FormatString<Char>::GB, static_cast<double>(bytes) / ToGB);
 		}
 
 	};

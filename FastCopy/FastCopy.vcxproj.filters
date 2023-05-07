@@ -66,6 +66,9 @@
     <Midl Include="DateTimeToStringConverter.idl">
       <Filter>Views\Converters</Filter>
     </Midl>
+    <Midl Include="ReadableSizeConverter.idl">
+      <Filter>Views\Converters</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />

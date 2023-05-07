@@ -12,5 +12,7 @@ namespace FastCopy
         Boolean Selected;
 
         Microsoft.UI.Xaml.Media.ImageSource Bitmap{ get; };
+
+        event Windows.Foundation.EventHandler<Boolean> SelectionChanged;
     }
 }

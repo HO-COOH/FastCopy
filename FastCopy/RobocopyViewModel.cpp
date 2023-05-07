@@ -173,6 +173,36 @@ namespace winrt::FastCopy::implementation
 			raisePropertyChange(L"SpeedText");
 		});
 	}
+	winrt::Windows::Foundation::IReference<bool> RobocopyViewModel::UseSource()
+	{
+		if (m_useSourceCount == 0)
+			return false;
+		else if (m_useSourceCount < m_duplicateFiles.Size())
+			return nullptr;
+		else
+			return true;
+	}
+	void RobocopyViewModel::UseSource(winrt::Windows::Foundation::IReference<bool> value)
+	{
+		if (!value) return;
+		for (auto fileCompare : m_duplicateFiles)
+			fileCompare.File1().Selected(value.GetBoolean());
+	}
+	winrt::Windows::Foundation::IReference<bool> RobocopyViewModel::UseDestination()
+	{
+		if (m_useDestinationCount == 0)
+			return false;
+		else if (m_useDestinationCount < m_duplicateFiles.Size())
+			return nullptr;
+		else
+			return true;
+	}
+	void RobocopyViewModel::UseDestination(winrt::Windows::Foundation::IReference<bool> value)
+	{
+		if (!value) return;
+		for (auto fileCompare : m_duplicateFiles)
+			fileCompare.File2().Selected(value.GetBoolean());
+	}
 	winrt::hstring RobocopyViewModel::SizeText()
 	{
 		return m_size == 0 ?
