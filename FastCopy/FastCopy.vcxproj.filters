@@ -69,6 +69,9 @@
     <Midl Include="ReadableSizeConverter.idl">
       <Filter>Views\Converters</Filter>
     </Midl>
+    <Midl Include="AnimatedValue.idl">
+      <Filter>ViewHelper</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -397,6 +400,15 @@
     <Filter Include="ViewModel\Robocopy">
       <UniqueIdentifier>{a3f4d143-a3b2-4385-9a07-60ca6769cf1d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Strings">
+      <UniqueIdentifier>{e03bba09-b9e1-4422-80c5-21b54d995e59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\zh-CN">
+      <UniqueIdentifier>{25622ce8-179a-49ca-898c-a33bdd89aacd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\en-US">
+      <UniqueIdentifier>{3c81bba3-3650-452d-964e-8bdb1a3a1948}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="app.manifest" />
@@ -408,5 +420,13 @@
     <None Include="packages.config" />
     <None Include="FastCopy_TemporaryKey.pfx" />
     <None Include="..\x64\Release\FastCopy\FastCopyShellExtension.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\en-US\Resources.resw">
+      <Filter>Strings\en-US</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\zh-CN\Resources.resw">
+      <Filter>Strings\zh-CN</Filter>
+    </PRIResource>
   </ItemGroup>
 </Project>

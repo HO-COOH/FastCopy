@@ -10,6 +10,8 @@
 #include "WindowHelper.h"
 #include "Global.h"
 #include "Taskbar.h"
+#include <winrt/Windows.Graphics.h>
+#include <winrt/Microsoft.UI.Xaml.Media.Animation.h>
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
@@ -24,7 +26,7 @@ namespace winrt::FastCopy::implementation
         InitializeComponent();
 
         //CenterWindow(*this, { 450, 300 });
-        CenterWindow(*this, { 540, 350 });
+        CenterWindow(*this, { 540, 400 });
         auto appWindow = GetAppWindow(*this);
         auto presenter = appWindow.Presenter().as<winrt::Microsoft::UI::Windowing::OverlappedPresenter>();
         presenter.IsResizable(false);
@@ -56,5 +58,13 @@ namespace winrt::FastCopy::implementation
         //    }
         //    hasSetSize = !hasSetSize;
         //});
+
+
     }
+}
+
+
+void winrt::FastCopy::implementation::CopyDialogWindow::CopyDialog_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+
 }

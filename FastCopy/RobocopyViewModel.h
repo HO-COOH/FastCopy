@@ -16,7 +16,9 @@ namespace winrt::FastCopy::implementation
     {
         RobocopyViewModel()
         {
+#ifdef _DEBUG
             m_duplicateFiles.Append({LR"(E:\android-studio-2021.2.1.15-windows_2.exe)", LR"(E:\527.56-desktop-win10-win11-64bit-international-dch-whql.exe)"});
+#endif
         }
 
         winrt::hstring RecordFile();

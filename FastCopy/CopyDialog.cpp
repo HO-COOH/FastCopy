@@ -62,3 +62,25 @@ void winrt::FastCopy::implementation::CopyDialog::CheckBox_Checked(winrt::Window
 {
 	OutputDebugString(L"Checkbox clicked\n");
 }
+
+
+void winrt::FastCopy::implementation::CopyDialog::Button_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+{
+	//winrt::Microsoft::UI::Xaml::Media::Animation::DoubleAnimation animation;
+	//animation.From(0.0);
+	//animation.To(100.0);
+	//animation.Duration({ std::chrono::seconds{ 1 } });
+
+	//winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTargetProperty(animation, L"Value");
+	//winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTarget(animation, m_height);
+	//animation.EnableDependentAnimation(true);
+
+	//winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard storyboard;
+	//storyboard.Children().Append(animation);
+	//storyboard.Begin();
+
+
+	//MyAnimation().SetTarget(MyAnimation(), m_height);
+	//MyAnimation().SetTargetProperty(MyAnimation(), L"Value");
+	//MyAnimation().Begin();
+}

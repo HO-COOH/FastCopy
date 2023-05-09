@@ -129,6 +129,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AcrylicHelper.h" />
+    <ClInclude Include="AnimatedValue.h">
+      <DependentUpon>AnimatedValue.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="BoolToVisibilityConverter.h">
       <DependentUpon>BoolToVisibilityConverter.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -259,6 +263,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AcrylicHelper.cpp" />
+    <ClCompile Include="AnimatedValue.cpp">
+      <DependentUpon>AnimatedValue.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="BoolToVisibilityConverter.cpp">
       <DependentUpon>BoolToVisibilityConverter.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -364,6 +372,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <Midl Include="AnimatedValue.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="App.idl">
       <SubType>Code</SubType>
       <DependentUpon>App.xaml</DependentUpon>
@@ -514,6 +525,10 @@
     <ProjectReference Include="..\FastCopyShellExtension\FastCopyShellExtension.vcxproj">
       <Project>{17f52e4d-1e98-4288-9aa1-20a384171876}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="Strings\en-US\Resources.resw" />
+    <PRIResource Include="Strings\zh-CN\Resources.resw" />
   </ItemGroup>
   <!-- 
     Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution 

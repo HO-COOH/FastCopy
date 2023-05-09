@@ -127,12 +127,15 @@ namespace winrt::FastCopy::implementation
 				{
 					//use fallback
 					std::wstring_view destinationView{ m_destination };
-					
-					Fallback::CopyAddSuffix(
-						**m_iter, 
-						std::wstring_view{ destinationView.substr(0, destinationView.find_last_not_of(L"/\\") + 1) },
-						m_recordFile->GetOperation() == CopyOperation::Move
-					);
+					m_duplicateFiles.Append({
+						**m_iter,
+						std::format(LR"({}\{})", m_destination.data(), std::filesystem::path{ **m_iter }.filename().wstring())
+					});
+					//Fallback::CopyAddSuffix(
+					//	**m_iter, 
+					//	std::wstring_view{ destinationView.substr(0, destinationView.find_last_not_of(L"/\\") + 1) },
+					//	m_recordFile->GetOperation() == CopyOperation::Move
+					//);
 				}
 				m_finishedFiles += m_recordFile->GetNumFiles(m_recordFile->IndexOf(*m_iter));
 				Global::UIThread.TryEnqueue([this] 

@@ -4,6 +4,7 @@
 #pragma once
 
 #include "CopyDialogWindow.g.h"
+#include "AnimatedValue.g.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -11,7 +12,8 @@ namespace winrt::FastCopy::implementation
     {
         CopyDialogWindow();
 
-        winrt::Microsoft::UI::Xaml::Controls::Button m_button;
+    public:
+        void CopyDialog_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
     };
 }
 

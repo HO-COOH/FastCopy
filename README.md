@@ -23,7 +23,7 @@ A GUI wrapper for Windows' built-in `robocopy` ~~and `xcopy`~~.
 
 - Multi-language support
   + English
-  + Chinese (WIP)
+  + 中文
 
 ## Usage
 1. Using file explorer, select some files/folders, as many as you want >> right click >> move to **FastCopy** >> select **Copy** or **Move**

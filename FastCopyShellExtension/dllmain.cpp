@@ -15,6 +15,7 @@
 #include "IconProvider.h"
 #include "ShellItemArray.h"
 #include "ShellItem.h"
+#include "CopyOperationNames.h"
 
 
 #pragma comment(lib,"runtimeobject")

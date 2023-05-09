@@ -10,5 +10,5 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <local:CopyDialog x:Name="CopyDialog"/>
+    <local:CopyDialog x:Name="CopyDialog" Loaded="CopyDialog_Loaded"/>
 </Window>

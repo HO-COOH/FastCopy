@@ -61,6 +61,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <TextBlock Style="{StaticResource HeaderTextStyle}">
@@ -76,11 +77,11 @@
                 <Run Text="{x:Bind ViewModel.FinishedItemCount, Mode=OneWay}"/>
                 /
                 <Run Text="{x:Bind ViewModel.ItemCount, Mode=OneWay}"/>
-                <Run Text="items from "/>
+                <Run x:Uid="ItemsFromText"/>
             </TextBlock>
 
             <TextBlock Style="{StaticResource StatusTextStyle}" Foreground="LightGreen" Text="{x:Bind ViewModel.Source, Mode=OneWay}" Margin="3,0,0,0"/>
-            <TextBlock Style="{StaticResource StatusTextStyle}" Text=" to "/>
+            <TextBlock Style="{StaticResource StatusTextStyle}" x:Uid="ToText"/>
             <Button FontSize="11" Padding="2" Foreground="LightGreen" Content="{x:Bind ViewModel.Destination, Mode=OneWay}" Background="Transparent" BorderThickness="0" Margin="2,-3,0,0" Click="HyperlinkButton_Click"/>
         </StackPanel>
 
@@ -114,12 +115,14 @@
             </Grid.RowDefinitions>
 
             <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Height="55" Padding="0,25,0,20" LineHeight="42" VerticalAlignment="Center" FontSize="12">
-                <Run Text="Destination folder contains 3 duplicates"/>
+                <Run x:Uid="DestinationFolderContains"/>
+                <Run Text="{x:Bind ViewModel.DuplicateFiles.Size, Mode=OneWay}"/>
+                <Run x:Uid="Duplicates"/>
             </TextBlock>
 
             <Line Margin="0,0,0,0" Grid.Row="1" Grid.ColumnSpan="2" X1="0" X2="500" Y1="0" Y2="0" Stroke="{StaticResource SeperatorLineColor}" Opacity="{StaticResource SeperatorLineOpacity}"/>
-            <CheckBox Grid.Row="1" Content="Use source" Checked="CheckBox_Checked" IsThreeState="True" IsChecked="{x:Bind ViewModel.UseSource, Mode=TwoWay}"/>
-            <CheckBox Grid.Row="1" Grid.Column="1" Content="Use destination" IsThreeState="True" IsChecked="{x:Bind ViewModel.UseDestination, Mode=TwoWay}"/>
+            <CheckBox Grid.Row="1" x:Uid="UseSourceCheckBox" Checked="CheckBox_Checked" IsThreeState="True" IsChecked="{x:Bind ViewModel.UseSource, Mode=TwoWay}"/>
+            <CheckBox Grid.Row="1" x:Uid="UseDestinationCheckBox" Grid.Column="1" IsThreeState="True" IsChecked="{x:Bind ViewModel.UseDestination, Mode=TwoWay}"/>
             <Line Margin="0,0,0,0" Grid.Row="1" Grid.ColumnSpan="2" X1="0" X2="500" Y1="45" Y2="45" Stroke="{StaticResource SeperatorLineColor}" Opacity="{StaticResource SeperatorLineOpacity}"/>
         </Grid>
 
@@ -171,5 +174,7 @@
                 </DataTemplate>
             </ItemsRepeater.ItemTemplate>
         </ItemsRepeater>
+
+        <Button x:Uid="ContinueButton" HorizontalAlignment="Right" Grid.Row="5" Style="{StaticResource AccentButtonStyle}" Loaded="Button_Loaded"/>
     </Grid>
 </Page>

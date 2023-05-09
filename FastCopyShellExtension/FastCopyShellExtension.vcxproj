@@ -172,6 +172,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CopyOperationNames.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="IconProvider.cpp" />
     <ClCompile Include="Recorder.cpp" />
@@ -184,6 +185,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CopyOperation.h" />
+    <ClInclude Include="CopyOperationNames.h" />
     <ClInclude Include="IconProvider.h" />
     <ClInclude Include="Recorder.h" />
     <ClInclude Include="resource.h" />
