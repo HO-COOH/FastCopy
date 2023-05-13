@@ -120,6 +120,12 @@
   <data name="ContinueButton.Content" xml:space="preserve">
     <value>Continue</value>
   </data>
+  <data name="CopyOperation" xml:space="preserve">
+    <value>Copying </value>
+  </data>
+  <data name="DeleteOperation" xml:space="preserve">
+    <value>Deleting </value>
+  </data>
   <data name="DestinationFolderContains.Text" xml:space="preserve">
     <value>Destination folder contains</value>
   </data>
@@ -128,6 +134,9 @@
   </data>
   <data name="ItemsFromText.Text" xml:space="preserve">
     <value>items from </value>
+  </data>
+  <data name="MoveOperation" xml:space="preserve">
+    <value>Moving </value>
   </data>
   <data name="ToText.Text" xml:space="preserve">
     <value>to</value>

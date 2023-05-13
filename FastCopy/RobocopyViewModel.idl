@@ -23,5 +23,8 @@ namespace FastCopy
         void RemoveSource();
         void AddDestination();
         void RemoveDestination();
+
+        void ConfirmDuplicates();
+        Boolean CanContinue{ get; };
     }
 }

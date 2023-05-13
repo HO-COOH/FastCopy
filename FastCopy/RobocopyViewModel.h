@@ -17,7 +17,7 @@ namespace winrt::FastCopy::implementation
         RobocopyViewModel()
         {
 #ifdef _DEBUG
-            m_duplicateFiles.Append({LR"(E:\android-studio-2021.2.1.15-windows_2.exe)", LR"(E:\527.56-desktop-win10-win11-64bit-international-dch-whql.exe)"});
+            //m_duplicateFiles.Append({LR"(E:\android-studio-2021.2.1.15-windows_2.exe)", LR"(E:\527.56-desktop-win10-win11-64bit-international-dch-whql.exe)"});
 #endif
         }
 
@@ -56,15 +56,26 @@ namespace winrt::FastCopy::implementation
         void RemoveSource() { --m_useSourceCount; raisePropertyChange(L"UseSource"); }
         void AddDestination() { ++m_useDestinationCount; raisePropertyChange(L"UseDestination"); }
         void RemoveDestination() { --m_useDestinationCount; raisePropertyChange(L"UseDestination"); }
+
+        void ConfirmDuplicates();
+        bool CanContinue() { return m_canContinue; }
     private:
+        bool m_canContinue = false;
+        bool m_hasDuplicates = false;
         int m_useSourceCount{};
         int m_useDestinationCount{};
         winrt::event<winrt::Windows::Foundation::EventHandler<winrt::FastCopy::FinishState>> m_finishEvent;
         std::optional<RobocopyProcess> m_process;
         winrt::hstring m_destination;
         uint64_t m_size{};
+
         std::optional<TaskFile> m_recordFile;
         mutable std::optional<TaskFile::TaskFileIterator<typename std::vector<std::wstring>::iterator>> m_iter;
+
+        std::optional<std::vector<winrt::FastCopy::FileCompareViewModel>> m_duplicateFileTask;
+        std::optional<std::vector<winrt::FastCopy::FileCompareViewModel>::iterator> m_duplicateFileTaskIter;
+        std::atomic_bool m_hasConfirmed = false;
+
         Concurrency::task<void> m_countItemTask;
         winrt::hstring m_speedText;
         int m_finishedFiles{};
@@ -76,6 +87,20 @@ namespace winrt::FastCopy::implementation
          * returns false in such cases
          */
         bool canUseRobocopy() const;
+
+        /**
+         * @brief Called after normal robocopy stages finished 
+         */
+        void onNormalRobocopyFinished();
+
+        /**
+         * @brief Called after fallback copy stages finished
+         */
+        void onFallbackFinished();
+
+        void onAllFinished();
+
+        void raiseProgressChange();
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::FileCompareViewModel> m_duplicateFiles = winrt::single_threaded_observable_vector<winrt::FastCopy::FileCompareViewModel>();
     };
 }

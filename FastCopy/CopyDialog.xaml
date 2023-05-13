@@ -5,7 +5,8 @@
     xmlns:local="using:FastCopy"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    RequestedTheme="Dark">
 
     <Page.Resources>
         <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
@@ -54,18 +55,18 @@
         <x:Double x:Key="SeperatorLineOpacity">0.1</x:Double>
     </Page.Resources>
     
-    <Grid Margin="15" x:Name="MainPanel">
+    <Grid Margin="15" x:Name="MainPanel" SizeChanged="MainPanel_SizeChanged">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <TextBlock Style="{StaticResource HeaderTextStyle}">
-            <Run Text="{x:Bind ViewModel.Percent,Converter={StaticResource NumberToStringConverter}, ConverterParameter=2, Mode=OneWay}"/>% Complete
+            <Run Text="{x:Bind ViewModel.Percent,Converter={StaticResource NumberToStringConverter}, ConverterParameter=2, Mode=OneWay}"/>%
         </TextBlock>
 
         <TextBlock x:Name="SpeedText" Text="{x:Bind ViewModel.SpeedText,Mode=OneWay}" Style="{StaticResource StatusTextStyle}" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
@@ -99,12 +100,12 @@
             </Button>
         </StackPanel>
 
-        <local:ProgressBarEx x:Name="ProgressBar" Loaded="ProgressBar_Loaded" Margin="0,10,0,0" HorizontalAlignment="Stretch" 
+        <local:ProgressBarEx x:Name="ProgressBar" Loaded="ProgressBar_Loaded" Margin="0,10,0,0" HorizontalAlignment="Stretch"
                              Percent="{x:Bind ViewModel.Percent, Mode=OneWay}" Height="5" Color="Green" Grid.Row="2"/>
-        
+
         <!---Red: BB0000 -->
         <!--Duplicate files area-->
-        <Grid Grid.Row="3">
+        <Grid Grid.Row="3" x:Name="DuplicateFileInfoGrid" x:Load="False">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -126,55 +127,67 @@
             <Line Margin="0,0,0,0" Grid.Row="1" Grid.ColumnSpan="2" X1="0" X2="500" Y1="45" Y2="45" Stroke="{StaticResource SeperatorLineColor}" Opacity="{StaticResource SeperatorLineOpacity}"/>
         </Grid>
 
-        <ItemsRepeater Grid.Row="4" Margin="0,24,0,0" ItemsSource="{x:Bind ViewModel.DuplicateFiles}">
-            <ItemsRepeater.Layout>
-                <StackLayout Orientation="Vertical"/>
-            </ItemsRepeater.Layout>
-            <ItemsRepeater.ItemTemplate>
-                <DataTemplate x:DataType="local:FileCompareViewModel">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+        <ScrollViewer Grid.Row="4" Margin="0,24,0,0">
+            <ItemsRepeater x:Load="False" Grid.Row="4"  ItemsSource="{x:Bind ViewModel.DuplicateFiles}" x:Name="DuplicateFileItems">
+                <ItemsRepeater.Layout>
+                    <StackLayout Orientation="Vertical"/>
+                </ItemsRepeater.Layout>
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="local:FileCompareViewModel">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
-                        <StackPanel Grid.ColumnSpan="2" HorizontalAlignment="Left" CornerRadius="3">
-                            <StackPanel.Background>
-                                <SolidColorBrush Color="{StaticResource DuplicateFilenameColor}" Opacity="{StaticResource DuplicateFilenameBackgroundOpacity}"/>
-                            </StackPanel.Background>
-                            <TextBlock Padding="4,0,4,4" Text="{x:Bind File1.Filename}" Foreground="{StaticResource DuplicateFilenameColor}"/>
-                        </StackPanel>
-                        <CheckBox Grid.Row="1" Margin="0,5,0,0" IsChecked="{x:Bind File1.Selected, Mode=TwoWay}">
-                            <StackPanel Orientation="Horizontal" Margin="11,0,0,0">
-                                <Image Source="{x:Bind File1.Bitmap}" Width="48" Height="48" Stretch="Uniform"/>
-                                <StackPanel Margin="10,0,0,0" Orientation="Vertical">
-                                    <TextBlock Text="{x:Bind File1.CreationDate,Converter={StaticResource DateTimeToStringConverter}}"/>
-                                    <TextBlock Text="{x:Bind File1.Bytes, Converter={StaticResource ReadableSizeConverter}}"/>
-                                </StackPanel>
+                            <StackPanel Grid.ColumnSpan="2" HorizontalAlignment="Left" CornerRadius="3">
+                                <StackPanel.Background>
+                                    <SolidColorBrush Color="{StaticResource DuplicateFilenameColor}" Opacity="{StaticResource DuplicateFilenameBackgroundOpacity}"/>
+                                </StackPanel.Background>
+                                <TextBlock Padding="4,0,4,4" Text="{x:Bind File1.Filename}" Foreground="{StaticResource DuplicateFilenameColor}"/>
                             </StackPanel>
-                        </CheckBox>
-
-                        <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{x:Bind File2.Selected, Mode=TwoWay}">
-                            <StackPanel Orientation="Horizontal" Margin="11,0,0,0">
-                                <Image Source="{x:Bind File2.Bitmap}" Width="48" Height="48" Stretch="Uniform"/>
-                                <StackPanel Margin="10,0,0,0" Orientation="Vertical">
-                                    <TextBlock Text="{x:Bind File2.CreationDate, Converter={StaticResource DateTimeToStringConverter}}"/>
-                                    <TextBlock Text="{x:Bind File2.Bytes,Converter={StaticResource ReadableSizeConverter}}"/>
+                            <CheckBox Grid.Row="1" Margin="0,5,0,0" IsChecked="{x:Bind File1.Selected, Mode=TwoWay}">
+                                <StackPanel Orientation="Horizontal" Margin="11,0,0,0">
+                                    <Image Source="{x:Bind File1.Bitmap}" Width="48" Height="48" Stretch="Uniform"/>
+                                    <StackPanel Margin="10,0,0,0" Orientation="Vertical">
+                                        <TextBlock Text="{x:Bind File1.CreationDate,Converter={StaticResource DateTimeToStringConverter}}"/>
+                                        <TextBlock Text="{x:Bind File1.Bytes, Converter={StaticResource ReadableSizeConverter}}"/>
+                                    </StackPanel>
                                 </StackPanel>
-                            </StackPanel>
-                        </CheckBox>
+                            </CheckBox>
 
-                        <Line Margin="0,22,0,0" Grid.Row="2" Grid.ColumnSpan="2" X1="0" X2="500" Stroke="{StaticResource SeperatorLineColor}" Opacity="{StaticResource SeperatorLineOpacity}"/>
-                    </Grid>
-                </DataTemplate>
-            </ItemsRepeater.ItemTemplate>
-        </ItemsRepeater>
+                            <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{x:Bind File2.Selected, Mode=TwoWay}">
+                                <StackPanel Orientation="Horizontal" Margin="11,0,0,0">
+                                    <Image Source="{x:Bind File2.Bitmap}" Width="48" Height="48" Stretch="Uniform"/>
+                                    <StackPanel Margin="10,0,0,0" Orientation="Vertical">
+                                        <TextBlock Text="{x:Bind File2.CreationDate, Converter={StaticResource DateTimeToStringConverter}}"/>
+                                        <TextBlock Text="{x:Bind File2.Bytes,Converter={StaticResource ReadableSizeConverter}}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </CheckBox>
 
-        <Button x:Uid="ContinueButton" HorizontalAlignment="Right" Grid.Row="5" Style="{StaticResource AccentButtonStyle}" Loaded="Button_Loaded"/>
+                            <Line Margin="0,18,0,5" Grid.Row="2" Grid.ColumnSpan="2" X1="0" X2="500" Stroke="{StaticResource SeperatorLineColor}" Opacity="{StaticResource SeperatorLineOpacity}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+        </ScrollViewer>
+
+        <Button x:Load="False" 
+                x:Name="ContinueButton" 
+                x:Uid="ContinueButton"
+                Margin="0,10,0,0"
+                HorizontalAlignment="Right" 
+                Grid.Row="5" 
+                Style="{StaticResource AccentButtonStyle}" 
+                Loaded="Button_Loaded" 
+                Click="{x:Bind ViewModel.ConfirmDuplicates}"
+                IsEnabled="{x:Bind ViewModel.CanContinue,Mode=OneWay}"
+                />
     </Grid>
 </Page>

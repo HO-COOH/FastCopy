@@ -13,6 +13,7 @@
 #include "Taskbar.h"
 #include "Notification.h"
 #include "Fallback.h"
+#include <winrt/Microsoft.Windows.ApplicationModel.Resources.h>
 
 namespace winrt::FastCopy::implementation
 {
@@ -35,7 +36,8 @@ namespace winrt::FastCopy::implementation
 			Global::UIThread.TryEnqueue([this] {
 				raisePropertyChange(L"ItemCount");
 			});
-			Start();
+			//std::this_thread::sleep_for(std::chrono::seconds{ 2 });
+			//Start();
 		});
 	}
 
@@ -54,17 +56,25 @@ namespace winrt::FastCopy::implementation
 			std::format(L"file://{}", backSlashToForwardSlash(m_destination))
 		};
 	}
+
+	static auto getResource(winrt::hstring const& key)
+	{
+		return winrt::Microsoft::Windows::ApplicationModel::Resources::ResourceManager{}
+			.MainResourceMap()
+			.GetValue(key)
+			.ValueAsString();
+	}
 	winrt::hstring RobocopyViewModel::OperationString()
 	{
 		if (!m_recordFile)
 			return L" ";
+
 		switch (m_recordFile->GetOperation())
 		{
-			case CopyOperation::Copy: return L"Copying ";
-			case CopyOperation::Move: return L"Moving ";
-			case CopyOperation::Delete: return L"Deleting ";
-			default:
-				throw std::runtime_error{ "Invalid operation" };
+			case CopyOperation::Copy: return getResource(L"Resources/CopyOperation");
+			case CopyOperation::Move: return getResource(L"Resources/MoveOperation");
+			case CopyOperation::Delete: return getResource(L"Resources/DeleteOperation");
+			default: throw std::runtime_error{ "Invalid operation" };
 		}
 	}
 	int RobocopyViewModel::ItemCount()
@@ -100,8 +110,7 @@ namespace winrt::FastCopy::implementation
 			return 0;
 
 		auto const result = min(100.0, static_cast<float>(m_finishedFiles) / numFiles * 100.0);
-		Taskbar::SetProgressState(Global::MainHwnd, Taskbar::ProgressState::Normal);
-		Taskbar::SetProgressValue(Global::MainHwnd, result);
+		Taskbar::SetProgressValue(Global::MainHwnd, std::clamp<int>(result, 1, 100));
 		return result;
 	}
 	void RobocopyViewModel::Start()
@@ -122,43 +131,29 @@ namespace winrt::FastCopy::implementation
 					m_process.emplace(getRobocopyArg());
 					SetHandle(m_process->Handle());
 					auto const ret = m_process->WaitForExit();
+					m_finishedFiles += m_recordFile->GetNumFiles(m_recordFile->IndexOf(*m_iter));
 				}
 				else
 				{
 					//use fallback
 					std::wstring_view destinationView{ m_destination };
-					m_duplicateFiles.Append({
-						**m_iter,
-						std::format(LR"({}\{})", m_destination.data(), std::filesystem::path{ **m_iter }.filename().wstring())
+					Global::UIThread.TryEnqueue([this, value = **m_iter] {
+						m_duplicateFiles.Append({
+							value,
+							std::format(LR"({}\{})", m_destination.data(), std::filesystem::path{ value }.filename().wstring())
+						});
 					});
-					//Fallback::CopyAddSuffix(
-					//	**m_iter, 
-					//	std::wstring_view{ destinationView.substr(0, destinationView.find_last_not_of(L"/\\") + 1) },
-					//	m_recordFile->GetOperation() == CopyOperation::Move
-					//);
+					m_hasDuplicates = true;
 				}
-				m_finishedFiles += m_recordFile->GetNumFiles(m_recordFile->IndexOf(*m_iter));
-				Global::UIThread.TryEnqueue([this] 
-				{ 
-					raisePropertyChange(L"Percent");
-					raisePropertyChange(L"FinishedItemCount");
-				});
+				raiseProgressChange();
 				++*m_iter;
 			}
 			if (*m_iter == m_recordFile->end())
 			{
-				Notification::SendSuccess(std::format(L"Successfully {} {} files",
-					[this] {
-						switch (m_recordFile->GetOperation())
-						{
-							case CopyOperation::Copy: return L"copied";
-							case CopyOperation::Move: return L"moved";
-							case CopyOperation::Delete: return L"deleted";
-						}
-					}(), m_finishedFiles).data(), m_destination);
-				std::filesystem::remove(m_recordFile->GetPath().data());
-				m_finishEvent(*this, FinishState::Success);
+				onNormalRobocopyFinished();
 			}
+			if (m_hasConfirmed)
+				ConfirmDuplicates();
 		});
 	}
 	void RobocopyViewModel::Pause()
@@ -206,6 +201,53 @@ namespace winrt::FastCopy::implementation
 		for (auto fileCompare : m_duplicateFiles)
 			fileCompare.File2().Selected(value.GetBoolean());
 	}
+
+	void RobocopyViewModel::ConfirmDuplicates()
+	{
+		m_hasConfirmed = true;
+		if (!m_duplicateFileTask.has_value())
+		{
+			m_duplicateFileTask.emplace();
+			std::copy(m_duplicateFiles.begin(), m_duplicateFiles.end(), std::back_inserter(*m_duplicateFileTask));
+			m_duplicateFiles.Clear();
+			m_duplicateFileTaskIter = m_duplicateFileTask->begin();
+		}
+
+		while(m_duplicateFileTaskIter != m_duplicateFileTask->end() && m_status == Status::Running)
+		{
+			auto duplicate = **m_duplicateFileTaskIter;
+			auto file1 = duplicate.File1();
+			auto file2 = duplicate.File2();
+			auto const file1Selected = file1.Selected();
+			auto const file2Selected = file2.Selected();
+
+			if (file1Selected && file2Selected)
+			{
+				std::wstring_view destinationView{ m_destination };
+				Fallback::CopyAddSuffix(
+					file1.Path().data(),
+					std::wstring_view{ destinationView.substr(0, destinationView.find_last_not_of(L"/\\") + 1) },
+					m_recordFile->GetOperation() == CopyOperation::Move
+				);
+			}
+			else if (file1Selected)
+			{
+				try {
+					std::filesystem::copy(file1.Path().data(), m_destination.data(), std::filesystem::copy_options::overwrite_existing);
+				}
+				catch (std::exception const& e)
+				{
+					OutputDebugStringA(e.what());
+				}
+			}
+			++m_finishedFiles;
+			++*m_duplicateFileTaskIter;
+			raiseProgressChange();
+		}
+		if (*m_duplicateFileTaskIter == m_duplicateFileTask->end())
+			onFallbackFinished();
+	}
+
 	winrt::hstring RobocopyViewModel::SizeText()
 	{
 		return m_size == 0 ?
@@ -242,9 +284,49 @@ namespace winrt::FastCopy::implementation
 
 	bool RobocopyViewModel::canUseRobocopy() const
 	{
-		auto const fileName = std::filesystem::path{ **m_iter }.filename().wstring();
+		std::filesystem::path sourcePath{ **m_iter };
+		auto const fileName = sourcePath.filename().wstring();
 		return !std::filesystem::exists(
 			std::format(LR"({}\{})", m_destination.data(), fileName)
-		);
+		) || sourcePath.parent_path() == std::filesystem::path{ m_destination.data() };
+	}
+	void RobocopyViewModel::onNormalRobocopyFinished()
+	{
+		if (m_hasDuplicates)
+		{
+			m_canContinue = true;
+			Taskbar::SetProgressState(Global::MainHwnd, Taskbar::ProgressState::Paused);
+			Global::UIThread.TryEnqueue([this] {raisePropertyChange(L"CanContinue"); });
+		}
+		else
+			onAllFinished();
+	}
+	void RobocopyViewModel::onFallbackFinished()
+	{
+		onAllFinished();
+	}
+	void RobocopyViewModel::onAllFinished()
+	{
+		Notification::SendSuccess(std::format(L"Successfully {} {} files",
+			[this] 
+			{
+				switch (m_recordFile->GetOperation())
+				{
+					case CopyOperation::Copy: return L"copied";
+					case CopyOperation::Move: return L"moved";
+					case CopyOperation::Delete: return L"deleted";
+				}
+			}(), m_finishedFiles).data(), m_destination);
+		std::filesystem::remove(m_recordFile->GetPath().data());
+		m_finishEvent(*this, FinishState::Success);
+	}
+
+	void RobocopyViewModel::raiseProgressChange()
+	{
+		Global::UIThread.TryEnqueue([this] 
+		{ 
+			raisePropertyChange(L"Percent");
+			raisePropertyChange(L"FinishedItemCount");
+		});
 	}
 }

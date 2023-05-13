@@ -12,6 +12,7 @@
 #include "Taskbar.h"
 #include <winrt/Windows.Graphics.h>
 #include <winrt/Microsoft.UI.Xaml.Media.Animation.h>
+#include "ViewModelLocator.h"
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
@@ -25,8 +26,7 @@ namespace winrt::FastCopy::implementation
     {
         InitializeComponent();
 
-        //CenterWindow(*this, { 450, 300 });
-        CenterWindow(*this, { 540, 400 });
+        CenterWindow(*this, m_currentSize);
         auto appWindow = GetAppWindow(*this);
         auto presenter = appWindow.Presenter().as<winrt::Microsoft::UI::Windowing::OverlappedPresenter>();
         presenter.IsResizable(false);
@@ -59,7 +59,27 @@ namespace winrt::FastCopy::implementation
         //    hasSetSize = !hasSetSize;
         //});
 
+        ViewModelLocator::GetInstance().RobocopyViewModel().DuplicateFiles().VectorChanged(
+            [this](winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::FileCompareViewModel> original, auto)
+            {
+                auto const numElements = original.Size();
+                auto const isEmpty = numElements == 0;
+                if (isEmpty && m_currentSize != Sizes[0])
+                {
+                    ResizeWindow(*this, Sizes[0]);
+                    m_currentSize = Sizes[0];
+                }
+                else if (!isEmpty)
+                {
+                    auto const clamped = std::clamp<uint32_t>(numElements, 0, std::size(Sizes) - 1);
+                    if (m_currentSize == Sizes[clamped])
+                        return;
 
+                    ResizeWindow(*this, Sizes[clamped]);
+                    m_currentSize = Sizes[clamped];
+                }
+            }
+        );
     }
 }
 

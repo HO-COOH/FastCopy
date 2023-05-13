@@ -176,6 +176,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="IconProvider.cpp" />
     <ClCompile Include="Recorder.cpp" />
+    <ClCompile Include="Registry.cpp" />
     <ClCompile Include="ShellItem.cpp" />
     <ClCompile Include="ShellItemArray.cpp" />
   </ItemGroup>
@@ -188,6 +189,7 @@
     <ClInclude Include="CopyOperationNames.h" />
     <ClInclude Include="IconProvider.h" />
     <ClInclude Include="Recorder.h" />
+    <ClInclude Include="Registry.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ShellItem.h" />
     <ClInclude Include="ShellItemArray.h" />

@@ -16,6 +16,7 @@
 #include "ShellItemArray.h"
 #include "ShellItem.h"
 #include "CopyOperationNames.h"
+#include "Registry.h"
 
 
 #pragma comment(lib,"runtimeobject")
@@ -192,7 +193,7 @@ class SubCommand final :
         auto result = ShellExecute(
             NULL,
             L"open",
-            std::format(LR"(fastcopy://"{}")", arg).data(),
+            std::format(LR"(fastcopy://"{}"|{})", arg, Registry{}.read(L"record")).data(),
             nullptr,
             nullptr,
             SW_SHOW

@@ -12,8 +12,13 @@ namespace winrt::FastCopy::implementation
     {
         CopyDialogWindow();
 
-    public:
         void CopyDialog_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+
+    private:
+        constexpr static winrt::Windows::Graphics::SizeInt32 Sizes[] = { { 450,120 }, { 540,400 }, {540, 495}, {540, 595} };
+
+        //Cache it to improve efficiency so that we dont' resize window every time vector is changed
+        winrt::Windows::Graphics::SizeInt32 m_currentSize = Sizes[0];
     };
 }
 

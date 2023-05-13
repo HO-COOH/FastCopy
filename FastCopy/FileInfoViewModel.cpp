@@ -138,6 +138,10 @@ namespace winrt::FastCopy::implementation
 	winrt::Microsoft::UI::Xaml::Media::ImageSource FileInfoViewModel::Bitmap()
 	{
 		auto icon = GetImage(m_path.data());
-		return HIconToWriteableBitmap(icon);
+		if (icon)
+			return HIconToWriteableBitmap(icon);
+
+		winrt::Microsoft::UI::Xaml::Media::Imaging::BitmapImage image{ winrt::Windows::Foundation::Uri{L"ms-appx:///Assets/FileDefault.ico" } };
+		return image;
 	}
 }

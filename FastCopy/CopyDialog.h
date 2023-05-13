@@ -7,12 +7,7 @@ namespace winrt::FastCopy::implementation
 {
     struct CopyDialog : CopyDialogT<CopyDialog>
     {
-        CopyDialog() 
-        {
-            // Xaml objects should not call InitializeComponent during construction.
-            // See https://github.com/microsoft/cppwinrt/tree/master/nuget#initializecomponent
-            InitializeComponent();
-        }
+        CopyDialog();
 
         winrt::FastCopy::RobocopyViewModel ViewModel();
         void ProgressBar_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
@@ -20,7 +15,7 @@ namespace winrt::FastCopy::implementation
         void PauseButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void CheckBox_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void Button_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-
+        void MainPanel_SizeChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e);
     private:
         winrt::FastCopy::AnimatedValue m_height;
     };

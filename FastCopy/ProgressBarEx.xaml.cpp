@@ -28,7 +28,7 @@ namespace winrt::FastCopy::implementation
 	);
 
 	winrt::Microsoft::UI::Xaml::DependencyProperty ProgressBarEx::s_percentProperty = winrt::Microsoft::UI::Xaml::DependencyProperty::Register(
-		L"Color",
+		L"Percent",
 		winrt::xaml_typename<double>(),
 		winrt::xaml_typename<winrt::FastCopy::ProgressBarEx>(),
 		winrt::Microsoft::UI::Xaml::PropertyMetadata{ winrt::box_value(0.0) }
@@ -90,5 +90,3 @@ namespace winrt::FastCopy::implementation
 			m_propertySet.InsertScalar(L"width", width);
 	}
 }
-
-

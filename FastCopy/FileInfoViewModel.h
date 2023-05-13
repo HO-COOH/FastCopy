@@ -11,6 +11,7 @@ namespace winrt::FastCopy::implementation
         {
         }
 
+        winrt::hstring Path() { return m_path; }
         winrt::hstring Filename();
         winrt::Windows::Foundation::DateTime CreationDate();
         uint64_t Bytes();

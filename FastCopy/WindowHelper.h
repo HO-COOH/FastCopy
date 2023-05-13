@@ -40,5 +40,5 @@ void MoveAndResizeWindow(winrt::Microsoft::UI::Xaml::Window window, winrt::Windo
 void CenterWindow(winrt::Microsoft::UI::Xaml::Window window, winrt::Windows::Graphics::SizeInt32 size);
 
 
-
+void ResizeWindow(winrt::Microsoft::UI::Xaml::Window window, winrt::Windows::Graphics::SizeInt32 size);
 

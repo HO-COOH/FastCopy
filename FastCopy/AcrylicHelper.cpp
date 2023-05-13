@@ -45,6 +45,13 @@ bool AcrylicHelper::trySetAcrylicBackdrop(AcrylicParameter const& parameter)
             m_window.Activated(activatedToken);
         }
     );
+
+    m_window.Content().as<winrt::Microsoft::UI::Xaml::FrameworkElement>().ActualThemeChanged([this](auto, auto)
+    {
+        if(m_configurationSource)
+            setConfigurationSourceTheme();
+    });
+
     m_configurationSource.IsInputActive(true);
     setConfigurationSourceTheme();
     auto pt = m_window.try_as<winrt::Microsoft::UI::Composition::ICompositionSupportsSystemBackdrop>();
@@ -110,6 +117,13 @@ bool MicaHelper::trySetMicaBackdrop(MicaParameter const& parameter)
         m_configurationSource = nullptr;
         m_window.Activated(activatedToken);
     });
+
+    m_window.Content().as<winrt::Microsoft::UI::Xaml::FrameworkElement>().ActualThemeChanged([this](auto, auto)
+    {
+        if (m_configurationSource)
+            setConfigurationSourceTheme();
+    });
+
     m_configurationSource.IsInputActive(true);
     setConfigurationSourceTheme();
     auto pt = m_window.try_as<winrt::Microsoft::UI::Composition::ICompositionSupportsSystemBackdrop>();

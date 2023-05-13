@@ -24,6 +24,7 @@ namespace winrt::FastCopy::implementation
 	{
 		if (ProgressBar().ActualWidth() != 0 && !std::isnan(ProgressBar().ActualWidth()))
 		{
+		 
 			WidthAnimation().To(ProgressBar().ActualWidth());
 			ProgressBarEntranceAnimation().Begin();
 		}
@@ -55,6 +56,39 @@ namespace winrt::FastCopy::implementation
 		}
 	}
 
+	CopyDialog::CopyDialog()
+	{
+		InitializeComponent();
+		ViewModel().DuplicateFiles().VectorChanged(
+			[this](winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::FileCompareViewModel> original, auto)
+			{
+				if (original.Size() == 0)
+				{
+					UnloadObject(DuplicateFileInfoGrid());
+					UnloadObject(ContinueButton());
+				}
+				else
+				{
+					DispatcherQueue().TryEnqueue([this] 
+					{
+						FindName(L"ContinueButton");
+						FindName(L"DuplicateFileItems");
+						FindName(L"DuplicateFileInfoGrid");
+					});
+				}
+			}
+		);
+	}
+
+	void CopyDialog::MainPanel_SizeChanged(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e)
+	{
+		//The width will not automatically resized after applying storyboard animation
+		//need this function to set it manually
+		auto width = e.NewSize().Width;
+		if (width != 0 && !std::isnan(width))
+			ProgressBar().Width(width);
+	}
+
 }
 
 
@@ -66,6 +100,7 @@ void winrt::FastCopy::implementation::CopyDialog::CheckBox_Checked(winrt::Window
 
 void winrt::FastCopy::implementation::CopyDialog::Button_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 {
+
 	//winrt::Microsoft::UI::Xaml::Media::Animation::DoubleAnimation animation;
 	//animation.From(0.0);
 	//animation.To(100.0);
@@ -84,3 +119,5 @@ void winrt::FastCopy::implementation::CopyDialog::Button_Loaded(winrt::Windows::
 	//MyAnimation().SetTargetProperty(MyAnimation(), L"Value");
 	//MyAnimation().Begin();
 }
+
+

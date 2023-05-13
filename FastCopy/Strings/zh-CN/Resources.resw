@@ -120,6 +120,12 @@
   <data name="ContinueButton.Content" xml:space="preserve">
     <value>继续</value>
   </data>
+  <data name="CopyOperation" xml:space="preserve">
+    <value>正在复制</value>
+  </data>
+  <data name="DeleteOperation" xml:space="preserve">
+    <value>正在删除</value>
+  </data>
   <data name="DestinationFolderContains.Text" xml:space="preserve">
     <value>目标文件夹包含</value>
   </data>
@@ -128,6 +134,9 @@
   </data>
   <data name="ItemsFromText.Text" xml:space="preserve">
     <value>从</value>
+  </data>
+  <data name="MoveOperation" xml:space="preserve">
+    <value>正在移动</value>
   </data>
   <data name="ToText.Text" xml:space="preserve">
     <value>到</value>

@@ -5,6 +5,7 @@
 #include <Windows.h>
 #include <filesystem>
 #include "ShellItem.h"
+#include "Registry.h"
 
 static auto GetLocalDataFolder()
 {
@@ -30,9 +31,10 @@ static auto GetTimeString()
 
 Recorder::Recorder(CopyOperation op) 
 {
-	std::filesystem::remove_all(GetLocalDataFolder());
 	std::filesystem::create_directory(GetLocalDataFolder());
-	m_fs = _wfopen(GetRecordFilePath(op).data(), L"wb");
+	auto const filename = GetRecordFilePath(op);
+	Registry{}.write(L"record", filename);
+	m_fs = _wfopen(filename.data(), L"wb");
 	if (!m_fs)
 		throw std::runtime_error{ "Cannot open file" };
 }

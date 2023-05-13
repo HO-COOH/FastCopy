@@ -106,6 +106,11 @@ void App::OnLaunched(LaunchActivatedEventArgs const&)
     auto const destination = Command::Get().GetDestination();
     if (destination.empty())
         return;
+#ifndef _DEBUG
+    if (recordFile.empty())
+        return;
+#endif // !_DEBUG
+
     //MessageBox(NULL, destination.data(), L"", 0);
     viewModel.Destination(destination);
     viewModel.RecordFile(recordFile);
@@ -122,6 +127,6 @@ void App::OnLaunched(LaunchActivatedEventArgs const&)
     window = make<CopyDialogWindow>();
     window.Activate();
     m_helper.emplace(window);
-
+    viewModel.Start();
 
 }

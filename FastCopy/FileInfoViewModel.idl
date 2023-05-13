@@ -6,6 +6,7 @@ namespace FastCopy
     {
         FileInfoViewModel(String path);
         
+        String Path{ get; };
         String Filename{ get; };
         Windows.Foundation.DateTime CreationDate{ get; };
         UInt64 Bytes{ get; };

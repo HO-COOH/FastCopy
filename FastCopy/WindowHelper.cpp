@@ -45,6 +45,14 @@ void CenterWindow(winrt::Microsoft::UI::Xaml::Window window, winrt::Windows::Gra
     });
 }
 
+void ResizeWindow(winrt::Microsoft::UI::Xaml::Window window, winrt::Windows::Graphics::SizeInt32 size)
+{
+    auto const dpi = GetDpiForWindow(GetHwnd(window));
+    size.Height = ScaleForDpi(size.Height, dpi);
+    size.Width = ScaleForDpi(size.Width, dpi);
+    GetAppWindow(window).Resize(size);
+}
+
 MONITORINFO MonitorInfo::GetFromPoint(POINT p)
 {
     MONITORINFO info
