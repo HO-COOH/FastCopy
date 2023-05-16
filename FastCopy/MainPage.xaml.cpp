@@ -18,40 +18,12 @@ namespace winrt::FastCopy::implementation
     MainPage::MainPage()
     {
         InitializeComponent();
-        switch (ViewModel().Mode())
-        {
-            case FastCopy::Mode::Copy: CopyModeItem_Click(nullptr, nullptr); break;
-            case FastCopy::Mode::Move: MoveModeItem_Click(nullptr, nullptr); break;
-            case FastCopy::Mode::Custom: CustomModeItem_Click(nullptr, nullptr); break;
-            default: throw std::exception{ "Unknown xcopy mode" };
-        }
     }
 
     winrt::FastCopy::XCopyViewModel MainPage::ViewModel()
     {
         return ViewModelLocator::GetInstance().XCopyViewModel();
     }
-}
-
-
-void winrt::FastCopy::implementation::MainPage::CopyModeItem_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
-{
-    ViewModel().Mode(FastCopy::Mode::Copy);
-    ModeButton().Content(winrt::box_value(L"Copy"));
-}
-
-
-void winrt::FastCopy::implementation::MainPage::CustomModeItem_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
-{
-    ViewModel().Mode(FastCopy::Mode::Custom);
-    ModeButton().Content(winrt::box_value(L"Custom"));
-}
-
-
-void winrt::FastCopy::implementation::MainPage::MoveModeItem_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
-{
-    ViewModel().Mode(FastCopy::Mode::Move);
-    ModeButton().Content(winrt::box_value(L"Move"));
 }
 
 

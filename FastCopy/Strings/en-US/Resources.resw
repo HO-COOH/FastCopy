@@ -117,11 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AcrylicItem.Content" xml:space="preserve">
+    <value>Acrylic</value>
+  </data>
   <data name="ContinueButton.Content" xml:space="preserve">
     <value>Continue</value>
   </data>
   <data name="CopyOperation" xml:space="preserve">
     <value>Copying </value>
+  </data>
+  <data name="CustomItem.Content" xml:space="preserve">
+    <value>Disable</value>
+  </data>
+  <data name="DarkThemeItem.Content" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="DefaultThemeItem.Content" xml:space="preserve">
+    <value>Windows default</value>
   </data>
   <data name="DeleteOperation" xml:space="preserve">
     <value>Deleting </value>
@@ -135,8 +147,38 @@
   <data name="ItemsFromText.Text" xml:space="preserve">
     <value>items from </value>
   </data>
+  <data name="LightThemeItem.Content" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="MicaItem.Content" xml:space="preserve">
+    <value>Mica</value>
+  </data>
   <data name="MoveOperation" xml:space="preserve">
     <value>Moving </value>
+  </data>
+  <data name="MultipleInstanceBehaviorSettingItem.HelpText" xml:space="preserve">
+    <value>Control the bahavior of having multiple instances of fastcopy</value>
+  </data>
+  <data name="MultipleInstanceBehaviorSettingItem.Title" xml:space="preserve">
+    <value>Multiple Instance</value>
+  </data>
+  <data name="MultipleInstanceSegmentButton.Content1" xml:space="preserve">
+    <value>Show seperate windows</value>
+  </data>
+  <data name="MultipleInstanceSegmentButton.Content2" xml:space="preserve">
+    <value>Combine into one window</value>
+  </data>
+  <data name="NotificationSettingItem.HelpText" xml:space="preserve">
+    <value>Send a toast notification to Windows notification center after finish</value>
+  </data>
+  <data name="NotificationSettingItem.Title" xml:space="preserve">
+    <value>Notify upon finish</value>
+  </data>
+  <data name="SettingWindowTitle.Text" xml:space="preserve">
+    <value>FastCopy Settings</value>
+  </data>
+  <data name="ThemeSettingItem.Title" xml:space="preserve">
+    <value>Theme</value>
   </data>
   <data name="ToText.Text" xml:space="preserve">
     <value>to</value>
@@ -146,5 +188,8 @@
   </data>
   <data name="UseSourceCheckBox.Content" xml:space="preserve">
     <value>Use source</value>
+  </data>
+  <data name="WindowBackgroundSettingItem.Title" xml:space="preserve">
+    <value>Window background</value>
   </data>
 </root>

@@ -117,11 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AcrylicItem.Content" xml:space="preserve">
+    <value>Acrylic</value>
+  </data>
   <data name="ContinueButton.Content" xml:space="preserve">
     <value>继续</value>
   </data>
   <data name="CopyOperation" xml:space="preserve">
     <value>正在复制</value>
+  </data>
+  <data name="CustomItem.Content" xml:space="preserve">
+    <value>禁用效果</value>
+  </data>
+  <data name="DarkThemeItem.Content" xml:space="preserve">
+    <value>暗色</value>
+  </data>
+  <data name="DefaultThemeItem.Content" xml:space="preserve">
+    <value>Windows默认</value>
   </data>
   <data name="DeleteOperation" xml:space="preserve">
     <value>正在删除</value>
@@ -135,8 +147,38 @@
   <data name="ItemsFromText.Text" xml:space="preserve">
     <value>从</value>
   </data>
+  <data name="LightThemeItem.Content" xml:space="preserve">
+    <value>亮色</value>
+  </data>
+  <data name="MicaItem.Content" xml:space="preserve">
+    <value>Mica</value>
+  </data>
   <data name="MoveOperation" xml:space="preserve">
     <value>正在移动</value>
+  </data>
+  <data name="MultipleInstanceBehaviorSettingItem.HelpText" xml:space="preserve">
+    <value>控制多实例时的窗口显式方式</value>
+  </data>
+  <data name="MultipleInstanceBehaviorSettingItem.Title" xml:space="preserve">
+    <value>多窗口</value>
+  </data>
+  <data name="MultipleInstanceSegmentButton.Content1" xml:space="preserve">
+    <value>显式多个窗口</value>
+  </data>
+  <data name="MultipleInstanceSegmentButton.Content2" xml:space="preserve">
+    <value>合并为一个窗口</value>
+  </data>
+  <data name="NotificationSettingItem.HelpText" xml:space="preserve">
+    <value>复制完成时向Windows通知中心发送通知</value>
+  </data>
+  <data name="NotificationSettingItem.Title" xml:space="preserve">
+    <value>复制完成后通知</value>
+  </data>
+  <data name="SettingWindowTitle.Text" xml:space="preserve">
+    <value>FastCopy设置</value>
+  </data>
+  <data name="ThemeSettingItem.Title" xml:space="preserve">
+    <value>主题</value>
   </data>
   <data name="ToText.Text" xml:space="preserve">
     <value>到</value>
@@ -146,5 +188,8 @@
   </data>
   <data name="UseSourceCheckBox.Content" xml:space="preserve">
     <value>使用源</value>
+  </data>
+  <data name="WindowBackgroundSettingItem.Title" xml:space="preserve">
+    <value>窗口背景</value>
   </data>
 </root>

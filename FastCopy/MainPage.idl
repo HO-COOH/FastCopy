@@ -11,6 +11,5 @@ namespace FastCopy
     {
         MainPage();
         FastCopy.XCopyViewModel ViewModel{ get; };
-        FastCopy.SettingContainer LastSetting{ get; };
     }
 }

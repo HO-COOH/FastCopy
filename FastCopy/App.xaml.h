@@ -16,6 +16,7 @@ namespace winrt::FastCopy::implementation
         void OnLaunched(Microsoft::UI::Xaml::LaunchActivatedEventArgs const&);
     private:
         winrt::Microsoft::UI::Xaml::Window window{ nullptr };
+        winrt::Microsoft::UI::Xaml::Window setting{ nullptr };
         std::optional<MicaHelper> m_helper;
     };
 }

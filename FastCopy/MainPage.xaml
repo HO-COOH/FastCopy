@@ -196,28 +196,11 @@
                 <Setter Property="Glyph" Value="{StaticResource NavigationFontIcon}"/>
             </Style>
 
-            <x:String x:Key="DefaultSkinTitleText">Skin hitsound</x:String>
 
-
-            <x:String x:Key="NoModShortName">None</x:String>
-            <x:String x:Key="NoModLongName">NoMod</x:String>
-            <x:String x:Key="DoubleTimeShortName">DT</x:String>
-            <x:String x:Key="DoubleTimeLongName">DoubleTime</x:String>
-            <x:String x:Key="NightCoreShortName">NC</x:String>
-            <x:String x:Key="NightCoreLongName">NightCore</x:String>
-            <x:String x:Key="HalfTimeShortName">HT</x:String>
-            <x:String x:Key="HalfTimeLongName">HalfTime</x:String>
-
-            <x:String x:Key="OsuPathIconGlyph">&#xF12B;</x:String>
-            <x:String x:Key="NewFolderIconGlyph">&#xE8F4;</x:String>
-            <x:String x:Key="ThemeIconGlyph">&#xE790;</x:String>
-            <x:String x:Key="PlayModIconGlyph">&#xEC57;</x:String>
-            <x:String x:Key="SkinIconGlyph">&#xE7F6;</x:String>
-            <x:String x:Key="HitsoundIconGlyph">&#xE8D6;</x:String>
-            <x:String x:Key="LinkIconGlyph">&#xE71B;</x:String>
-            <x:String x:Key="JumpListIconGlyph">&#xE728;</x:String>
-            <x:String x:Key="ExperimentalIconGlyph">&#xE7BA;</x:String>
-            <x:String x:Key="AboutIconGlyph">&#xF6FA;</x:String>
+            <x:String x:Key="NotificationGlyph">&#xE7E7;</x:String>
+            <x:String x:Key="MultipleWindowGlyph">&#xF7ED;</x:String>
+            <x:String x:Key="ThemeGlyph">&#xE790;</x:String>
+            <x:String x:Key="WindowBackgroundGlyph">&#xE81E;</x:String>
 
             <Style x:Key="ToggleSwitchLeftLabelStyle" TargetType="ToggleSwitch">
                 <Setter Property="Foreground" Value="{ThemeResource ToggleSwitchContentForeground}"/>
@@ -606,259 +589,50 @@
         
     </Page.Resources>
 
-    <StackPanel>
-        <local:SettingContainer Title="操作" HelpText="复制或移动">
+    <StackPanel Margin="20" Spacing="5">
+        <TextBlock x:Uid="SettingWindowTitle" FontSize="32" FontWeight="Bold" MaxWidth="1000"/>
+        <local:SettingContainer x:Uid="NotificationSettingItem">
             <local:SettingContainer.Symbol>
-                <SymbolIcon Symbol="Copy"/>
+                <FontIcon Glyph="{StaticResource NotificationGlyph}"/>
             </local:SettingContainer.Symbol>
             <local:SettingContainer.HeaderContent>
-                <DropDownButton x:Name="ModeButton" Content="Mode">
-                    <DropDownButton.Flyout>
-                        <MenuFlyout Placement="Bottom">
-                            <MenuFlyout.MenuFlyoutPresenterStyle>
-                                <Style TargetType="MenuFlyoutPresenter">
-                                    <Setter Property="Background" Value="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"/>
-                                </Style>
-                            </MenuFlyout.MenuFlyoutPresenterStyle>
-                            <MenuFlyoutItem x:Name="CopyModeItem" Text="Copy" Click="CopyModeItem_Click" Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"/>
-                            <MenuFlyoutItem x:Name="MoveModeItem" Text="Move" Click="MoveModeItem_Click" Background="{ThemeResource AcrylicBackgroundFillColorDefaultBrush}"/>
-                            <MenuFlyoutItem x:Name="CustomModeItem" Text="Custom" Click="CustomModeItem_Click"/>
-                        </MenuFlyout>
-                    </DropDownButton.Flyout>
-                </DropDownButton>
+                <ToggleSwitch x:Name="NotificationSwitch" Style="{StaticResource ToggleSwitchLeftLabelStyle}"/>
             </local:SettingContainer.HeaderContent>
         </local:SettingContainer>
 
-        <local:SettingContainer x:Name="LastSetting" Title="开发者模式" HelpText="高级选项，供专业人士使用" Style="{StaticResource ExpanderSettingContainerStyle}">
+        <local:SettingContainer x:Uid="MultipleInstanceBehaviorSettingItem">
             <local:SettingContainer.Symbol>
-                <SymbolIcon Symbol="Repair"/>
+                <FontIcon Glyph="{StaticResource MultipleWindowGlyph}"/>
             </local:SettingContainer.Symbol>
             <local:SettingContainer.HeaderContent>
-                <ToggleSwitch x:Name="AdvancedMode" Style="{StaticResource ToggleSwitchLeftLabelStyle}" Margin="0,0,-45,0"/>
+                <local:SegmentedButton x:Uid="MultipleInstanceSegmentButton"/>
             </local:SettingContainer.HeaderContent>
-            <local:SettingContainer.ExpanderContent>
-                <ScrollViewer MaxHeight="250">
-                    <Grid HorizontalAlignment="Stretch">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Grid.Resources>
-                            <Style x:Key="SwitchTextStyle" TargetType="TextBlock">
-                                <Style.Setters>
-                                    <Setter Property="Margin" Value="47,0,0,0"/>
-                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                </Style.Setters>
-                            </Style>
-                        </Grid.Resources>
-                        
-                        <!--进程数-->
-                        <TextBlock Text="xcopy的最大进程数" Style="{StaticResource SwitchTextStyle}" Grid.Row="0" Grid.Column="0"/>
-                        <NumberBox Value="{x:Bind ViewModel.ProcessCount, Mode=TwoWay}" 
-                                   SpinButtonPlacementMode="Compact" SmallChange="1" LargeChange="1" 
-                                   Minimum="1" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Width="100"/>
-
-                        <!-- /A -->
-                        <TextBlock Style="{StaticResource SwitchTextStyle}" Text="只复制有存档属性的文件" VerticalAlignment="Center"  Grid.Row="1" Grid.Column="0"/>
-                        <local:SegmentedButton Content1="保留属性" Content2="不保留属性" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right"/>
-
-                        <!-- /D:m-d-y-->
-                        <TextBlock Style="{StaticResource SwitchTextStyle}" 
-                                   Text="复制在指定日期或指定日期以后改变的文件。如果没有提供日期，只复制那些源时间比目标时间新的文件" 
-                                   Grid.Row="2" Grid.Column="0"/>
-                        <Viewbox Width="250" Grid.Row="2" Grid.Column="1" Stretch="Fill" HorizontalAlignment="Right">
-                            <DatePicker HorizontalAlignment="Right" Language="zh-cn" FontSize="16"/>
-                        </Viewbox>
-                        
-                        <!-- /P 每复制一个文件都提示，没卵用-->
-                        
-                        <!-- /S /E -->
-                        <TextBlock Style="{StaticResource SwitchTextStyle}" Text="复制目录和子目录" Grid.Row="3" Grid.Column="0"/>
-                        <local:SegmentedButton Content1="包括空文件夹" Content2="不包括空文件夹" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right"/>
-
-                        <!-- /V -->
-                        <TextBlock Text="验证每个新文件的大小" Style="{StaticResource SwitchTextStyle}" Grid.Row="4" Grid.Column="0"/>
-                        <ToggleSwitch Style="{StaticResource ToggleSwitchLeftLabelStyle}" Grid.Row="4" Grid.Column="1"/>
-                        
-                        <!-- /I /-I-->
-                        <TextBlock Text="如果目标不存在又复制一个以上的文件，则假定目标是" Style="{StaticResource SwitchTextStyle}" Grid.Row="5" Grid.Column="0"/>
-                        <local:SegmentedButton Content1="目录" Content2="文件" Grid.Row="5" Grid.Column="1"/>
-                        
-                        <!-- /Q /F /L 显示相关，无卵用-->
-                        
-                        <!-- /G-->
-                        <TextBlock Text="允许将加密文件复制到不支持加密的目录" Style="{StaticResource SwitchTextStyle}" Grid.Row="6" Grid.Column="0"/>
-                        <ToggleSwitch Style="{StaticResource ToggleSwitchLeftLabelStyle}" Grid.Row="6" Grid.Column="1"/>
-                        
-                        <!-- /H-->
-                        <TextBlock Text="复制隐藏文件和系统文件" Style="{StaticResource SwitchTextStyle}" Grid.Row="7" Grid.Column="0"/>
-                        <ToggleSwitch Style="{StaticResource ToggleSwitchLeftLabelStyle}" Grid.Row="7" Grid.Column="1"/>
-
-                        <!-- /R-->
-                        <TextBlock Text="覆盖只读文件" Style="{StaticResource SwitchTextStyle}" Grid.Row="8" Grid.Column="0"/>
-                        <ToggleSwitch Style="{StaticResource ToggleSwitchLeftLabelStyle}" Grid.Row="8" Grid.Column="1"/>
-
-                        <!--<Border BorderThickness="1" Grid.Row="9" BorderBrush="Red" CornerRadius="3" HorizontalAlignment="Stretch" Grid.ColumnSpan="2">
-                            <Grid>
-                                <TextBlock Text="覆盖只读文件" Style="{StaticResource SwitchTextStyle}" Grid.Column="0"/>
-                                <ToggleSwitch Style="{StaticResource ToggleSwitchLeftLabelStyle}" Grid.Column="1"/>
-                            </Grid>
-                        </Border>-->
-                    </Grid>
-                </ScrollViewer>
-            </local:SettingContainer.ExpanderContent>
         </local:SettingContainer>
 
-        <TextBox PlaceholderText="自定义补充命令" HorizontalAlignment="Stretch" Margin="0,5,0,0" MaxWidth="1000"/>
-        <TextBox x:Name="FinalCommandsPreview" HorizontalAlignment="Stretch"  Margin="0,5,0,0" MaxWidth="1000"/>
+        <local:SettingContainer x:Uid="ThemeSettingItem">
+            <local:SettingContainer.Symbol>
+                <FontIcon Glyph="{StaticResource ThemeGlyph}"/>
+            </local:SettingContainer.Symbol>
+            <local:SettingContainer.HeaderContent>
+                <ComboBox>
+                    <ComboBoxItem x:Uid="DefaultThemeItem"/>
+                    <ComboBoxItem x:Uid="DarkThemeItem"/>
+                    <ComboBoxItem x:Uid="LightThemeItem"/>
+                </ComboBox>
+            </local:SettingContainer.HeaderContent>
+        </local:SettingContainer>
 
-        <Grid HorizontalAlignment="Stretch" MaxWidth="1000" Margin="0,5,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-
-            <Expander HorizontalAlignment="Stretch" Grid.Column="0" Height="500" Style="{StaticResource ExpanderExpandedStyle}" IsExpanded="True">
-                <Expander.Header>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <SymbolIcon Symbol="Send" Grid.Column="0"/>
-                        <TextBlock Margin="16,0,0,0" VerticalAlignment="Center" Text="来源" Grid.Column="1"/>
-                        <DropDownButton Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,10,0" Content="打开">
-                            <DropDownButton.Flyout>
-                                <MenuFlyout Placement="Bottom">
-                                    
-                                    <MenuFlyoutItem Text="打开文件" Click="MenuFlyoutItem_Click">
-                                        <MenuFlyoutItem.Icon>
-                                            <SymbolIcon Symbol="Document"/>
-                                        </MenuFlyoutItem.Icon>
-                                    </MenuFlyoutItem>
-
-                                    <MenuFlyoutItem Text="打开文件夹" Click="MenuFlyoutItem_Click_1">
-                                        <MenuFlyoutItem.Icon>
-                                            <SymbolIcon Symbol="Folder"/>
-                                        </MenuFlyoutItem.Icon>
-                                    </MenuFlyoutItem>
-                                </MenuFlyout>
-                            </DropDownButton.Flyout>
-                        </DropDownButton>
-                    </Grid>
-                </Expander.Header>
-                <Expander.Content>
-                    <TreeView x:Name="SourceTree" 
-                              VerticalAlignment="Stretch" 
-                              HorizontalAlignment="Left" 
-                              HorizontalContentAlignment="Left" 
-                              ItemsSource="{x:Bind ViewModel.Sources}" 
-                              ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}"/>
-                </Expander.Content>
-            </Expander>
-
-            <Expander HorizontalAlignment="Stretch" Grid.Column="1" Height="500" Style="{StaticResource ExpanderExpandedStyle}" IsExpanded="True">
-                <Expander.Header>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <SymbolIcon Symbol="Send" Grid.Column="0"/>
-                        <StackPanel Grid.Column="1" Orientation="Horizontal">
-                            <TextBlock Margin="16,0,0,0" VerticalAlignment="Center" Text="目标预览"/>
-                            <TextBlock Text="{x:Bind ViewModel.Destination, Mode=OneWay}" Margin="20,0,0,0"/>
-                        </StackPanel>
-                        <Button x:Name="ChangeDestinationButton" Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,10,0" Click="ChangeDestinationButton_Click">打开</Button>
-                    </Grid>
-                </Expander.Header>
-                <Expander.Content>
-                    <TreeView x:Name="Destination" 
-                              VerticalAlignment="Stretch" 
-                              HorizontalAlignment="Left" 
-                              HorizontalContentAlignment="Left" 
-                              ItemsSource="{x:Bind ViewModel.Preview}" 
-                              ItemTemplateSelector="{StaticResource ExplorerItemTemplateSelector}"/>
-                </Expander.Content>
-            </Expander>
-        </Grid>
-
-        <Grid HorizontalAlignment="Center" Margin="0,10,0,0" MaxWidth="1000">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-
-            <Button x:Name="ExecuteButton" Grid.Column="0" Background="Transparent" BorderThickness="0" Click="ExecuteButton_Click" IsEnabled="{x:Bind ViewModel.IsExecutable, Mode=OneWay}">
-                <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="Play"/>
-                    <TextBlock Margin="10,0,0,0" Text="开始复制"/>
-                </StackPanel>
-            </Button>
-
-            <ProgressBar Margin="50,0,0,0" Grid.Column="1" Width="2000" HorizontalAlignment="Stretch"/>
-        </Grid>
+        <local:SettingContainer x:Uid="WindowBackgroundSettingItem">
+            <local:SettingContainer.Symbol>
+                <FontIcon Glyph="{StaticResource WindowBackgroundGlyph}"/>
+            </local:SettingContainer.Symbol>
+            <local:SettingContainer.HeaderContent>
+                <ComboBox>
+                    <ComboBoxItem x:Uid="MicaItem"/>
+                    <ComboBoxItem x:Uid="AcrylicItem"/>
+                    <ComboBoxItem x:Uid="CustomItem"/>
+                </ComboBox>
+            </local:SettingContainer.HeaderContent>
+        </local:SettingContainer>
     </StackPanel>
-    
-    <!--<ScrollViewer>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="300"/>
-            </Grid.RowDefinitions>
-
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-
-
-                <Expander HorizontalAlignment="Stretch" Grid.Column="0">
-                    <Expander.Header>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Common mode: " VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Expander.Header>
-                    <Expander.Content>
-                        <ListView ItemsSource="{x:Bind ViewModel.Flags}" IsEnabled="{x:Bind ViewModel.IsCustomEnabled, Mode=OneWay}">
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="local:XCopyFlags">
-                                    <StackPanel Orientation="Horizontal">
-                                        <CheckBox Content="{x:Bind Flag}" IsChecked="{x:Bind Enabled}"/>
-                                        <TextBlock Text="{x:Bind Description}"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </Expander.Content>
-                </Expander>
-
-
-            </Grid>
-
-            </Grid>
-        </Grid>
-    </ScrollViewer>-->
-    
-
 </Page>

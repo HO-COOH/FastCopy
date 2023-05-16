@@ -5,6 +5,7 @@
 
 #include "App.xaml.h"
 #include "CopyDialogWindow.xaml.h"
+#include "MainWindow.xaml.h"
 
 
 using namespace winrt;
@@ -69,7 +70,7 @@ winrt::Windows::Foundation::IAsyncAction GetFromClipboard()
 #include <winrt/Windows.System.h>
 #include <filesystem>
 
-std::pair<std::wstring_view, std::wstring_view> ParseToastArgument(std::wstring_view argument)
+static std::pair<std::wstring_view, std::wstring_view> ParseToastArgument(std::wstring_view argument)
 {
     auto const index = argument.find(L'=');
     return { argument.substr(0, index), argument.substr(index + 1) };
@@ -128,5 +129,8 @@ void App::OnLaunched(LaunchActivatedEventArgs const&)
     window.Activate();
     m_helper.emplace(window);
     viewModel.Start();
+
+    setting = make<MainWindow>();
+    setting.Activate();
 
 }
