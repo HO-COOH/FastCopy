@@ -10,5 +10,8 @@ namespace FastCopy
         
         IInspectable Content2;
         static Microsoft.UI.Xaml.DependencyProperty Content2Property{ get; };
+
+        Int32 Selection;
+        static Microsoft.UI.Xaml.DependencyProperty SelectionProperty{ get; };
     }
 }

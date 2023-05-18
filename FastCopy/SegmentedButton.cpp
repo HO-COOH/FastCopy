@@ -23,6 +23,14 @@ namespace winrt::FastCopy::implementation
             winrt::xaml_typename<winrt::FastCopy::SegmentedButton>(),
             { nullptr }
         );
+
+    winrt::Microsoft::UI::Xaml::DependencyProperty SegmentedButton::m_selectionProperty =
+        winrt::Microsoft::UI::Xaml::DependencyProperty::Register(
+            L"Selection",
+            winrt::xaml_typename<int>(),
+            winrt::xaml_typename<winrt::FastCopy::SegmentedButton>(),
+            { nullptr }
+    );
     winrt::Windows::Foundation::IInspectable SegmentedButton::Content1()
     {
         return GetValue(m_content1);
@@ -58,5 +66,12 @@ namespace winrt::FastCopy::implementation
     void SegmentedButton::Button2_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
     {
         Button1().IsChecked(false);
+    }
+    int SegmentedButton::Selection()
+    {
+        return 0;
+    }
+    void SegmentedButton::Selection(int value)
+    {
     }
 }

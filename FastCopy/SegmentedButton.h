@@ -18,9 +18,14 @@ namespace winrt::FastCopy::implementation
 
         void Button1_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void Button2_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+
+        int Selection();
+        void Selection(int value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty SelectionProperty() { return m_selectionProperty; }
     private:
         static winrt::Microsoft::UI::Xaml::DependencyProperty m_content1;
         static winrt::Microsoft::UI::Xaml::DependencyProperty m_content2;
+        static winrt::Microsoft::UI::Xaml::DependencyProperty m_selectionProperty;
     };
 }
 

@@ -93,7 +93,7 @@ public:
 private:
 	winrt::hstring m_path;
 	std::vector<std::wstring> lines;
-	std::vector<std::optional<int>> numFiles;
+	std::vector<int> numFiles;
 	int totalFiles{};
 };
 

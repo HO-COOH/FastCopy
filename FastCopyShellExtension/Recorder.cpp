@@ -41,7 +41,8 @@ Recorder::Recorder(CopyOperation op)
 
 Recorder& Recorder::operator<<(ShellItem& item)
 {
-	std::wstring_view buf{ item.GetDisplayName() };
+	std::wstring buf {item.GetDisplayName()};
+	std::transform(buf.begin(), buf.end(), buf.begin(), [](wchar_t c) { return c == L'\\' ? L'/' : c; });
 	size_t const length = buf.size();
 	fwrite(&length, sizeof(length), 1, m_fs);
 	fwrite(buf.data(), 2, length, m_fs);

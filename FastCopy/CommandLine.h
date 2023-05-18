@@ -8,6 +8,8 @@ class Command
 {
 public:
 	static Command& Get();
+
+	int Size() const;
 	winrt::hstring GetDestination();
 	std::wstring RecordFile();
 };

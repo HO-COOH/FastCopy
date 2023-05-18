@@ -55,7 +55,6 @@ namespace winrt::FastCopy::implementation
             { nullptr }
     );
 
-
     winrt::Windows::Foundation::IInspectable implementation::SettingContainer::Symbol()
     {
         return GetValue(m_symbolProperty);

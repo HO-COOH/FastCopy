@@ -6,6 +6,7 @@
 #include "App.xaml.g.h"
 #include "AcrylicHelper.h"
 #include <optional>
+#include <winrt/Microsoft.Windows.AppLifecycle.h>
 
 namespace winrt::FastCopy::implementation
 {
@@ -17,6 +18,15 @@ namespace winrt::FastCopy::implementation
     private:
         winrt::Microsoft::UI::Xaml::Window window{ nullptr };
         winrt::Microsoft::UI::Xaml::Window setting{ nullptr };
+
+        static std::optional<winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments> isLaunchByToastNotification();
+        static void launchByToastNotification(winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments const& args);
+
+        static bool isLaunchSettings();
+        void launchSettings();
+
+        void normalLaunch();
+
         std::optional<MicaHelper> m_helper;
     };
 }

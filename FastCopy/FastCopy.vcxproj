@@ -180,6 +180,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="MessageWindow.h" />
     <ClInclude Include="Notification.h" />
     <ClInclude Include="NumberToStringConverter.h">
       <DependentUpon>NumberToStringConverter.idl</DependentUpon>
@@ -221,6 +222,10 @@
     </ClInclude>
     <ClInclude Include="SettingContainer.h">
       <DependentUpon>SettingContainer.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="SettingsViewModel.h">
+      <DependentUpon>SettingsViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="Taskbar.h" />
@@ -314,6 +319,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="MessageWindow.cpp" />
     <ClCompile Include="Notification.cpp" />
     <ClCompile Include="NumberToStringConverter.cpp">
       <DependentUpon>NumberToStringConverter.idl</DependentUpon>
@@ -354,6 +360,10 @@
     </ClCompile>
     <ClCompile Include="SettingContainer.cpp">
       <DependentUpon>SettingContainer.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="SettingsViewModel.cpp">
+      <DependentUpon>SettingsViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Taskbar.cpp" />
@@ -439,6 +449,9 @@
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="SettingContainer.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="SettingsViewModel.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="VectorToBoolConverter.idl">

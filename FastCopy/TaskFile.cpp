@@ -36,9 +36,10 @@ int32_t TaskFile::GetNumFiles()
 			break;
 
 		if (std::filesystem::is_directory(line))
-			count += getNumFilesInFolder(line);
+			numFiles.push_back(getNumFilesInFolder(line));
 		else
-			++count;
+			numFiles.push_back(1);
+		count += numFiles.back();
 		lines.push_back(std::move(line));
 	}
 	numFiles.resize(lines.size());
@@ -48,12 +49,7 @@ int32_t TaskFile::GetNumFiles()
 
 int32_t TaskFile::GetNumFiles(int index)
 {
-	if (numFiles[index].has_value())
-		return *numFiles[index];
-
-	numFiles[index] = 
-		std::filesystem::is_directory(lines[index]) ? getNumFilesInFolder(lines[index]) : 1;
-	return *numFiles[index];
+	return numFiles[index];
 }
 
 int TaskFile::IndexOf(TaskFileIterator<typename std::vector<std::wstring>::iterator> const& iter)

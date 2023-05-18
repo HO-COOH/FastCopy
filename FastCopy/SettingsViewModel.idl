@@ -1,0 +1,14 @@
+namespace FastCopy
+{
+    [bindable]
+    [default_interface]
+    runtimeclass SettingsViewModel 
+    {
+        SettingsViewModel();
+
+        Boolean Notify;
+        Int32 MultipleWindowBehavior;
+        Int32 ThemeSelection;
+        Int32 BackgroundSelection;
+    }
+}

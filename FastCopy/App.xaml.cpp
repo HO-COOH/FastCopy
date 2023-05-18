@@ -6,6 +6,14 @@
 #include "App.xaml.h"
 #include "CopyDialogWindow.xaml.h"
 #include "MainWindow.xaml.h"
+#include "ViewModelLocator.h"
+#include "FastCopyCommandParser.h"
+#include <winrt/Windows.ApplicationModel.DataTransfer.h>
+#include "CommandLine.h"
+#include "DebugLogger.h"
+#include <winrt/Microsoft.Windows.AppLifecycle.h>
+#include <winrt/Windows.System.h>
+#include <filesystem>
 
 
 using namespace winrt;
@@ -39,9 +47,7 @@ App::App()
 #endif
 }
 
-#include "ViewModelLocator.h"
-#include "FastCopyCommandParser.h"
-#include <winrt/Windows.ApplicationModel.DataTransfer.h>
+
 winrt::Windows::Foundation::IAsyncAction GetFromClipboard()
 {
     //get data from copy paste
@@ -64,11 +70,7 @@ winrt::Windows::Foundation::IAsyncAction GetFromClipboard()
     }
 }
 
-#include "CommandLine.h"
-#include "DebugLogger.h"
-#include <winrt/Microsoft.Windows.AppLifecycle.h>
-#include <winrt/Windows.System.h>
-#include <filesystem>
+
 
 static std::pair<std::wstring_view, std::wstring_view> ParseToastArgument(std::wstring_view argument)
 {
@@ -76,46 +78,75 @@ static std::pair<std::wstring_view, std::wstring_view> ParseToastArgument(std::w
     return { argument.substr(0, index), argument.substr(index + 1) };
 }
 
-static void LaunchByToastNotification(winrt::hstring argument)
+
+void App::OnLaunched(LaunchActivatedEventArgs const&)
 {
+    if (auto arg = isLaunchByToastNotification(); arg)
+        return launchByToastNotification(*arg);
+
+    if (isLaunchSettings())
+        return launchSettings();
+
+    normalLaunch();
+}
+
+std::optional<winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments> App::isLaunchByToastNotification()
+{
+    if (auto activateArg = winrt::Microsoft::Windows::AppLifecycle::AppInstance::GetCurrent().GetActivatedEventArgs();
+        activateArg && activateArg.Kind() == winrt::Microsoft::Windows::AppLifecycle::ExtendedActivationKind::ToastNotification)
+    {
+        return activateArg;
+    }
+    return {};
+}
+
+void App::launchByToastNotification(winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments const& args)
+{
+    auto argument = args
+        .Data()
+        .as<winrt::Windows::ApplicationModel::Activation::ToastNotificationActivatedEventArgs>()
+        .Argument();
+
     if (argument.empty())
-        return; //dismiss
+        exit(-1); //dismiss
 
     auto const [action, arg] = ParseToastArgument(argument);
     if (action == L"open")
     {
         winrt::Windows::System::Launcher::LaunchUriAsync(winrt::Windows::Foundation::Uri{ arg });
     }
+
+    exit(0);
 }
-void App::OnLaunched(LaunchActivatedEventArgs const&)
+
+bool App::isLaunchSettings()
 {
-    if (auto activateArg = winrt::Microsoft::Windows::AppLifecycle::AppInstance::GetCurrent().GetActivatedEventArgs(); 
-        activateArg && activateArg.Kind() == winrt::Microsoft::Windows::AppLifecycle::ExtendedActivationKind::ToastNotification)
-    {
-        LaunchByToastNotification(
-            activateArg
-            .Data()
-            .as<winrt::Windows::ApplicationModel::Activation::ToastNotificationActivatedEventArgs>()
-            .Argument()
-        );
-        exit(0);
-    }
+    return Command::Get().Size() == 1;
+}
+
+void App::launchSettings()
+{
+    setting = make<MainWindow>();
+    setting.Activate();
+}
+
+void App::normalLaunch()
+{
+    auto const destination = Command::Get().GetDestination();
+    if (destination.empty())
+        return;
 
     auto const recordFile = Command::Get().RecordFile();
     auto viewModel = ViewModelLocator::GetInstance().RobocopyViewModel();
 
-    auto const destination = Command::Get().GetDestination();
-    if (destination.empty())
-        return;
 #ifndef _DEBUG
     if (recordFile.empty())
         return;
 #endif // !_DEBUG
 
-    //MessageBox(NULL, destination.data(), L"", 0);
+
     viewModel.Destination(destination);
     viewModel.RecordFile(recordFile);
-
     viewModel.Finished([recordFile](auto, FinishState state) {
 #ifndef _DEBUG
         if (state == FinishState::Success)
@@ -129,8 +160,4 @@ void App::OnLaunched(LaunchActivatedEventArgs const&)
     window.Activate();
     m_helper.emplace(window);
     viewModel.Start();
-
-    setting = make<MainWindow>();
-    setting.Activate();
-
 }

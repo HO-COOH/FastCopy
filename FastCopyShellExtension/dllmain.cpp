@@ -190,10 +190,12 @@ class SubCommand final :
 
     HRESULT callMainProgramImpl(std::wstring_view arg)
     {
+        std::wstring argTransform{arg};
+        std::transform(argTransform.begin(), argTransform.end(), argTransform.begin(), [](wchar_t c) { return c == L'\\' ? L'/' : c; });
         auto result = ShellExecute(
             NULL,
             L"open",
-            std::format(LR"(fastcopy://"{}"|{})", arg, Registry{}.read(L"record")).data(),
+            std::format(LR"(fastcopy://"{}"|{})", argTransform, Registry{}.read(L"record")).data(),
             nullptr,
             nullptr,
             SW_SHOW

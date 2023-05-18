@@ -1,6 +1,7 @@
 import "ExplorerItem.idl";
 import "XCopyViewModel.idl";
 import "SettingContainer.idl";
+import "SettingsViewModel.idl";
 // Copyright (c) Microsoft Corporation and Contributors.
 // Licensed under the MIT License.
 
@@ -10,6 +11,6 @@ namespace FastCopy
     runtimeclass MainPage : Microsoft.UI.Xaml.Controls.Page
     {
         MainPage();
-        FastCopy.XCopyViewModel ViewModel{ get; };
+        FastCopy.SettingsViewModel ViewModel{ get; };
     }
 }

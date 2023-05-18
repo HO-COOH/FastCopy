@@ -537,44 +537,7 @@
                 </Setter>
             </Style>
             
-            <!--                            Real resources begins here               -->
-            <DataTemplate x:Key="FolderTemplate" x:DataType="local:ExplorerItem">
-                <TreeViewItem ItemsSource="{x:Bind Children}" IsExpanded="True" HorizontalAlignment="Left">
-                    <StackPanel Orientation="Horizontal" Margin="-40,0,0,0">
-                        <SymbolIcon Symbol="Folder"/>
-                        <TextBlock Margin="20,0,0,0" Text="{x:Bind Name}"/>
-                        <SymbolIcon Symbol="Accept" Foreground="Green" Visibility="{x:Bind IsFinished, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                        <SymbolIcon Symbol="Clear" Foreground="Red" Visibility="{x:Bind IsFailed, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                    </StackPanel>
 
-                    <TreeViewItem.ContextFlyout>
-                        <MenuFlyout>
-                            <MenuFlyoutItem x:Name="RemoveItemMenuItem" Text="Remove from list" Click="RemoveItemMenuItem_Click"/>
-                            <MenuFlyoutItem x:Name="RenameMenuItem" Text="Rename" Click="RenameMenuItem_Click"/>
-                        </MenuFlyout>
-                    </TreeViewItem.ContextFlyout>
-                </TreeViewItem>
-            </DataTemplate>
-
-            <DataTemplate x:Key="FileTemplate" x:DataType="local:ExplorerItem">
-                <TreeViewItem HorizontalAlignment="Left">
-                    <StackPanel Orientation="Horizontal" Margin="-40,0,0,0">
-                        <SymbolIcon Symbol="Document"/>
-                        <TextBlock Margin="5,0,0,0" Text="{x:Bind Name}"/>
-                        <SymbolIcon Symbol="Accept" Foreground="Green" Visibility="{x:Bind IsFinished,Mode=OneWay}" />
-                        <SymbolIcon Symbol="Clear" Foreground="Red" Visibility="{x:Bind IsFailed, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                        <TextBlock Margin="10,0,0,0" Text="{x:Bind Size, Converter={StaticResource NumberToStringConverter}, Mode=OneWay}"/>
-                    </StackPanel>
-
-                    <TreeViewItem.ContextFlyout>
-                        <MenuFlyout>
-                            <MenuFlyoutItem x:Name="RemoveItemMenuItem" Text="Remove from list" Click="RemoveItemMenuItem_Click"/>
-                            <MenuFlyoutItem x:Name="RenameMenuItem" Text="Rename" Click="RenameMenuItem_Click"/>
-                            <MenuFlyoutItem x:Name="OpenLocationMenuItem" Text="Open file location" Click="{x:Bind OpenLocation}"/>
-                        </MenuFlyout>
-                    </TreeViewItem.ContextFlyout>
-                </TreeViewItem>
-            </DataTemplate>
 
             <local:ExplorerItemTemplateSelector x:Key="ExplorerItemTemplateSelector"
                                                         FolderTemplate="{StaticResource FolderTemplate}"
@@ -589,14 +552,14 @@
         
     </Page.Resources>
 
-    <StackPanel Margin="20" Spacing="5">
-        <TextBlock x:Uid="SettingWindowTitle" FontSize="32" FontWeight="Bold" MaxWidth="1000"/>
+    <StackPanel Margin="20">
+        <TextBlock x:Uid="SettingWindowTitle" FontSize="32" FontWeight="Bold" MaxWidth="1000" Margin="0,0,0,10"/>
         <local:SettingContainer x:Uid="NotificationSettingItem">
             <local:SettingContainer.Symbol>
                 <FontIcon Glyph="{StaticResource NotificationGlyph}"/>
             </local:SettingContainer.Symbol>
             <local:SettingContainer.HeaderContent>
-                <ToggleSwitch x:Name="NotificationSwitch" Style="{StaticResource ToggleSwitchLeftLabelStyle}"/>
+                <ToggleSwitch x:Name="NotificationSwitch" Style="{StaticResource ToggleSwitchLeftLabelStyle}" IsOn="{x:Bind ViewModel.Notify, Mode=TwoWay}"/>
             </local:SettingContainer.HeaderContent>
         </local:SettingContainer>
 
@@ -605,7 +568,7 @@
                 <FontIcon Glyph="{StaticResource MultipleWindowGlyph}"/>
             </local:SettingContainer.Symbol>
             <local:SettingContainer.HeaderContent>
-                <local:SegmentedButton x:Uid="MultipleInstanceSegmentButton"/>
+                <local:SegmentedButton x:Uid="MultipleInstanceSegmentButton" Selection="{x:Bind ViewModel.MultipleWindowBehavior, Mode=TwoWay}"/>
             </local:SettingContainer.HeaderContent>
         </local:SettingContainer>
 
@@ -614,7 +577,7 @@
                 <FontIcon Glyph="{StaticResource ThemeGlyph}"/>
             </local:SettingContainer.Symbol>
             <local:SettingContainer.HeaderContent>
-                <ComboBox>
+                <ComboBox SelectedIndex="{x:Bind ViewModel.ThemeSelection, Mode=TwoWay}">
                     <ComboBoxItem x:Uid="DefaultThemeItem"/>
                     <ComboBoxItem x:Uid="DarkThemeItem"/>
                     <ComboBoxItem x:Uid="LightThemeItem"/>
@@ -627,7 +590,7 @@
                 <FontIcon Glyph="{StaticResource WindowBackgroundGlyph}"/>
             </local:SettingContainer.Symbol>
             <local:SettingContainer.HeaderContent>
-                <ComboBox>
+                <ComboBox SelectedIndex="{x:Bind ViewModel.BackgroundSelection, Mode=TwoWay}">
                     <ComboBoxItem x:Uid="MicaItem"/>
                     <ComboBoxItem x:Uid="AcrylicItem"/>
                     <ComboBoxItem x:Uid="CustomItem"/>

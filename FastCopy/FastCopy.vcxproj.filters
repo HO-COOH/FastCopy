@@ -72,6 +72,9 @@
     <Midl Include="AnimatedValue.idl">
       <Filter>ViewHelper</Filter>
     </Midl>
+    <Midl Include="SettingsViewModel.idl">
+      <Filter>ViewModel\Settings</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -125,6 +128,9 @@
     </ClCompile>
     <ClCompile Include="Fallback.cpp">
       <Filter>Utils\Fallback</Filter>
+    </ClCompile>
+    <ClCompile Include="MessageWindow.cpp">
+      <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -191,6 +197,9 @@
     </ClInclude>
     <ClInclude Include="Fallback.h">
       <Filter>Utils\Fallback</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageWindow.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -411,6 +420,9 @@
     </Filter>
     <Filter Include="Strings\en-US">
       <UniqueIdentifier>{3c81bba3-3650-452d-964e-8bdb1a3a1948}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ViewModel\Settings">
+      <UniqueIdentifier>{346f5409-9099-4b78-a713-37925c75a390}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

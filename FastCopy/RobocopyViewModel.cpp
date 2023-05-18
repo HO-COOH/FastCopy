@@ -93,8 +93,13 @@ namespace winrt::FastCopy::implementation
 	}
 	winrt::hstring RobocopyViewModel::Destination()
 	{
-		return std::filesystem::path{ std::wstring_view{m_destination }}.filename().wstring().data();
+		std::filesystem::path path{ std::wstring_view{m_destination }};
+		if (auto pathName = path.filename().wstring(); !pathName.empty())
+			return pathName.data();
+		else
+			return path.parent_path().wstring().data();
 	}
+			
 	void RobocopyViewModel::Destination(winrt::hstring value)
 	{
 		m_destination = value;

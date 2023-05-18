@@ -21,3 +21,10 @@ winrt::FastCopy::RobocopyViewModel ViewModelLocator::RobocopyViewModel()
         m_robocopyViewModel = winrt::FastCopy::RobocopyViewModel();
     return m_robocopyViewModel;
 }
+
+winrt::FastCopy::SettingsViewModel ViewModelLocator::SettingsViewModel()
+{
+    if (!m_settingsViewModel)
+        m_settingsViewModel = winrt::FastCopy::SettingsViewModel();
+    return m_settingsViewModel;
+}

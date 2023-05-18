@@ -28,6 +28,11 @@ Command& Command::Get()
     return s_instance;
 }
 
+int Command::Size() const
+{
+    return GetCommandArgs().size();
+}
+
 winrt::hstring Command::GetDestination()
 {
     auto& args = GetCommandArgs();
