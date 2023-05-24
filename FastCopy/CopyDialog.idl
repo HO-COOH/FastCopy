@@ -1,4 +1,3 @@
-import "XCopyViewModel.idl";
 import "RobocopyViewModel.idl";
 import "ProgressBarEx.idl";
 

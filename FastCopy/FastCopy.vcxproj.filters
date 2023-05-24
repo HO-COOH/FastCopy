@@ -16,9 +16,6 @@
     <Page Include="CopyDialog.xaml">
       <Filter>Views</Filter>
     </Page>
-    <Page Include="ProgressItem.xaml">
-      <Filter>Views\Controls</Filter>
-    </Page>
     <Page Include="CopyDialogWindow.xaml">
       <Filter>Views</Filter>
     </Page>
@@ -29,16 +26,6 @@
   <ItemGroup>
     <Midl Include="App.idl" />
     <Midl Include="MainWindow.idl" />
-    <Midl Include="XCopyViewModel.idl">
-      <Filter>ViewModel</Filter>
-    </Midl>
-    <Midl Include="ExplorerItem.idl">
-      <Filter>ViewModel</Filter>
-    </Midl>
-    <Midl Include="ExplorerItemTemplateSelector.idl" />
-    <Midl Include="VectorToBoolConverter.idl">
-      <Filter>Converter</Filter>
-    </Midl>
     <Midl Include="BoolToVisibilityConverter.idl">
       <Filter>Converter</Filter>
     </Midl>
@@ -79,9 +66,6 @@
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
-    <ClCompile Include="XCopyCommandGenerator.cpp">
-      <Filter>ViewModel</Filter>
-    </ClCompile>
     <ClCompile Include="FastCopyCommandParser.cpp">
       <Filter>ViewModel</Filter>
     </ClCompile>
@@ -135,9 +119,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="XCopyCommandGenerator.h">
-      <Filter>ViewModel</Filter>
-    </ClInclude>
     <ClInclude Include="FastCopyCommandParser.h">
       <Filter>ViewModel</Filter>
     </ClInclude>
@@ -200,6 +181,9 @@
     </ClInclude>
     <ClInclude Include="MessageWindow.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Settings.h">
+      <Filter>ViewModel\Settings</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -536,13 +536,9 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-            
 
 
-            <local:ExplorerItemTemplateSelector x:Key="ExplorerItemTemplateSelector"
-                                                        FolderTemplate="{StaticResource FolderTemplate}"
-                                                        FileTemplate="{StaticResource FileTemplate}"/>
-            <local:VectorToBoolConverter x:Key="VectorToBoolConverter"/>
+
             <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
             <muxm:AcrylicBrush x:Key="MenuAcrylic"  TintOpacity="0.5" TintLuminosityOpacity="0.4" TintColor="White"/>
             <local:NumberToStringConverter x:Key="NumberToStringConverter"/>
@@ -559,7 +555,7 @@
                 <FontIcon Glyph="{StaticResource NotificationGlyph}"/>
             </local:SettingContainer.Symbol>
             <local:SettingContainer.HeaderContent>
-                <ToggleSwitch x:Name="NotificationSwitch" Style="{StaticResource ToggleSwitchLeftLabelStyle}" IsOn="{x:Bind ViewModel.Notify, Mode=TwoWay}"/>
+                <ToggleSwitch x:Name="NotificationSwitch" Margin="0,0,-80,0" Style="{StaticResource ToggleSwitchLeftLabelStyle}" IsOn="{x:Bind ViewModel.Notify, Mode=TwoWay}"/>
             </local:SettingContainer.HeaderContent>
         </local:SettingContainer>
 

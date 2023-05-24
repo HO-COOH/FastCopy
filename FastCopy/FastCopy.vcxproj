@@ -155,14 +155,6 @@
       <DependentUpon>DoubleToStringConverter.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="ExplorerItem.h">
-      <DependentUpon>ExplorerItem.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
-    <ClInclude Include="ExplorerItemTemplateSelector.h">
-      <DependentUpon>ExplorerItemTemplateSelector.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
     <ClInclude Include="Fallback.h" />
     <ClInclude Include="FastCopyCommandParser.h" />
     <ClInclude Include="FileCompareViewModel.h">
@@ -199,10 +191,6 @@
       <DependentUpon>ProgressBarEx.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="ProgressItem.xaml.h">
-      <DependentUpon>ProgressItem.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
     <ClInclude Include="PropertyChangeHelper.hpp" />
     <ClInclude Include="ReadableSizeConverter.h">
       <DependentUpon>ReadableSizeConverter.idl</DependentUpon>
@@ -224,6 +212,7 @@
       <DependentUpon>SettingContainer.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Settings.h" />
     <ClInclude Include="SettingsViewModel.h">
       <DependentUpon>SettingsViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -232,17 +221,8 @@
     <ClInclude Include="TaskFile.h" />
     <ClInclude Include="UIDispatcher.h" />
     <ClInclude Include="UIThreadWrapper.h" />
-    <ClInclude Include="VectorToBoolConverter.h">
-      <DependentUpon>VectorToBoolConverter.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
     <ClInclude Include="ViewModelLocator.h" />
     <ClInclude Include="WindowHelper.h" />
-    <ClInclude Include="XCopyCommandGenerator.h" />
-    <ClInclude Include="XCopyViewModel.h">
-      <DependentUpon>XCopyViewModel.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
@@ -257,9 +237,6 @@
     </Page>
     <Page Include="MainWindow.xaml" />
     <Page Include="ProgressBarEx.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ProgressItem.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="SegmentedButton.xaml">
@@ -292,14 +269,6 @@
     <ClCompile Include="DebugLogger.cpp" />
     <ClCompile Include="DoubleToStringConverter.cpp">
       <DependentUpon>DoubleToStringConverter.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
-    <ClCompile Include="ExplorerItem.cpp">
-      <DependentUpon>ExplorerItem.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
-    <ClCompile Include="ExplorerItemTemplateSelector.cpp">
-      <DependentUpon>ExplorerItemTemplateSelector.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Fallback.cpp" />
@@ -340,10 +309,6 @@
       <DependentUpon>ProgressBarEx.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="ProgressItem.xaml.cpp">
-      <DependentUpon>ProgressItem.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
     <ClCompile Include="ReadableSizeConverter.cpp">
       <DependentUpon>ReadableSizeConverter.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -369,17 +334,8 @@
     <ClCompile Include="Taskbar.cpp" />
     <ClCompile Include="TaskFile.cpp" />
     <ClCompile Include="UIThreadWrapper.cpp" />
-    <ClCompile Include="VectorToBoolConverter.cpp">
-      <DependentUpon>VectorToBoolConverter.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
     <ClCompile Include="ViewModelLocator.cpp" />
     <ClCompile Include="WindowHelper.cpp" />
-    <ClCompile Include="XCopyCommandGenerator.cpp" />
-    <ClCompile Include="XCopyViewModel.cpp">
-      <DependentUpon>XCopyViewModel.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="AnimatedValue.idl">
@@ -406,12 +362,6 @@
     <Midl Include="DoubleToStringConverter.idl">
       <SubType>Designer</SubType>
     </Midl>
-    <Midl Include="ExplorerItem.idl">
-      <SubType>Designer</SubType>
-    </Midl>
-    <Midl Include="ExplorerItemTemplateSelector.idl">
-      <SubType>Designer</SubType>
-    </Midl>
     <Midl Include="FileCompareViewModel.idl">
       <SubType>Designer</SubType>
     </Midl>
@@ -434,10 +384,6 @@
       <DependentUpon>ProgressBarEx.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="ProgressItem.idl">
-      <DependentUpon>ProgressItem.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Midl>
     <Midl Include="ReadableSizeConverter.idl">
       <SubType>Designer</SubType>
     </Midl>
@@ -452,12 +398,6 @@
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="SettingsViewModel.idl">
-      <SubType>Designer</SubType>
-    </Midl>
-    <Midl Include="VectorToBoolConverter.idl">
-      <SubType>Designer</SubType>
-    </Midl>
-    <Midl Include="XCopyViewModel.idl">
       <SubType>Designer</SubType>
     </Midl>
   </ItemGroup>
