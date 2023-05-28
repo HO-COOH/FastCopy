@@ -573,7 +573,7 @@
                 <FontIcon Glyph="{StaticResource ThemeGlyph}"/>
             </local:SettingContainer.Symbol>
             <local:SettingContainer.HeaderContent>
-                <ComboBox SelectedIndex="{x:Bind ViewModel.ThemeSelection, Mode=TwoWay}">
+                <ComboBox x:Name="ThemeSelectionComboBox" SelectedIndex="{x:Bind ViewModel.ThemeSelection, Mode=TwoWay}">
                     <ComboBoxItem x:Uid="DefaultThemeItem"/>
                     <ComboBoxItem x:Uid="DarkThemeItem"/>
                     <ComboBoxItem x:Uid="LightThemeItem"/>

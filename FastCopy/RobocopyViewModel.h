@@ -89,6 +89,12 @@ namespace winrt::FastCopy::implementation
         bool canUseRobocopy() const;
 
         /**
+         * @brief If the source and destination are under the same disk partition, use IFileOperation APIs takes literally no time
+         * @return True if source and destination are under the same disk partition
+         */
+        bool canUseShellCopy() const;
+
+        /**
          * @brief Called after normal robocopy stages finished 
          */
         void onNormalRobocopyFinished();

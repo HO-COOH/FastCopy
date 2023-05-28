@@ -15,7 +15,7 @@ public:
 	std::wstring sourceFolder = Env::GetFolderPath(Env::SpecialFolder::Desktop) + L"\\" + Env::GetRandomName();
 	std::wstring destinationFolder = Env::GetTestDestinationPath(Env::GetRandomName(), randomFileTotalBytes);
 
-	void CreateSourceAndDestinationFolder();
+	void CreateSourceAndDestinationFolder() const;
 private:
 	Config() = default;
 	Config(Config const&) = delete;

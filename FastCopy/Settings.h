@@ -17,7 +17,7 @@ struct Settings
 	 * @param key name of the setting
 	 */
 	template<typename T>
-	auto Get(wchar_t const* key)
+	auto Get(wchar_t const* key) const
 	{
 		if constexpr (std::is_base_of_v<winrt::Windows::Foundation::IInspectable, std::remove_cvref_t<T>>)
 			return m_map.Lookup(key);
@@ -32,7 +32,7 @@ struct Settings
 	 * @param defaultValue that will be returned if the setting is not set
 	 */
 	template<typename T>
-	auto Get(wchar_t const* key, T&& defaultValue)
+	auto Get(wchar_t const* key, T&& defaultValue) const
 	{
 		if constexpr (std::is_base_of_v<winrt::Windows::Foundation::IInspectable, std::remove_cvref_t<T>>)
 			return m_map.TryLookup(key);

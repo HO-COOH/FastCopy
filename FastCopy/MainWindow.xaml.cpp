@@ -22,6 +22,21 @@ namespace winrt::FastCopy::implementation
     MainWindow::MainWindow()
     {
         InitializeComponent();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         UIDispatcher::g_dispatcher = DispatcherQueue();
         UIDispatcher::g_mainWindow = *this;
     }

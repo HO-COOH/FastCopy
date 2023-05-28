@@ -3,24 +3,17 @@
 
 #pragma once
 
+#include "WindowEx.g.h"
+#include "WindowEx.h"
 #include "MainWindow.g.h"
 
-//namespace winrt
-//{
-//    namespace MUC = Microsoft::UI::Composition;
-//    namespace MUCSB = Microsoft::UI::Composition::SystemBackdrops;
-//    namespace MUX = Microsoft::UI::Xaml;
-//    namespace WS = Windows::System;
-//}
 
 namespace winrt::FastCopy::implementation
 {
 
-
     struct MainWindow : MainWindowT<MainWindow>
     {
         MainWindow();
-
     };
 }
 
@@ -30,6 +23,3 @@ namespace winrt::FastCopy::factory_implementation
     {
     };
 }
-
-
-

@@ -7,7 +7,7 @@ Config& Config::GetInstance()
     return s_instance;
 }
 
-void Config::CreateSourceAndDestinationFolder()
+void Config::CreateSourceAndDestinationFolder() const
 {
     std::filesystem::create_directory(sourceFolder);
     std::filesystem::create_directory(destinationFolder);

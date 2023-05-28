@@ -10,3 +10,8 @@ struct BigFile
 {
 	void operator()(std::vector<TestOperation>& test) const;
 };
+
+struct MoveFileSamePartition
+{
+	void operator()(std::vector<TestOperation>& test) const;
+};

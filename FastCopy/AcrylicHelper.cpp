@@ -5,6 +5,8 @@
 #include <DispatcherQueue.h>
 #include <winrt/Microsoft.UI.Composition.h>
 #include <winrt/Microsoft.UI.Dispatching.h>
+#include "SettingsChangeListener.h"
+#include "ViewModelLocator.h"
 
 void AcrylicHelper::EnsureWindowsSystemDispatcherQueueController()
 {
@@ -29,22 +31,27 @@ AcrylicHelper::AcrylicHelper(winrt::Microsoft::UI::Xaml::Window& window, Acrylic
     trySetAcrylicBackdrop(parameter);
 }
 
+AcrylicHelper::~AcrylicHelper()
+{
+    m_acrylicController.Close();
+    m_acrylicController = nullptr;
+}
+
 bool AcrylicHelper::trySetAcrylicBackdrop(AcrylicParameter const& parameter)
 {
     auto activatedToken = m_window.Activated([this](auto, winrt::Microsoft::UI::Xaml::WindowActivatedEventArgs args)
-        {
-            if (m_configurationSource)
-                m_configurationSource.IsInputActive(args.WindowActivationState() != winrt::Microsoft::UI::Xaml::WindowActivationState::Deactivated);
-        });
-
-    m_window.Closed(
-        [this, activatedToken](auto, winrt::Microsoft::UI::Xaml::WindowEventArgs args)
-        {
-            m_acrylicController = nullptr;
-            m_configurationSource = nullptr;
-            m_window.Activated(activatedToken);
-        }
-    );
+    {
+        if (m_configurationSource)
+            m_configurationSource.IsInputActive(args.WindowActivationState() != winrt::Microsoft::UI::Xaml::WindowActivationState::Deactivated);
+    });
+    //m_window.Closed(
+    //    [this, activatedToken](auto, winrt::Microsoft::UI::Xaml::WindowEventArgs args)
+    //    {
+    //        //m_acrylicController = nullptr;
+    //        //m_configurationSource = nullptr;
+    //        //m_window.Activated(activatedToken);
+    //    }
+    //);
 
     m_window.Content().as<winrt::Microsoft::UI::Xaml::FrameworkElement>().ActualThemeChanged([this](auto, auto)
     {
@@ -103,6 +110,12 @@ MicaHelper::MicaHelper(winrt::Microsoft::UI::Xaml::Window& window, MicaParameter
     trySetMicaBackdrop(micaParameter);
 }
 
+MicaHelper::~MicaHelper()
+{
+    m_micaController.Close();
+    m_micaController = nullptr;
+}
+
 bool MicaHelper::trySetMicaBackdrop(MicaParameter const& parameter)
 {
     auto activatedToken = m_window.Activated([this](auto, winrt::Microsoft::UI::Xaml::WindowActivatedEventArgs args)
@@ -111,12 +124,12 @@ bool MicaHelper::trySetMicaBackdrop(MicaParameter const& parameter)
             m_configurationSource.IsInputActive(args.WindowActivationState() != winrt::Microsoft::UI::Xaml::WindowActivationState::Deactivated);
     });
 
-    m_window.Closed([this, activatedToken](auto, winrt::Microsoft::UI::Xaml::WindowEventArgs args)
-    {
-        m_micaController = nullptr;
-        m_configurationSource = nullptr;
-        m_window.Activated(activatedToken);
-    });
+    //m_window.Closed([this, activatedToken](auto, winrt::Microsoft::UI::Xaml::WindowEventArgs args)
+    //{
+    //    //m_micaController = nullptr;
+    //    //m_configurationSource = nullptr;
+    //    //m_window.Activated(activatedToken);
+    //});
 
     m_window.Content().as<winrt::Microsoft::UI::Xaml::FrameworkElement>().ActualThemeChanged([this](auto, auto)
     {
@@ -151,4 +164,55 @@ void MicaHelper::setConfigurationSourceTheme()
         case winrt::Microsoft::UI::Xaml::ElementTheme::Default:   
             m_configurationSource.Theme(winrt::Microsoft::UI::Composition::SystemBackdrops::SystemBackdropTheme::Default); break;
     }
+}
+
+void WindowEffectHelper::init()
+{
+    if (!m_target)
+        return;
+
+    auto settingsViewModel = ViewModelLocator::GetInstance().SettingsViewModel();
+    settingsViewModel.BackgroundSelection(settingsViewModel.BackgroundSelection());
+    settingsViewModel.ThemeSelection(settingsViewModel.ThemeSelection());
+}
+
+void WindowEffectHelper::SetTheme(winrt::Microsoft::UI::Xaml::ElementTheme theme)
+{
+    std::visit(
+        [theme](auto&& helper)
+        {
+            if constexpr (std::is_same_v<std::remove_reference_t<decltype(helper)>, std::nullptr_t>)
+                return;
+            else
+            {
+                if (auto element = helper.GetWindow().Content().try_as<winrt::Microsoft::UI::Xaml::FrameworkElement>(); element)
+                    element.RequestedTheme(theme);
+            }
+        }, m_helper
+    );
+}
+
+void WindowEffectHelper::SetListenThemeChange()
+{
+    SettingsChangeListener::GetInstance().OnThemeChange([this](SettingsChangeListener::ThemeChangeEventArg e)
+    {
+
+        if (e.effect == m_helper.index())
+            return;
+
+        switch (e.effect)
+        {
+            case 0:
+                TrySetMica();
+                break;
+            case 1:
+                TrySetAcrylic();
+                break;
+            case 2:
+                Reset();
+                break;
+            default:
+                break;
+        }
+    });
 }

@@ -45,7 +45,5 @@ namespace winrt::FastCopy::implementation
          * @brief This should be the last function to call in `App::OnLaunched()`, it runs all the copy logic.
          */
         void normalLaunch();
-
-        std::optional<MicaHelper> m_helper;
     };
 }

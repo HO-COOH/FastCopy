@@ -12,7 +12,9 @@ bool RobocopyTest::Run(std::vector<TestOperation> const& paths)
         processes.push_back(
             Process<wchar_t>{
                 ApplicationName,
-                std::format(LR"("{}" "{}" /E /MT:64)", item.source, item.destination)
+                item.operation == TestOperation::Operation::Copy?
+                    std::format(LR"("{}" "{}" /E /MT:64)", item.source, item.destination) :
+                    std::format(LR"("{}" "{}" /E /MT:64 /MOVE)", item.source, item.destination)
             }
         );
     }

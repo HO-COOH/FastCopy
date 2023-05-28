@@ -14,6 +14,7 @@
 #include <winrt/Microsoft.Windows.AppLifecycle.h>
 #include <winrt/Windows.System.h>
 #include <filesystem>
+#include "Global.h"
 
 
 using namespace winrt;
@@ -105,6 +106,7 @@ void App::launchSettings()
 {
     setting = make<MainWindow>();
     setting.Activate();
+    Global::windowEffectHelper.SetTarget(setting);
 }
 
 void App::normalLaunch()
@@ -135,6 +137,7 @@ void App::normalLaunch()
 
     window = make<CopyDialogWindow>();
     window.Activate();
-    m_helper.emplace(window);
+    Global::windowEffectHelper.SetTarget(window);
+    Global::windowEffectHelper.SetListenThemeChange();
     viewModel.Start();
 }

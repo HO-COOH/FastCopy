@@ -3,7 +3,8 @@
 #if __has_include("SettingsViewModel.g.cpp")
 #include "SettingsViewModel.g.cpp"
 #endif
-
+#include "Global.h"
+#include "SettingsChangeListener.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -30,6 +31,19 @@ namespace winrt::FastCopy::implementation
 	void SettingsViewModel::ThemeSelection(int value)
 	{
 		m_model.Set(Settings::ThemeSelection, value);
+
+		switch (value)
+		{
+			case 1:
+				Global::windowEffectHelper.SetTheme(winrt::Microsoft::UI::Xaml::ElementTheme::Dark);
+				break;
+			case 2:
+				Global::windowEffectHelper.SetTheme(winrt::Microsoft::UI::Xaml::ElementTheme::Light);
+				break;
+			default:
+				break;
+		}
+		SettingsChangeListener::GetInstance().BroadcastThemeChange();
 	}
 	int SettingsViewModel::BackgroundSelection()
 	{
@@ -38,5 +52,20 @@ namespace winrt::FastCopy::implementation
 	void SettingsViewModel::BackgroundSelection(int value)
 	{
 		m_model.Set(Settings::BackgroundSelection, value);
+		switch (value)
+		{
+			case 0:
+				Global::windowEffectHelper.TrySetMica();
+				break;
+			case 1:
+				Global::windowEffectHelper.TrySetAcrylic();
+				break;
+			case 2:
+				Global::windowEffectHelper.Reset();
+				break;
+			default:
+				break;
+		}
+		SettingsChangeListener::GetInstance().BroadcastThemeChange();
 	}
 }
