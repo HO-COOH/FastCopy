@@ -178,30 +178,27 @@ void WindowEffectHelper::init()
 
 void WindowEffectHelper::SetTheme(winrt::Microsoft::UI::Xaml::ElementTheme theme)
 {
-    std::visit(
-        [theme](auto&& helper)
+    if (auto element = m_target.Content().try_as<winrt::Microsoft::UI::Xaml::Controls::Page>(); element)
+    {
+        element.RequestedTheme(theme);
+
+        if (m_helper.index() != 2)
         {
-            if constexpr (std::is_same_v<std::remove_reference_t<decltype(helper)>, std::nullptr_t>)
-                return;
-            else
-            {
-                if (auto element = helper.GetWindow().Content().try_as<winrt::Microsoft::UI::Xaml::FrameworkElement>(); element)
-                    element.RequestedTheme(theme);
-            }
-        }, m_helper
-    );
+            element.Background(nullptr);
+            return;
+        }
+    }
 }
 
 void WindowEffectHelper::SetListenThemeChange()
 {
     SettingsChangeListener::GetInstance().OnThemeChange([this](SettingsChangeListener::ThemeChangeEventArg e)
     {
-
-        if (e.effect == m_helper.index())
-            return;
-
-        switch (e.effect)
+        if (e.effect != m_helper.index())
         {
+
+            switch (e.effect)
+            {
             case 0:
                 TrySetMica();
                 break;
@@ -213,6 +210,9 @@ void WindowEffectHelper::SetListenThemeChange()
                 break;
             default:
                 break;
+            }
         }
+
+        SetTheme(static_cast<winrt::Microsoft::UI::Xaml::ElementTheme>(e.theme));
     });
 }

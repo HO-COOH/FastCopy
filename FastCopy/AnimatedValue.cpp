@@ -1,27 +1,57 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "AnimatedValue.h"
-#if __has_include("AnimatedValue.g.cpp")
-#include "AnimatedValue.g.cpp"
-#endif
 
-namespace winrt::FastCopy::implementation
+
+void AnimatedValue::create()
 {
-    
-    winrt::Microsoft::UI::Xaml::DependencyProperty AnimatedValue::m_valueProperty =
-        winrt::Microsoft::UI::Xaml::DependencyProperty::Register(
-            L"Value",
-            winrt::xaml_typename<double>(),
-            winrt::xaml_typename<winrt::FastCopy::AnimatedValue>(),
-            winrt::Microsoft::UI::Xaml::PropertyMetadata{ winrt::box_value(0.0) }
-    );
+	if (m_animation)
+		return;
+	m_value = {};
+	m_animation = {};
+	m_animation.EnableDependentAnimation(true);
+	winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTargetProperty(m_animation, L"Value");
+	winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTarget(m_animation, m_value);
+}
 
-    double AnimatedValue::Value()
-    {
-        return winrt::unbox_value<double>(GetValue(m_valueProperty));
-    }
-    void AnimatedValue::Value(double value)
-    {
-        OutputDebugString((std::to_wstring(value) + L"\n").data());
-        SetValue(m_valueProperty, winrt::box_value(value));
-    }
+AnimatedValue& AnimatedValue::From(double value)
+{
+	create();
+	m_animation.From(value);
+	return *this;
+}
+
+AnimatedValue& AnimatedValue::To(double value)
+{
+	create();
+	m_animation.To(value);
+	return *this;
+}
+
+AnimatedValue& AnimatedValue::EasingFunction(winrt::Microsoft::UI::Xaml::Media::Animation::EasingFunctionBase const& easing)
+{
+	create();
+	m_animation.EasingFunction(easing);
+	return *this;
+}
+
+StoryboardWrapper& StoryboardWrapper::operator<<(AnimatedValue const& animatedValue)
+{
+	try
+	{
+		//This might be called too fast, so animatedValue is already child of an on-going storyboard
+		m_storyboard.Children().Append(animatedValue.m_animation);
+	}
+	catch (...) {}
+
+	return *this;
+}
+
+void StoryboardWrapper::Begin()
+{
+	//m_storyboard.Duration({ std::chrono::milliseconds{5000} });
+	m_storyboard.Begin();
+	m_storyboard.Completed([now = std::chrono::steady_clock::now()](auto...)
+		{
+			OutputDebugString(std::to_wstring(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - now).count()).data());
+		});
 }

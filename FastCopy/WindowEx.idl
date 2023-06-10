@@ -9,7 +9,5 @@ namespace FastCopy
         Boolean IsMinimizable;
         Boolean IsModal;
         Boolean IsResizable;
-
-        Microsoft.UI.Windowing.AppWindow AppWindow{get; };
     }
 }

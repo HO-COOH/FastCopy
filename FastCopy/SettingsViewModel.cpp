@@ -31,18 +31,7 @@ namespace winrt::FastCopy::implementation
 	void SettingsViewModel::ThemeSelection(int value)
 	{
 		m_model.Set(Settings::ThemeSelection, value);
-
-		switch (value)
-		{
-			case 1:
-				Global::windowEffectHelper.SetTheme(winrt::Microsoft::UI::Xaml::ElementTheme::Dark);
-				break;
-			case 2:
-				Global::windowEffectHelper.SetTheme(winrt::Microsoft::UI::Xaml::ElementTheme::Light);
-				break;
-			default:
-				break;
-		}
+		Global::windowEffectHelper.SetTheme(static_cast<winrt::Microsoft::UI::Xaml::ElementTheme>(value));
 		SettingsChangeListener::GetInstance().BroadcastThemeChange();
 	}
 	int SettingsViewModel::BackgroundSelection()

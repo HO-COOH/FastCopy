@@ -1,0 +1,20 @@
+/*
+    This runtimeclass is used together with Storyboard and DoubleAnimation,
+    and possibly with EasingFunctions,
+    so that we can extract out values out without reinventing the wheels.
+*/
+
+namespace FastCopy
+{
+    [Microsoft.UI.Xaml.Data.Bindable]
+    [default_interface]
+    runtimeclass DependentValue : Microsoft.UI.Xaml.DependencyObject
+    {
+        DependentValue();
+
+        Double Value;
+        static Microsoft.UI.Xaml.DependencyProperty ValueProperty{ get; };
+
+        event Windows.Foundation.EventHandler<Double> ValueChanged;
+    }
+}

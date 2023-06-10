@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "WindowEx.g.h"
+#include "WindowHelper.h"
 #include <winrt/Microsoft.UI.Windowing.h>
 
 namespace winrt::FastCopy::implementation
@@ -21,7 +22,10 @@ namespace winrt::FastCopy::implementation
         bool IsResizable();
         void IsResizable(bool value);
 
-        winrt::Microsoft::UI::Windowing::AppWindow AppWindow() { return nullptr; }
+        winrt::Microsoft::UI::Windowing::AppWindow AppWindow();
+    private:
+        winrt::Microsoft::UI::Windowing::AppWindow appWindow = GetAppWindow(*this);
+        winrt::Microsoft::UI::Windowing::OverlappedPresenter presenter = appWindow.Presenter().as<winrt::Microsoft::UI::Windowing::OverlappedPresenter>();
     };
 }
 

@@ -42,6 +42,11 @@ namespace winrt::FastCopy::implementation
         void launchSettings();
 
         /**
+         * @brief Checks whether there is another instance of FastCopy running in settings window
+         */
+        static bool hasAnotherInstance();
+
+        /**
          * @brief This should be the last function to call in `App::OnLaunched()`, it runs all the copy logic.
          */
         void normalLaunch();

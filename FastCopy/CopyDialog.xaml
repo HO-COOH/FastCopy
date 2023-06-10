@@ -185,7 +185,6 @@
                 HorizontalAlignment="Right" 
                 Grid.Row="5" 
                 Style="{StaticResource AccentButtonStyle}" 
-                Loaded="Button_Loaded" 
                 Click="{x:Bind ViewModel.ConfirmDuplicates}"
                 IsEnabled="{x:Bind ViewModel.CanContinue,Mode=OneWay}"
                 />

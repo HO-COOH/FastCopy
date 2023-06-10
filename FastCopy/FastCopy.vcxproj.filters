@@ -56,14 +56,14 @@
     <Midl Include="ReadableSizeConverter.idl">
       <Filter>Views\Converters</Filter>
     </Midl>
-    <Midl Include="AnimatedValue.idl">
-      <Filter>ViewHelper</Filter>
-    </Midl>
     <Midl Include="SettingsViewModel.idl">
       <Filter>ViewModel\Settings</Filter>
     </Midl>
     <Midl Include="WindowEx.idl">
       <Filter>Views</Filter>
+    </Midl>
+    <Midl Include="DependentValue.idl">
+      <Filter>Utils</Filter>
     </Midl>
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +118,12 @@
     </ClCompile>
     <ClCompile Include="ShellCopy.cpp">
       <Filter>Utils\ShellCopy</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatedValue.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="MutexWrapper.cpp">
+      <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -187,6 +193,12 @@
     </ClInclude>
     <ClInclude Include="ShellCopy.h">
       <Filter>Utils\ShellCopy</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatedValue.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="MutexWrapper.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -15,6 +15,7 @@
 #include <winrt/Windows.System.h>
 #include <filesystem>
 #include "Global.h"
+#include "MutexWrapper.h"
 
 
 using namespace winrt;
@@ -104,9 +105,18 @@ bool App::isLaunchSettings()
 
 void App::launchSettings()
 {
+    //ensure singleton if launching settings
+    if (hasAnotherInstance())
+        exit(0);
+
     setting = make<MainWindow>();
     setting.Activate();
     Global::windowEffectHelper.SetTarget(setting);
+}
+
+bool winrt::FastCopy::implementation::App::hasAnotherInstance()
+{
+    return !MutexWrapper{ L"FastCopySettingsLock", false }.TryLock();
 }
 
 void App::normalLaunch()

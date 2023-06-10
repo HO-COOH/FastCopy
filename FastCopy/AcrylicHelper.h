@@ -53,7 +53,7 @@ private:
 class WindowEffectHelper
 {
 	winrt::Microsoft::UI::Xaml::Window m_target;
-	std::variant<AcrylicHelper, MicaHelper, std::nullptr_t> m_helper = nullptr;
+	std::variant<MicaHelper, AcrylicHelper, std::nullptr_t> m_helper = nullptr;
 
 	template<typename EffectType, typename Parameter, typename Func = std::nullptr_t>
 	void trySetEffect(Parameter&& parameter, Func&& onFail)

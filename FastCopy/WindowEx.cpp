@@ -8,31 +8,38 @@ namespace winrt::FastCopy::implementation
 {
     bool WindowEx::IsMaximizable()
     {
-        return true;
+        return presenter.IsMaximizable();
     }
     void WindowEx::IsMaximizable(bool value)
     {
-        OutputDebugString(std::to_wstring(value).data());
+        presenter.IsMaximizable(value);
     }
     bool WindowEx::IsMinimizable()
     {
-        return false;
+        return presenter.IsMinimizable();
     }
     void WindowEx::IsMinimizable(bool value)
     {
+        presenter.IsMinimizable(value);
     }
     bool WindowEx::IsModal()
     {
-        return false;
+        return presenter.IsModal();
     }
     void WindowEx::IsModal(bool value)
     {
+        presenter.IsModal(value);
     }
     bool WindowEx::IsResizable()
     {
-        return false;
+        return presenter.IsResizable();
     }
     void WindowEx::IsResizable(bool value)
     {
+        presenter.IsResizable(value);
+    }
+    winrt::Microsoft::UI::Windowing::AppWindow WindowEx::AppWindow()
+    {
+        return appWindow;
     }
 }

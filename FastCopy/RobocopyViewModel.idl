@@ -3,7 +3,8 @@ import "FileCompareViewModel.idl";
 
 namespace FastCopy
 {
-    [bindable]
+    /*[bindable]*/
+    [Microsoft.UI.Xaml.Data.Bindable]
     [default_interface]
     runtimeclass RobocopyViewModel : ICopyBase
     {
