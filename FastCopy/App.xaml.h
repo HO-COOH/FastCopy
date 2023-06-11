@@ -19,14 +19,36 @@ namespace winrt::FastCopy::implementation
         winrt::Microsoft::UI::Xaml::Window window{ nullptr };
         winrt::Microsoft::UI::Xaml::Window setting{ nullptr };
 
+        /**
+         * @brief Check if launched by toast notification, if is, return the argument
+         * @details Currently there is [Open] and [Dismiss]
+         */
         static std::optional<winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments> isLaunchByToastNotification();
+
+        /**
+         * @brief Handle launch by toast notification
+         * @details Currently only [Open] is handled. It opens the path in `explorer.exe` then exit
+         */
         static void launchByToastNotification(winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments const& args);
 
+        /**
+         * @brief Check if launched by running the main program
+         */
         static bool isLaunchSettings();
+
+        /**
+         * @brief Open the settings GUI.
+         */
         void launchSettings();
 
-        void normalLaunch();
+        /**
+         * @brief Checks whether there is another instance of FastCopy running in settings window
+         */
+        static bool hasAnotherInstance();
 
-        std::optional<MicaHelper> m_helper;
+        /**
+         * @brief This should be the last function to call in `App::OnLaunched()`, it runs all the copy logic.
+         */
+        void normalLaunch();
     };
 }

@@ -40,51 +40,43 @@ namespace winrt::FastCopy::implementation
         Global::UIThread = DispatcherQueue();
         Taskbar::SetProgressState(Global::MainHwnd, Taskbar::ProgressState::Indeterminate);
 
-        //static bool hasSetSize = false;
-        //CopyDialog().Loaded([this](auto, auto)
-        //{
-        //    auto size = CopyDialog().DesiredSize();
-        //    CenterWindow(*this, { static_cast<int>(size.Width), static_cast<int>(size.Height) });
-        //    hasSetSize = true;
-        //    OutputDebugString(L"Size changed\n");
-        //});
-
-
-        //CopyDialog().MainPanel().SizeChanged([this](auto, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs e)
-        //{
-        //    if(!hasSetSize)
-        //    {
-        //        CenterWindow(*this, { static_cast<int>(e.NewSize().Width), static_cast<int>(e.NewSize().Height) });
-        //    }
-        //    hasSetSize = !hasSetSize;
-        //});
 
         ViewModelLocator::GetInstance().RobocopyViewModel().DuplicateFiles().VectorChanged(
             [this](winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::FileCompareViewModel> original, auto)
             {
                 auto const numElements = original.Size();
-                auto const isEmpty = numElements == 0;
-                if (isEmpty && m_currentSize != Sizes[0])
-                {
-                    ResizeWindow(*this, Sizes[0]);
-                    m_currentSize = Sizes[0];
-                }
-                else if (!isEmpty)
-                {
-                    auto const clamped = std::clamp<uint32_t>(numElements, 0, std::size(Sizes) - 1);
-                    if (m_currentSize == Sizes[clamped])
-                        return;
+                auto const clamped = std::clamp<uint32_t>(numElements, 0, std::size(Sizes) - 1);
 
-                    ResizeWindow(*this, Sizes[clamped]);
-                    m_currentSize = Sizes[clamped];
-                }
+                if (m_currentSize == Sizes[clamped])
+                    return;
+
+                playWindowAnimation(Sizes[clamped]);
+
+                /*set size cache*/
+                m_currentSize = Sizes[clamped];
             }
         );
     }
+    void CopyDialogWindow::playWindowAnimation(winrt::Windows::Graphics::SizeInt32 targetSize)
+    {
+        winrt::Microsoft::UI::Xaml::Media::Animation::CircleEase f;
+        f.EasingMode(winrt::Microsoft::UI::Xaml::Media::Animation::EasingMode::EaseInOut);
+        m_heightValue
+            .From(m_currentSize.Height)
+            .To(targetSize.Height)
+            .EasingFunction(f)
+            .Duration(WindowAnimationDuration);
+        m_widthValue
+            .From(m_currentSize.Width)
+            .To(targetSize.Width)
+            .EasingFunction(f)
+            .Duration(WindowAnimationDuration);
+
+        (StoryboardWrapper{} << m_heightValue << m_widthValue).Begin();
+
+        m_heightValue.OnValueChange([this](auto, double value) {
+            ResizeWindow(*this, { .Width = (int)m_widthValue, .Height = (int)value });
+        });
+    }
 }
 
-
-void winrt::FastCopy::implementation::CopyDialogWindow::CopyDialog_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
-{
-
-}

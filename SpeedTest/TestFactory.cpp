@@ -29,7 +29,7 @@ void TestFactory::RunAllTest()
 			std::cout << "\t Failed.";
 		}
 		std::cout << "\t Clearing ";
-		clearTestination();
+		//clearTestination();
 		std::cout << "finished.\n";
 	}
 	std::ranges::sort(s_testResults);

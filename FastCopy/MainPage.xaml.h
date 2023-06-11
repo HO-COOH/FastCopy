@@ -12,8 +12,7 @@ namespace winrt::FastCopy::implementation
         MainPage();
 
         winrt::FastCopy::SettingsViewModel ViewModel();
-        
-
+        void ComboBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
     };
 }
 

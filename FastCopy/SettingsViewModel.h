@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "SettingsViewModel.g.h"
+#include "Settings.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -19,6 +20,8 @@ namespace winrt::FastCopy::implementation
 
         int BackgroundSelection();
         void BackgroundSelection(int value);
+    private:
+        Settings m_model;
     };
 }
 

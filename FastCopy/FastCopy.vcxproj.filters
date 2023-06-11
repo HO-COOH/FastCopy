@@ -16,9 +16,6 @@
     <Page Include="CopyDialog.xaml">
       <Filter>Views</Filter>
     </Page>
-    <Page Include="ProgressItem.xaml">
-      <Filter>Views\Controls</Filter>
-    </Page>
     <Page Include="CopyDialogWindow.xaml">
       <Filter>Views</Filter>
     </Page>
@@ -29,16 +26,6 @@
   <ItemGroup>
     <Midl Include="App.idl" />
     <Midl Include="MainWindow.idl" />
-    <Midl Include="XCopyViewModel.idl">
-      <Filter>ViewModel</Filter>
-    </Midl>
-    <Midl Include="ExplorerItem.idl">
-      <Filter>ViewModel</Filter>
-    </Midl>
-    <Midl Include="ExplorerItemTemplateSelector.idl" />
-    <Midl Include="VectorToBoolConverter.idl">
-      <Filter>Converter</Filter>
-    </Midl>
     <Midl Include="BoolToVisibilityConverter.idl">
       <Filter>Converter</Filter>
     </Midl>
@@ -69,19 +56,19 @@
     <Midl Include="ReadableSizeConverter.idl">
       <Filter>Views\Converters</Filter>
     </Midl>
-    <Midl Include="AnimatedValue.idl">
-      <Filter>ViewHelper</Filter>
-    </Midl>
     <Midl Include="SettingsViewModel.idl">
       <Filter>ViewModel\Settings</Filter>
+    </Midl>
+    <Midl Include="WindowEx.idl">
+      <Filter>Views</Filter>
+    </Midl>
+    <Midl Include="DependentValue.idl">
+      <Filter>Utils</Filter>
     </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
-    <ClCompile Include="XCopyCommandGenerator.cpp">
-      <Filter>ViewModel</Filter>
-    </ClCompile>
     <ClCompile Include="FastCopyCommandParser.cpp">
       <Filter>ViewModel</Filter>
     </ClCompile>
@@ -90,9 +77,6 @@
     </ClCompile>
     <ClCompile Include="AcrylicHelper.cpp">
       <Filter>ViewHelper</Filter>
-    </ClCompile>
-    <ClCompile Include="FileStats.cpp">
-      <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="CommandLine.cpp">
       <Filter>Utils</Filter>
@@ -129,15 +113,21 @@
     <ClCompile Include="Fallback.cpp">
       <Filter>Utils\Fallback</Filter>
     </ClCompile>
-    <ClCompile Include="MessageWindow.cpp">
+    <ClCompile Include="SettingsChangeListener.cpp">
+      <Filter>ViewModel\Settings</Filter>
+    </ClCompile>
+    <ClCompile Include="ShellCopy.cpp">
+      <Filter>Utils\ShellCopy</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatedValue.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="MutexWrapper.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="XCopyCommandGenerator.h">
-      <Filter>ViewModel</Filter>
-    </ClInclude>
     <ClInclude Include="FastCopyCommandParser.h">
       <Filter>ViewModel</Filter>
     </ClInclude>
@@ -152,9 +142,6 @@
     </ClInclude>
     <ClInclude Include="PropertyChangeHelper.hpp">
       <Filter>ViewHelper</Filter>
-    </ClInclude>
-    <ClInclude Include="FileStats.h">
-      <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="CommandLine.h">
       <Filter>Utils</Filter>
@@ -198,7 +185,19 @@
     <ClInclude Include="Fallback.h">
       <Filter>Utils\Fallback</Filter>
     </ClInclude>
-    <ClInclude Include="MessageWindow.h">
+    <ClInclude Include="Settings.h">
+      <Filter>ViewModel\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingsChangeListener.h">
+      <Filter>ViewModel\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="ShellCopy.h">
+      <Filter>Utils\ShellCopy</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatedValue.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="MutexWrapper.h">
       <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
@@ -423,6 +422,9 @@
     </Filter>
     <Filter Include="ViewModel\Settings">
       <UniqueIdentifier>{346f5409-9099-4b78-a713-37925c75a390}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\ShellCopy">
+      <UniqueIdentifier>{73525a02-f480-41b5-8b0a-5863d45cd71f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

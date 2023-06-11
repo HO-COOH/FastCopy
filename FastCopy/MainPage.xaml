@@ -9,6 +9,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxm="using:Microsoft.UI.Xaml.Media"
+    Background="Transparent"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -41,6 +42,11 @@
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
+            <SolidColorBrush
+            x:Name="RootBackground"
+            Opacity="0"
+            Color="{ThemeResource SolidBackgroundFillColorBase}" />
+            
             <Style x:Key="StackPanelInExpanderStyle" TargetType="StackPanel">
                 <Setter Property="VerticalAlignment" Value="Center" />
                 <Setter Property="Padding" Value="0,12,0,12" />
@@ -536,13 +542,9 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-            
 
 
-            <local:ExplorerItemTemplateSelector x:Key="ExplorerItemTemplateSelector"
-                                                        FolderTemplate="{StaticResource FolderTemplate}"
-                                                        FileTemplate="{StaticResource FileTemplate}"/>
-            <local:VectorToBoolConverter x:Key="VectorToBoolConverter"/>
+
             <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
             <muxm:AcrylicBrush x:Key="MenuAcrylic"  TintOpacity="0.5" TintLuminosityOpacity="0.4" TintColor="White"/>
             <local:NumberToStringConverter x:Key="NumberToStringConverter"/>
@@ -553,13 +555,16 @@
     </Page.Resources>
 
     <StackPanel Margin="20">
+        <StackPanel.ChildrenTransitions>
+            <EntranceThemeTransition/>
+        </StackPanel.ChildrenTransitions>
         <TextBlock x:Uid="SettingWindowTitle" FontSize="32" FontWeight="Bold" MaxWidth="1000" Margin="0,0,0,10"/>
         <local:SettingContainer x:Uid="NotificationSettingItem">
             <local:SettingContainer.Symbol>
                 <FontIcon Glyph="{StaticResource NotificationGlyph}"/>
             </local:SettingContainer.Symbol>
             <local:SettingContainer.HeaderContent>
-                <ToggleSwitch x:Name="NotificationSwitch" Style="{StaticResource ToggleSwitchLeftLabelStyle}" IsOn="{x:Bind ViewModel.Notify, Mode=TwoWay}"/>
+                <ToggleSwitch x:Name="NotificationSwitch" Margin="0,0,-80,0" Style="{StaticResource ToggleSwitchLeftLabelStyle}" IsOn="{x:Bind ViewModel.Notify, Mode=TwoWay}"/>
             </local:SettingContainer.HeaderContent>
         </local:SettingContainer>
 
@@ -568,7 +573,11 @@
                 <FontIcon Glyph="{StaticResource MultipleWindowGlyph}"/>
             </local:SettingContainer.Symbol>
             <local:SettingContainer.HeaderContent>
-                <local:SegmentedButton x:Uid="MultipleInstanceSegmentButton" Selection="{x:Bind ViewModel.MultipleWindowBehavior, Mode=TwoWay}"/>
+                <local:SegmentedButton x:Uid="MultipleInstanceSegmentButton" IsEnabled="False" Selection="{x:Bind ViewModel.MultipleWindowBehavior, Mode=TwoWay}">
+                    <ToolTipService.ToolTip>
+                        <ToolTip Content="Not implemented!"/>
+                    </ToolTipService.ToolTip>
+                </local:SegmentedButton>
             </local:SettingContainer.HeaderContent>
         </local:SettingContainer>
 
@@ -577,10 +586,10 @@
                 <FontIcon Glyph="{StaticResource ThemeGlyph}"/>
             </local:SettingContainer.Symbol>
             <local:SettingContainer.HeaderContent>
-                <ComboBox SelectedIndex="{x:Bind ViewModel.ThemeSelection, Mode=TwoWay}">
+                <ComboBox x:Name="ThemeSelectionComboBox" SelectedIndex="{x:Bind ViewModel.ThemeSelection, Mode=TwoWay}">
                     <ComboBoxItem x:Uid="DefaultThemeItem"/>
-                    <ComboBoxItem x:Uid="DarkThemeItem"/>
                     <ComboBoxItem x:Uid="LightThemeItem"/>
+                    <ComboBoxItem x:Uid="DarkThemeItem"/>
                 </ComboBox>
             </local:SettingContainer.HeaderContent>
         </local:SettingContainer>

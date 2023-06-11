@@ -4,6 +4,7 @@
 #include <ShlObj_core.h>
 #include <execution>
 #include <filesystem>
+#include <cassert>
 
 COMApiTest::COMApiTest()
 {
@@ -31,12 +32,22 @@ bool COMApiTest::Run(std::vector<TestOperation> const& paths)
             if(!SUCCEEDED(SHCreateItemFromParsingName(test.source.data(), NULL, IID_PPV_ARGS(psiFrom.put()))))
                 return false;
 
-            auto destinationParent = std::filesystem::path{ test.destination }.parent_path().wstring();
-            if (!SUCCEEDED(SHCreateItemFromParsingName(destinationParent.data(), NULL, IID_PPV_ARGS(psiDest.put()))))
+            if (!SUCCEEDED(SHCreateItemFromParsingName(test.destination.data(), NULL, IID_PPV_ARGS(psiDest.put()))))
                 return false;
 
-            if(!SUCCEEDED(pfo->CopyItem(psiFrom.get(), psiDest.get(), nullptr, nullptr)))
-                return false;
+
+            //if (!SUCCEEDED(pfo->CopyItem(psiFrom.get(), psiDest.get(), nullptr, nullptr)))
+            //    return false;
+            switch (test.operation)
+            {
+                case TestOperation::Operation::Copy:
+                    if (!SUCCEEDED(pfo->CopyItem(psiFrom.get(), psiDest.get(), nullptr, nullptr)))
+                        return false;
+                case TestOperation::Operation::Move:
+                    if (!SUCCEEDED(pfo->MoveItem(psiFrom.get(), psiDest.get(), nullptr, nullptr)))
+                        return false;
+            }
+
 
             if (!SUCCEEDED(pfo->PerformOperations()))
                 return false;

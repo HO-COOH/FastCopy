@@ -9,6 +9,8 @@
 #ifdef _DEBUG
 #include "COMApiTest.h"
 #include "XCopyTest.h"
+#include "FilesystemApiTest.h"
+#include "RobocopyTest.h"
 #endif
 
 /*
@@ -67,24 +69,31 @@ static void RunCommandLineConfig(...)
 		TestFactory{} << BigFile{};
 }
 
+
+#include <wil/com.h>
+#include <ShlObj_core.h>
+
 int main(int argc, char** argv)
 {
 	if (argc == 1)
 	{
-		ExplorerGuard guard;
+		//ExplorerGuard guard;
 #ifdef _DEBUG
 		//manually add debugging test implementation here...
 		//In release build, all tests registered with AutoRegister<Self> runs
 
 		//TestFactory::Register(std::make_unique<COMApiTest>());
-		TestFactory::Register(std::make_unique<XCopyTest>());
+		TestFactory::Register(std::make_unique<COMApiTest>());
+		TestFactory::Register(std::make_unique<FilesystemApiTest>());
+		TestFactory::Register(std::make_unique<RobocopyTest>());
 #endif
 		TestFactory{}
-			<< Random4KFiles{}
-			<< BigFile{};
+			//<< Random4KFiles{}
+			//<< BigFile{};
+		<< MoveFileSamePartition{};
 		TestFactory::RunAllTest();
 		TestFactory::PrintResult();
-		TestFactory::Clear();
+		//TestFactory::Clear();
 	}
 	else
 	{

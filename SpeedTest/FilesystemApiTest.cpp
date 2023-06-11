@@ -1,6 +1,7 @@
 #include "FilesystemApiTest.h"
 #include <filesystem>
 #include <execution>
+#include <cassert>
 bool FilesystemApiTest::Run(std::vector<TestOperation> const& paths)
 {
 	try
@@ -10,7 +11,17 @@ bool FilesystemApiTest::Run(std::vector<TestOperation> const& paths)
 			std::begin(paths),
 			std::end(paths),
 			[](TestOperation const& test) {
-				std::filesystem::copy(test.source, test.destination, std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing);
+				switch (test.operation)
+				{
+					case TestOperation::Operation::Copy:
+						std::filesystem::copy(test.source, test.destination, std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing);
+						break;
+					case TestOperation::Operation::Move:
+						std::filesystem::rename(test.source, test.destination);
+						break;
+					default:
+						assert(false);
+				}
 			}
 		);
 		return true;

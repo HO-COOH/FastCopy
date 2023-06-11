@@ -3,6 +3,7 @@
 #include <winrt/Microsoft.Windows.AppNotifications.Builder.h>
 #include <winrt/Microsoft.Windows.AppNotifications.h>
 #include <format>
+#include "Settings.h"
 
 namespace Notification
 {
@@ -38,6 +39,9 @@ namespace Notification
 	*/
 	void Notification::SendSuccess(winrt::hstring prompt, winrt::hstring destination)
 	{
+		if (!Settings{}.Get<bool>(Settings::Notify, true))
+			return;
+
 		winrt::Microsoft::Windows::AppNotifications::Builder::AppNotificationBuilder builder;
 		builder.AddText(prompt);
 		

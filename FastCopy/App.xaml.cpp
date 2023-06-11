@@ -14,6 +14,8 @@
 #include <winrt/Microsoft.Windows.AppLifecycle.h>
 #include <winrt/Windows.System.h>
 #include <filesystem>
+#include "Global.h"
+#include "MutexWrapper.h"
 
 
 using namespace winrt;
@@ -45,29 +47,6 @@ App::App()
             }
         });
 #endif
-}
-
-
-winrt::Windows::Foundation::IAsyncAction GetFromClipboard()
-{
-    //get data from copy paste
-    auto packageView = winrt::Windows::ApplicationModel::DataTransfer::Clipboard::GetContent();
-    if (!packageView.Contains(winrt::Windows::ApplicationModel::DataTransfer::StandardDataFormats::StorageItems()))
-        co_return;
-
-    auto sources = ViewModelLocator::GetInstance().XCopyViewModel().Sources();
-    auto storageItems = co_await packageView.GetStorageItemsAsync();
-    for (auto storageItem : storageItems)
-    {
-        if (storageItem.IsOfType(winrt::Windows::Storage::StorageItemTypes::File))
-        {
-            sources.Append(winrt::FastCopy::ExplorerItem{ storageItem.as<winrt::Windows::Storage::StorageFile>() });
-        }
-        else if (storageItem.IsOfType(winrt::Windows::Storage::StorageItemTypes::Folder))
-        {
-            sources.Append(winrt::FastCopy::ExplorerItem{ storageItem.as<winrt::Windows::Storage::StorageFolder>(), true, 3 });
-        }
-    }
 }
 
 
@@ -126,8 +105,18 @@ bool App::isLaunchSettings()
 
 void App::launchSettings()
 {
+    //ensure singleton if launching settings
+    if (hasAnotherInstance())
+        exit(0);
+
     setting = make<MainWindow>();
     setting.Activate();
+    Global::windowEffectHelper.SetTarget(setting);
+}
+
+bool winrt::FastCopy::implementation::App::hasAnotherInstance()
+{
+    return !MutexWrapper{ L"FastCopySettingsLock", false }.TryLock();
 }
 
 void App::normalLaunch()
@@ -158,6 +147,7 @@ void App::normalLaunch()
 
     window = make<CopyDialogWindow>();
     window.Activate();
-    m_helper.emplace(window);
+    Global::windowEffectHelper.SetTarget(window);
+    Global::windowEffectHelper.SetListenThemeChange();
     viewModel.Start();
 }

@@ -1,0 +1,13 @@
+namespace FastCopy
+{
+    unsealed runtimeclass WindowEx : Microsoft.UI.Xaml.Window
+    {
+        WindowEx();
+
+        //static Microsoft.UI.Xaml.DependencyProperty IsMaximizableProperty{get; };
+        Boolean IsMaximizable;
+        Boolean IsMinimizable;
+        Boolean IsModal;
+        Boolean IsResizable;
+    }
+}

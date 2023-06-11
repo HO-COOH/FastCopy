@@ -8,6 +8,7 @@
 #include <winrt/Windows.System.h>
 #include "Taskbar.h"
 #include "Global.h"
+#include "SettingsChangeListener.h"
 
 using namespace winrt;
 using namespace Windows::UI::Xaml;
@@ -78,6 +79,22 @@ namespace winrt::FastCopy::implementation
 				}
 			}
 		);
+		SettingsChangeListener::GetInstance().OnThemeChange(
+			[this](SettingsChangeListener::ThemeChangeEventArg e)
+			{
+				if (e.effect == 2)
+				{
+					switch (e.theme)
+					{
+					case 0: Background(nullptr); break;
+					case 1: Background(winrt::Microsoft::UI::Xaml::Media::SolidColorBrush{winrt::Windows::UI::Colors::White()}); break;
+					case 2: Background(winrt::Microsoft::UI::Xaml::Media::SolidColorBrush{winrt::Windows::UI::Colors::Black()}); break;
+					}
+				}
+				else
+					Background(nullptr);
+			}
+		);
 	}
 
 	void CopyDialog::MainPanel_SizeChanged(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e)
@@ -96,28 +113,3 @@ void winrt::FastCopy::implementation::CopyDialog::CheckBox_Checked(winrt::Window
 {
 	OutputDebugString(L"Checkbox clicked\n");
 }
-
-
-void winrt::FastCopy::implementation::CopyDialog::Button_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
-{
-
-	//winrt::Microsoft::UI::Xaml::Media::Animation::DoubleAnimation animation;
-	//animation.From(0.0);
-	//animation.To(100.0);
-	//animation.Duration({ std::chrono::seconds{ 1 } });
-
-	//winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTargetProperty(animation, L"Value");
-	//winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTarget(animation, m_height);
-	//animation.EnableDependentAnimation(true);
-
-	//winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard storyboard;
-	//storyboard.Children().Append(animation);
-	//storyboard.Begin();
-
-
-	//MyAnimation().SetTarget(MyAnimation(), m_height);
-	//MyAnimation().SetTargetProperty(MyAnimation(), L"Value");
-	//MyAnimation().Begin();
-}
-
-

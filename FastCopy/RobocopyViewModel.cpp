@@ -8,11 +8,11 @@
 #include <filesystem>
 #include "ReadableUnitConverter.h"
 #include "Global.h"
-#include "FileStats.h"
 #include "RobocopyArgs.h"
 #include "Taskbar.h"
 #include "Notification.h"
 #include "Fallback.h"
+#include "ShellCopy.h"
 #include <winrt/Microsoft.Windows.ApplicationModel.Resources.h>
 
 namespace winrt::FastCopy::implementation
@@ -131,7 +131,12 @@ namespace winrt::FastCopy::implementation
 			while (*m_iter != m_recordFile->end() && m_status == Status::Running)
 			{
 				Global::UIThread.TryEnqueue([this] {raisePropertyChange(L"Source"); });
-				if (canUseRobocopy())
+				if (canUseShellCopy())
+				{
+					ShellCopy::Move(**m_iter, m_destination);
+					m_finishedFiles += m_recordFile->GetNumFiles(m_recordFile->IndexOf(*m_iter));
+				}
+				else if (canUseRobocopy())
 				{
 					m_process.emplace(getRobocopyArg());
 					SetHandle(m_process->Handle());
@@ -294,6 +299,11 @@ namespace winrt::FastCopy::implementation
 		return !std::filesystem::exists(
 			std::format(LR"({}\{})", m_destination.data(), fileName)
 		) || sourcePath.parent_path() == std::filesystem::path{ m_destination.data() };
+	}
+	bool RobocopyViewModel::canUseShellCopy() const
+	{
+		return m_recordFile->GetOperation() == CopyOperation::Move &&
+			ShellCopy::IsInSameDiskPartition(**m_iter, m_destination);
 	}
 	void RobocopyViewModel::onNormalRobocopyFinished()
 	{

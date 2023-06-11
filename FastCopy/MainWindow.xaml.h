@@ -3,24 +3,25 @@
 
 #pragma once
 
+#include "WindowEx.g.h"
+#include "WindowEx.h"
 #include "MainWindow.g.h"
+#include "MutexWrapper.h"
 
-//namespace winrt
-//{
-//    namespace MUC = Microsoft::UI::Composition;
-//    namespace MUCSB = Microsoft::UI::Composition::SystemBackdrops;
-//    namespace MUX = Microsoft::UI::Xaml;
-//    namespace WS = Windows::System;
-//}
 
 namespace winrt::FastCopy::implementation
 {
-
-
     struct MainWindow : MainWindowT<MainWindow>
     {
         MainWindow();
+    private:
+        //Unscaled window size
+        constexpr static winrt::Windows::Graphics::SizeInt32 Size
+        {
+            600, 470
+        };
 
+        MutexWrapper m_settingsLock{ L"FastCopySettingsLock", true };
     };
 }
 
@@ -30,6 +31,3 @@ namespace winrt::FastCopy::factory_implementation
     {
     };
 }
-
-
-

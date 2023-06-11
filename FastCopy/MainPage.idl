@@ -1,5 +1,3 @@
-import "ExplorerItem.idl";
-import "XCopyViewModel.idl";
 import "SettingContainer.idl";
 import "SettingsViewModel.idl";
 // Copyright (c) Microsoft Corporation and Contributors.
