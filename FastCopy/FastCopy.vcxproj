@@ -198,6 +198,7 @@
     </ClInclude>
     <ClInclude Include="ReadableUnitConverter.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="ResourceHelper.h" />
     <ClInclude Include="RobocopyArgs.h" />
     <ClInclude Include="RobocopyProcess.h" />
     <ClInclude Include="RobocopyViewModel.h">
@@ -319,6 +320,7 @@
       <DependentUpon>ReadableSizeConverter.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="ResourceHelper.cpp" />
     <ClCompile Include="RobocopyArgs.cpp" />
     <ClCompile Include="RobocopyProcess.cpp" />
     <ClCompile Include="RobocopyViewModel.cpp">

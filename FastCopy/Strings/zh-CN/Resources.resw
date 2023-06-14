@@ -123,8 +123,17 @@
   <data name="ContinueButton.Content" xml:space="preserve">
     <value>继续</value>
   </data>
-  <data name="CopyOperation" xml:space="preserve">
+  <data name="Copied" xml:space="preserve">
+    <value>复制</value>
+  </data>
+  <data name="CopyFinishNotificationFormatString" xml:space="preserve">
+    <value>成功{}{}个文件</value>
+  </data>
+  <data name="Copying" xml:space="preserve">
     <value>正在复制</value>
+  </data>
+  <data name="CopyOperation" xml:space="preserve">
+    <value>复制</value>
   </data>
   <data name="CustomItem.Content" xml:space="preserve">
     <value>禁用效果</value>
@@ -135,7 +144,13 @@
   <data name="DefaultThemeItem.Content" xml:space="preserve">
     <value>Windows默认</value>
   </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>删除</value>
+  </data>
   <data name="DeleteOperation" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="Deleting" xml:space="preserve">
     <value>正在删除</value>
   </data>
   <data name="DestinationFolderContains.Text" xml:space="preserve">
@@ -153,7 +168,13 @@
   <data name="MicaItem.Content" xml:space="preserve">
     <value>Mica</value>
   </data>
+  <data name="Moved" xml:space="preserve">
+    <value>移动</value>
+  </data>
   <data name="MoveOperation" xml:space="preserve">
+    <value>移动</value>
+  </data>
+  <data name="Moving" xml:space="preserve">
     <value>正在移动</value>
   </data>
   <data name="MultipleInstanceBehaviorSettingItem.HelpText" xml:space="preserve">

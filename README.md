@@ -29,6 +29,8 @@ A GUI wrapper for Windows' built-in `robocopy` ~~and `xcopy`~~.
 1. Using file explorer, select some files/folders, as many as you want >> right click >> move to **FastCopy** >> select **Copy** or **Move**
 2. Go to destination folder, right click at empty space >> move to **FastCopy** >> select **Paste**
 
+
+
 ## Development
 ### Project structure
 ```
@@ -55,6 +57,10 @@ vcpkg install spdlog:x64-windows
 vcpkg install abseil:x64-windows
 ``` 
 
+## Translation
+For contribution to translation, there are 2 places to be translated:
+- The main project, in `FastCopy/Strings/<language>/Resources.resw`
+- The shell extension project, in `FastCopyShellExtension/CopyOperationNames.cpp CopyOperationNames::GetInstance()`
 
 ### Prototype
 [Figma link, you may need to ask for permission.](https://www.figma.com/file/e5hUvDWKO8gZiKXruuNSvL/Xcopy?type=design&node-id=217-31199&t=cKY9TdBJXXi7QdFL-0)

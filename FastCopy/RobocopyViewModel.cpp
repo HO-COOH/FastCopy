@@ -14,6 +14,7 @@
 #include "Fallback.h"
 #include "ShellCopy.h"
 #include <winrt/Microsoft.Windows.ApplicationModel.Resources.h>
+#include "ResourceHelper.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -36,8 +37,6 @@ namespace winrt::FastCopy::implementation
 			Global::UIThread.TryEnqueue([this] {
 				raisePropertyChange(L"ItemCount");
 			});
-			//std::this_thread::sleep_for(std::chrono::seconds{ 2 });
-			//Start();
 		});
 	}
 
@@ -57,13 +56,6 @@ namespace winrt::FastCopy::implementation
 		};
 	}
 
-	static auto getResource(winrt::hstring const& key)
-	{
-		return winrt::Microsoft::Windows::ApplicationModel::Resources::ResourceManager{}
-			.MainResourceMap()
-			.GetValue(key)
-			.ValueAsString();
-	}
 	winrt::hstring RobocopyViewModel::OperationString()
 	{
 		if (!m_recordFile)
@@ -71,9 +63,9 @@ namespace winrt::FastCopy::implementation
 
 		switch (m_recordFile->GetOperation())
 		{
-			case CopyOperation::Copy: return getResource(L"Resources/CopyOperation");
-			case CopyOperation::Move: return getResource(L"Resources/MoveOperation");
-			case CopyOperation::Delete: return getResource(L"Resources/DeleteOperation");
+			case CopyOperation::Copy: return ToCapital(GetStringResource(L"CopyOperation"));
+			case CopyOperation::Move: return ToCapital(GetStringResource(L"MoveOperation"));
+			case CopyOperation::Delete: return ToCapital(GetStringResource(L"DeleteOperation"));
 			default: throw std::runtime_error{ "Invalid operation" };
 		}
 	}
@@ -322,18 +314,23 @@ namespace winrt::FastCopy::implementation
 	}
 	void RobocopyViewModel::onAllFinished()
 	{
-		Notification::SendSuccess(std::format(L"Successfully {} {} files",
-			[this] 
-			{
-				switch (m_recordFile->GetOperation())
-				{
-					case CopyOperation::Copy: return L"copied";
-					case CopyOperation::Move: return L"moved";
-					case CopyOperation::Delete: return L"deleted";
-				}
-			}(), m_finishedFiles).data(), m_destination);
+		auto formatString = GetStringResource(L"CopyFinishNotificationFormatString");
+		Notification::SendSuccess(
+			std::vformat(std::wstring_view{formatString}, std::make_wformat_args(OperationString().data(), m_finishedFiles)).data(), 
+			m_destination
+		);
 		std::filesystem::remove(m_recordFile->GetPath().data());
 		m_finishEvent(*this, FinishState::Success);
+	}
+
+	winrt::hstring RobocopyViewModel::finishedOperationString()
+	{
+		switch (m_recordFile->GetOperation())
+		{
+			case CopyOperation::Copy: return GetStringResource(L"Copied");
+			case CopyOperation::Move: return GetStringResource(L"Moved");
+			case CopyOperation::Delete: return GetStringResource(L"Deleted");
+		}
 	}
 
 	void RobocopyViewModel::raiseProgressChange()

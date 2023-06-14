@@ -125,6 +125,9 @@
     <ClCompile Include="MutexWrapper.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="ResourceHelper.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -198,6 +201,9 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="MutexWrapper.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceHelper.h">
       <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
