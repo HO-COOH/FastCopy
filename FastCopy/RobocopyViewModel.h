@@ -14,12 +14,7 @@ namespace winrt::FastCopy::implementation
 {
     struct RobocopyViewModel : RobocopyViewModelT<RobocopyViewModel>, PropertyChangeHelper<RobocopyViewModel>, ProcessIOUpdater<RobocopyViewModel>
     {
-        RobocopyViewModel()
-        {
-#ifdef _DEBUG
-            //m_duplicateFiles.Append({LR"(E:\android-studio-2021.2.1.15-windows_2.exe)", LR"(E:\527.56-desktop-win10-win11-64bit-international-dch-whql.exe)"});
-#endif
-        }
+        RobocopyViewModel() = default;
 
         winrt::hstring RecordFile();
         void RecordFile(winrt::hstring value);
@@ -105,6 +100,8 @@ namespace winrt::FastCopy::implementation
         void onFallbackFinished();
 
         void onAllFinished();
+
+        winrt::hstring finishedOperationString();
 
         void raiseProgressChange();
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::FileCompareViewModel> m_duplicateFiles = winrt::single_threaded_observable_vector<winrt::FastCopy::FileCompareViewModel>();

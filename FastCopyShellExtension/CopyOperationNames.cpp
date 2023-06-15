@@ -38,6 +38,7 @@ CopyOperationNames& CopyOperationNames::GetInstance()
                 .Delete = L"删除"
             };
         }
+        //Add more languages here
     }();
     return s_instance;
 }

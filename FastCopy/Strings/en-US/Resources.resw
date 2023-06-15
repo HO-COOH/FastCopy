@@ -123,8 +123,17 @@
   <data name="ContinueButton.Content" xml:space="preserve">
     <value>Continue</value>
   </data>
+  <data name="Copied" xml:space="preserve">
+    <value>copied</value>
+  </data>
+  <data name="CopyFinishNotificationFormatString" xml:space="preserve">
+    <value>Successfully {} {} files</value>
+  </data>
+  <data name="Copying" xml:space="preserve">
+    <value>copying</value>
+  </data>
   <data name="CopyOperation" xml:space="preserve">
-    <value>Copying </value>
+    <value>copy</value>
   </data>
   <data name="CustomItem.Content" xml:space="preserve">
     <value>Disable</value>
@@ -135,8 +144,14 @@
   <data name="DefaultThemeItem.Content" xml:space="preserve">
     <value>Windows default</value>
   </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>deleted</value>
+  </data>
   <data name="DeleteOperation" xml:space="preserve">
-    <value>Deleting </value>
+    <value>delete</value>
+  </data>
+  <data name="Deleting" xml:space="preserve">
+    <value>deleting</value>
   </data>
   <data name="DestinationFolderContains.Text" xml:space="preserve">
     <value>Destination folder contains</value>
@@ -153,8 +168,14 @@
   <data name="MicaItem.Content" xml:space="preserve">
     <value>Mica</value>
   </data>
+  <data name="Moved" xml:space="preserve">
+    <value>moved</value>
+  </data>
   <data name="MoveOperation" xml:space="preserve">
-    <value>Moving </value>
+    <value>move</value>
+  </data>
+  <data name="Moving" xml:space="preserve">
+    <value>moving</value>
   </data>
   <data name="MultipleInstanceBehaviorSettingItem.HelpText" xml:space="preserve">
     <value>Control the bahavior of having multiple instances of fastcopy</value>
