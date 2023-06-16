@@ -48,6 +48,16 @@ CopyOperationNames& CopyOperationNames::GetInstance()
                 .Delete = L"Löschen"
             };
         }
+        else if (defaultLang == L"es-es") 
+        {
+            return CopyOperationNames
+            {
+                .Copy = L"Copiar",
+                .Move = L"Mover",
+                .Paste = L"Pegar",
+                .Delete = L"Borrar"
+            };
+        }
         //Add more languages here
     }();
     return s_instance;
