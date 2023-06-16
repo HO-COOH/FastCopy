@@ -38,6 +38,16 @@ CopyOperationNames& CopyOperationNames::GetInstance()
                 .Delete = L"删除"
             };
         }
+        else if (defaultLang == L"de-de") 
+        {
+            return CopyOperationNames
+            {
+                .Copy = L"Kopieren",
+                .Move = L"Verschieben",
+                .Paste = L"Einfügen",
+                .Delete = L"Löschen"
+            };
+        }
         //Add more languages here
     }();
     return s_instance;
