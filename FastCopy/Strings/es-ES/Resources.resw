@@ -142,7 +142,7 @@
     <value>Oscuro</value>
   </data>
   <data name="DefaultThemeItem.Content" xml:space="preserve">
-    <value>Valor or defecto de Windows</value>
+    <value>Valor por defecto de Windows</value>
   </data>
   <data name="Deleted" xml:space="preserve">
     <value>borrado</value>
