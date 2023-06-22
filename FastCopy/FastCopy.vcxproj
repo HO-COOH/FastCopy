@@ -220,6 +220,10 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="ShellCopy.h" />
+    <ClInclude Include="SpeedGraph.xaml.h">
+      <DependentUpon>SpeedGraph.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Taskbar.h" />
     <ClInclude Include="TaskFile.h" />
     <ClInclude Include="UIDispatcher.h" />
@@ -247,6 +251,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="SegmentedButton.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SpeedGraph.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
@@ -341,6 +348,10 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ShellCopy.cpp" />
+    <ClCompile Include="SpeedGraph.xaml.cpp">
+      <DependentUpon>SpeedGraph.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Taskbar.cpp" />
     <ClCompile Include="TaskFile.cpp" />
     <ClCompile Include="UIThreadWrapper.cpp" />
@@ -413,6 +424,10 @@
     </Midl>
     <Midl Include="SettingsViewModel.idl">
       <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="SpeedGraph.idl">
+      <DependentUpon>SpeedGraph.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Midl>
     <Midl Include="WindowEx.idl">
       <SubType>Designer</SubType>

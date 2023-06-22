@@ -22,6 +22,9 @@
     <Page Include="ProgressBarEx.xaml">
       <Filter>Views\Controls</Filter>
     </Page>
+    <Page Include="SpeedGraph.xaml">
+      <Filter>Views\Controls</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />

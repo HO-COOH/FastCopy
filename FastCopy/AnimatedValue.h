@@ -60,6 +60,8 @@ public:
 class StoryboardWrapper
 {
 	winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard m_storyboard;
+	bool m_completed = true;
+	winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::Completed_revoker m_revoker;
 public:
 
 	/**

@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="FastCopy.SpeedGraph"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:FastCopy"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
+    SizeChanged="UserControl_SizeChanged"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <Color x:Key="NormalTopColor">#e08caeff</Color>
+        <Color x:Key="NormalBottomColor">#108caeff</Color>
+
+        <Color x:Key="PauseTopColor">#e0ffff00</Color>
+        <Color x:Key="PauseBottomColor">#10e0e020</Color>
+
+        <Color x:Key="ErrorTopColor">#e0ff1010</Color>
+        <Color x:Key="ErrorBottomColor">#10b01010</Color>
+
+        <LinearGradientBrush x:Key="Brush" StartPoint="0,1" EndPoint="0,0">
+            <GradientStop Color="#108caeff" Offset="0"/>
+            <GradientStop Color="#e08caeff" Offset="1"/>
+        </LinearGradientBrush>
+
+        <Duration x:Key="ScaleDuration">0:0:0.3</Duration>
+        <Duration x:Key="ColorAnimationDuration">0:0:0.3</Duration>
+
+        <Storyboard x:Name="ScaleDown">
+            <DoubleAnimation x:Name="ScaleDownAnimation"
+                Storyboard.TargetName="GraphScale"
+                 Storyboard.TargetProperty="ScaleY"
+                 Duration="{StaticResource ScaleDuration}">
+                <DoubleAnimation.EasingFunction>
+                    <ExponentialEase Exponent="6" EasingMode="EaseInOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+    </UserControl.Resources>
+
+    <Grid>
+        <canvas:CanvasControl Draw="CanvasControl_Draw" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ClearColor="Transparent"/>
+
+        <Polygon x:Name="Shape" Fill="{StaticResource Brush}" Points="" RenderTransformOrigin="0 1.0">
+            <Polygon.RenderTransform>
+                <ScaleTransform x:Name="GraphScale"/>
+            </Polygon.RenderTransform>
+        </Polygon>
+
+        <Line x:Name="AverageSpeedLine" X1="0" X2="10000" Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}" Opacity="0.3">
+            <Line.RenderTransform>
+                <TranslateTransform x:Name="LineTranslate"/>
+            </Line.RenderTransform>
+        </Line>
+
+        <TextBlock x:Name="AverageSpeedText" Text="20.0 MB/s" Margin="0,-20,10,0" HorizontalAlignment="Right" Opacity="0.8">
+            <TextBlock.RenderTransform>
+                <TranslateTransform x:Name="TextTranslate"/>
+            </TextBlock.RenderTransform>
+        </TextBlock>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="States">
+                <VisualState x:Name="Normal">
+                    <Storyboard>
+                        <ColorAnimation Storyboard.TargetName="Shape"
+                                        Storyboard.TargetProperty="(Polygon.Fill).(LinearGradientBrush.GradientStops)[0].(GradientStop.Color)"
+                                        To="{StaticResource NormalBottomColor}"
+                                        Duration="{StaticResource ColorAnimationDuration}" 
+                                        EnableDependentAnimation="True"/>
+                        <ColorAnimation Storyboard.TargetName="Shape"
+                                        Storyboard.TargetProperty="(Polygon.Fill).(LinearGradientBrush.GradientStops)[1].(GradientStop.Color)"
+                                        To="{StaticResource NormalTopColor}"
+                                        Duration="{StaticResource ColorAnimationDuration}" 
+                                        EnableDependentAnimation="True"/>
+                        <DoubleAnimation Storyboard.TargetName="AverageSpeedLine"
+                                         Storyboard.TargetProperty="Opacity"
+                                         To="0.3"
+                                         Duration="{StaticResource ColorAnimationDuration}"/>
+                        <DoubleAnimation Storyboard.TargetName="AverageSpeedText"
+                                         Storyboard.TargetProperty="Opacity"
+                                         To="1"
+                                         Duration="{StaticResource ColorAnimationDuration}"/>
+                    </Storyboard>
+                </VisualState>
+
+
+                <VisualState x:Name="Pause">
+                    <Storyboard>
+                        <ColorAnimation Storyboard.TargetName="Shape"
+                                        Storyboard.TargetProperty="(Polygon.Fill).(LinearGradientBrush.GradientStops)[0].(GradientStop.Color)"
+                                        To="{StaticResource PauseBottomColor}"
+                                        Duration="{StaticResource ColorAnimationDuration}" 
+                                        EnableDependentAnimation="True"/>
+                        <ColorAnimation Storyboard.TargetName="Shape"
+                                        Storyboard.TargetProperty="(Polygon.Fill).(LinearGradientBrush.GradientStops)[1].(GradientStop.Color)"
+                                        To="{StaticResource PauseTopColor}"
+                                        Duration="{StaticResource ColorAnimationDuration}" 
+                                        EnableDependentAnimation="True"/>
+                        <DoubleAnimation Storyboard.TargetName="AverageSpeedLine"
+                                         Storyboard.TargetProperty="Opacity"
+                                         To="0"
+                                         Duration="{StaticResource ColorAnimationDuration}"/>
+                        <DoubleAnimation Storyboard.TargetName="AverageSpeedText"
+                                         Storyboard.TargetProperty="Opacity"
+                                         To="0"
+                                         Duration="{StaticResource ColorAnimationDuration}"/>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="Error">
+                    <Storyboard>
+                        <ColorAnimation Storyboard.TargetName="Shape"
+                                        Storyboard.TargetProperty="(Polygon.Fill).(LinearGradientBrush.GradientStops)[0].(GradientStop.Color)"
+                                        To="{StaticResource ErrorBottomColor}"
+                                        Duration="{StaticResource ColorAnimationDuration}" 
+                                        EnableDependentAnimation="True"/>
+                        <ColorAnimation Storyboard.TargetName="Shape"
+                                        Storyboard.TargetProperty="(Polygon.Fill).(LinearGradientBrush.GradientStops)[1].(GradientStop.Color)"
+                                        To="{StaticResource ErrorTopColor}"
+                                        Duration="{StaticResource ColorAnimationDuration}" 
+                                        EnableDependentAnimation="True"/>
+                        <DoubleAnimation Storyboard.TargetName="AverageSpeedLine"
+                                         Storyboard.TargetProperty="Opacity"
+                                         To="0"
+                                         Duration="{StaticResource ColorAnimationDuration}"/>
+                        <DoubleAnimation Storyboard.TargetName="AverageSpeedText"
+                                         Storyboard.TargetProperty="Opacity"
+                                         To="0"
+                                         Duration="{StaticResource ColorAnimationDuration}"/>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </Grid>
+</UserControl>

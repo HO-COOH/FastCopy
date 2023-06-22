@@ -15,6 +15,7 @@
 #include "ShellCopy.h"
 #include <winrt/Microsoft.Windows.ApplicationModel.Resources.h>
 #include "ResourceHelper.h"
+#include <pplawait.h>
 
 namespace winrt::FastCopy::implementation
 {
@@ -34,8 +35,12 @@ namespace winrt::FastCopy::implementation
 		{
 			m_recordFile->GetNumFiles();
 			m_iter = m_recordFile->begin();
+			m_recordFileBegin = m_recordFile->begin();
+			m_recordFileEnd = m_recordFile->end();
+
 			Global::UIThread.TryEnqueue([this] {
 				raisePropertyChange(L"ItemCount");
+				raisePropertyChange(L"Source");
 			});
 		});
 	}
@@ -71,7 +76,7 @@ namespace winrt::FastCopy::implementation
 	}
 	int RobocopyViewModel::ItemCount()
 	{
-		return m_recordFile.has_value() ? m_recordFile->GetNumFiles() : 0;
+		return m_recordFile.has_value() && m_countItemTask.is_done() ? m_recordFile->GetNumFiles() : 0;
 	}
 	int RobocopyViewModel::FinishedItemCount()
 	{
@@ -79,7 +84,7 @@ namespace winrt::FastCopy::implementation
 	}
 	winrt::hstring RobocopyViewModel::Source()
 	{
-		if (m_recordFile && m_iter && *m_iter >= m_recordFile->begin() && *m_iter < m_recordFile->end())
+		if (m_countItemTask.is_done() && m_recordFile && m_iter && *m_iter >= m_recordFileBegin && *m_iter < m_recordFileEnd)
 			return std::filesystem::path{ **m_iter }.filename().wstring().data();
 		return L"---";
 	}
@@ -99,7 +104,7 @@ namespace winrt::FastCopy::implementation
 	}
 	double RobocopyViewModel::Percent()
 	{
-		if (!m_recordFile.has_value())
+		if (!m_recordFile.has_value() || !m_countItemTask.is_done())
 			return 0;
 
 		auto const numFiles = m_recordFile->GetNumFiles();
@@ -110,10 +115,15 @@ namespace winrt::FastCopy::implementation
 		Taskbar::SetProgressValue(Global::MainHwnd, std::clamp<int>(result, 1, 100));
 		return result;
 	}
-	void RobocopyViewModel::Start()
+	winrt::hstring RobocopyViewModel::SpeedText()
+	{
+		return ReadableUnitConverter::Speed::ToString<wchar_t>(m_bytesPerSec).data();
+	}
+	winrt::Windows::Foundation::IAsyncAction RobocopyViewModel::Start()
 	{
 		if (!m_recordFile)
-			return;
+			co_return;
+		co_await m_countItemTask;
 		ProcessIOUpdater::Start(std::chrono::milliseconds{ 300 });
 		m_status = Status::Running; 
 		concurrency::create_task([this]
@@ -168,9 +178,10 @@ namespace winrt::FastCopy::implementation
 	}
 	void RobocopyViewModel::OnUpdateCopySpeed(ProcessIoCounter::IOCounterDiff diff)
 	{
-		m_speedText = ReadableUnitConverter::Speed::ToString<wchar_t>(diff.read, diff.duration);
+		m_bytesPerSec = ReadableUnitConverter::Speed::BytesPerSec(diff.read, diff.duration);
 		Global::UIThread.TryEnqueue([this] {
 			raisePropertyChange(L"SpeedText");
+			raisePropertyChange(L"Speed");
 		});
 	}
 	winrt::Windows::Foundation::IReference<bool> RobocopyViewModel::UseSource()
@@ -248,6 +259,20 @@ namespace winrt::FastCopy::implementation
 		}
 		if (*m_duplicateFileTaskIter == m_duplicateFileTask->end())
 			onFallbackFinished();
+	}
+
+	winrt::Windows::Foundation::IAsyncOperation<uint64_t> RobocopyViewModel::GetTotalSize()
+	{
+		//auto result = co_await concurrency::create_task([this]()->winrt::Windows::Foundation::IAsyncA
+		//if(m_countItemTask)
+
+		co_return m_recordFile ? m_recordFile->GetTotalSize() : 0;
+	}
+
+	RobocopyViewModel::~RobocopyViewModel()
+	{
+		if (m_process)
+			m_process->Terminate();
 	}
 
 	winrt::hstring RobocopyViewModel::SizeText()

@@ -33,6 +33,11 @@ namespace internal
 		}
 
 		[[nodiscard]] HANDLE Handle() const { return m_processHandle; }
+
+		void Terminate()
+		{
+			TerminateProcess(m_processHandle, 1);
+		}
 	protected:
 		HANDLE m_processHandle;
 	};

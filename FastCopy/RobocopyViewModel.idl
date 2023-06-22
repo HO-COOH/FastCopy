@@ -20,12 +20,22 @@ namespace FastCopy
         Windows.Foundation.IReference<Boolean> UseSource;
         Windows.Foundation.IReference<Boolean> UseDestination;
         
+        //Added a new source file in duplicate list
         void AddSource();
+
+        //Remove a source file in duplicate list
         void RemoveSource();
+
+        //Add a destination file in duplicate list
         void AddDestination();
+
+        //Remove a destination file in duplicate list
         void RemoveDestination();
 
+        //Confirm duplicate list
         void ConfirmDuplicates();
         Boolean CanContinue{ get; };
+
+        Windows.Foundation.IAsyncOperation<UInt64> GetTotalSize();
     }
 }

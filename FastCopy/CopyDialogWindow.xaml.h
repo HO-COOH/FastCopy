@@ -7,6 +7,7 @@
 #include <winrt/Microsoft.UI.Xaml.Media.Animation.h>
 #include "DependentValue.g.h"
 #include "AnimatedValue.h"
+#include <optional>
 
 namespace winrt::FastCopy::implementation
 {
@@ -14,6 +15,9 @@ namespace winrt::FastCopy::implementation
     {
         CopyDialogWindow();
 
+        void Resize(winrt::Windows::Graphics::SizeInt32 size);
+
+        winrt::Windows::Graphics::SizeInt32 ActualSize() { return m_currentSize; }
     private:
         constexpr static winrt::Windows::Graphics::SizeInt32 Sizes[]
         { 
@@ -35,6 +39,8 @@ namespace winrt::FastCopy::implementation
          * @brief Play Window animation, values from m_currentSize -> targetSize
          */
         void playWindowAnimation(winrt::Windows::Graphics::SizeInt32 targetSize);
+
+        StoryboardWrapper m_storyboardWrapper;
     };
 }
 

@@ -82,6 +82,8 @@ public:
 	[[maybe_unused]]int32_t GetNumFiles();
 	int32_t GetNumFiles(int index);
 
+	uint64_t GetTotalSize();
+
 	auto begin() { return lines.begin(); }
 	auto end() { return lines.end(); }
 

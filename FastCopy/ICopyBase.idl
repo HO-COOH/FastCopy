@@ -15,11 +15,12 @@ namespace FastCopy
 		String Destination;
 
 		Double Percent{ get; };
-		void Start();
+		Windows.Foundation.IAsyncAction Start();
 		void Pause();
 		void Cancel();
 
 		String SpeedText{ get; };
+		Double Speed{ get; };
 		event Windows.Foundation.EventHandler<FinishState> Finished;
 	}
 }

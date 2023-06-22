@@ -56,6 +56,12 @@ namespace winrt::FastCopy::implementation
                 m_currentSize = Sizes[clamped];
             }
         );
+        Global::copyWindow = *this;
+    }
+    void CopyDialogWindow::Resize(winrt::Windows::Graphics::SizeInt32 size)
+    {
+        playWindowAnimation(size);
+        m_currentSize = size;
     }
     void CopyDialogWindow::playWindowAnimation(winrt::Windows::Graphics::SizeInt32 targetSize)
     {
@@ -72,10 +78,12 @@ namespace winrt::FastCopy::implementation
             .EasingFunction(f)
             .Duration(WindowAnimationDuration);
 
-        (StoryboardWrapper{} << m_heightValue << m_widthValue).Begin();
+        (m_storyboardWrapper << m_heightValue << m_widthValue).Begin();
 
         m_heightValue.OnValueChange([this](auto, double value) {
-            ResizeWindow(*this, { .Width = (int)m_widthValue, .Height = (int)value });
+            auto const widthValue = (int)m_widthValue;
+            if (widthValue != 0 && value != 0)
+                ResizeWindow(*this, { .Width = widthValue, .Height = (int)value });
         });
     }
 }

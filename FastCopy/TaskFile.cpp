@@ -4,12 +4,26 @@
 #include <filesystem>
 #include <codecvt>
 #include "FileWrapper.h"
+#include <numeric>
 
 static int32_t getNumFilesInFolder(std::wstring_view path)
 {
 	return std::distance(
 		std::filesystem::recursive_directory_iterator{ path },
 		std::filesystem::recursive_directory_iterator{}
+	);
+}
+
+static uint64_t getFileSizeInFolder(std::wstring_view path)
+{
+	return std::accumulate(
+		std::filesystem::recursive_directory_iterator{path},
+		std::filesystem::recursive_directory_iterator{},
+		0ull,
+		[](uint64_t lhs, std::filesystem::directory_entry p)
+		{
+			return lhs + std::filesystem::file_size(p);
+		}
 	);
 }
 
@@ -50,6 +64,20 @@ int32_t TaskFile::GetNumFiles()
 int32_t TaskFile::GetNumFiles(int index)
 {
 	return numFiles[index];
+}
+
+uint64_t TaskFile::GetTotalSize()
+{
+	return std::accumulate(
+		lines.begin(),
+		lines.end(),
+		0ull,
+		[](uint64_t result, std::wstring const& line)
+		{
+			return result + std::filesystem::is_directory(line) ?
+				getFileSizeInFolder(line) : std::filesystem::file_size(line);
+		}
+	);
 }
 
 int TaskFile::IndexOf(TaskFileIterator<typename std::vector<std::wstring>::iterator> const& iter)

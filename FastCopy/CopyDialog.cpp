@@ -106,6 +106,36 @@ namespace winrt::FastCopy::implementation
 			ProgressBar().Width(width);
 	}
 
+	void CopyDialog::ShowGraphButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		if (m_showSpeedGraph)
+		{
+			HideGraphAnimation().Completed([this](auto...) { UnloadObject(SpeedGraph()); });
+			HideGraphAnimation().Begin();
+			winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"HideGraph", false);
+			Global::copyWindow.Resize(m_originalWindowSize);
+			ViewModel().PropertyChanged(m_speedUpdateRevoker);
+		}
+		else
+		{
+			FindName(L"SpeedGraph").as<winrt::FastCopy::SpeedGraph>().Loaded([this](auto...)
+			{ 
+				GraphAnimation().Begin(); 
+			});
+			m_speedUpdateRevoker = ViewModel().PropertyChanged([this](auto, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs e) {
+				if (e.PropertyName() == L"Speed")
+				{
+					SpeedGraph().SetSpeed(ViewModel().Percent(), ViewModel().Speed());
+				}
+			});
+
+			winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"ShowGraph", false);
+			m_originalWindowSize = Global::copyWindow.ActualSize();
+			Global::copyWindow.Resize({ (int)m_originalWindowSize.Width, (int)m_originalWindowSize.Height + 190 });
+		}
+		m_showSpeedGraph = !m_showSpeedGraph;
+	}
+
 }
 
 
@@ -113,3 +143,5 @@ void winrt::FastCopy::implementation::CopyDialog::CheckBox_Checked(winrt::Window
 {
 	OutputDebugString(L"Checkbox clicked\n");
 }
+
+

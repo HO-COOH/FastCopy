@@ -28,10 +28,10 @@ namespace winrt::FastCopy::implementation
         winrt::hstring Destination();
         void Destination(winrt::hstring value);
         double Percent();
-        winrt::hstring SpeedText() { return m_speedText; }
+        winrt::hstring SpeedText();
         winrt::hstring SizeText();
 
-        void Start();
+        winrt::Windows::Foundation::IAsyncAction Start();
         void Pause();
         void Cancel();
 
@@ -54,7 +54,12 @@ namespace winrt::FastCopy::implementation
 
         void ConfirmDuplicates();
         bool CanContinue() { return m_canContinue; }
+        double Speed() { return m_bytesPerSec; }
+        winrt::Windows::Foundation::IAsyncOperation<uint64_t> GetTotalSize();
+
+        ~RobocopyViewModel();
     private:
+        double m_bytesPerSec{};
         bool m_canContinue = false;
         bool m_hasDuplicates = false;
         int m_useSourceCount{};
@@ -66,13 +71,14 @@ namespace winrt::FastCopy::implementation
 
         std::optional<TaskFile> m_recordFile;
         mutable std::optional<TaskFile::TaskFileIterator<typename std::vector<std::wstring>::iterator>> m_iter;
+        TaskFile::TaskFileIterator<typename std::vector<std::wstring>::iterator> m_recordFileBegin;
+        TaskFile::TaskFileIterator<typename std::vector<std::wstring>::iterator> m_recordFileEnd;
 
         std::optional<std::vector<winrt::FastCopy::FileCompareViewModel>> m_duplicateFileTask;
         std::optional<std::vector<winrt::FastCopy::FileCompareViewModel>::iterator> m_duplicateFileTaskIter;
         std::atomic_bool m_hasConfirmed = false;
 
         Concurrency::task<void> m_countItemTask;
-        winrt::hstring m_speedText;
         int m_finishedFiles{};
         RobocopyArgs getRobocopyArg();
         Status m_status{ Status::Running };

@@ -38,6 +38,9 @@ StoryboardWrapper& StoryboardWrapper::operator<<(AnimatedValue const& animatedVa
 {
 	try
 	{
+		if (!m_completed)
+			return *this;
+
 		//This might be called too fast, so animatedValue is already child of an on-going storyboard
 		m_storyboard.Children().Append(animatedValue.m_animation);
 	}
@@ -48,10 +51,13 @@ StoryboardWrapper& StoryboardWrapper::operator<<(AnimatedValue const& animatedVa
 
 void StoryboardWrapper::Begin()
 {
-	//m_storyboard.Duration({ std::chrono::milliseconds{5000} });
+	if (!m_completed)
+		return;
+
+	m_revoker = m_storyboard.Completed(winrt::auto_revoke, [now = std::chrono::steady_clock::now(), this](auto...)
+	{
+		m_completed = true;
+	});
+	m_completed = false;
 	m_storyboard.Begin();
-	m_storyboard.Completed([now = std::chrono::steady_clock::now()](auto...)
-		{
-			OutputDebugString(std::to_wstring(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - now).count()).data());
-		});
 }

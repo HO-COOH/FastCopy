@@ -53,9 +53,34 @@
         <Color x:Key="DuplicateFilenameColor">#6ccb5f</Color>
         <x:Double x:Key="DuplicateFilenameBackgroundOpacity">0.15</x:Double>
         <x:Double x:Key="SeperatorLineOpacity">0.1</x:Double>
+
+        <x:String x:Key="DownArrowGlyph">&#xE70D;</x:String>
+
+        <Storyboard x:Name="GraphAnimation">
+            <DoubleAnimation Storyboard.TargetName="SpeedGraph"
+                                             Storyboard.TargetProperty="Opacity"
+                                             To="1"
+                                             Duration="0:0:0.3">
+                <DoubleAnimation.EasingFunction>
+                    <CircleEase EasingMode="EaseInOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+
+        <Storyboard x:Name="HideGraphAnimation">
+            <DoubleAnimation Storyboard.TargetName="SpeedGraph"
+                                             Storyboard.TargetProperty="Opacity"
+                                             To="0"
+                                             Duration="0:0:0.3">
+                <DoubleAnimation.EasingFunction>
+                    <CircleEase EasingMode="EaseInOut"/>
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
     </Page.Resources>
     
-    <Grid Margin="15" x:Name="MainPanel" SizeChanged="MainPanel_SizeChanged">
+    <Grid Margin="15,15,15,0" x:Name="MainPanel" SizeChanged="MainPanel_SizeChanged">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -64,7 +89,40 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-
+        
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="HideGraph">
+                    <Storyboard>
+                        <DoubleAnimation
+                                Storyboard.TargetName="RotateArrow"
+                                Storyboard.TargetProperty="Angle"
+                                To="0"
+                                Duration="0:0:0.3"/>
+                        <DoubleAnimation
+                            Storyboard.TargetName="SpeedText"
+                            Storyboard.TargetProperty="Opacity"
+                            To="1"
+                            Duration="0:0:0.3"/>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="ShowGraph">
+                    <Storyboard>
+                        <DoubleAnimation
+                                Storyboard.TargetName="RotateArrow"
+                                Storyboard.TargetProperty="Angle"
+                                To="180"
+                                Duration="0:0:0.3"/>
+                        <DoubleAnimation 
+                            Storyboard.TargetName="SpeedText"
+                            Storyboard.TargetProperty="Opacity"
+                            To="0"
+                            Duration="0:0:0.3"/>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        
         <TextBlock Style="{StaticResource HeaderTextStyle}">
             <Run Text="{x:Bind ViewModel.Percent,Converter={StaticResource NumberToStringConverter}, ConverterParameter=2, Mode=OneWay}"/>%
         </TextBlock>
@@ -87,6 +145,7 @@
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center">
+            
             <Button x:Name="PauseButton" Background="Transparent" BorderBrush="Transparent" Click="PauseButton_Click">
                 <Viewbox Width="15" Height="15">
                     <SymbolIcon x:Name="PauseIcon" Symbol="Pause"/>
@@ -102,6 +161,18 @@
 
         <local:ProgressBarEx x:Name="ProgressBar" Loaded="ProgressBar_Loaded" Margin="0,10,0,0" HorizontalAlignment="Stretch"
                              Percent="{x:Bind ViewModel.Percent, Mode=OneWay}" Height="5" Color="Green" Grid.Row="2"/>
+
+        <!--SpeedGraph area-->
+        <Button Grid.Row="4" x:Name="ShowGraphButton" HorizontalAlignment="Center" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5"
+                Padding="2" BorderBrush="Transparent" Background="Transparent" Click="ShowGraphButton_Click">
+            <Button.RenderTransform>
+                <RotateTransform x:Name="RotateArrow"/>
+            </Button.RenderTransform>
+            <FontIcon Glyph="{StaticResource DownArrowGlyph}" FontSize="12" Opacity="0.7"/>
+        </Button>
+        <local:SpeedGraph x:Name="SpeedGraph" Grid.Row="3" x:Load="False" Height="170" Margin="0,20,0,3" Opacity="0">
+        </local:SpeedGraph>
+
 
         <!---Red: BB0000 -->
         <!--Duplicate files area-->
