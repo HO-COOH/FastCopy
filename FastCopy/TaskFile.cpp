@@ -27,6 +27,11 @@ static uint64_t getFileSizeInFolder(std::wstring_view path)
 	);
 }
 
+uint64_t TaskFile::GetSizeOfPath(std::wstring_view path)
+{
+	return std::filesystem::is_directory(path) ?
+		getFileSizeInFolder(path) : std::filesystem::file_size(path);
+}
 
 int32_t TaskFile::GetNumFiles()
 {
@@ -74,8 +79,7 @@ uint64_t TaskFile::GetTotalSize()
 		0ull,
 		[](uint64_t result, std::wstring const& line)
 		{
-			return result + std::filesystem::is_directory(line) ?
-				getFileSizeInFolder(line) : std::filesystem::file_size(line);
+			return result + GetSizeOfPath(line);
 		}
 	);
 }
@@ -96,3 +100,4 @@ CopyOperation TaskFile::GetOperation() const
 			throw std::runtime_error{ "Invalid operation" };
 	}
 }
+

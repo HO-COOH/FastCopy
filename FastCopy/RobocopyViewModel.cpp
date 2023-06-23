@@ -37,6 +37,7 @@ namespace winrt::FastCopy::implementation
 			m_iter = m_recordFile->begin();
 			m_recordFileBegin = m_recordFile->begin();
 			m_recordFileEnd = m_recordFile->end();
+			m_totalSize = m_recordFile->GetTotalSize();
 
 			Global::UIThread.TryEnqueue([this] {
 				raisePropertyChange(L"ItemCount");
@@ -107,13 +108,18 @@ namespace winrt::FastCopy::implementation
 		if (!m_recordFile.has_value() || !m_countItemTask.is_done())
 			return 0;
 
-		auto const numFiles = m_recordFile->GetNumFiles();
-		if (numFiles == 0)
-			return 0;
+		//auto const numFiles = m_recordFile->GetNumFiles();
+		//if (numFiles == 0)
+		//	return 0;
+		//
 
-		auto const result = min(100.0, static_cast<float>(m_finishedFiles) / numFiles * 100.0);
-		Taskbar::SetProgressValue(Global::MainHwnd, std::clamp<int>(result, 1, 100));
-		return result;
+		//auto const result = min(100.0, static_cast<float>(m_finishedFiles) / numFiles * 100.0);
+		//Taskbar::SetProgressValue(Global::MainHwnd, std::clamp<int>(result, 1, 100));
+		//return result;
+
+		auto const percent = static_cast<double>(m_copiedBytes) * 100.0 / m_totalSize;
+		Taskbar::SetProgressValue(Global::MainHwnd, std::clamp<int>(percent, 1, 100));
+		return percent;
 	}
 	winrt::hstring RobocopyViewModel::SpeedText()
 	{
@@ -124,12 +130,12 @@ namespace winrt::FastCopy::implementation
 		if (!m_recordFile)
 			co_return;
 		co_await m_countItemTask;
-		ProcessIOUpdater::Start(std::chrono::milliseconds{ 300 });
+		ProcessIOUpdater::Start(std::chrono::milliseconds{ 100 });
 		m_status = Status::Running; 
 		concurrency::create_task([this]
 		{
 			m_countItemTask.get();
-
+			static uint64_t bytes{};
 			while (*m_iter != m_recordFile->end() && m_status == Status::Running)
 			{
 				Global::UIThread.TryEnqueue([this] {raisePropertyChange(L"Source"); });
@@ -157,6 +163,8 @@ namespace winrt::FastCopy::implementation
 					});
 					m_hasDuplicates = true;
 				}
+				bytes += TaskFile::GetSizeOfPath(**m_iter);
+				m_copiedBytes = bytes;
 				raiseProgressChange();
 				++*m_iter;
 			}
@@ -179,6 +187,7 @@ namespace winrt::FastCopy::implementation
 	void RobocopyViewModel::OnUpdateCopySpeed(ProcessIoCounter::IOCounterDiff diff)
 	{
 		m_bytesPerSec = ReadableUnitConverter::Speed::BytesPerSec(diff.read, diff.duration);
+		//m_copiedBytes += GetTotal().read;
 		Global::UIThread.TryEnqueue([this] {
 			raisePropertyChange(L"SpeedText");
 			raisePropertyChange(L"Speed");

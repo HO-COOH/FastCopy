@@ -41,3 +41,10 @@ ProcessIoCounter::IOCounter& ProcessIoCounter::IOCounter::operator+=(IOCounter r
 	write += rhs.write;
 	return *this;
 }
+
+ProcessIoCounter::IOCounter ProcessIoCounter::IOCounter::operator+(IOCounter rhs)
+{
+	auto copy = *this;
+	copy += rhs;
+	return copy;
+}

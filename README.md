@@ -13,13 +13,23 @@ A GUI wrapper for Windows' built-in `robocopy` ~~and `xcopy`~~.
 ![](Screenshots/OldMenuCopy_Dark.png)
 
 - Integration with Windows Notification Center: a notification toast will pop up when the copy is finished
+
 ![](Screenshots/notification.png)
+
+- Speed graph
+
+![](Screenshots/speed-graph.png)
 
 - Integration with taskbar: a progress bar sync with the one inside the window
 
 <p align="center">
     <image src="Screenshots/taskbar-icon.png">
 </p>
+
+- Settings
+
+![](Screenshots/settings.png)
+
 
 - Multi-language support
   + English

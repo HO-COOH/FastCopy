@@ -67,9 +67,11 @@ namespace winrt::FastCopy::implementation
         winrt::event<winrt::Windows::Foundation::EventHandler<winrt::FastCopy::FinishState>> m_finishEvent;
         std::optional<RobocopyProcess> m_process;
         winrt::hstring m_destination;
+        uint64_t m_copiedBytes{};
         uint64_t m_size{};
 
         std::optional<TaskFile> m_recordFile;
+        uint64_t m_totalSize{};
         mutable std::optional<TaskFile::TaskFileIterator<typename std::vector<std::wstring>::iterator>> m_iter;
         TaskFile::TaskFileIterator<typename std::vector<std::wstring>::iterator> m_recordFileBegin;
         TaskFile::TaskFileIterator<typename std::vector<std::wstring>::iterator> m_recordFileEnd;

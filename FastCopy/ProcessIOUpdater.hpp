@@ -11,11 +11,9 @@ class ProcessIOUpdater
 	}
 
 	ProcessIoCounter m_counter;
-	ProcessIoCounter::IOCounter m_total{};
 public:
 	void SetHandle(HANDLE handle)
 	{
-		m_total += m_counter.GetTotal();
 		m_counter.SetHandle(handle);
 	}
 
@@ -32,6 +30,6 @@ public:
 
 	auto GetTotal()
 	{
-		return m_total + m_counter.GetTotal();
+		return m_counter.GetTotal();
 	}
 };

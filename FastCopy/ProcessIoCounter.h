@@ -35,6 +35,7 @@ public:
 		ULONGLONG write;
 
 		IOCounter& operator+=(IOCounter rhs);
+		IOCounter operator+(IOCounter rhs);
 	};
 
 	struct IOCounterDiff : IOCounter

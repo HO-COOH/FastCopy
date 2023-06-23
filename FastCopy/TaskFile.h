@@ -92,6 +92,8 @@ public:
 	CopyOperation GetOperation() const;
 
 	winrt::hstring GetPath() const { return m_path; }
+
+	static uint64_t GetSizeOfPath(std::wstring_view path);
 private:
 	winrt::hstring m_path;
 	std::vector<std::wstring> lines;
