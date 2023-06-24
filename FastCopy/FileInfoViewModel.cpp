@@ -10,10 +10,14 @@
 
 #include <shellapi.h>
 #include <filesystem>
+#include <ShObjIdl_core.h>
+#include "PathUtils.h"
 
 
-
-static HICON GetImage(std::wstring_view path)
+/**
+ * @brief Get HIcon from file 
+ */
+static HICON GetHIconFromFile(std::wstring_view path)
 {
 	// Get the image list index of the icon
 	SHFILEINFO sfi;
@@ -34,17 +38,26 @@ static HICON GetImage(std::wstring_view path)
 	return hico;
 }
 
-static auto HIconToWriteableBitmap(HICON hIcon)
+/**
+ * @brief Get HBitmap from file
+ */
+static auto GetHBitmapFromFile(std::wstring_view path)
 {
-	ICONINFO iconInfo = { 0 };
-	GetIconInfo(hIcon, &iconInfo);
+	winrt::com_ptr<IShellItem> item;
+	SHCreateItemFromParsingName(ToBackslash(path).data(), NULL, IID_PPV_ARGS(item.put()));
+	HBITMAP bitmap{};
+	item.as<IShellItemImageFactory>()->GetImage({ 96, 96 }, SIIGBF_BIGGERSIZEOK, &bitmap);
+	return bitmap;
+}
 
+static auto HBitmapToWriteableBitmap(HBITMAP hBitmap, HBITMAP hMask = NULL)
+{
 	// Get the screen DC
 	HDC dc = GetDC(NULL);
 
 	// Get icon size info
 	BITMAP bm = { 0 };
-	GetObject(iconInfo.hbmColor, sizeof(BITMAP), &bm);
+	GetObject(hBitmap, sizeof(BITMAP), &bm);
 
 	// Set up BITMAPINFO
 	BITMAPINFO bmi = { 0 };
@@ -57,8 +70,8 @@ static auto HIconToWriteableBitmap(HICON hIcon)
 
 	// Extract the color bitmap
 	int nBits = bm.bmWidth * bm.bmHeight;
-	int32_t* colorBits = new int32_t[nBits];
-	GetDIBits(dc, iconInfo.hbmColor, 0, bm.bmHeight, colorBits, &bmi, DIB_RGB_COLORS);
+	auto colorBits = std::make_unique<int32_t[]>(nBits);
+	GetDIBits(dc, hBitmap, 0, bm.bmHeight, colorBits.get(), &bmi, DIB_RGB_COLORS);
 
 	// Check whether the color bitmap has an alpha channel.
 	BOOL hasAlpha = FALSE;
@@ -73,7 +86,7 @@ static auto HIconToWriteableBitmap(HICON hIcon)
 	if (!hasAlpha) {
 		// Extract the mask bitmap
 		int32_t* maskBits = new int32_t[nBits];
-		GetDIBits(dc, iconInfo.hbmMask, 0, bm.bmHeight, maskBits, &bmi, DIB_RGB_COLORS);
+		GetDIBits(dc, hMask, 0, bm.bmHeight, maskBits, &bmi, DIB_RGB_COLORS);
 		// Copy the mask alphas into the color bits
 		for (int i = 0; i < nBits; i++) {
 			if (maskBits[i] == 0) {
@@ -85,16 +98,13 @@ static auto HIconToWriteableBitmap(HICON hIcon)
 
 	// Release DC and GDI bitmaps
 	ReleaseDC(NULL, dc);
-	DeleteObject(iconInfo.hbmColor);
-	DeleteObject(iconInfo.hbmMask);
-	DestroyIcon(hIcon);
+	DeleteObject(hBitmap);
+	if(hMask != NULL)
+		DeleteObject(hMask);
 
 
 	{
 		winrt::Microsoft::UI::Xaml::Media::Imaging::WriteableBitmap bitmap{ bm.bmWidth, bm.bmHeight };
-		//IUnknown* pUnk{ reinterpret_cast<IUnknown*>(bitmap->PixelBuffer) };
-		//Microsoft::WRL::ComPtr<IBufferByteAccess> bufferByteAccess;
-		//HRESULT hr{ pUnk->QueryInterface(IID_PPV_ARGS(&bufferByteAccess)) };
 		auto buffer = bitmap.PixelBuffer();
 		auto pBuffer = buffer.data();
 		for (int i = 0; i < nBits; i++)
@@ -109,6 +119,14 @@ static auto HIconToWriteableBitmap(HICON hIcon)
 		return bitmap;
 	}
 }
+
+static auto HIconToWriteableBitmap(HICON hIcon)
+{
+	ICONINFO iconInfo = { 0 };
+	GetIconInfo(hIcon, &iconInfo);
+	return HBitmapToWriteableBitmap(iconInfo.hbmColor, iconInfo.hbmMask);
+}
+
 namespace winrt::FastCopy::implementation
 {
     winrt::hstring FileInfoViewModel::Filename()
@@ -137,9 +155,19 @@ namespace winrt::FastCopy::implementation
 
 	winrt::Microsoft::UI::Xaml::Media::ImageSource FileInfoViewModel::Bitmap()
 	{
-		auto icon = GetImage(m_path.data());
-		if (icon)
-			return HIconToWriteableBitmap(icon);
+		try 
+		{
+			if (auto icon = GetHBitmapFromFile(m_path.data()))
+				return HBitmapToWriteableBitmap(icon);
+		}
+		catch (...) {}
+
+		try 
+		{
+			if (auto icon = GetHIconFromFile(m_path.data()))				
+				return HIconToWriteableBitmap(icon);
+		}
+		catch (...) {}
 
 		winrt::Microsoft::UI::Xaml::Media::Imaging::BitmapImage image{ winrt::Windows::Foundation::Uri{L"ms-appx:///Assets/FileDefault.ico" } };
 		return image;

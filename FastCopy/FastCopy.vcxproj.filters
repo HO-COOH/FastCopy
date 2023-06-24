@@ -209,6 +209,9 @@
     <ClInclude Include="ResourceHelper.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="PathUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">

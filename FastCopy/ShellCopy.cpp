@@ -2,6 +2,8 @@
 #include "ShellCopy.h"
 #include <fileapi.h>
 #include <ShObjIdl_core.h>
+#include "PathUtils.h"
+
 namespace ShellCopy
 {
 	bool IsInSameDiskPartition(std::wstring_view source, std::wstring_view destination)
@@ -11,13 +13,6 @@ namespace ShellCopy
 			GetVolumePathNameW(destination.data(), path[1], MAX_PATH) &&
 			memcmp(path[0], path[1], sizeof(path[0])) == 0;
 	}
-
-    std::wstring ToBackslash(std::wstring_view source)
-    {
-        std::wstring ret(source.size(), {});
-        std::transform(source.begin(), source.end(), ret.begin(), [](wchar_t c) {return c == L'/' ? L'\\' : c; });
-        return ret;
-    }
 
 	bool Move(std::wstring_view source, std::wstring_view destination)
 	{
