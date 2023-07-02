@@ -57,6 +57,8 @@ void StoryboardWrapper::Begin()
 	m_revoker = m_storyboard.Completed(winrt::auto_revoke, [now = std::chrono::steady_clock::now(), this](auto...)
 	{
 		m_completed = true;
+		m_storyboard.Stop();
+		m_storyboard.Children().Clear();
 	});
 	m_completed = false;
 	m_storyboard.Begin();

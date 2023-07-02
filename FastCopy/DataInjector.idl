@@ -1,0 +1,17 @@
+namespace FastCopy
+{
+    /**
+     * Inject ViewModel into controls
+     */
+    [bindable]
+    [default_interface]
+    runtimeclass DataInjector : Microsoft.UI.Xaml.DependencyObject
+    {
+        DataInjector();
+        
+        static Microsoft.UI.Xaml.DependencyProperty DataProperty{get; };
+
+        static Object GetData(Microsoft.UI.Xaml.DependencyObject target);
+        static void SetData(Microsoft.UI.Xaml.DependencyObject target, Object data);
+    }
+}

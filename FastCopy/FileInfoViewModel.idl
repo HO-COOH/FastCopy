@@ -1,5 +1,11 @@
 namespace FastCopy
 {
+    struct ExtendedFileInfo
+    {
+        String name;
+        String value;
+    };
+
     [bindable]
     [default_interface]
     runtimeclass FileInfoViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
@@ -8,9 +14,18 @@ namespace FastCopy
         
         String Path{ get; };
         String Filename{ get; };
-        Windows.Foundation.DateTime CreationDate{ get; };
+        
+        /*file times */
+        Windows.Foundation.DateTime CreateTime{ get; };
+        Windows.Foundation.DateTime LastAccessTime{get; };
+        Windows.Foundation.DateTime LastWriteTime{get; };
+
         UInt64 Bytes{ get; };
         Boolean Selected;
+
+        /*Tooltip*/
+        Windows.Foundation.Collections.IVector<Object> tooltipInfo{get; };
+
 
         Microsoft.UI.Xaml.Media.ImageSource Bitmap{ get; };
 

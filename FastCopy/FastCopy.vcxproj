@@ -94,7 +94,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <WarningLevel>Level4</WarningLevel>
-      <AdditionalOptions>%(AdditionalOptions) /bigobj</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) /bigobj /Zm2000</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
@@ -143,6 +143,10 @@
       <DependentUpon>CopyDialogWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="DataInjector.h">
+      <DependentUpon>DataInjector.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="DateTimeToStringConverter.h">
       <DependentUpon>DateTimeToStringConverter.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -166,8 +170,11 @@
       <DependentUpon>FileInfoViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="FileTime.h" />
     <ClInclude Include="FileWrapper.h" />
     <ClInclude Include="Global.h" />
+    <ClInclude Include="HandleWrapper.hpp" />
+    <ClInclude Include="ImageUtils.h" />
     <ClInclude Include="MainPage.xaml.h">
       <DependentUpon>MainPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -227,6 +234,10 @@
     </ClInclude>
     <ClInclude Include="Taskbar.h" />
     <ClInclude Include="TaskFile.h" />
+    <ClInclude Include="TilesControl.h">
+      <DependentUpon>TilesControl.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="UIDispatcher.h" />
     <ClInclude Include="UIThreadWrapper.h" />
     <ClInclude Include="ViewModelLocator.h" />
@@ -274,6 +285,10 @@
       <DependentUpon>CopyDialogWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="DataInjector.cpp">
+      <DependentUpon>DataInjector.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="DateTimeToStringConverter.cpp">
       <DependentUpon>DateTimeToStringConverter.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -297,8 +312,10 @@
       <DependentUpon>FileInfoViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="FileTime.cpp" />
     <ClCompile Include="FileWrapper.cpp" />
     <ClCompile Include="Global.cpp" />
+    <ClCompile Include="ImageUtils.cpp" />
     <ClCompile Include="MainPage.xaml.cpp">
       <DependentUpon>MainPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -355,6 +372,10 @@
     </ClCompile>
     <ClCompile Include="Taskbar.cpp" />
     <ClCompile Include="TaskFile.cpp" />
+    <ClCompile Include="TilesControl.cpp">
+      <DependentUpon>TilesControl.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="UIThreadWrapper.cpp" />
     <ClCompile Include="ViewModelLocator.cpp" />
     <ClCompile Include="WindowEx.cpp">
@@ -378,6 +399,9 @@
     <Midl Include="CopyDialogWindow.idl">
       <DependentUpon>CopyDialogWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="DataInjector.idl">
+      <SubType>Designer</SubType>
     </Midl>
     <Midl Include="DateTimeToStringConverter.idl">
       <SubType>Designer</SubType>
@@ -429,6 +453,9 @@
     <Midl Include="SpeedGraph.idl">
       <DependentUpon>SpeedGraph.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="TilesControl.idl">
+      <SubType>Designer</SubType>
     </Midl>
     <Midl Include="WindowEx.idl">
       <SubType>Designer</SubType>

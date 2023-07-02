@@ -1,0 +1,9 @@
+namespace FastCopy
+{
+    [bindable]
+    [default_interface]
+    runtimeclass TilesControl : Microsoft.UI.Xaml.Controls.ItemsControl
+    {
+        TilesControl();
+    }
+}

@@ -42,6 +42,8 @@ namespace winrt::FastCopy::implementation
 
         void Percent(double value)
         {
+            if (isnan(value) || value < 0 || value > 100)
+                return;
             SetValue(s_percentProperty, winrt::box_value(value));
             RectColumn().Width(winrt::Microsoft::UI::Xaml::GridLength{ value, winrt::Microsoft::UI::Xaml::GridUnitType::Star });
             RestColumn().Width(winrt::Microsoft::UI::Xaml::GridLength{ 100 - value, winrt::Microsoft::UI::Xaml::GridUnitType::Star });

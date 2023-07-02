@@ -135,6 +135,9 @@
   <data name="CopyOperation" xml:space="preserve">
     <value>复制</value>
   </data>
+  <data name="CreateTimeAbbreviation.Text" xml:space="preserve">
+    <value>建</value>
+  </data>
   <data name="CustomItem.Content" xml:space="preserve">
     <value>禁用效果</value>
   </data>
@@ -161,6 +164,12 @@
   </data>
   <data name="ItemsFromText.Text" xml:space="preserve">
     <value>从</value>
+  </data>
+  <data name="LastAccessTimeAbbreviation.Text" xml:space="preserve">
+    <value>读</value>
+  </data>
+  <data name="LastWriteTimeAbbreviation.Text" xml:space="preserve">
+    <value>写</value>
   </data>
   <data name="LightThemeItem.Content" xml:space="preserve">
     <value>亮色</value>

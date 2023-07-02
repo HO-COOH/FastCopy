@@ -60,6 +60,7 @@ namespace winrt::FastCopy::implementation
         ~RobocopyViewModel();
     private:
         double m_bytesPerSec{};
+        double m_lastPercent{};
         bool m_canContinue = false;
         bool m_hasDuplicates = false;
         int m_useSourceCount{};

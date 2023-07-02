@@ -66,8 +66,6 @@
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
         </Storyboard>
-
-
         <Storyboard x:Name="HideGraphAnimation">
             <DoubleAnimation Storyboard.TargetName="SpeedGraph"
                                              Storyboard.TargetProperty="Opacity"
@@ -78,6 +76,71 @@
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
         </Storyboard>
+
+        <DataTemplate x:Key="FileTooltipTemplate" x:DataType="local:ExtendedFileInfo">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="{x:Bind name}" Margin="0,0,10,0"/>
+                <TextBlock Text="{x:Bind value}" Grid.Column="1"/>
+            </Grid>
+        </DataTemplate>
+
+        <Style x:Key="TimeLabelBorderStyle" TargetType="Border">
+            <Setter Property="CornerRadius" Value="3"/>
+            <Setter Property="Padding" Value="3,0,3,2"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="TimeLabelTextStyle" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="10"/>
+        </Style>
+
+        <DataTemplate x:DataType="local:FileInfoViewModel" x:Key="FileInfoControlTemplate">
+            <CheckBox Grid.Row="1" Margin="0,5,0,0" IsChecked="{x:Bind Selected, Mode=TwoWay}" IsRightTapEnabled="True">
+                <CheckBox.ContextFlyout>
+                    <MenuFlyout Opening="MenuFlyout_Opening" local:DataInjector.Data="{x:Bind}"/>
+                </CheckBox.ContextFlyout>
+                <StackPanel Orientation="Horizontal" Margin="11,0,0,0">
+                    <Image Source="{x:Bind Bitmap}" Width="48" Height="48" Stretch="Uniform">
+                        <ToolTipService.ToolTip>
+                            <ToolTip>
+                                <ItemsControl ItemsSource="{x:Bind tooltipInfo}" ItemTemplate="{StaticResource FileTooltipTemplate}"/>
+                            </ToolTip>
+                        </ToolTipService.ToolTip>
+                    </Image>
+                    <StackPanel Margin="2,0,0,0" Orientation="Vertical">
+                        <local:TilesControl>
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <Border Background="#2cff006f" Style="{StaticResource TimeLabelBorderStyle}">
+                                    <TextBlock x:Uid="CreateTimeAbbreviation" Foreground="Red" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="10"/>
+                                </Border>
+                                <TextBlock Text="{x:Bind CreateTime,Converter={StaticResource DateTimeToStringConverter}}" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <Border Background="#2c00ff30" Style="{StaticResource TimeLabelBorderStyle}">
+                                    <TextBlock x:Uid="LastAccessTimeAbbreviation" Foreground="DarkGreen" Style="{StaticResource TimeLabelTextStyle}"/>
+                                </Border>
+                                <TextBlock Text="{x:Bind LastAccessTime, Converter={StaticResource DateTimeToStringConverter}}" VerticalAlignment="Center"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <Border Background="#2c0000ff" Style="{StaticResource TimeLabelBorderStyle}">
+                                    <TextBlock x:Uid="LastWriteTimeAbbreviation" Foreground="Blue" Style="{StaticResource TimeLabelTextStyle}"/>
+                                </Border>
+                                <TextBlock Text="{x:Bind LastWriteTime, Converter={StaticResource DateTimeToStringConverter}}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </local:TilesControl>
+                        
+                        <TextBlock Text="{x:Bind Bytes, Converter={StaticResource ReadableSizeConverter}}"/>
+                    </StackPanel>
+                </StackPanel>
+            </CheckBox>
+        </DataTemplate>
     </Page.Resources>
     
     <Grid Margin="15,15,15,0" x:Name="MainPanel" SizeChanged="MainPanel_SizeChanged">
@@ -119,6 +182,39 @@
                             To="0"
                             Duration="0:0:0.3"/>
                     </Storyboard>
+                </VisualState>
+
+                <VisualState x:Name="ShowDuplicateFiles">
+                    <Storyboard>
+                        <DoubleAnimation Storyboard.TargetName="ShowGraphButton"
+                                         Storyboard.TargetProperty="Opacity"
+                                         To="0"
+                                         Duration="0:0:0.3"/>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShowGraphButton"
+                                                       Storyboard.TargetProperty="Visibility"
+                                                        BeginTime="0:0:0.3">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                    <VisualState.Setters>
+                        <Setter Target="ShowGraphButton.IsEnabled" Value="False"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="HideDuplicateFiles">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ShowGraphButton"
+                                                       Storyboard.TargetProperty="Visibility"
+                                                        BeginTime="0:0:0.0">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                        </ObjectAnimationUsingKeyFrames>
+                        <DoubleAnimation Storyboard.TargetName="ShowGraphButton"
+                                         Storyboard.TargetProperty="Opacity"
+                                         To="1"
+                                         Duration="0:0:0.3"/>
+                    </Storyboard>
+                    <VisualState.Setters>
+                        <Setter Target="ShowGraphButton.IsEnabled" Value="True"/>
+                    </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
@@ -222,25 +318,9 @@
                                 </StackPanel.Background>
                                 <TextBlock Padding="4,0,4,4" Text="{x:Bind File1.Filename}" Foreground="{StaticResource DuplicateFilenameColor}"/>
                             </StackPanel>
-                            <CheckBox Grid.Row="1" Margin="0,5,0,0" IsChecked="{x:Bind File1.Selected, Mode=TwoWay}">
-                                <StackPanel Orientation="Horizontal" Margin="11,0,0,0">
-                                    <Image Source="{x:Bind File1.Bitmap}" Width="48" Height="48" Stretch="Uniform"/>
-                                    <StackPanel Margin="10,0,0,0" Orientation="Vertical">
-                                        <TextBlock Text="{x:Bind File1.CreationDate,Converter={StaticResource DateTimeToStringConverter}}"/>
-                                        <TextBlock Text="{x:Bind File1.Bytes, Converter={StaticResource ReadableSizeConverter}}"/>
-                                    </StackPanel>
-                                </StackPanel>
-                            </CheckBox>
 
-                            <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{x:Bind File2.Selected, Mode=TwoWay}">
-                                <StackPanel Orientation="Horizontal" Margin="11,0,0,0">
-                                    <Image Source="{x:Bind File2.Bitmap}" Width="48" Height="48" Stretch="Uniform"/>
-                                    <StackPanel Margin="10,0,0,0" Orientation="Vertical">
-                                        <TextBlock Text="{x:Bind File2.CreationDate, Converter={StaticResource DateTimeToStringConverter}}"/>
-                                        <TextBlock Text="{x:Bind File2.Bytes,Converter={StaticResource ReadableSizeConverter}}"/>
-                                    </StackPanel>
-                                </StackPanel>
-                            </CheckBox>
+                            <ContentControl Content="{x:Bind File1}" ContentTemplate="{StaticResource FileInfoControlTemplate}" Grid.Row="1" Grid.Column="0"/>
+                            <ContentControl Content="{x:Bind File2}" ContentTemplate="{StaticResource FileInfoControlTemplate}" Grid.Row="1" Grid.Column="1"/>
 
                             <Line Margin="0,18,0,5" Grid.Row="2" Grid.ColumnSpan="2" X1="0" X2="500" Stroke="{StaticResource SeperatorLineColor}" Opacity="{StaticResource SeperatorLineOpacity}"/>
                         </Grid>

@@ -68,6 +68,12 @@
     <Midl Include="DependentValue.idl">
       <Filter>Utils</Filter>
     </Midl>
+    <Midl Include="DataInjector.idl">
+      <Filter>Views\Controls</Filter>
+    </Midl>
+    <Midl Include="TilesControl.idl">
+      <Filter>Views\Controls</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -131,6 +137,10 @@
     <ClCompile Include="ResourceHelper.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="ImageUtils.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="FileTime.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -212,6 +222,13 @@
     <ClInclude Include="PathUtils.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="ImageUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="HandleWrapper.hpp">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="FileTime.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
