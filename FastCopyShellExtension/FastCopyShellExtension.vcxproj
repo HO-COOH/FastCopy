@@ -139,7 +139,7 @@
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy $(SolutionDir)$(Platform)\Release\FastCopy\$(ProjectName).dll $(SolutionDir)$(Platform)\Debug\FastCopy\$(ProjectName).dll /Y</Command>
+      <Command>xcopy "$(SolutionDir)$(Platform)\Release\FastCopy\$(ProjectName).dll" "$(SolutionDir)$(Platform)\Debug\FastCopy\$(ProjectName).dll" /Y /-I</Command>
     </PostBuildEvent>
     <ResourceCompile>
       <ResourceOutputFileName>FastCopyShellExtension.res</ResourceOutputFileName>
