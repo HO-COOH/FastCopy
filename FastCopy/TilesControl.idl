@@ -1,5 +1,14 @@
 namespace FastCopy
 {
+    /**
+     * TilesControl is a live-tile-like control that automatically "flips" its content after a period of time
+     * 
+     * This is currently used in DuplicatedFileInfo where these 3 file-times will be shown in cycle:
+     *      file create time
+     *      last access time
+     *      last modified time
+     * See usage in CopyDialog.xaml
+     */
     [bindable]
     [default_interface]
     runtimeclass TilesControl : Microsoft.UI.Xaml.Controls.ItemsControl
