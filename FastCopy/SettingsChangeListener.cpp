@@ -14,8 +14,8 @@ void SettingsChangeListener::BroadcastThemeChange()
 	Settings const settings;
 	ThemeChangeEventArg arg
 	{
-		.theme = settings.Get<int>(Settings::ThemeSelection),
-		.effect = settings.Get<int>(Settings::BackgroundSelection)
+		.theme = settings.Get<int>(Settings::ThemeSelection, 0),
+		.effect = settings.Get<int>(Settings::BackgroundSelection, 0)
 	};
 	do {
 		 findResult = FindWindowEx(HWND_MESSAGE, findResult, MessageWindowClassName, L"");
