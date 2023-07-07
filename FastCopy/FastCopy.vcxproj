@@ -166,6 +166,7 @@
       <DependentUpon>FileCompareViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="FileContextMenu.h" />
     <ClInclude Include="FileInfoViewModel.h">
       <DependentUpon>FileInfoViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -308,6 +309,7 @@
       <DependentUpon>FileCompareViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="FileContextMenu.cpp" />
     <ClCompile Include="FileInfoViewModel.cpp">
       <DependentUpon>FileInfoViewModel.idl</DependentUpon>
       <SubType>Code</SubType>

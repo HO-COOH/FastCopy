@@ -141,6 +141,9 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="FileTime.cpp" />
+    <ClCompile Include="FileContextMenu.cpp">
+      <Filter>Views\Controls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -229,6 +232,9 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="FileTime.h" />
+    <ClInclude Include="FileContextMenu.h">
+      <Filter>Views\Controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
