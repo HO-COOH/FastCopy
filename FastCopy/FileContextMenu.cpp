@@ -7,8 +7,26 @@
 #include <Windows.h>
 #include <gdiplus.h>
 
+class GdiplusInitializer
+{
+public:
+	GdiplusInitializer()
+	{
+		Gdiplus::GdiplusStartup(&gdiplusToken, &input, nullptr);
+	}
+
+	~GdiplusInitializer()
+	{
+		Gdiplus::GdiplusShutdown(gdiplusToken);
+	}
+private:
+	Gdiplus::GdiplusStartupInput input;
+	ULONG_PTR gdiplusToken;
+};
+
 winrt::Microsoft::UI::Xaml::Media::ImageSource FileContextMenu::getIconFromWin32Menu(HBITMAP menuItemInfoBitmap)
 {
+	static GdiplusInitializer s_gdiPlusInitializer;
 	if (!menuItemInfoBitmap)
 		return nullptr;
 
@@ -62,6 +80,9 @@ winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem FileContextMenu::makeMenuFl
 
 void FileContextMenu::ShowAt(winrt::Microsoft::UI::Xaml::Controls::MenuFlyout& flyout)
 {
+	if (flyout.Items().Size() != 0)
+		return;
+
 	winrt::com_ptr<IShellItem> item = CreateItemFromParsingName(m_path.data()), folderItem;
 	item->GetParent(folderItem.put());
 

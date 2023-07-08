@@ -24,7 +24,9 @@ static auto GetLocalDataFolder()
 
 static auto GetTimeString()
 {
-	auto ret = std::format(L"{}", std::chrono::zoned_time{ std::chrono::current_zone(), std::chrono::system_clock::now() }.get_local_time());
+	//std::chrono::current_zone() gives exceptions on Windows 10, 17763 with MSVC cl.exe version 19.36.32535
+	//auto ret = std::format(L"{}", std::chrono::zoned_time{ std::chrono::current_zone(), std::chrono::system_clock::now() }.get_local_time());
+	auto ret = std::format(L"{}", std::chrono::system_clock::now());
 	std::ranges::replace_if(ret, [](auto c) {return c == L'.' || c == L':'; }, L'-');
 	return ret;
 }

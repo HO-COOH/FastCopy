@@ -25,17 +25,10 @@
 
 void Print(IShellItemArray* items)
 {
-    if (!items)
-        return;
-
-    if (ShellItemArray{ items }.size() == 0)
-        return;
-
-    for (auto item : ShellItemArray{ items })
-    {
-        OutputDebugString(item.GetDisplayName());
-        OutputDebugString(L"\n");
-    }
+#ifdef DEBUG
+    auto const count = ShellItemArray{ items }.size();
+    OutputDebugString(std::to_wstring(count).data());
+#endif
 }
 
 class SubCommand;
@@ -50,16 +43,6 @@ static std::wstring const& GetCurrentDllPath()
     }();
     return ret;
 }
-
-
-static void CheckResult(HRESULT hr, LPCWSTR prompt = nullptr)
-{
-    if (FAILED(hr) && prompt)
-    {
-        MessageBox(NULL, prompt, L"", 0);
-    }
-}
-
 
 class __declspec(uuid("3282E233-C5D3-4533-9B25-44B8AAAFACFA")) TestExplorerCommandRoot : 
     public Microsoft::WRL::RuntimeClass<
@@ -87,17 +70,26 @@ public:
     #pragma region IExplorerCommand
     HRESULT GetTitle( IShellItemArray* items,  PWSTR* name)
     {
+        Print(items);
         return SHStrDup(CommandRootTitle, name);
     }
     HRESULT GetIcon(IShellItemArray* items, PWSTR* icon) 
     { 
+        Print(items);
+
         SHStrDup(std::format(L"{},{}", GetCurrentDllPath(), -IDI_ICON1).data(), icon);
         return S_OK;
     }
-    HRESULT GetToolTip( IShellItemArray*,  PWSTR* infoTip) { *infoTip = nullptr; return E_NOTIMPL; }
+    HRESULT GetToolTip( IShellItemArray* items,  PWSTR* infoTip) 
+    {
+        Print(items);
+        *infoTip = nullptr; return E_NOTIMPL; 
+    }
     HRESULT GetCanonicalName(GUID* guidCommandName) { *guidCommandName = GUID_NULL;  return E_NOTIMPL; }
     HRESULT GetState( IShellItemArray* selection, BOOL okToBeSlow, EXPCMDSTATE* cmdState)
     {
+        Print(selection);
+
         init(selection);
         if (m_hasInit && !ptrs.empty())
             *cmdState = ECS_ENABLED;
@@ -114,6 +106,7 @@ public:
     
     HRESULT Invoke( IShellItemArray* selection,  IBindCtx*)
     {
+        Print(selection);
         return E_NOTIMPL;
     }
 
@@ -170,6 +163,101 @@ public:
     #pragma endregion
 };
 
+#include <atlcomcli.h>  // for COM smart pointers
+#include <atlbase.h>    // for COM smart pointers
+#include <ShlObj_core.h>
+#include <shlobj.h>
+
+void ThrowIfFailed(...) {}
+// Deleter for a PIDL allocated by the shell.
+struct CoTaskMemDeleter
+{
+    void operator()(ITEMIDLIST* pidl) const { ::CoTaskMemFree(pidl); }
+};
+using UniquePidlPtr = std::unique_ptr< ITEMIDLIST, CoTaskMemDeleter >;
+// Return value of GetCurrentExplorerFolders()
+struct ExplorerFolderInfo
+{
+    HWND hwnd = nullptr;  // window handle of explorer
+    UniquePidlPtr pidl;   // PIDL that points to current folder
+};
+
+// Get information about all currently open explorer windows.
+// Throws std::system_error exception to report errors.
+static std::vector< ExplorerFolderInfo > GetCurrentExplorerFolders()
+{
+    CComPtr< IShellWindows > pshWindows;
+    ThrowIfFailed(
+        pshWindows.CoCreateInstance(CLSID_ShellWindows),
+        "Could not create instance of IShellWindows");
+
+    long count = 0;
+    ThrowIfFailed(
+        pshWindows->get_Count(&count),
+        "Could not get number of shell windows");
+
+    std::vector< ExplorerFolderInfo > result;
+    result.reserve(count);
+
+    for (long i = 0; i < count; ++i)
+    {
+        ExplorerFolderInfo info;
+
+        CComVariant vi{ i };
+        CComPtr< IDispatch > pDisp;
+        ThrowIfFailed(
+            pshWindows->Item(vi, &pDisp),
+            "Could not get item from IShellWindows");
+
+        if (!pDisp)
+            // Skip - this shell window was registered with a NULL IDispatch
+            continue;
+
+        CComQIPtr< IWebBrowserApp > pApp{ pDisp };
+        if (!pApp)
+            // This window doesn't implement IWebBrowserApp 
+            continue;
+
+        // Get the window handle.
+        pApp->get_HWND(reinterpret_cast<SHANDLE_PTR*>(&info.hwnd));
+
+        CComQIPtr< IServiceProvider > psp{ pApp };
+        if (!psp)
+            // This window doesn't implement IServiceProvider
+            continue;
+
+        CComPtr< IShellBrowser > pBrowser;
+        if (FAILED(psp->QueryService(SID_STopLevelBrowser, &pBrowser)))
+            // This window doesn't provide IShellBrowser
+            continue;
+
+        CComPtr< IShellView > pShellView;
+        if (FAILED(pBrowser->QueryActiveShellView(&pShellView)))
+            // For some reason there is no active shell view
+            continue;
+
+        CComQIPtr< IFolderView > pFolderView{ pShellView };
+        if (!pFolderView)
+            // The shell view doesn't implement IFolderView
+            continue;
+
+        // Get the interface from which we can finally query the PIDL of
+        // the current folder.
+        CComPtr< IPersistFolder2 > pFolder;
+        if (FAILED(pFolderView->GetFolder(IID_IPersistFolder2, (void**)&pFolder)))
+            continue;
+
+        LPITEMIDLIST pidl = nullptr;
+        if (SUCCEEDED(pFolder->GetCurFolder(&pidl)))
+        {
+            // Take ownership of the PIDL via std::unique_ptr.
+            info.pidl = UniquePidlPtr{ pidl };
+            result.push_back(std::move(info));
+        }
+    }
+
+    return result;
+}
 
 class SubCommand final : 
     public Microsoft::WRL::RuntimeClass<
@@ -229,6 +317,8 @@ public:
 
     virtual const EXPCMDSTATE State( IShellItemArray* selection) 
     { 
+        Print(selection);
+
         switch (m_op)
         {
             case CopyOperation::Copy:
@@ -246,11 +336,13 @@ public:
     // IExplorerCommand
     HRESULT GetTitle( IShellItemArray* items,  PWSTR* name)
     {
+        Print(items);
         SHStrDup(getName().data(), name);
         return S_OK;
     }
-    HRESULT GetIcon(IShellItemArray*,  PWSTR* icon) 
+    HRESULT GetIcon(IShellItemArray* items,  PWSTR* icon) 
     { 
+        Print(items);
         SHStrDup(std::format(
             L"{},{}", 
             GetCurrentDllPath(), 
@@ -259,10 +351,17 @@ public:
         );
         return S_OK; 
     }
-    HRESULT GetToolTip(IShellItemArray*,  PWSTR* infoTip) { *infoTip = nullptr; return E_NOTIMPL; }
+    HRESULT GetToolTip(IShellItemArray* items,  PWSTR* infoTip) 
+    {
+        Print(items);
+        *infoTip = nullptr; 
+        return E_NOTIMPL; 
+    }
     HRESULT GetCanonicalName(GUID* guidCommandName) { *guidCommandName = GUID_NULL;  return S_OK; }
     HRESULT GetState(IShellItemArray* selection, _In_ BOOL okToBeSlow, _Out_ EXPCMDSTATE* cmdState)
     {
+        Print(selection);
+
         auto const state = State(selection);
         if (m_op == CopyOperation::Delete)
             *cmdState = ECS_DISABLED;
@@ -270,17 +369,33 @@ public:
             *cmdState = state == ECS_DISABLED ? ECS_HIDDEN : ECS_ENABLED;
         return S_OK;
     }
-    HRESULT Invoke( IShellItemArray* selection,  IBindCtx*) noexcept
+
+
+    HRESULT Invoke( IShellItemArray* selection,  IBindCtx* ctx) noexcept
     {
         /*
-            if no files are selected, selection contains 1 element to the current invoked folder
+            if no files are selected, selection contains 1 element to the current invoked folder (Windows 11 only)
+            On Windows 10, `selection` is `nullptr`
         */
+        
+        auto hwnd = GetForegroundWindow();
         switch (m_op)
         {
             case CopyOperation::Copy:
             case CopyOperation::Move:   return recordFilesImpl(selection);
             case CopyOperation::Paste:
             {
+
+                for (auto const& info : GetCurrentExplorerFolders())
+                {
+                    if (info.hwnd == hwnd)
+                    {
+                        TCHAR* ptr;
+                        SHGetNameFromIDList(info.pidl.get(), SIGDN_FILESYSPATH, &ptr);
+                        return callMainProgramImpl(ptr);
+                    }
+                }
+
                 ShellItem psi{ selection ? ShellItemArray{ selection }[0] : m_parent };
                 return callMainProgramImpl(psi.GetDisplayName());
             }
@@ -337,17 +452,21 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 
 void TestExplorerCommandRoot::init(IShellItemArray* items)
 {
-    DWORD const count = items ? ShellItemArray{ items }.size() : 0;
-
-    //MessageBox(NULL, std::to_wstring(count).data(), L"", 0);
+    DWORD const count = ShellItemArray{ items }.size();
+    Print(items);
     if (!m_hasInit)
     {
         if (count == 0 && hasInvokedCopyOrCut())
         {
+            auto pasteCommand = Microsoft::WRL::Make<SubCommand>(CopyOperation::Paste);
             if (ptrs.empty())
-                ptrs.push_back(Microsoft::WRL::Make<SubCommand>(CopyOperation::Paste));
+            {
+                ptrs.push_back(pasteCommand);
+            }
             else
-                ptrs.insert(ptrs.begin() + 2, Microsoft::WRL::Make<SubCommand>(CopyOperation::Paste));
+            {
+                ptrs.insert(ptrs.begin() + 2, pasteCommand);
+            }
             m_hasInit = true;
         }
     }
@@ -363,11 +482,8 @@ void TestExplorerCommandRoot::init(IShellItemArray* items)
     }
 
     if (!ptrs.empty() && std::none_of(ptrs.begin(), ptrs.end(), [items](Microsoft::WRL::ComPtr<SubCommand> const& subcommand) {
-        OutputDebugString(subcommand->getName().data());
-        OutputDebugString(std::to_wstring(subcommand->State(nullptr) == ECS_ENABLED).data());
-        OutputDebugString(L"\n");
         return subcommand->State(nullptr) == ECS_ENABLED;
-        }))
+    }))
     {
         ptrs.emplace_back(Microsoft::WRL::Make<SubCommand>(CopyOperation::Paste));
         ptrs.back()->SetParentForPasteForWindows10(ShellItemArray{ items }.front().GetPtr());
