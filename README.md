@@ -61,6 +61,7 @@ A GUI wrapper for Windows' built-in `robocopy` ~~and `xcopy`~~.
 ![](Screenshots/install-cert.png)
 4. Then click `Next` and finally `Finish` to install the certificate.
 5. Now you can double-click the `msix` to install the app.
+6*. **In rare situations, you might need to restart `explorer.exe` to see `FastCopy` in the right-click context menu**
 
 ## Usage
 1. Using file explorer, select some files/folders, as many as you want >> right click >> move to **FastCopy** >> select **Copy** or **Move**
