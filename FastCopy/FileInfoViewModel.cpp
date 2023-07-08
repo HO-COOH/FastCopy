@@ -57,22 +57,22 @@ namespace winrt::FastCopy::implementation
 
 	static std::wstring GetShellPropStringFromPath(LPCWSTR pPath, PROPERTYKEY const& key)
 	{
-		// Use CComPtr to automatically release the IShellItem2 interface when the function returns
-		// or an exception is thrown.
-		winrt::com_ptr<IShellItem2> pItem;
-		HRESULT hr = SHCreateItemFromParsingName(pPath, nullptr, IID_PPV_ARGS(pItem.put()));
-		if (FAILED(hr))
-			throw std::system_error(hr, std::system_category(), "SHCreateItemFromParsingName() failed");
+		try 
+		{
+			// Use CComPtr to automatically release the IShellItem2 interface when the function returns
+			// or an exception is thrown.
+			winrt::com_ptr<IShellItem2> pItem = CreateItemFromParsingName<IShellItem2>(pPath);
 
-		// Use CComHeapPtr to automatically release the string allocated by the shell when the function returns
-		// or an exception is thrown (calls CoTaskMemFree).
-		CComHeapPtr<WCHAR> pValue;
-		hr = pItem->GetString(key, &pValue);
-		if (FAILED(hr))
-			return {};
+			// Use CComHeapPtr to automatically release the string allocated by the shell when the function returns
+			// or an exception is thrown (calls CoTaskMemFree).
+			CComHeapPtr<WCHAR> pValue;
+			winrt::check_hresult(pItem->GetString(key, &pValue));
 
-		// Copy to wstring for convenience
-		return std::wstring(pValue);
+			// Copy to wstring for convenience
+			return std::wstring(pValue);
+		}
+		catch (...) {}
+		return {};
 	}
 
 	winrt::Windows::Foundation::Collections::IVector<winrt::Windows::Foundation::IInspectable> FileInfoViewModel::tooltipInfo()

@@ -30,8 +30,7 @@ HICON GetHIconFromFile(std::wstring_view path)
 
 HBITMAP GetHBitmapFromFile(std::wstring_view path)
 {
-	winrt::com_ptr<IShellItem> item;
-	SHCreateItemFromParsingName(ToBackslash(path).data(), NULL, IID_PPV_ARGS(item.put()));
+	winrt::com_ptr<IShellItem> item = CreateItemFromParsingName(ToBackslash(path).data());
 	HBITMAP bitmap{};
 	item.as<IShellItemImageFactory>()->GetImage({ 96, 96 }, SIIGBF_BIGGERSIZEOK, &bitmap);
 	return bitmap;

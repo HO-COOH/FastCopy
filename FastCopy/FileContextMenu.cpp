@@ -7,11 +7,62 @@
 #include <Windows.h>
 #include <gdiplus.h>
 
+winrt::Microsoft::UI::Xaml::Media::ImageSource FileContextMenu::getIconFromWin32Menu(HBITMAP menuItemInfoBitmap)
+{
+	if (!menuItemInfoBitmap)
+		return nullptr;
+
+	auto pbitmap = Gdiplus::Bitmap::FromHBITMAP(menuItemInfoBitmap, NULL);
+	INT const height = pbitmap->GetHeight();
+	INT const width = pbitmap->GetWidth();
+
+	Gdiplus::Color c{Gdiplus::Color::MakeARGB(255, 0, 0, 0)};
+
+	Gdiplus::Rect bmBounds{0, 0, (INT)width, (INT)height};
+	Gdiplus::BitmapData data{};
+	pbitmap->LockBits(&bmBounds, Gdiplus::ImageLockModeRead, PixelFormat32bppRGB, &data);
+
+	Gdiplus::Bitmap tmp{width, height, data.Stride, PixelFormat32bppARGB, (BYTE*)data.Scan0};
+	Gdiplus::Bitmap clone{width, height, PixelFormat32bppARGB};
+
+	Gdiplus::Graphics* gr = Gdiplus::Graphics::FromImage(&clone);
+	gr->DrawImage(&tmp, bmBounds);
+
+	HBITMAP hbitmap{};
+	clone.GetHBITMAP(c, &hbitmap);
+	return HBitmapToWriteableBitmap(hbitmap);
+}
+
+winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem FileContextMenu::makeMenuFlyout(MENUITEMINFO const& menuItemInfo)
+{
+	winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem item;
+	item.Text(menuItemInfo.dwTypeData);
+
+	item.Click([thisPtr = shared_from_this()](auto self, ...) {
+		int const id = winrt::unbox_value<decltype(m_menuData.size())>(self.as<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem>().Tag());
+		auto const& data = thisPtr->m_menuData[id];
+		CMINVOKECOMMANDINFOEX invokeInfo
+		{
+			.cbSize = sizeof(invokeInfo),
+			.lpVerb = reinterpret_cast<decltype(invokeInfo.lpVerb)>(MAKEINTRESOURCEW(data.menuId)),
+			.nShow = SW_SHOWNORMAL,
+		};
+		thisPtr->m_menu->InvokeCommand(reinterpret_cast<CMINVOKECOMMANDINFO*>(&invokeInfo));
+	});
+
+	if (auto source = getIconFromWin32Menu(menuItemInfo.hbmpItem))
+	{
+		winrt::Microsoft::UI::Xaml::Controls::ImageIcon icon;
+		icon.Source(source);
+		item.Icon(icon);
+	}
+	item.Tag(winrt::box_value(m_menuData.size()));
+	return item;
+}
+
 void FileContextMenu::ShowAt(winrt::Microsoft::UI::Xaml::Controls::MenuFlyout& flyout)
 {
-	winrt::com_ptr<IShellItem> item, folderItem;
-	SHCreateItemFromParsingName(m_path.data(), NULL, IID_PPV_ARGS(item.put()));
-
+	winrt::com_ptr<IShellItem> item = CreateItemFromParsingName(m_path.data()), folderItem;
 	item->GetParent(folderItem.put());
 
 	winrt::com_ptr<IShellFolder> folder;
@@ -25,12 +76,10 @@ void FileContextMenu::ShowAt(winrt::Microsoft::UI::Xaml::Controls::MenuFlyout& f
 
 	LPCITEMIDLIST idl[2]{ last };
 
-	winrt::com_ptr<IContextMenu> menu;
-	auto hr = folder->GetUIObjectOf(NULL, 1, &idl[0], IID_IContextMenu, nullptr, menu.put_void());
+	auto hr = folder->GetUIObjectOf(NULL, 1, &idl[0], IID_IContextMenu, nullptr, m_menu.put_void());
 
 	auto hMenu = CreatePopupMenu();
-	//menu->QueryContextMenu(hMenu, 0, 1, 0x7fff, CMF_OPTIMIZEFORINVOKE);
-	menu->QueryContextMenu(hMenu, 0, 1, 0x7fff, CMF_NORMAL);
+	m_menu->QueryContextMenu(hMenu, 0, 1, 0x7fff, CMF_NORMAL);
 
 	auto const itemCount = GetMenuItemCount(hMenu);
 	MENUITEMINFO menuItemInfo{
@@ -43,43 +92,12 @@ void FileContextMenu::ShowAt(winrt::Microsoft::UI::Xaml::Controls::MenuFlyout& f
 		menuItemInfo.dwTypeData = buffer;
 		menuItemInfo.cch = std::size(buffer);
 		GetMenuItemInfo(hMenu, i, true, &menuItemInfo);
-		if (!std::wstring_view{buffer}.empty() && menu)
+		if (!std::wstring_view{buffer}.empty() && m_menu)
 		{
-			winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem item;
-			item.Text(buffer);
-
-			if (menuItemInfo.hbmpItem)
-			{
-				winrt::Microsoft::UI::Xaml::Controls::ImageIcon icon;
-				{
-					auto pbitmap = Gdiplus::Bitmap::FromHBITMAP(menuItemInfo.hbmpItem, NULL);
-					INT const height = pbitmap->GetHeight();
-					INT const width = pbitmap->GetWidth();
-
-					Gdiplus::Color c{Gdiplus::Color::MakeARGB(255, 0, 0, 0)};
-
-					Gdiplus::Rect bmBounds{0, 0, (INT)width, (INT)height};
-					Gdiplus::BitmapData data{};
-					pbitmap->LockBits(&bmBounds, Gdiplus::ImageLockModeRead, PixelFormat32bppRGB, &data);
-
-					Gdiplus::Bitmap tmp{width, height, data.Stride, PixelFormat32bppARGB, (BYTE*)data.Scan0};
-					Gdiplus::Bitmap clone{width, height, PixelFormat32bppARGB};
-
-					Gdiplus::Graphics* gr = Gdiplus::Graphics::FromImage(&clone);
-					gr->DrawImage(&tmp, bmBounds);
-
-					HBITMAP hbitmap{};
-					clone.GetHBITMAP(c, &hbitmap);
-					if (auto source = HBitmapToWriteableBitmap(hbitmap); source != nullptr)
-					{
-						icon.Source(source);
-						item.Icon(icon);
-					}
-				}
-			}
-			flyout.Items().Append(item);
+			flyout.Items().Append(makeMenuFlyout(menuItemInfo));
+			std::wstring command(100, {});
+			m_menu->GetCommandString(menuItemInfo.wID - 1, GCS_VERB, nullptr, reinterpret_cast<char*>(command.data()), command.size());
+			m_menuData.push_back(MenuData{ .menuId = menuItemInfo.wID - 1, .verb = std::move(command) });
 		}
-		OutputDebugString(buffer);
-		OutputDebugString(L"\n");
 	}
 }

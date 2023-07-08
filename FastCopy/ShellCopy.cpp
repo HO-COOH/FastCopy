@@ -16,30 +16,18 @@ namespace ShellCopy
 
 	bool Move(std::wstring_view source, std::wstring_view destination)
 	{
-		winrt::com_ptr<IFileOperation> pfo;
-		auto hr = CoCreateInstance(CLSID_FileOperation, NULL, CLSCTX_ALL, IID_PPV_ARGS(pfo.put()));
+		try 
+		{
+			winrt::com_ptr<IFileOperation> pfo;
+			winrt::check_hresult(CoCreateInstance(CLSID_FileOperation, NULL, CLSCTX_ALL, IID_PPV_ARGS(pfo.put())));
+			winrt::check_hresult(pfo->SetOperationFlags(FOF_NO_UI));
 
-        if (!SUCCEEDED(hr))
-            return false;
-
-        if (!SUCCEEDED(pfo->SetOperationFlags(FOF_NO_UI)))
-            return false;
-
-        winrt::com_ptr<IShellItem> psiFrom, psiDest;
-        std::wstring from = ToBackslash(source);
-        if (hr = SHCreateItemFromParsingName(from.data(), NULL, IID_PPV_ARGS(psiFrom.put())); !SUCCEEDED(hr))
-            return false;
-
-        std::wstring to = ToBackslash(destination);
-        if (hr = SHCreateItemFromParsingName(to.data(), NULL, IID_PPV_ARGS(psiDest.put())); !SUCCEEDED(hr))
-            return false;
-
-        if (!SUCCEEDED(pfo->MoveItem(psiFrom.get(), psiDest.get(), nullptr, nullptr)))
-            return false;
-
-
-        if (!SUCCEEDED(pfo->PerformOperations()))
-            return false;
+			winrt::com_ptr<IShellItem> psiFrom = CreateItemFromParsingName(ToBackslash(source).data()),
+				psiDest = CreateItemFromParsingName(ToBackslash(destination).data());
+			winrt::check_hresult(pfo->MoveItem(psiFrom.get(), psiDest.get(), nullptr, nullptr));
+			winrt::check_hresult(pfo->PerformOperations());
+		}
+		catch (...) { return false; }
 
         return true;
 	}

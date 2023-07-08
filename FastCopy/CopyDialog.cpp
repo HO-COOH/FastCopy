@@ -151,7 +151,7 @@ namespace winrt::FastCopy::implementation
 
 	void CopyDialog::ShowMenu(winrt::hstring path, winrt::Microsoft::UI::Xaml::Controls::MenuFlyout flyout)
 	{
-		FileContextMenu(path).ShowAt(flyout);
+		std::make_shared<FileContextMenu>(path)->ShowAt(flyout);
 	}
 
 }

@@ -213,6 +213,9 @@
   <data name="ToText.Text" xml:space="preserve">
     <value>到</value>
   </data>
+  <data name="UnderDevelopmentTooltip.Content" xml:space="preserve">
+    <value>开发中！</value>
+  </data>
   <data name="UseDestinationCheckBox.Content" xml:space="preserve">
     <value>使用目标</value>
   </data>

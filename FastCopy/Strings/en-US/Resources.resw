@@ -213,6 +213,9 @@
   <data name="ToText.Text" xml:space="preserve">
     <value>to</value>
   </data>
+  <data name="UnderDevelopmentTooltip.Content" xml:space="preserve">
+    <value>This functionality is under development!</value>
+  </data>
   <data name="UseDestinationCheckBox.Content" xml:space="preserve">
     <value>Use destination</value>
   </data>

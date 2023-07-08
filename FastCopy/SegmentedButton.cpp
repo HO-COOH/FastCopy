@@ -5,7 +5,6 @@
 #endif
 
 
-
 namespace winrt::FastCopy::implementation
 {
     winrt::Microsoft::UI::Xaml::DependencyProperty SegmentedButton::m_content1 = 
@@ -73,5 +72,15 @@ namespace winrt::FastCopy::implementation
     }
     void SegmentedButton::Selection(int value)
     {
+        if (value == 0)
+        {
+            Button1().IsChecked(true);
+            Button2().IsChecked(false);
+        }
+        else if(value == 1)
+        {
+            Button1().IsChecked(false);
+            Button2().IsChecked(true);
+        }
     }
 }

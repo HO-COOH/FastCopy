@@ -569,6 +569,9 @@
         </local:SettingContainer>
 
         <local:SettingContainer x:Uid="MultipleInstanceBehaviorSettingItem">
+            <ToolTipService.ToolTip>
+                <ToolTip x:Uid="UnderDevelopmentTooltip"/>
+            </ToolTipService.ToolTip>
             <local:SettingContainer.Symbol>
                 <FontIcon Glyph="{StaticResource MultipleWindowGlyph}"/>
             </local:SettingContainer.Symbol>

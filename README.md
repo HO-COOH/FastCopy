@@ -7,18 +7,35 @@ A GUI wrapper for Windows' built-in `robocopy` ~~and `xcopy`~~.
 
 - Support the new Windows 11 context menu, and the old windows context menu, with the fluent design icon adapted to Light/Dark theme
 
-![](Screenshots/NewMenuCopy_Dark.png)
-![](Screenshots/NewMenuCopy_Light.png)
-![](Screenshots/NewMenuPaste_Dark.png)
-![](Screenshots/OldMenuCopy_Dark.png)
+<p align="center">
+    <image src="Screenshots/NewMenuCopy_Dark.png">
+</p>
+
+<p align="center">
+    <image src="Screenshots/NewMenuCopy_Light.png">
+</p>
+
+<p align="center">
+    <image src="Screenshots/NewMenuPaste_Dark.png">
+</p>
+
+<p align="center">
+    <image src="Screenshots/OldMenuCopy_Dark.png">
+</p>
+
 
 - Integration with Windows Notification Center: a notification toast will pop up when the copy is finished
 
-![](Screenshots/notification.png)
+<p align="center">
+    <image src="Screenshots/notification.png">
+</p>
 
 - Speed graph
 
-![](Screenshots/speed-graph.png)
+<p align="center">
+    <image src="Screenshots/speed-graph.png">
+</p>
+
 
 - Integration with taskbar: a progress bar sync with the one inside the window
 
@@ -28,12 +45,22 @@ A GUI wrapper for Windows' built-in `robocopy` ~~and `xcopy`~~.
 
 - Settings
 
-![](Screenshots/settings.png)
-
+<p align="center">
+    <image src="Screenshots/settings.png">
+</p>
 
 - Multi-language support
   + English
   + 中文
+
+## Installation (before publish to Microsoft Store)
+1. Go to the [Release Page](https://github.com/HO-COOH/FastCopy/releases), download the zip file in the **Asset** section of the latest version
+2. Unzip, double-click to open the certificate file ended in `.cert`, click `Install Certificate`. Choose `Local Machine` in the dialog, click `Next`
+  ![](Screenshots/open_cert.png)
+3. Choose `Place all certificates in the following store`, click `Browser`, and in the dialog choose `Trusted root certification authorities`
+![](Screenshots/install-cert.png)
+4. Then click `Next` and finally `Finish` to install the certificate.
+5. Now you can double-click the `msix` to install the app.
 
 ## Usage
 1. Using file explorer, select some files/folders, as many as you want >> right click >> move to **FastCopy** >> select **Copy** or **Move**
@@ -66,6 +93,8 @@ You can install them with one command, and do no more.
 vcpkg install spdlog:x64-windows
 vcpkg install abseil:x64-windows
 ``` 
+### Known issue
+- App crash after the window closed (does not affect users, low priority)
 
 ## Translation
 For contribution to translation, there are 2 places to be translated:
