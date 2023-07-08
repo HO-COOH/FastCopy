@@ -135,6 +135,9 @@
   <data name="CopyOperation" xml:space="preserve">
     <value>Kopieren</value>
   </data>
+  <data name="CreateTimeAbbreviation.Text" xml:space="preserve">
+    <value>C</value>
+  </data>
   <data name="CustomItem.Content" xml:space="preserve">
     <value>Deaktivieren</value>
   </data>
@@ -161,6 +164,12 @@
   </data>
   <data name="ItemsFromText.Text" xml:space="preserve">
     <value>Elemente aus </value>
+  </data>
+  <data name="LastAccessTimeAbbreviation.Text" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="LastWriteTimeAbbreviation.Text" xml:space="preserve">
+    <value>W</value>
   </data>
   <data name="LightThemeItem.Content" xml:space="preserve">
     <value>Hell</value>
@@ -203,6 +212,9 @@
   </data>
   <data name="ToText.Text" xml:space="preserve">
     <value>nach</value>
+  </data>
+  <data name="UnderDevelopmentTooltip.Content" xml:space="preserve">
+    <value>Diese Funktionalität befindet sich in der Entwicklung!</value>
   </data>
   <data name="UseDestinationCheckBox.Content" xml:space="preserve">
     <value>Ziel verwenden</value>
