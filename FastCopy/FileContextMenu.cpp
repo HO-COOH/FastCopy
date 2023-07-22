@@ -6,6 +6,7 @@
 #include "ImageUtils.h"
 #include <Windows.h>
 #include <gdiplus.h>
+#include <boost/algorithm/string.hpp>
 
 class GdiplusInitializer
 {
@@ -54,7 +55,10 @@ winrt::Microsoft::UI::Xaml::Media::ImageSource FileContextMenu::getIconFromWin32
 winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem FileContextMenu::makeMenuFlyout(MENUITEMINFO const& menuItemInfo)
 {
 	winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem item;
-	item.Text(menuItemInfo.dwTypeData);
+	std::wstring buf{menuItemInfo.dwTypeData};
+	boost::replace_all(buf, L"&", L"");
+	item.Text(std::move(buf)); //dwTypeData has additional '&' that needs to be removed, see Files ShellContextMenuHelper.cs LoadMenuFlyoutItem() function
+	
 
 	item.Click([thisPtr = shared_from_this()](auto self, ...) {
 		int const id = winrt::unbox_value<decltype(m_menuData.size())>(self.as<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem>().Tag());

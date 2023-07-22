@@ -36,6 +36,10 @@ A GUI wrapper for Windows' built-in `robocopy` ~~and `xcopy`~~.
     <image src="Screenshots/speed-graph.png">
 </p>
 
+- Confirmation Dialog
+<p align="center">
+    <image src="Screenshots/confirmation-dialog.png">
+</p>
 
 - Integration with taskbar: a progress bar sync with the one inside the window
 
@@ -85,17 +89,26 @@ FastCopy
 - Additional dependencies per project:
   + FastCopy:
     - spdlog
+    - boost-algorithm
   + SpeedTest:
     - abseil
+    - ftxui
 
 [vcpkg](https://vcpkg.io/en/) is the recommended package manager to handle these dependencies. 
 You can install them with one command, and do no more.
 ```
+vcpkg install boost-algorithm:x64-windows
 vcpkg install spdlog:x64-windows
 vcpkg install abseil:x64-windows
+vcpkg install ftxui:x64-windows
 ``` 
 ### Known issue
 - App crash after the window closed (does not affect users, low priority)
+
+### Recommendation
+Please install the [Child Process Debugger](https://marketplace.visualstudio.com/items?itemName=vsdbgplat.MicrosoftChildProcessDebuggingPowerTool2022), so that the debugger would break at the copying process (after you launch the settings process). 
+That is, you run the program first (so it goes into settings), then copy-paste a file, then the debugger will break automatically. 
+Strongly recommended! 
 
 ## Translation
 For contribution to translation, there are 2 places to be translated:

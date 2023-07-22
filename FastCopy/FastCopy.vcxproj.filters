@@ -90,7 +90,6 @@
     <ClCompile Include="CommandLine.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="Global.cpp" />
     <ClCompile Include="UIThreadWrapper.cpp" />
     <ClCompile Include="ProcessIoCounter.cpp">
       <Filter>Utils</Filter>
@@ -140,9 +139,14 @@
     <ClCompile Include="ImageUtils.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="FileTime.cpp" />
     <ClCompile Include="FileContextMenu.cpp">
       <Filter>Views\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="Global.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="FileTime.cpp">
+      <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -231,9 +235,11 @@
     <ClInclude Include="HandleWrapper.hpp">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="FileTime.h" />
     <ClInclude Include="FileContextMenu.h">
       <Filter>Views\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="FileTime.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

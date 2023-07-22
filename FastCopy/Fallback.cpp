@@ -1,52 +1,47 @@
 #include "pch.h"
 #include "Fallback.h"
 #include <format>
+#include <ShlObj_core.h>
+#include "PathUtils.h"
 
 namespace Fallback
 {
-	static bool copyFolderAddSuffixImpl(std::filesystem::path const& source, std::filesystem::path const& destination)
+	/**
+	 * @brief Wrapper for creating a unique name based on the duplicate destination full path
+	 * 
+	 * @param destinationFullPath The "intended" full destinationm 
+	 */
+	static auto MakeUniqueName(std::wstring_view destinationFullPath)
 	{
-		auto const folderName = source.filename().wstring();
-		std::error_code ec;
-		for (int suffix = 1;; ++suffix)
-		{
-			auto const fullPath = std::format(LR"({}\{}({}))", destination.wstring(), folderName, suffix);
-			if (!std::filesystem::exists(fullPath))
-			{
-
-				std::filesystem::copy(source, fullPath, std::filesystem::copy_options::recursive
-					|std::filesystem::copy_options::update_existing, ec);
-				return bool{ ec };
-			}
-		}
+		std::wstring buffer(destinationFullPath.size() + 10, {});
+		PathYetAnotherMakeUniqueName(buffer.data(), destinationFullPath.data(), nullptr, nullptr);
+		return buffer;
 	}
 
+	/**
+	 * @brief Copy with unique name copying impl
+	 * 
+	 * @param source Full path to the source file
+	 * @param destination Full path to the destination folder
+	 * @retval true If error **happens**
+	 * @retval false If no error
+	 */
 	static bool copyFileAddSuffixImpl(std::filesystem::path const& source, std::filesystem::path const& destination)
 	{
 		auto const fileName = source.filename().wstring();
-		auto const fileNameWithoutExtension = source.stem().wstring();
-		auto const extension = source.extension().wstring();
 		std::error_code ec;
-		for(int suffix = 1;;++suffix)
-		{
-			auto fullPath = std::format(LR"({}\{}({}){})", destination.wstring(), fileNameWithoutExtension, suffix, extension);
-			if(!std::filesystem::exists(fullPath))
-			{
-				std::filesystem::copy(source, fullPath);
-				return bool{ ec };
-			}
-		}
+		auto fullPath = MakeUniqueName(std::format(LR"({}\{})", ToBackslash(destination.wstring()), fileName));
+		assert(!std::filesystem::exists(fullPath));
+		std::filesystem::copy(source, fullPath, std::filesystem::copy_options::recursive | std::filesystem::copy_options::update_existing, ec);
+		return bool{ ec };
 	}
 
 	void CopyAddSuffix(std::filesystem::path const& source, std::filesystem::path const& destination, bool isMove)
 	{
-		bool error = false;
-		if (std::filesystem::is_directory(source))
-			error = copyFolderAddSuffixImpl(source, destination);
-		else
-			error = copyFileAddSuffixImpl(source, destination);
-		
-		if (!error && isMove)
+		if (!copyFileAddSuffixImpl(source, destination) && isMove)
+		{
+			//there is error OR isMove
 			std::filesystem::remove_all(source);
+		}
 	}
 }
