@@ -44,6 +44,12 @@
     <ClCompile Include="TestCases.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TUI.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandLineConfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ICopyBase.h">
@@ -89,6 +95,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TestCases.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TUI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandLineConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

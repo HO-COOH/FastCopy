@@ -5,13 +5,8 @@
 #include "Env.h"
 #include <absl/flags/flag.h>
 #include <absl/flags/parse.h>
+#include "TUI.h"
 
-#ifdef _DEBUG
-#include "COMApiTest.h"
-#include "XCopyTest.h"
-#include "FilesystemApiTest.h"
-#include "RobocopyTest.h"
-#endif
 
 /*
 	The following flags are for configuring what test cases to be run via command lines.
@@ -77,23 +72,7 @@ int main(int argc, char** argv)
 {
 	if (argc == 1)
 	{
-		//ExplorerGuard guard;
-#ifdef _DEBUG
-		//manually add debugging test implementation here...
-		//In release build, all tests registered with AutoRegister<Self> runs
-
-		//TestFactory::Register(std::make_unique<COMApiTest>());
-		TestFactory::Register(std::make_unique<COMApiTest>());
-		TestFactory::Register(std::make_unique<FilesystemApiTest>());
-		TestFactory::Register(std::make_unique<RobocopyTest>());
-#endif
-		TestFactory{}
-			//<< Random4KFiles{}
-			//<< BigFile{};
-		<< MoveFileSamePartition{};
-		TestFactory::RunAllTest();
-		TestFactory::PrintResult();
-		//TestFactory::Clear();
+		TUI::Run();
 	}
 	else
 	{

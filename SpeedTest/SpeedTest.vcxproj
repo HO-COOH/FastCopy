@@ -132,6 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="COMApiTest.cpp" />
+    <ClCompile Include="CommandLineConfig.cpp" />
     <ClCompile Include="Config.cpp" />
     <ClCompile Include="Env.cpp" />
     <ClCompile Include="FilesystemApiTest.cpp" />
@@ -139,6 +140,7 @@
     <ClCompile Include="RobocopyTest.cpp" />
     <ClCompile Include="TestCases.cpp" />
     <ClCompile Include="TestFactory.cpp" />
+    <ClCompile Include="TUI.cpp" />
     <ClCompile Include="Win32ApiTest.cpp" />
     <ClCompile Include="XCopyTest.cpp" />
   </ItemGroup>
@@ -146,6 +148,7 @@
     <ClInclude Include="AutoRegister.h" />
     <ClInclude Include="COMApiTest.h" />
     <ClInclude Include="COMInitializeHelper.h" />
+    <ClInclude Include="CommandLineConfig.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="Env.h" />
     <ClInclude Include="FilesystemApiTest.h" />
@@ -156,6 +159,7 @@
     <ClInclude Include="TestFactory.h" />
     <ClInclude Include="TestOperation.h" />
     <ClInclude Include="TestResult.h" />
+    <ClInclude Include="TUI.h" />
     <ClInclude Include="Win32ApiTest.h" />
     <ClInclude Include="XCopyTest.h" />
   </ItemGroup>
