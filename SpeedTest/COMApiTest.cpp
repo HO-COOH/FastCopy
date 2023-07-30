@@ -5,6 +5,21 @@
 #include <execution>
 #include <filesystem>
 #include <cassert>
+#include <codecvt>
+
+//copied from https://stackoverflow.com/questions/42793735/how-to-convert-between-widecharacter-and-multi-byte-character-string-in-windows
+std::wstring convert_to_wstring(const std::string& str)
+{
+    int num_chars = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), NULL, 0);
+    std::wstring wstrTo;
+    if (num_chars)
+    {
+        wstrTo.resize(num_chars);
+        MultiByteToWideChar(CP_UTF8, 0, str.c_str(), str.length(), &wstrTo[0], num_chars);
+    }
+    return wstrTo;
+}
+
 
 COMApiTest::COMApiTest()
 {
@@ -29,10 +44,10 @@ bool COMApiTest::Run(std::vector<TestOperation> const& paths)
                 return false;
 
             wil::com_ptr<IShellItem> psiFrom, psiDest;
-            if(!SUCCEEDED(SHCreateItemFromParsingName(test.source.data(), NULL, IID_PPV_ARGS(psiFrom.put()))))
+            if(!SUCCEEDED(SHCreateItemFromParsingName(convert_to_wstring(test.source).data(), NULL, IID_PPV_ARGS(psiFrom.put()))))
                 return false;
 
-            if (!SUCCEEDED(SHCreateItemFromParsingName(test.destination.data(), NULL, IID_PPV_ARGS(psiDest.put()))))
+            if (!SUCCEEDED(SHCreateItemFromParsingName(convert_to_wstring(test.source).data(), NULL, IID_PPV_ARGS(psiDest.put()))))
                 return false;
 
 

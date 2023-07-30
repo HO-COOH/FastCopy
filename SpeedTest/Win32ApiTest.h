@@ -2,7 +2,7 @@
 #include "ICopyBase.h"
 #include "AutoRegister.h"
 class Win32ApiTest :
-    public ICopyBase,
+    public IImplementationBase,
     public AutoRegister<Win32ApiTest>
 {
 public:

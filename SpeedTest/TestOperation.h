@@ -5,10 +5,10 @@
 struct TestOperation
 {
 	//Source path of file/folder
-	std::wstring source;
+	std::string source;
 
 	//Destination path of file/folder
-	std::wstring destination;
+	std::string destination;
 
 	//Operation, default to copy
 	enum class Operation

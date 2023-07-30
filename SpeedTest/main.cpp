@@ -58,10 +58,10 @@ struct ExplorerGuard
  */
 static void RunCommandLineConfig(...)
 {
-	if (absl::GetFlag(FLAGS_generate_random_files))
-		TestFactory{} << Random4KFiles{};
-	if (absl::GetFlag(FLAGS_generate_big_files))
-		TestFactory{} << BigFile{};
+	//if (absl::GetFlag(FLAGS_generate_random_files))
+	//	TestFactory{} << Random4KFiles{};
+	//if (absl::GetFlag(FLAGS_generate_big_files))
+	//	TestFactory{} << BigFile{};
 }
 
 

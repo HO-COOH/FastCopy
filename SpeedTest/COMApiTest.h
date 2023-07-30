@@ -2,7 +2,7 @@
 #include "ICopyBase.h"
 #include "COMInitializeHelper.h"
 #include "AutoRegister.h"
-class COMApiTest : public ICopyBase, private AutoRegister<COMApiTest>
+class COMApiTest : public IImplementationBase, private AutoRegister<COMApiTest>
 {
 public:
 	COMApiTest();

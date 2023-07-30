@@ -3,20 +3,20 @@
 #include <shellapi.h>
 #include <iostream>
 
-static auto StringToMultiString(std::wstring_view src)
-{
-	auto buffer = std::make_unique<wchar_t[]>(src.size() + 2);
-	std::copy(src.begin(), src.end(), buffer.get());
-	buffer[src.size()] = L'\0';
-	buffer[src.size() + 1] = L'\0';
-	return buffer;
-}
+//static auto StringToMultiString(std::wstring_view src)
+//{
+//	auto buffer = std::make_unique<wchar_t[]>(src.size() + 2);
+//	std::copy(src.begin(), src.end(), buffer.get());
+//	buffer[src.size()] = L'\0';
+//	buffer[src.size() + 1] = L'\0';
+//	return buffer;
+//}
 
 bool Win32ApiTest::Run(std::vector<TestOperation> const& paths)
 {
 	for (auto const& path : paths)
 	{
-		SHFILEOPSTRUCTW info{};
+		SHFILEOPSTRUCTA info{};
 		switch (path.operation)
 		{
 			case TestOperation::Operation::Copy:	info.wFunc = FO_COPY;	break;
@@ -25,12 +25,10 @@ bool Win32ApiTest::Run(std::vector<TestOperation> const& paths)
 			default:
 				throw std::runtime_error{ "Unknown operation" };
 		}
-		auto pFromBuffer = StringToMultiString(path.source);
-		info.pFrom = pFromBuffer.get();
-		auto pToBuffer = StringToMultiString(path.destination);
-		info.pTo = pToBuffer.get();
+		info.pFrom = path.source.data();
+		info.pTo = path.destination.data();
 		info.fFlags = FOF_NO_UI;
-		if (int const result = SHFileOperationW(&info); result != 0)
+		if (int const result = SHFileOperationA(&info); result != 0)
 		{
 			std::cerr << "Error code: " << result << " in SHFileOperationW\n";
 			return false;

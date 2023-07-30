@@ -4,19 +4,11 @@
 #include "TestResult.h"
 #include "TestOperation.h"
 
-class ICopyBase;
+class IImplementationBase;
 class TestFactory
 {
 public:
 
-	static void RunAllTest();
-
-	/**
-	 * Run by the AutoRegister or custom register test cases
-	 * 
-	 * @param test A pointer to the test class
-	 */
-	static void Register(std::unique_ptr<ICopyBase>&& test);
 
 	/**
 	 * Print sorted test results, eg: 
@@ -29,12 +21,12 @@ public:
 	 * Clear test files and folders.
 	 * 
 	 */
-	static void Clear();
+	//static void Clear();
 
 	template<typename TestCase>
-	TestFactory& operator<<(TestCase const& testCase)
+	TestFactory& operator<<(TestCase& testCase)
 	{
-		testCase(s_paths);
+		testCase();
 		return *this;
 	}
 private:
@@ -44,15 +36,13 @@ private:
 	 * 
 	 * @return true if test runs successfully
 	 */
-	static bool verify();
-	static std::vector<TestOperation> s_paths;
-	static std::vector<std::unique_ptr<ICopyBase>> s_implementations;
+	//static bool verify();
 	static std::vector<TestResult> s_testResults;
 
 	/**
 	 * Delete previously copied files in the destinations
 	 * 
 	 */
-	static void clearTestination();
+	//static void clearTestination();
 };
 

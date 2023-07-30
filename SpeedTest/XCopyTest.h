@@ -6,7 +6,7 @@
 /**
  * This class calls Windows' built-in xcopy.exe
  */
-class XCopyTest : public ICopyBase, private AutoRegister<XCopyTest>
+class XCopyTest : public IImplementationBase, private AutoRegister<XCopyTest>
 {
 public:
 	virtual bool Run(std::vector<TestOperation> const& paths) override;

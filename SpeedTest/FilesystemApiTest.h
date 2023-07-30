@@ -1,7 +1,7 @@
 #pragma once
 #include "ICopyBase.h"
 #include "AutoRegister.h"
-class FilesystemApiTest : public ICopyBase, private AutoRegister<FilesystemApiTest>
+class FilesystemApiTest : public IImplementationBase, private AutoRegister<FilesystemApiTest>
 {
 public:
 	// Inherited via ICopyBase

@@ -5,6 +5,7 @@
 #include "COMApiTest.h"
 #include "FilesystemApiTest.h"
 #include "RobocopyTest.h"
+#include "Config.h"
 
 
 #include <Windows.h>
@@ -12,6 +13,7 @@
 #include <string>  // for string, basic_string
 #include <vector>  // for vector
 #include <format>
+#include <filesystem>
 
 #include "ftxui/component/captured_mouse.hpp"  // for ftxui
 #include "ftxui/component/component.hpp"  // for Radiobox, Renderer, Tab, Toggle, Vertical
@@ -44,7 +46,7 @@ static auto PrintTime(std::chrono::steady_clock::duration duration)
     return std::format("{}:{} ", min.count(), sec);
 }
 
-auto makeTestResult(auto name, TestData::TabData::Implementations::ImplementationResult& implementationResult)
+auto makeTestResult(auto name, Config::TabData::Implementations::ImplementationResult& implementationResult)
 {
     auto checkbox = Checkbox(std::string{name}, & implementationResult.selected);
     return Renderer(
@@ -52,13 +54,13 @@ auto makeTestResult(auto name, TestData::TabData::Implementations::Implementatio
         [=, &implementationResult] {
             return hbox({ checkbox->Render(),
                 filler() | flex,
-                text(implementationResult.started? PrintTime(implementationResult.endTime == 0? std::chrono::steady_clock::now() - implementationResult.startTime : implementationResult.endTime - implementationResult.startTime) : "xx:xx "),
+                text(implementationResult.started ? PrintTime(implementationResult.endTime == std::chrono::steady_clock::time_point{} ? std::chrono::steady_clock::now() - implementationResult.startTime : implementationResult.endTime - implementationResult.startTime) : "xx:xx "),
             });
         }
     );
 }
 
-auto makeSection(auto name, TestData::TabData::Implementations& implementation)
+auto makeSection(auto name, Config::TabData::Implementations& implementation)
 {
     auto checkboxes = Vertical({
         makeTestResult("COM", implementation.COM_selected),
@@ -82,7 +84,7 @@ auto makeSection(auto name, TestData::TabData::Implementations& implementation)
     );
 }
 
-auto makeAdjustableSection(auto name, TestData::TabData::Implementations& implementation, int& sliderValue)
+auto makeAdjustableSection(auto name, Config::TabData::Implementations& implementation, int& sliderValue)
 {
     auto checkboxes = Vertical({
         Slider("Size: ", &sliderValue, 256, 4096),
@@ -107,7 +109,7 @@ auto makeAdjustableSection(auto name, TestData::TabData::Implementations& implem
     );
 }
 
-auto makeTab(TestData::TabData& tabData, auto startButtonPress)
+auto makeTab(Config::TabData& tabData, auto startButtonPress)
 {
     return
         Vertical({
@@ -119,20 +121,19 @@ auto makeTab(TestData::TabData& tabData, auto startButtonPress)
 
 void TUI::runCopyTab()
 {
-    if (data.copy_tab.fourK.COM_selected.selected)
-        TestFactory::Register(std::make_unique<COMApiTest>());
-
-    TestFactory::BeforeRunImplementation([](TestData::TabData::Implementations::ImplementationResult& result)
+    if (Config::GetInstance().copy_tab.fourK.COM_selected.selected)
     {
-        result.started = true;
-        result.startTime = std::chrono::steady_clock::now();
-    });
+        auto test = std::make_unique<COMApiTest>();
+        test->started = [this] {
+            Config::GetInstance().copy_tab.fourK.COM_selected.started = true;
+            Config::GetInstance().copy_tab.fourK.COM_selected.startTime = std::chrono::steady_clock::now();
+        };
+        test->finished = [this] {
+            Config::GetInstance().copy_tab.fourK.COM_selected.endTime = std::chrono::steady_clock::now();
+        };
 
-    TestFactory::AfterRunImplementation([](TestData::TabData::Implementations::ImplementationResult& result)
-    {
-        result.endTime = std::chrono::steady_clock::now();
-    });
-    TestFactory::RunAllTest();
+        TestFactory{} << (Random4KFiles{1024ull * 1024ull * 128} << std::move(test));
+    }
     
 }
 
@@ -166,14 +167,14 @@ void TUI::runImpl()
     auto tab_toggle = Toggle(&tab_values, &tab_selected);
 
 
-    auto sourceDirInput = Input(&data.sourceDir, "SoureDir");
-    auto destDirInput = Input(&data.destDir, "DestDir");
+    auto sourceDirInput = Input(&Config::GetInstance().sourceFolder, "SoureDir");
+    auto destDirInput = Input(&Config::GetInstance().destinationFolder, "DestDir");
 
     auto tab_container = Tab(
         {
-            makeTab(data.copy_tab, [this] {runCopyTab(); }),
-            makeTab(data.move_tab, [] {OutputDebugString(L"Move"); }),
-            makeTab(data.delete_tab, [] {OutputDebugString(L"Delete"); })
+            makeTab(Config::GetInstance().copy_tab, [this] {runCopyTab(); }),
+            makeTab(Config::GetInstance().move_tab, [] {OutputDebugString(L"Move"); }),
+            makeTab(Config::GetInstance().delete_tab, [] {OutputDebugString(L"Delete"); })
         }, &tab_selected
     );
 
@@ -189,15 +190,18 @@ void TUI::runImpl()
         container,
         [&]
         {
+            auto const isSourceCorrect = std::filesystem::is_directory(Config::GetInstance().sourceFolder);
+            //auto sourceDirInputElement = 
+            auto const isDestCorrect = std::filesystem::is_directory(Config::GetInstance().destinationFolder);
             return vbox
             ({
-                sourceDirInput->Render() | xflex,
-                destDirInput->Render() | xflex,
+                isSourceCorrect ? sourceDirInput->Render() | xflex : color(Color::Red, sourceDirInput->Render() | xflex),
+                isDestCorrect? destDirInput->Render() | xflex : color(Color::Red, destDirInput->Render() | xflex),
                 separator(),
                 tab_toggle->Render(),
                 separator(),
                 tab_container->Render(),
-                }) | border;
+            }) | border;
         })
     );
 }

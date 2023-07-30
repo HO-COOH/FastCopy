@@ -1,6 +1,7 @@
 #include "XCopyTest.h"
 #include "Process.h"
 #include "Env.h"
+#include "Config.h"
 
 std::wstring const XCopyTest::Application = Env::GetFolderPath(Env::SpecialFolder::System32) + LR"(\xcopy.exe)";
 bool XCopyTest::Run(std::vector<TestOperation> const& paths)
@@ -10,7 +11,7 @@ bool XCopyTest::Run(std::vector<TestOperation> const& paths)
 	{
 		processes.push_back(Process<wchar_t>{
 			XCopyTest::Application,
-			std::format(LR"("{}" "{}" /Y /E /C /I /H)", item.source, item.destination)
+			std::format(LR"("{}" "{}" /Y /E /C /I /H)", convert_to_wstring(item.source), convert_to_wstring(item.destination))
 		});
 	}
 	WaitForAllProcesses<wchar_t>(processes);

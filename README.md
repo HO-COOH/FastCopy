@@ -93,6 +93,7 @@ FastCopy
   + SpeedTest:
     - abseil
     - ftxui
+    - cereal
 
 [vcpkg](https://vcpkg.io/en/) is the recommended package manager to handle these dependencies. 
 You can install them with one command, and do no more.
@@ -101,6 +102,7 @@ vcpkg install boost-algorithm:x64-windows
 vcpkg install spdlog:x64-windows
 vcpkg install abseil:x64-windows
 vcpkg install ftxui:x64-windows
+vcpkg install cereal:x64-windows
 ``` 
 ### Known issue
 - App crash after the window closed (does not affect users, low priority)

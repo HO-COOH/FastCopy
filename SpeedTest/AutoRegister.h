@@ -20,5 +20,5 @@ public:
 template<typename Self>
 class AutoRegister
 {
-	static inline AutoRegisterImpl<Self> m_impl;
+	//static inline AutoRegisterImpl<Self> m_impl;
 };

@@ -3,9 +3,10 @@
 #include <vector>
 #include <string>
 #include "TestOperation.h"
+#include <functional>
 
 //All test inherits this class
-class ICopyBase
+class IImplementationBase
 {
 public:
 	/**
@@ -20,4 +21,7 @@ public:
 	 * Return the name/id of this implementation
 	 */
 	virtual std::string GetName() const = 0;
+
+	std::function<void(void)> started;
+	std::function<void(void)> finished;
 };

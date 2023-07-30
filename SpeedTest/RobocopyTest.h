@@ -6,7 +6,7 @@
  * Calls windows' built-in robocopy.exe
  */
 class RobocopyTest :
-    public ICopyBase, public AutoRegister<RobocopyTest>
+    public IImplementationBase, public AutoRegister<RobocopyTest>
 {
 public:
     // Inherited via ICopyBase

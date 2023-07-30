@@ -2,6 +2,7 @@
 #include <vector>
 #include "Process.h"
 #include "Env.h"
+#include "Config.h"
 
 std::wstring const RobocopyTest::ApplicationName = Env::GetFolderPath(Env::SpecialFolder::System32) + L"\\robocopy.exe";
 bool RobocopyTest::Run(std::vector<TestOperation> const& paths)
@@ -13,8 +14,8 @@ bool RobocopyTest::Run(std::vector<TestOperation> const& paths)
             Process<wchar_t>{
                 ApplicationName,
                 item.operation == TestOperation::Operation::Copy?
-                    std::format(LR"("{}" "{}" /E /MT:64)", item.source, item.destination) :
-                    std::format(LR"("{}" "{}" /E /MT:64 /MOVE)", item.source, item.destination)
+                    std::format(LR"("{}" "{}" /E /MT:64)", convert_to_wstring(item.source), convert_to_wstring(item.destination)) :
+                    std::format(LR"("{}" "{}" /E /MT:64 /MOVE)", convert_to_wstring(item.source), convert_to_wstring(item.destination))
             }
         );
     }
