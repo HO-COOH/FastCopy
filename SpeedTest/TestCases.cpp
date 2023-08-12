@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <span>
 #include <array>
+#include "Env.h"
 
 template<typename Char>
 static void createFile(std::basic_string_view<Char> path, std::span<char const> buffer, int repeat = 1)
@@ -50,7 +51,7 @@ void Random4KFiles::beforeRun()
 			config.destinationFolder
 		}
 	);
-	puts(std::format(
+	Env::Puts(std::format(
 		"Make test files ==> {} seconds\n",
 		std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - before)
 	).data());
@@ -67,7 +68,7 @@ void BigFile::beforeRun()
 	auto buffer = makeFilledBuffer();
 	config.CreateSourceAndDestinationFolder();
 	createFile<char>(config.sourceFolder + "\\BigFile", buffer, m_bigFileSize / std::size(buffer));
-	puts(std::format(
+	Env::Puts(std::format(
 		"Make big file ==> {} seconds\n",
 		std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - before)
 	).data());

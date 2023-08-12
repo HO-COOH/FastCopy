@@ -1,16 +1,9 @@
 #include "Win32ApiTest.h"
 #include <Windows.h>
 #include <shellapi.h>
-#include <iostream>
+#include "Env.h"
+#include <filesystem>
 
-//static auto StringToMultiString(std::wstring_view src)
-//{
-//	auto buffer = std::make_unique<wchar_t[]>(src.size() + 2);
-//	std::copy(src.begin(), src.end(), buffer.get());
-//	buffer[src.size()] = L'\0';
-//	buffer[src.size() + 1] = L'\0';
-//	return buffer;
-//}
 
 bool Win32ApiTest::Run(std::vector<TestOperation> const& paths)
 {
@@ -25,12 +18,21 @@ bool Win32ApiTest::Run(std::vector<TestOperation> const& paths)
 			default:
 				throw std::runtime_error{ "Unknown operation" };
 		}
-		info.pFrom = path.source.data();
-		info.pTo = path.destination.data();
+		
+		std::string sourceBuffer(MAX_PATH + 1, {});
+		sourceBuffer.assign(path.source);
+		if(path.isFolder())
+			sourceBuffer += R"(\*)";
+
+		char destBuffer[MAX_PATH + 1]{}; //for double termination
+		std::ranges::copy(path.destination, destBuffer);
+
+		info.pFrom = sourceBuffer.data();
+		info.pTo = destBuffer;
 		info.fFlags = FOF_NO_UI;
 		if (int const result = SHFileOperationA(&info); result != 0)
 		{
-			std::cerr << "Error code: " << result << " in SHFileOperationW\n";
+			Env::Puts(std::format("Error code: {} in SHFileOperationW", result).data());
 			return false;
 		}
 	}

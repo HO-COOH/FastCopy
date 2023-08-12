@@ -4,7 +4,7 @@
 #include <chrono>
 #include <atomic>
 
-struct Config
+class Config
 {
 public:
 	static Config& GetInstance();
@@ -18,7 +18,6 @@ public:
             struct ImplementationResult
             {
                 bool selected{};
-                //std::chrono::milliseconds duration{};
                 std::atomic_bool started{};
                 std::chrono::steady_clock::time_point startTime{};
                 std::chrono::steady_clock::time_point endTime{};
@@ -36,6 +35,8 @@ public:
     std::string sourceFolder;
     std::string destinationFolder;
 
+    bool m_loaded{};
+    bool m_printConsole{ true };
     void CreateSourceAndDestinationFolder() const;
 private:
 	Config() = default;
@@ -48,7 +49,7 @@ private:
 public:
     //Use `cereal` to serialize & deserialize the config
     template<typename Archive>
-    void serialize(Config& archive)
+    void serialize(Archive& archive)
     {
         archive(
             copy_tab.bigFileSizeMB,
@@ -59,8 +60,11 @@ public:
         );
     }
 
-    static void LoadFromFile();
-    static void SaveToFile();
+    static void LoadFromFile(Config& instance);
+    static void SaveToFile(Config const& instance);
+
+    bool isSourcePathCorrect() const;
+    bool isDestPathCorrect() const;
 };
 
 std::wstring convert_to_wstring(const std::string& str);

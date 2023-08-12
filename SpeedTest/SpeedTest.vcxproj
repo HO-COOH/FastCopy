@@ -145,11 +145,13 @@
     <ClCompile Include="XCopyTest.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AllImplementations.h" />
     <ClInclude Include="AutoRegister.h" />
     <ClInclude Include="COMApiTest.h" />
     <ClInclude Include="COMInitializeHelper.h" />
     <ClInclude Include="CommandLineConfig.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="ConfigArchive.h" />
     <ClInclude Include="Env.h" />
     <ClInclude Include="FilesystemApiTest.h" />
     <ClInclude Include="ICopyBase.h" />

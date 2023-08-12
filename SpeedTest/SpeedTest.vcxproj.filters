@@ -44,10 +44,10 @@
     <ClCompile Include="TestCases.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TUI.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="CommandLineConfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -102,6 +102,12 @@
     </ClInclude>
     <ClInclude Include="CommandLineConfig.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigArchive.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AllImplementations.h">
+      <Filter>TestImplementation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

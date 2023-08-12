@@ -22,4 +22,7 @@ namespace Env
 	 * Generate a random folder name for holding test files
 	 */
 	std::wstring const& GetRandomName();
+
+	//Print to console when it is not running TUI
+	void Puts(char const* const arg);
 }

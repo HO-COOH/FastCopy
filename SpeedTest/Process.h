@@ -3,6 +3,8 @@
 #include <string_view>
 #include <variant>
 #include <span>
+#include <ranges>
+#include <algorithm>
 
 namespace internal
 {

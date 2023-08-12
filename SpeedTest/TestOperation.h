@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <filesystem>
 
 //Represents a single test operation (a file or a folder)
 struct TestOperation
@@ -17,4 +18,9 @@ struct TestOperation
 		Move,
 		Delete
 	} operation = Operation::Copy;
+
+	bool isFolder() const
+	{
+		return std::filesystem::is_directory(source);
+	}
 };

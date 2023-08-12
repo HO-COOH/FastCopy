@@ -39,7 +39,7 @@ void TestFactory::PrintResult()
 {
 	for (int i = 0; i < std::size(s_testResults); ++i)
 	{
-		puts(std::format(
+		Env::Puts(std::format(
 			"#{}: {} ==> {} seconds\n",
 			i,
 			s_testResults[i].m_testName,

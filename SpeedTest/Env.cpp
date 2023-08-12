@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include <format>
 #include <chrono>
+#include "Config.h"
+#include <algorithm>
 namespace Env
 {
 	static auto getFolderPathImpl(REFKNOWNFOLDERID id)
@@ -81,5 +83,13 @@ namespace Env
 			return ret;
 		}();
 		return ret;
+	}
+
+	void Puts(char const* const arg)
+	{
+		if (!Config::GetInstance().m_printConsole)
+			return;
+
+		std::puts(arg);
 	}
 }

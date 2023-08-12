@@ -43,7 +43,7 @@ struct ExplorerGuard
 {
 	ExplorerGuard()
 	{
-		puts("Killing explorer.exe for accurate result. It will be restarted after test.\n");
+		Env::Puts("Killing explorer.exe for accurate result. It will be restarted after test.\n");
 		std::system("taskkill /f /im explorer.exe");
 	}
 
@@ -72,6 +72,7 @@ int main(int argc, char** argv)
 {
 	if (argc == 1)
 	{
+		Config::GetInstance().m_printConsole = false;
 		TUI::Run();
 	}
 	else

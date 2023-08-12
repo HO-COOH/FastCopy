@@ -2,9 +2,7 @@
 #include "TUI.h"
 #include "TestFactory.h"
 #include "TestCases.h"
-#include "COMApiTest.h"
-#include "FilesystemApiTest.h"
-#include "RobocopyTest.h"
+#include "AllImplementations.h"
 #include "Config.h"
 
 
@@ -14,7 +12,6 @@
 #include <vector>  // for vector
 #include <format>
 #include <filesystem>
-
 #include "ftxui/component/captured_mouse.hpp"  // for ftxui
 #include "ftxui/component/component.hpp"  // for Radiobox, Renderer, Tab, Toggle, Vertical
 #include "ftxui/component/component_base.hpp"      // for ComponentBase
@@ -26,24 +23,22 @@ using namespace ftxui;
 using namespace ftxui::Container;
 
 
-
-namespace std
-{
-    template<>
-    struct formatter<std::reference_wrapper<int>> : std::formatter<int>
-    {
-        auto format(std::reference_wrapper<int> intRef, auto& formatContext) const noexcept
-        {
-            return std::formatter<int>{}.format(intRef.get(), formatContext);
-        }
-    };
-}
-
 static auto PrintTime(std::chrono::steady_clock::duration duration)
 {
     auto const min = std::chrono::duration_cast<std::chrono::minutes>(duration);
     auto const sec = std::chrono::duration_cast<std::chrono::seconds>(duration - min).count();
     return std::format("{}:{} ", min.count(), sec);
+}
+
+static std::string PrintTime(Config::TabData::Implementations::ImplementationResult const& implementationResult)
+{
+    if (!implementationResult.started)
+    {
+        return "xx: xx";
+    }
+
+    auto const endTime = implementationResult.endTime == std::chrono::steady_clock::time_point{} ? std::chrono::steady_clock::now() : implementationResult.endTime;
+    return PrintTime(endTime - implementationResult.startTime);
 }
 
 auto makeTestResult(auto name, Config::TabData::Implementations::ImplementationResult& implementationResult)
@@ -54,7 +49,7 @@ auto makeTestResult(auto name, Config::TabData::Implementations::ImplementationR
         [=, &implementationResult] {
             return hbox({ checkbox->Render(),
                 filler() | flex,
-                text(implementationResult.started ? PrintTime(implementationResult.endTime == std::chrono::steady_clock::time_point{} ? std::chrono::steady_clock::now() - implementationResult.startTime : implementationResult.endTime - implementationResult.startTime) : "xx:xx "),
+                text(PrintTime(implementationResult))
             });
         }
     );
@@ -79,7 +74,7 @@ auto makeSection(auto name, Config::TabData::Implementations& implementation)
                 sectionCheckbox->Render() | center,
                 separator(),
                 checkboxes->Render() | xflex
-                });
+            });
         }
     );
 }
@@ -99,12 +94,12 @@ auto makeAdjustableSection(auto name, Config::TabData::Implementations& implemen
     auto section = Horizontal({ sectionCheckbox , checkboxes });
     return Renderer(
         section,
-        [=] {
+        [=, valuePtr = &sliderValue] {
             return hbox({
-                sectionCheckbox->Render() | center,
+                vbox({sectionCheckbox->Render() | center, text(std::format("{} MB", *valuePtr))}),
                 separator(),
                 checkboxes->Render() | xflex
-                });
+            });
         }
     );
 }
@@ -114,49 +109,55 @@ auto makeTab(Config::TabData& tabData, auto startButtonPress)
     return
         Vertical({
             makeSection("4K files", tabData.fourK) | border,
-            makeAdjustableSection("Big files", tabData.fourK, tabData.bigFileSizeMB) | border,
+            makeAdjustableSection("Big files", tabData.bigFile, tabData.bigFileSizeMB) | border,
             Button("Start", startButtonPress)
         });
 }
 
+static void SetImplementationStart(Config::TabData::Implementations::ImplementationResult& implementation)
+{
+    implementation.started = true;
+    implementation.startTime = std::chrono::steady_clock::now();
+}
+
+static void SetImplementationFinished(Config::TabData::Implementations::ImplementationResult& implementation)
+{
+    implementation.endTime = std::chrono::steady_clock::now();
+}
+
+template<typename Implementation, typename TestCaseBase>
+static void AddImplementationToTestCase(TestCaseBase& testCase, Config::TabData::Implementations::ImplementationResult& implementationResult)
+{
+    if (!implementationResult.selected)
+        return;
+
+    auto test = std::make_unique<Implementation>();
+    test->started = [&implementationResult] { SetImplementationStart(implementationResult); };
+    test->finished = [&implementationResult] {SetImplementationFinished(implementationResult); };
+    testCase << std::move(test);
+}
+
+
 void TUI::runCopyTab()
 {
-    if (Config::GetInstance().copy_tab.fourK.COM_selected.selected)
-    {
-        auto test = std::make_unique<COMApiTest>();
-        test->started = [this] {
-            Config::GetInstance().copy_tab.fourK.COM_selected.started = true;
-            Config::GetInstance().copy_tab.fourK.COM_selected.startTime = std::chrono::steady_clock::now();
-        };
-        test->finished = [this] {
-            Config::GetInstance().copy_tab.fourK.COM_selected.endTime = std::chrono::steady_clock::now();
-        };
+    std::thread{[this] {
+        Config::GetInstance().sourceFolder = m_tempSourceDir;
+        Config::GetInstance().destinationFolder = m_tempDestDir;
 
-        TestFactory{} << (Random4KFiles{1024ull * 1024ull * 128} << std::move(test));
-    }
-    
+        Random4KFiles randomTestCase{ /*1024ull * 1024ull * 128*/ 1024ull * 1024ull * 32 };
+        AddImplementationToTestCase<COMApiTest>(randomTestCase, Config::GetInstance().copy_tab.fourK.COM_selected);
+        AddImplementationToTestCase<Win32ApiTest>(randomTestCase, Config::GetInstance().copy_tab.fourK.win32_selected);
+        AddImplementationToTestCase<RobocopyTest>(randomTestCase, Config::GetInstance().copy_tab.fourK.robocopy_selected);
+        AddImplementationToTestCase<XCopyTest>(randomTestCase, Config::GetInstance().copy_tab.fourK.xcopy_selected);
+        AddImplementationToTestCase<FilesystemApiTest>(randomTestCase, Config::GetInstance().copy_tab.fourK.std_selected);
+
+        if (randomTestCase)
+            TestFactory{} << randomTestCase;
+    }}.detach();
 }
 
 void TUI::runImpl()
 {
-//	//ExplorerGuard guard;
-//#ifdef _DEBUG
-//		//manually add debugging test implementation here...
-//		//In release build, all tests registered with AutoRegister<Self> runs
-//
-//		//TestFactory::Register(std::make_unique<COMApiTest>());
-//	TestFactory::Register(std::make_unique<COMApiTest>());
-//	TestFactory::Register(std::make_unique<FilesystemApiTest>());
-//	TestFactory::Register(std::make_unique<RobocopyTest>());
-//#endif
-//	TestFactory{}
-//		//<< Random4KFiles{}
-//		//<< BigFile{};
-//	<< MoveFileSamePartition{};
-//	TestFactory::RunAllTest();
-//	TestFactory::PrintResult();
-//	//TestFactory::Clear();
-
     std::vector<std::string> tab_values
     {
         "Copy",
@@ -167,15 +168,16 @@ void TUI::runImpl()
     auto tab_toggle = Toggle(&tab_values, &tab_selected);
 
 
-    auto sourceDirInput = Input(&Config::GetInstance().sourceFolder, "SoureDir");
-    auto destDirInput = Input(&Config::GetInstance().destinationFolder, "DestDir");
+    auto sourceDirInput = Input(&m_tempSourceDir, "SoureDir");
+    auto destDirInput = Input(&m_tempDestDir, "DestDir");
 
     auto tab_container = Tab(
         {
             makeTab(Config::GetInstance().copy_tab, [this] {runCopyTab(); }),
             makeTab(Config::GetInstance().move_tab, [] {OutputDebugString(L"Move"); }),
             makeTab(Config::GetInstance().delete_tab, [] {OutputDebugString(L"Delete"); })
-        }, &tab_selected
+        }, 
+        &tab_selected
     );
 
     auto container = Vertical({
@@ -184,15 +186,14 @@ void TUI::runImpl()
         tab_toggle,
         tab_container
     });
+    
 
-
-    ScreenInteractive::TerminalOutput().Loop(Renderer(
+    screen.Loop(Renderer(
         container,
         [&]
         {
-            auto const isSourceCorrect = std::filesystem::is_directory(Config::GetInstance().sourceFolder);
-            //auto sourceDirInputElement = 
-            auto const isDestCorrect = std::filesystem::is_directory(Config::GetInstance().destinationFolder);
+            auto const isSourceCorrect = std::filesystem::is_directory(m_tempSourceDir);
+            auto const isDestCorrect = std::filesystem::is_directory(m_tempDestDir);
             return vbox
             ({
                 isSourceCorrect ? sourceDirInput->Render() | xflex : color(Color::Red, sourceDirInput->Render() | xflex),
@@ -206,18 +207,23 @@ void TUI::runImpl()
     );
 }
 
+void TUI::redraw()
+{
+    screen.PostEvent(ftxui::Event::Custom);
+}
+
 void TUI::Run()
 {
+    TUI tui{};
     std::thread t{
-        [] { TUI{}.runImpl(); }
+        [&tui] { tui.runImpl(); }
     };
 
     t.detach();
 
     while (true)
     {
-        ftxui::ScreenInteractive::TerminalOutput().PostEvent(ftxui::Event::Custom);
+        tui.redraw();
         std::this_thread::sleep_for(std::chrono::seconds{1});
     }
-    //t.join();
 }
