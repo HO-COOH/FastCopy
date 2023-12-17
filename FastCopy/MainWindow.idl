@@ -1,11 +1,10 @@
-import "WindowEx.idl";
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace FastCopy
 {
     [default_interface]
-    runtimeclass MainWindow : FastCopy.WindowEx
+    runtimeclass MainWindow : WinUI3Package.WindowEx
     {
         MainWindow();
     }

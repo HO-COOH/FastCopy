@@ -1,5 +1,4 @@
 import "RobocopyViewModel.idl";
-import "ProgressBarEx.idl";
 
 namespace FastCopy
 {
@@ -8,7 +7,7 @@ namespace FastCopy
     {
         CopyDialog();
         RobocopyViewModel ViewModel{ get; };
-        FastCopy.ProgressBarEx ProgressBar{ get; };
+        WinUI3Package.ProgressBarEx ProgressBar{ get; };
 
         Microsoft.UI.Xaml.Controls.Grid MainPanel{ get; };
     }

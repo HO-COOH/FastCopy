@@ -186,10 +186,10 @@
   <data name="Moving" xml:space="preserve">
     <value>正在移动</value>
   </data>
-  <data name="MultipleInstanceBehaviorSettingItem.HelpText" xml:space="preserve">
+  <data name="MultipleInstanceBehaviorSettingItem.Description" xml:space="preserve">
     <value>控制多实例时的窗口显式方式</value>
   </data>
-  <data name="MultipleInstanceBehaviorSettingItem.Title" xml:space="preserve">
+  <data name="MultipleInstanceBehaviorSettingItem.Header" xml:space="preserve">
     <value>多窗口</value>
   </data>
   <data name="MultipleInstanceSegmentButton.Content1" xml:space="preserve">
@@ -198,16 +198,19 @@
   <data name="MultipleInstanceSegmentButton.Content2" xml:space="preserve">
     <value>合并为一个窗口</value>
   </data>
-  <data name="NotificationSettingItem.HelpText" xml:space="preserve">
+  <data name="NotificationSettingItem.Description" xml:space="preserve">
     <value>复制完成时向Windows通知中心发送通知</value>
   </data>
-  <data name="NotificationSettingItem.Title" xml:space="preserve">
+  <data name="NotificationSettingItem.Header" xml:space="preserve">
     <value>复制完成后通知</value>
   </data>
   <data name="SettingWindowTitle.Text" xml:space="preserve">
     <value>FastCopy设置</value>
   </data>
-  <data name="ThemeSettingItem.Title" xml:space="preserve">
+  <data name="ThemeSettingItem.Description" xml:space="preserve">
+    <value>切换亮色/暗色主题</value>
+  </data>
+  <data name="ThemeSettingItem.Header" xml:space="preserve">
     <value>主题</value>
   </data>
   <data name="ToText.Text" xml:space="preserve">
@@ -222,7 +225,10 @@
   <data name="UseSourceCheckBox.Content" xml:space="preserve">
     <value>使用源</value>
   </data>
-  <data name="WindowBackgroundSettingItem.Title" xml:space="preserve">
+  <data name="WindowBackgroundSettingItem.Description" xml:space="preserve">
+    <value>控制所有窗口的背景</value>
+  </data>
+  <data name="WindowBackgroundSettingItem.Header" xml:space="preserve">
     <value>窗口背景</value>
   </data>
 </root>

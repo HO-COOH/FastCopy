@@ -48,14 +48,22 @@ namespace winrt::FastCopy::implementation
 		{
 			ViewModel().Pause();
 			PauseIcon().Symbol(winrt::Microsoft::UI::Xaml::Controls::Symbol::Play);
-			ProgressBar().Color(winrt::Windows::UI::Colors::Yellow());
+			winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(
+				*this,
+				L"PausedState",
+				false
+			);
 			Taskbar::SetProgressState(Global::MainHwnd, Taskbar::ProgressState::Paused);
 		}
 		else
 		{
 			ViewModel().Start();
 			PauseIcon().Symbol(winrt::Microsoft::UI::Xaml::Controls::Symbol::Pause);
-			ProgressBar().Color(winrt::Windows::UI::Colors::Green());
+			winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(
+				*this,
+				L"NormalState",
+				false
+			);
 			Taskbar::SetProgressState(Global::MainHwnd, Taskbar::ProgressState::Normal);
 		}
 	}

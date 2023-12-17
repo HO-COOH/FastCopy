@@ -104,6 +104,9 @@ vcpkg install abseil:x64-windows
 vcpkg install ftxui:x64-windows
 vcpkg install cereal:x64-windows
 ``` 
+
+Other component comes from my very own [WinUIEssentials](https://github.com/HO-COOH/WinUIEssentials), which will be installed automatically by Visual Studio nuget.
+
 ### Known issue
 - App crash after the window closed (does not affect users, low priority)
 
@@ -116,6 +119,7 @@ Strongly recommended!
 For contribution to translation, there are 2 places to be translated:
 - The main project, in `FastCopy/Strings/<language>/Resources.resw`
 - The shell extension project, in `FastCopyShellExtension/CopyOperationNames.cpp CopyOperationNames::GetInstance()`
+
 
 ### Prototype
 [Figma link, you may need to ask for permission.](https://www.figma.com/file/e5hUvDWKO8gZiKXruuNSvL/Xcopy?type=design&node-id=217-31199&t=cKY9TdBJXXi7QdFL-0)

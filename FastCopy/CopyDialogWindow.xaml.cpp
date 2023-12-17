@@ -28,10 +28,6 @@ namespace winrt::FastCopy::implementation
 
         CenterWindow(*this, m_currentSize);
         auto appWindow = GetAppWindow(*this);
-        auto presenter = appWindow.Presenter().as<winrt::Microsoft::UI::Windowing::OverlappedPresenter>();
-        presenter.IsResizable(false);
-        presenter.IsMaximizable(false);
-        presenter.IsMinimizable(true);
 
         auto titleBar = appWindow.TitleBar();
         titleBar.ExtendsContentIntoTitleBar(true);

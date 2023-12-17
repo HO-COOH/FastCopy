@@ -5,6 +5,7 @@
     xmlns:local="using:FastCopy"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:essential="using:WinUI3Package"
     mc:Ignorable="d"
     RequestedTheme="Dark">
 
@@ -217,6 +218,18 @@
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
+
+            <VisualStateGroup x:Name="ProgressBarStates">
+                <VisualState x:Name="NormalState">
+
+                </VisualState>
+                <VisualState x:Name="PausedState">
+                    <VisualState.Setters>
+                        <Setter Target="ProgressBar.HighColor" Value="#FFFFFF00"/>
+                        <Setter Target="ProgressBar.BaseColor" Value="#B3FFFF00"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         
         <TextBlock Style="{StaticResource HeaderTextStyle}">
@@ -255,8 +268,9 @@
             </Button>
         </StackPanel>
 
-        <local:ProgressBarEx x:Name="ProgressBar" Loaded="ProgressBar_Loaded" Margin="0,10,0,0" HorizontalAlignment="Stretch"
-                             Percent="{x:Bind ViewModel.Percent, Mode=OneWay}" Height="5" Color="Green" Grid.Row="2"/>
+        <essential:ProgressBarEx x:Name="ProgressBar" Loaded="ProgressBar_Loaded" Margin="0,10,0,0" HorizontalAlignment="Stretch"
+                             Percent="{x:Bind ViewModel.Percent, Mode=OneWay}" Height="5" CornerRadius="5" Grid.Row="2"
+                             Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"/>
 
         <!--SpeedGraph area-->
         <Button Grid.Row="4" x:Name="ShowGraphButton" HorizontalAlignment="Center" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5"

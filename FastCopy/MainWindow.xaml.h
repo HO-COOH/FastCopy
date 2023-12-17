@@ -3,10 +3,7 @@
 
 #pragma once
 
-#include "WindowEx.g.h"
-#include "WindowEx.h"
 #include "MainWindow.g.h"
-#include "MutexWrapper.h"
 
 
 namespace winrt::FastCopy::implementation
@@ -14,14 +11,6 @@ namespace winrt::FastCopy::implementation
     struct MainWindow : MainWindowT<MainWindow>
     {
         MainWindow();
-    private:
-        //Unscaled window size
-        constexpr static winrt::Windows::Graphics::SizeInt32 Size
-        {
-            600, 470
-        };
-
-        MutexWrapper m_settingsLock{ L"FastCopySettingsLock", true };
     };
 }
 

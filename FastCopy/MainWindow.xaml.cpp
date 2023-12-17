@@ -7,7 +7,6 @@
 #include "MainWindow.g.cpp"
 #endif
 
-#include "WindowHelper.h"
 #include "UIDispatcher.h"
 
 
@@ -23,9 +22,6 @@ namespace winrt::FastCopy::implementation
     MainWindow::MainWindow()
     {
         InitializeComponent();
-        
-        AppWindow().Title(L"FastCopy");
-        ResizeWindow(*this, Size);
         UIDispatcher::g_dispatcher = DispatcherQueue();
         UIDispatcher::g_mainWindow = *this;
     }

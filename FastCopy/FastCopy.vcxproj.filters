@@ -19,9 +19,6 @@
     <Page Include="CopyDialogWindow.xaml">
       <Filter>Views</Filter>
     </Page>
-    <Page Include="ProgressBarEx.xaml">
-      <Filter>Views\Controls</Filter>
-    </Page>
     <Page Include="SpeedGraph.xaml">
       <Filter>Views\Controls</Filter>
     </Page>
@@ -29,14 +26,8 @@
   <ItemGroup>
     <Midl Include="App.idl" />
     <Midl Include="MainWindow.idl" />
-    <Midl Include="BoolToVisibilityConverter.idl">
-      <Filter>Converter</Filter>
-    </Midl>
     <Midl Include="NumberToStringConverter.idl">
       <Filter>Converter</Filter>
-    </Midl>
-    <Midl Include="SettingContainer.idl">
-      <Filter>Views\Controls</Filter>
     </Midl>
     <Midl Include="ICopyBase.idl">
       <Filter>ViewModel</Filter>
@@ -61,9 +52,6 @@
     </Midl>
     <Midl Include="SettingsViewModel.idl">
       <Filter>ViewModel\Settings</Filter>
-    </Midl>
-    <Midl Include="WindowEx.idl">
-      <Filter>Views</Filter>
     </Midl>
     <Midl Include="DependentValue.idl">
       <Filter>Utils</Filter>
@@ -414,6 +402,9 @@
     <Image Include="Assets\FileDefault.ico">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Assets\Main.ico">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Assets">
@@ -449,9 +440,6 @@
     <Filter Include="Utils\Fallback">
       <UniqueIdentifier>{585c7294-37bb-485f-9f1d-e00173bde03e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ViewModel\Robocopy">
-      <UniqueIdentifier>{a3f4d143-a3b2-4385-9a07-60ca6769cf1d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Strings">
       <UniqueIdentifier>{e03bba09-b9e1-4422-80c5-21b54d995e59}</UniqueIdentifier>
     </Filter>
@@ -466,6 +454,9 @@
     </Filter>
     <Filter Include="Utils\ShellCopy">
       <UniqueIdentifier>{73525a02-f480-41b5-8b0a-5863d45cd71f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ViewModel\Robocopy">
+      <UniqueIdentifier>{a3f4d143-a3b2-4385-9a07-60ca6769cf1d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

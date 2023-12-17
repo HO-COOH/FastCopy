@@ -186,10 +186,10 @@
   <data name="Moving" xml:space="preserve">
     <value>moving</value>
   </data>
-  <data name="MultipleInstanceBehaviorSettingItem.HelpText" xml:space="preserve">
+  <data name="MultipleInstanceBehaviorSettingItem.Description" xml:space="preserve">
     <value>Control the bahavior of having multiple instances of fastcopy</value>
   </data>
-  <data name="MultipleInstanceBehaviorSettingItem.Title" xml:space="preserve">
+  <data name="MultipleInstanceBehaviorSettingItem.Header" xml:space="preserve">
     <value>Multiple Instance</value>
   </data>
   <data name="MultipleInstanceSegmentButton.Content1" xml:space="preserve">
@@ -198,16 +198,19 @@
   <data name="MultipleInstanceSegmentButton.Content2" xml:space="preserve">
     <value>Combine into one window</value>
   </data>
-  <data name="NotificationSettingItem.HelpText" xml:space="preserve">
+  <data name="NotificationSettingItem.Description" xml:space="preserve">
     <value>Send a toast notification to Windows notification center after finish</value>
   </data>
-  <data name="NotificationSettingItem.Title" xml:space="preserve">
+  <data name="NotificationSettingItem.Header" xml:space="preserve">
     <value>Notify upon finish</value>
   </data>
   <data name="SettingWindowTitle.Text" xml:space="preserve">
     <value>FastCopy Settings</value>
   </data>
-  <data name="ThemeSettingItem.Title" xml:space="preserve">
+  <data name="ThemeSettingItem.Description" xml:space="preserve">
+    <value>Toggle between light/dark theme</value>
+  </data>
+  <data name="ThemeSettingItem.Header" xml:space="preserve">
     <value>Theme</value>
   </data>
   <data name="ToText.Text" xml:space="preserve">
@@ -222,7 +225,10 @@
   <data name="UseSourceCheckBox.Content" xml:space="preserve">
     <value>Use source</value>
   </data>
-  <data name="WindowBackgroundSettingItem.Title" xml:space="preserve">
+  <data name="WindowBackgroundSettingItem.Description" xml:space="preserve">
+    <value>Controls the background of all windows</value>
+  </data>
+  <data name="WindowBackgroundSettingItem.Header" xml:space="preserve">
     <value>Window background</value>
   </data>
 </root>
