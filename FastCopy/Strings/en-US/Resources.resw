@@ -192,12 +192,6 @@
   <data name="MultipleInstanceBehaviorSettingItem.Header" xml:space="preserve">
     <value>Multiple Instance</value>
   </data>
-  <data name="MultipleInstanceSegmentButton.Content1" xml:space="preserve">
-    <value>Show seperate windows</value>
-  </data>
-  <data name="MultipleInstanceSegmentButton.Content2" xml:space="preserve">
-    <value>Combine into one window</value>
-  </data>
   <data name="NotificationSettingItem.Description" xml:space="preserve">
     <value>Send a toast notification to Windows notification center after finish</value>
   </data>
@@ -206,6 +200,12 @@
   </data>
   <data name="SettingWindowTitle.Text" xml:space="preserve">
     <value>FastCopy Settings</value>
+  </data>
+  <data name="ShowCombinedWindow.Text" xml:space="preserve">
+    <value>Combine into one window</value>
+  </data>
+  <data name="ShowSeperateWindows.Text" xml:space="preserve">
+    <value>Show seperate windows</value>
   </data>
   <data name="ThemeSettingItem.Description" xml:space="preserve">
     <value>Toggle between light/dark theme</value>

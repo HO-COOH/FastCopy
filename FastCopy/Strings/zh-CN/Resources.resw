@@ -192,12 +192,6 @@
   <data name="MultipleInstanceBehaviorSettingItem.Header" xml:space="preserve">
     <value>多窗口</value>
   </data>
-  <data name="MultipleInstanceSegmentButton.Content1" xml:space="preserve">
-    <value>显式多个窗口</value>
-  </data>
-  <data name="MultipleInstanceSegmentButton.Content2" xml:space="preserve">
-    <value>合并为一个窗口</value>
-  </data>
   <data name="NotificationSettingItem.Description" xml:space="preserve">
     <value>复制完成时向Windows通知中心发送通知</value>
   </data>
@@ -206,6 +200,12 @@
   </data>
   <data name="SettingWindowTitle.Text" xml:space="preserve">
     <value>FastCopy设置</value>
+  </data>
+  <data name="ShowCombinedWindow.Text" xml:space="preserve">
+    <value>合并为一个窗口</value>
+  </data>
+  <data name="ShowSeperateWindows.Text" xml:space="preserve">
+    <value>显示多个窗口</value>
   </data>
   <data name="ThemeSettingItem.Description" xml:space="preserve">
     <value>切换亮色/暗色主题</value>

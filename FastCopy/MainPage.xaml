@@ -286,11 +286,25 @@
             <essential:SettingsCard.HeaderIcon>
                 <FontIcon Glyph="{StaticResource MultipleWindowGlyph}"/>
             </essential:SettingsCard.HeaderIcon>
-            <local:SegmentedButton x:Uid="MultipleInstanceSegmentButton" IsEnabled="False" Selection="{x:Bind ViewModel.MultipleWindowBehavior, Mode=TwoWay}">
-                <ToolTipService.ToolTip>
-                    <ToolTip Content="Not implemented!"/>
-                </ToolTipService.ToolTip>
-            </local:SegmentedButton>
+            <essential:Segmented Style="{StaticResource ButtonSegmentedStyle}" IsEnabled="False">
+                <essential:SegmentedItem>
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                        <FontIcon FontSize="13" Glyph="{StaticResource ChromeRestore}"/>
+                        <TextBlock x:Uid="ShowSeperateWindows"/>
+                    </StackPanel>
+                </essential:SegmentedItem>
+
+                <essential:SegmentedItem>
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                        <FontIcon Glyph="{StaticResource CollapseContentSingle}"/>
+                        <TextBlock x:Uid="ShowCombinedWindow"/>
+                    </StackPanel>
+
+                    <ToolTipService.ToolTip>
+                        <ToolTip Content="Not implemented!"/>
+                    </ToolTipService.ToolTip>
+                </essential:SegmentedItem>
+            </essential:Segmented>
         </essential:SettingsCard>
 
         <essential:SettingsCard x:Uid="ThemeSettingItem"> 

@@ -10,9 +10,6 @@
     <Page Include="MainPage.xaml">
       <Filter>Views</Filter>
     </Page>
-    <Page Include="SegmentedButton.xaml">
-      <Filter>Views\Controls</Filter>
-    </Page>
     <Page Include="CopyDialog.xaml">
       <Filter>Views</Filter>
     </Page>
