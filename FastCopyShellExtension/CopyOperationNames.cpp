@@ -58,6 +58,16 @@ CopyOperationNames& CopyOperationNames::GetInstance()
                 .Delete = L"Borrar"
             };
         }
+        else if (defaultLang == L"zh-tw") 
+        {
+            return CopyOperationNames
+            {
+                .Copy = L"複製",
+                .Move = L"移動",
+                .Paste = L"貼上",
+                .Delete = L"刪除"
+            };
+        }
         //Add more languages here
     }();
     return s_instance;
