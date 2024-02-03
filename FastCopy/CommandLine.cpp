@@ -3,6 +3,7 @@
 #include <ranges>
 #include <ShlObj_core.h>
 #include <filesystem>
+#include <shellapi.h>
 #pragma comment(lib, "Shell32.lib")
 
 static std::vector<std::wstring> const& GetCommandArgs()

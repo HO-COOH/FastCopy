@@ -3,7 +3,7 @@
 #pragma comment(lib, "Gdi32.lib")
 #include <CommCtrl.h>
 #include <commoncontrols.h>
-
+#include <shellapi.h>
 #include <ShObjIdl_core.h>
 #include "PathUtils.h"
 

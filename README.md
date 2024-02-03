@@ -129,3 +129,40 @@ For contribution to translation, there are 2 places to be translated:
 ![image](https://user-images.githubusercontent.com/6630660/212826364-28155c87-c809-4ab8-b203-c8438fa64749.png)
 
 ![image](https://user-images.githubusercontent.com/6630660/212826583-75744773-2f10-45a7-8e5d-281ab1f9eee3.png)
+
+
+### Behind the scene
+#### Parsing `robocopy` output
+1. New file line has the form of this
+```
+New File  		     485	CMakeLists.txt	20:58 -> 20:58
+```
+This can be matched with **staring with `New File` and containing 4 segments after split with `\t`**
+```cpp
+std::string_view{line}.starts_with("New File");
+std::vector<absl::string_view> v = absl::StrSplit(s.data(), "\t", absl::SkipEmpty()); 
+/*
+    New File
+    485
+    CMakeLists.txt
+    xx:xx -> xx:xx
+*/
+```
+2. New folder line has the form of this
+```
+New Dir       2000	D:\computecpp-sdk\.git\refs\
+```
+This can be matched with **starting with `New Dir` and containing 2 segments after split with `\t`** (the spacing between `New Dir` and number are spaces, not `\t`)
+```cpp
+std::string_view{line}.starts_with("New Dir");
+std::vector<std::string> splitted = absl::StrSplit(absl::string_view{ line.data(), line.length() }, "\t", absl::SkipEmpty());
+/*
+    New Dir       2000
+    D:\computecpp-sdk\.git\refs\
+*/
+std::pair<std::string, std::string> count = absl::StrSplit(splitted[0], "  ", absl::SkipEmpty());
+/*
+    New Dir
+    2000
+*/
+```

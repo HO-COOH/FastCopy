@@ -56,11 +56,9 @@ namespace winrt::FastCopy::implementation
         bool CanContinue() { return m_canContinue; }
         double Speed() { return m_bytesPerSec; }
         winrt::Windows::Foundation::IAsyncOperation<uint64_t> GetTotalSize();
-
-        ~RobocopyViewModel();
     private:
         double m_bytesPerSec{};
-        double m_lastPercent{};
+
         bool m_canContinue = false;
         bool m_hasDuplicates = false;
         int m_useSourceCount{};
@@ -83,7 +81,7 @@ namespace winrt::FastCopy::implementation
 
         Concurrency::task<void> m_countItemTask;
         int m_finishedFiles{};
-        RobocopyArgs getRobocopyArg();
+        RobocopyArgsBuilder getRobocopyArg();
         Status m_status{ Status::Running };
 
         /**

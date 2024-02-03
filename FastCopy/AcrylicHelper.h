@@ -71,6 +71,10 @@ public:
 	void SetTarget(winrt::Microsoft::UI::Xaml::Window window)
 	{
 		m_target = window;
+		window.Closed([this](auto...) {
+			m_target = nullptr;
+			m_helper = nullptr;
+		});
 		init();
 	}
 

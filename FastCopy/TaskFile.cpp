@@ -8,9 +8,15 @@
 
 static int32_t getNumFilesInFolder(std::wstring_view path)
 {
-	return std::distance(
+	//return std::distance(
+	//	std::filesystem::recursive_directory_iterator{ path },
+	//	std::filesystem::recursive_directory_iterator{}
+	//);
+
+	return std::count_if(
 		std::filesystem::recursive_directory_iterator{ path },
-		std::filesystem::recursive_directory_iterator{}
+		std::filesystem::recursive_directory_iterator{},
+		[](std::filesystem::directory_entry path) { return path.is_regular_file(); }
 	);
 }
 

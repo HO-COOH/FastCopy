@@ -1,16 +1,79 @@
 #pragma once
 #include "../SpeedTest/Process.h"
+#include <boost/process.hpp>
+#include <boost/asio.hpp>
+#include <boost/regex.hpp>
+#include <regex>
+#include "RobocopyArgs.h"
+#include <absl/strings/str_split.h>
 
 //Forward declaration
 struct RobocopyArgs;
 
+class RobocopyArgsBuilder;
+
 /**
  * @brief Represents a robocopy process
  */
-class RobocopyProcess : public Process<wchar_t>
+class RobocopyProcess
 {
+	static inline boost::asio::io_service ios;
+	constexpr static auto k_OutBufferSize = MAX_PATH + 20;
+
+
+	boost::process::async_pipe pipeOut{ ios };
+	boost::process::child m_child;
 public:
-	RobocopyProcess(RobocopyArgs const& arg);
+	RobocopyProcess(RobocopyArgsBuilder const& builder, auto onProgress, auto onNewFile) :
+		m_child{
+			std::string{R"(C:\Windows\System32\Robocopy.exe )"} + builder.Build(),
+			boost::process::std_out > pipeOut
+		}
+	{
+		static std::regex Progress{ "^[0-9]+[.]?[0-9]*%" };
+		boost::asio::co_spawn(ios, [this, onProgress = std::move(onProgress), onNewFile = std::move(onNewFile)]()->boost::asio::awaitable<void>
+			{
+				std::vector<char> outBuf(k_OutBufferSize);           // that worked well for my decoding app.
+				try
+				{
+					auto buf = boost::asio::dynamic_buffer(outBuf);
+					while (true)
+					{
+						auto n = co_await boost::asio::async_read_until(pipeOut, buf, boost::regex{ "\r|\n" }, boost::asio::use_awaitable);
+						std::string_view data{ outBuf.begin(), outBuf.begin() + n };
+						data.remove_prefix((std::min)(data.find_first_not_of(" \r\t"), data.size()));
+						data.remove_suffix((std::min)(data.size() - 1 - data.find_last_not_of(" \r\n\t"), data.size()));
+						if (!data.empty())
+						{
+							if (data.starts_with("New File"))
+							{
+								auto splited = absl::StrSplit(absl::string_view{ data.data(), data.length() }, "\t", absl::SkipEmpty());
+								
+								onNewFile(std::stoull((++splited.begin())->data()));
+							}
+							else if (std::regex_match(data.data(), data.data() + data.size(), Progress))
+							{
+								onProgress(std::strtof(data.data(), nullptr));
+							}
+						}
+						buf.consume(n);
+						auto c = buf.data().begin();
+					}
+				}
+				catch (std::exception const& e)
+				{
+					co_return;
+				}
+			}, boost::asio::detached);
+	}
+
+	HANDLE Handle() { return m_child.native_handle(); }
+
+	void WaitForExit()
+	{
+		ios.run();
+		m_child.wait();
+	}
 };
 
 /**

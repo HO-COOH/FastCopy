@@ -3,6 +3,7 @@
 #include <fileapi.h>
 #include <ShObjIdl_core.h>
 #include "PathUtils.h"
+#include <shellapi.h>
 
 namespace ShellCopy
 {

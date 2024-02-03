@@ -136,20 +136,44 @@ namespace winrt::FastCopy::implementation
 		{
 			m_countItemTask.get();
 			static uint64_t bytes{};
+			static uint64_t currentItemSize{};
 			while (*m_iter != m_recordFile->end() && m_status == Status::Running)
 			{
+				currentItemSize = TaskFile::GetSizeOfPath(**m_iter);
+				OutputDebugString(std::format(L"{}: {} MB\n", (**m_iter), currentItemSize / 1024 / 1024).data());
 				Global::UIThread.TryEnqueue([this] {raisePropertyChange(L"Source"); });
 				if (canUseShellCopy())
 				{
 					ShellCopy::Move(**m_iter, m_destination);
 					m_finishedFiles += m_recordFile->GetNumFiles(m_recordFile->IndexOf(*m_iter));
+					bytes += currentItemSize;
 				}
 				else if (canUseRobocopy())
 				{
-					m_process.emplace(getRobocopyArg());
+					m_process.emplace(getRobocopyArg(),
+						[this](float progress)
+						{
+							OutputDebugString(std::format(L"{}\n", progress).data());
+							m_copiedBytes = bytes + currentItemSize * progress / 100.f;
+							if (progress == 100.f)
+							{
+								bytes += currentItemSize;
+								++m_finishedFiles;
+							}
+							raiseProgressChange();
+						},
+						[&](uint64_t current)
+						{
+							currentItemSize = current;
+
+						});
+					
 					SetHandle(m_process->Handle());
-					auto const ret = m_process->WaitForExit();
-					m_finishedFiles += m_recordFile->GetNumFiles(m_recordFile->IndexOf(*m_iter));
+					m_process->WaitForExit();
+					//auto const ret = m_process->WaitForExit();
+
+
+					//m_finishedFiles += m_recordFile->GetNumFiles(m_recordFile->IndexOf(*m_iter));
 				}
 				else
 				{
@@ -162,8 +186,9 @@ namespace winrt::FastCopy::implementation
 						});
 					});
 					m_hasDuplicates = true;
+					bytes += currentItemSize;
 				}
-				bytes += TaskFile::GetSizeOfPath(**m_iter);
+
 				m_copiedBytes = bytes;
 				raiseProgressChange();
 				++*m_iter;
@@ -278,12 +303,6 @@ namespace winrt::FastCopy::implementation
 		co_return m_recordFile ? m_recordFile->GetTotalSize() : 0;
 	}
 
-	RobocopyViewModel::~RobocopyViewModel()
-	{
-		if (m_process)
-			m_process->Terminate();
-	}
-
 	winrt::hstring RobocopyViewModel::SizeText()
 	{
 		return m_size == 0 ?
@@ -298,23 +317,36 @@ namespace winrt::FastCopy::implementation
 	{
 		m_finishEvent.remove(token);
 	}
-	RobocopyArgs RobocopyViewModel::getRobocopyArg()
+	RobocopyArgsBuilder RobocopyViewModel::getRobocopyArg()
 	{
-		RobocopyArgs args;
-		args.destinationDir = m_destination;
-		args.moveFilesAndDirs.value = (m_recordFile->GetOperation() == CopyOperation::Move);
-		if (std::filesystem::is_directory(**m_iter))
-		{
-			args.sourceDir = **m_iter;
-			args.destinationDir += L"\\" + std::filesystem::path{ **m_iter }.filename().wstring();
-			args.copySubDirectoriesIncludeEmpty.value = true;
-		}
-		else
-		{
-			std::filesystem::path path{ **m_iter };
-			args.sourceDir = path.parent_path().wstring();
-			args.files.push_back(path.filename().wstring());
-		}
+		RobocopyArgsBuilder args;
+		args.Source(winrt::to_string(**m_iter))
+			.Destination(
+				std::filesystem::is_directory(**m_iter)?
+				winrt::to_string(m_destination + std::filesystem::path{ **m_iter }.filename().wstring()) : 
+				winrt::to_string(m_destination)
+			)
+			.E(true)
+			.ETA(true)
+			.V(true)
+			.NJS(true)
+			.NJH(true)
+			.BYTES(true);
+		if (m_recordFile->GetOperation() == CopyOperation::Move)
+			args.MOVE(true);
+
+		//if (std::filesystem::is_directory(**m_iter))
+		//{
+		//	args.Source(winrt::to_string(**m_iter));
+		//	args.destinationDir += L"\\" + std::filesystem::path{ **m_iter }.filename().wstring();
+		//	args.copySubDirectoriesIncludeEmpty.value = true;
+		//}
+		//else
+		//{
+		//	std::filesystem::path path{ **m_iter };
+		//	args.sourceDir = path.parent_path().wstring();
+		//	args.files.push_back(path.filename().wstring());
+		//}
 		return args;
 	}
 
@@ -340,7 +372,11 @@ namespace winrt::FastCopy::implementation
 			Global::UIThread.TryEnqueue([this] {raisePropertyChange(L"CanContinue"); });
 		}
 		else
+		{
+			m_copiedBytes = m_totalSize;
+			raiseProgressChange();
 			onAllFinished();
+		}
 	}
 	void RobocopyViewModel::onFallbackFinished()
 	{
