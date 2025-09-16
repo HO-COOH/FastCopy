@@ -1,6 +1,7 @@
 #include "CopyOperationNames.h"
 #include <Windows.h>
 #include <algorithm>
+#include <string>
 
 static std::wstring getDefaultLanguage()
 {
