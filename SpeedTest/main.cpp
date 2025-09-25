@@ -1,12 +1,10 @@
 #define _SILENCE_CXX20_CISO646_REMOVED_WARNING //needed for C++20 with Absl
 #include "TestFactory.h"
-#include "Process.h"
 #include "TestCases.h"
-#include "Env.h"
 #include <absl/flags/flag.h>
 #include <absl/flags/parse.h>
 #include "TUI.h"
-
+#include "COMInitializeHelper.h"
 
 /*
 	The following flags are for configuring what test cases to be run via command lines.
@@ -36,22 +34,7 @@ ABSL_FLAG(bool, generate_big_files, false, "Generate 4GB of big files");
 	Test files and folders and generated in TestFactory::MakeTestPaths()
 */
 
-/**
- * This class kills explorer.exe in constructor and then restart it in the destructor
- */
-struct ExplorerGuard
-{
-	ExplorerGuard()
-	{
-		Env::Puts("Killing explorer.exe for accurate result. It will be restarted after test.\n");
-		std::system("taskkill /f /im explorer.exe");
-	}
 
-	~ExplorerGuard()
-	{
-		Process<wchar_t> explorer{ Env::GetFolderPath(Env::SpecialFolder::Windows) + L"\\explorer.exe" };
-	}
-};
 
 /**
  * If there is command line args, run what command line specified.
@@ -65,9 +48,12 @@ static void RunCommandLineConfig(...)
 }
 
 
-#include <wil/com.h>
-#include <ShlObj_core.h>
-
+//1.Generate 4k files (1GB / 4KB = 262,144 )
+//2.Generate big files (4GB / 1GB = 4)
+//3.Generate mixed files (5GB total)
+//4.Run copy
+//5.Run move
+//6.Run delete
 int main(int argc, char** argv)
 {
 	if (argc == 1)

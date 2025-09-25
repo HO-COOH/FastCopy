@@ -6,8 +6,8 @@
 
 class TUI
 {
-    std::string m_tempSourceDir = Config::GetInstance().sourceFolder;
-    std::string m_tempDestDir = Config::GetInstance().destinationFolder;
+    std::wstring m_tempSourceDir;
+    std::wstring m_tempDestDir;
     ftxui::ScreenInteractive screen = ftxui::ScreenInteractive::TerminalOutput();
     void runCopyTab();
 

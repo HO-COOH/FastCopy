@@ -17,6 +17,7 @@
 #include "ftxui/component/component_base.hpp"      // for ComponentBase
 #include "ftxui/component/screen_interactive.hpp"  // for ScreenInteractive
 #include "ftxui/dom/elements.hpp"  // for Element, separator, operator|, vbox, border
+#include "FileOpenDialog.h"
 #pragma once
 
 using namespace ftxui;
@@ -141,8 +142,8 @@ static void AddImplementationToTestCase(TestCaseBase& testCase, Config::TabData:
 void TUI::runCopyTab()
 {
     std::thread{[this] {
-        Config::GetInstance().sourceFolder = m_tempSourceDir;
-        Config::GetInstance().destinationFolder = m_tempDestDir;
+        //Config::GetInstance().sourceFolder = m_tempSourceDir;
+        //Config::GetInstance().destinationFolder = m_tempDestDir;
 
         Random4KFiles randomTestCase{ /*1024ull * 1024ull * 128*/ 1024ull * 1024ull * 32 };
         AddImplementationToTestCase<COMApiTest>(randomTestCase, Config::GetInstance().copy_tab.fourK.COM_selected);
@@ -168,8 +169,8 @@ void TUI::runImpl()
     auto tab_toggle = Toggle(&tab_values, &tab_selected);
 
 
-    auto sourceDirInput = Input(&m_tempSourceDir, "SoureDir");
-    auto destDirInput = Input(&m_tempDestDir, "DestDir");
+    auto sourceDirInput = Button("SourceDir", [this] { m_tempSourceDir = FileOpenDialog::PickSingleFolder().GetDisplayName(); });
+    auto destDirInput = Button("DestDir", [this] { m_tempDestDir = FileOpenDialog::PickSingleFolder().GetDisplayName(); });
 
     auto tab_container = Tab(
         {
@@ -216,7 +217,7 @@ void TUI::Run()
 {
     TUI tui{};
     std::thread t{
-        [&tui] { tui.runImpl(); }
+        [&tui] { COMInitializeHelper comInit; tui.runImpl(); }
     };
 
     t.detach();
