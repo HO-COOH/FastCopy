@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
@@ -14,6 +10,16 @@
     </Filter>
     <Filter Include="Utils">
       <UniqueIdentifier>{9c663a9e-cfca-42dd-8bca-23b89e99c06d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="COM">
+      <UniqueIdentifier>{d96d6e3b-e8dd-4a2d-9b6a-30568bbd6fa7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="TestCases">
+      <UniqueIdentifier>{7457cf2c-97e8-4713-9671-a98f05131c33}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -44,26 +50,29 @@
     <ClCompile Include="Config.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestCases.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CommandLineConfig.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FileOpenDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Public\ShellItemArray.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Public\ShellItem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ExplorerGuard.cpp">
       <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Public\ShellItem.cpp">
+      <Filter>COM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Public\ShellItemArray.cpp">
+      <Filter>COM</Filter>
+    </ClCompile>
+    <ClCompile Include="FileOpenDialog.cpp">
+      <Filter>COM</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCases.cpp">
+      <Filter>TestCases</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCaseBase.cpp">
+      <Filter>TestCases</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -106,12 +115,6 @@
     <ClInclude Include="Config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="COMInitializeHelper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TestCases.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TUI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -124,17 +127,29 @@
     <ClInclude Include="AllImplementations.h">
       <Filter>TestImplementation</Filter>
     </ClInclude>
-    <ClInclude Include="FileOpenDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\ShellItem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\ShellItemArray.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ExplorerGuard.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ShellItem.h">
+      <Filter>COM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ShellItemArray.h">
+      <Filter>COM</Filter>
+    </ClInclude>
+    <ClInclude Include="COMInitializeHelper.h">
+      <Filter>COM</Filter>
+    </ClInclude>
+    <ClInclude Include="FileOpenDialog.h">
+      <Filter>COM</Filter>
+    </ClInclude>
+    <ClInclude Include="TestCaseBase.h">
+      <Filter>TestCases</Filter>
+    </ClInclude>
+    <ClInclude Include="Random4KFiles.h">
+      <Filter>TestCases</Filter>
+    </ClInclude>
+    <ClInclude Include="BigFiles.h">
+      <Filter>TestCases</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

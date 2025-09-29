@@ -15,14 +15,6 @@ Config& Config::GetInstance()
     return s_instance;
 }
 
-void Config::CreateSourceAndDestinationFolder() const
-{
-    std::filesystem::create_directory(sourceFolder);
-    std::filesystem::create_directory(destinationFolder);
-    if (!std::filesystem::exists(sourceFolder) || !std::filesystem::exists(destinationFolder))
-        throw std::runtime_error{ "Error in creating folders" };
-}
-
 void Config::LoadFromFile(Config& instance)
 {
     if (!std::filesystem::exists(SaveFilename))

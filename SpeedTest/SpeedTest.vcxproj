@@ -158,6 +158,7 @@
     <ClCompile Include="FilesystemApiTest.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RobocopyTest.cpp" />
+    <ClCompile Include="TestCaseBase.cpp" />
     <ClCompile Include="TestCases.cpp" />
     <ClCompile Include="TestFactory.cpp" />
     <ClCompile Include="TUI.cpp" />
@@ -169,6 +170,7 @@
     <ClInclude Include="..\Public\ShellItemArray.h" />
     <ClInclude Include="AllImplementations.h" />
     <ClInclude Include="AutoRegister.h" />
+    <ClInclude Include="BigFiles.h" />
     <ClInclude Include="COMApiTest.h" />
     <ClInclude Include="COMInitializeHelper.h" />
     <ClInclude Include="CommandLineConfig.h" />
@@ -180,8 +182,9 @@
     <ClInclude Include="FilesystemApiTest.h" />
     <ClInclude Include="ICopyBase.h" />
     <ClInclude Include="Process.h" />
+    <ClInclude Include="Random4KFiles.h" />
     <ClInclude Include="RobocopyTest.h" />
-    <ClInclude Include="TestCases.h" />
+    <ClInclude Include="TestCaseBase.h" />
     <ClInclude Include="TestFactory.h" />
     <ClInclude Include="TestOperation.h" />
     <ClInclude Include="TestResult.h" />

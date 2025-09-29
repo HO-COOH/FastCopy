@@ -32,12 +32,9 @@ public:
 
         int bigFileSizeMB = 2048;
     } copy_tab, move_tab, delete_tab;
-    std::string sourceFolder;
-    std::string destinationFolder;
 
     bool m_loaded{};
     bool m_printConsole{ true };
-    void CreateSourceAndDestinationFolder() const;
 private:
 	Config() = default;
 	Config(Config const&) = delete;
@@ -54,9 +51,7 @@ public:
         archive(
             copy_tab.bigFileSizeMB,
             move_tab.bigFileSizeMB,
-            delete_tab.bigFileSizeMB,
-            sourceFolder,
-            destinationFolder
+            delete_tab.bigFileSizeMB
         );
     }
 
