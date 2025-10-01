@@ -19,6 +19,9 @@ bool FilesystemApiTest::Run(std::vector<TestOperation> const& paths)
 					case TestOperation::Operation::Move:
 						std::filesystem::rename(test.source, test.destination);
 						break;
+					case TestOperation::Operation::Delete:
+						std::filesystem::remove_all(test.source);
+						break;
 					default:
 						assert(false);
 				}

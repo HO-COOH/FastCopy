@@ -1,7 +1,6 @@
 #define NOMINMAX
 #include "TUI.h"
 #include "TestFactory.h"
-#include "TestCases.h"
 #include "AllImplementations.h"
 #include "Config.h"
 
@@ -18,6 +17,7 @@
 #include "ftxui/component/screen_interactive.hpp"  // for ScreenInteractive
 #include "ftxui/dom/elements.hpp"  // for Element, separator, operator|, vbox, border
 #include "FileOpenDialog.h"
+#include "BasicInteraction.h"
 #pragma once
 
 using namespace ftxui;
@@ -145,15 +145,15 @@ void TUI::runCopyTab()
         //Config::GetInstance().sourceFolder = m_tempSourceDir;
         //Config::GetInstance().destinationFolder = m_tempDestDir;
 
-        Random4KFiles randomTestCase{ /*1024ull * 1024ull * 128*/ 1024ull * 1024ull * 32 };
-        AddImplementationToTestCase<COMApiTest>(randomTestCase, Config::GetInstance().copy_tab.fourK.COM_selected);
-        AddImplementationToTestCase<Win32ApiTest>(randomTestCase, Config::GetInstance().copy_tab.fourK.win32_selected);
-        AddImplementationToTestCase<RobocopyTest>(randomTestCase, Config::GetInstance().copy_tab.fourK.robocopy_selected);
-        AddImplementationToTestCase<XCopyTest>(randomTestCase, Config::GetInstance().copy_tab.fourK.xcopy_selected);
-        AddImplementationToTestCase<FilesystemApiTest>(randomTestCase, Config::GetInstance().copy_tab.fourK.std_selected);
+        //Random4KFiles randomTestCase{ /*1024ull * 1024ull * 128*/ 1024ull * 1024ull * 32 };
+        //AddImplementationToTestCase<COMApiTest>(randomTestCase, Config::GetInstance().copy_tab.fourK.COM_selected);
+        //AddImplementationToTestCase<Win32ApiTest>(randomTestCase, Config::GetInstance().copy_tab.fourK.win32_selected);
+        //AddImplementationToTestCase<RobocopyTest>(randomTestCase, Config::GetInstance().copy_tab.fourK.robocopy_selected);
+        //AddImplementationToTestCase<XCopyTest>(randomTestCase, Config::GetInstance().copy_tab.fourK.xcopy_selected);
+        //AddImplementationToTestCase<FilesystemApiTest>(randomTestCase, Config::GetInstance().copy_tab.fourK.std_selected);
 
-        if (randomTestCase)
-            TestFactory{} << randomTestCase;
+        //if (randomTestCase)
+        //    TestFactory{} << randomTestCase;
     }}.detach();
 }
 

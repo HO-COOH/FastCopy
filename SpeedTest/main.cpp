@@ -1,10 +1,11 @@
 #define _SILENCE_CXX20_CISO646_REMOVED_WARNING //needed for C++20 with Absl
 #include "TestFactory.h"
-#include "TestCases.h"
 #include <absl/flags/flag.h>
 #include <absl/flags/parse.h>
 #include "TUI.h"
 #include "COMInitializeHelper.h"
+#include "BasicInteraction.h"
+#include <iostream>
 
 /*
 	The following flags are for configuring what test cases to be run via command lines.
@@ -54,15 +55,24 @@ static void RunCommandLineConfig(...)
 //4.Run copy
 //5.Run move
 //6.Run delete
+
 int main(int argc, char** argv)
 {
-	if (argc == 1)
+	try 
 	{
-		Config::GetInstance().m_printConsole = false;
-		TUI::Run();
+		if (argc == 1)
+		{
+			BasicInteraction::Run();
+			//Config::GetInstance().m_printConsole = false;
+			//TUI::Run();
+		}
+		else
+		{
+			RunCommandLineConfig(absl::ParseCommandLine(argc, argv));
+		}
 	}
-	else
+	catch (std::exception const& e)
 	{
-		RunCommandLineConfig(absl::ParseCommandLine(argc, argv));
+		std::cerr << e.what() << '\n';
 	}
 }

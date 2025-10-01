@@ -13,6 +13,7 @@ public:
 	{
 	}
 
+	void Generate();
 private:
 	uint64_t m_bigFileSize{};
 };

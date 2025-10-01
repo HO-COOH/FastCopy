@@ -149,6 +149,8 @@
   <ItemGroup>
     <ClCompile Include="..\Public\ShellItem.cpp" />
     <ClCompile Include="..\Public\ShellItemArray.cpp" />
+    <ClCompile Include="BasicInteraction.cpp" />
+    <ClCompile Include="BigFiles.cpp" />
     <ClCompile Include="COMApiTest.cpp" />
     <ClCompile Include="CommandLineConfig.cpp" />
     <ClCompile Include="Config.cpp" />
@@ -157,9 +159,9 @@
     <ClCompile Include="FileOpenDialog.cpp" />
     <ClCompile Include="FilesystemApiTest.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Random4KFiles.cpp" />
     <ClCompile Include="RobocopyTest.cpp" />
     <ClCompile Include="TestCaseBase.cpp" />
-    <ClCompile Include="TestCases.cpp" />
     <ClCompile Include="TestFactory.cpp" />
     <ClCompile Include="TUI.cpp" />
     <ClCompile Include="Win32ApiTest.cpp" />
@@ -170,6 +172,7 @@
     <ClInclude Include="..\Public\ShellItemArray.h" />
     <ClInclude Include="AllImplementations.h" />
     <ClInclude Include="AutoRegister.h" />
+    <ClInclude Include="BasicInteraction.h" />
     <ClInclude Include="BigFiles.h" />
     <ClInclude Include="COMApiTest.h" />
     <ClInclude Include="COMInitializeHelper.h" />

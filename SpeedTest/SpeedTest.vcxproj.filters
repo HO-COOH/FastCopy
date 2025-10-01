@@ -21,6 +21,9 @@
     <Filter Include="TestCases">
       <UniqueIdentifier>{7457cf2c-97e8-4713-9671-a98f05131c33}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{9b384f1f-ed18-4aca-98ea-f737c9035d70}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -53,9 +56,6 @@
     <ClCompile Include="CommandLineConfig.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TUI.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ExplorerGuard.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
@@ -68,10 +68,19 @@
     <ClCompile Include="FileOpenDialog.cpp">
       <Filter>COM</Filter>
     </ClCompile>
-    <ClCompile Include="TestCases.cpp">
+    <ClCompile Include="TestCaseBase.cpp">
       <Filter>TestCases</Filter>
     </ClCompile>
-    <ClCompile Include="TestCaseBase.cpp">
+    <ClCompile Include="TUI.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="BasicInteraction.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Random4KFiles.cpp">
+      <Filter>TestCases</Filter>
+    </ClCompile>
+    <ClCompile Include="BigFiles.cpp">
       <Filter>TestCases</Filter>
     </ClCompile>
   </ItemGroup>
@@ -115,9 +124,6 @@
     <ClInclude Include="Config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TUI.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CommandLineConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -150,6 +156,12 @@
     </ClInclude>
     <ClInclude Include="BigFiles.h">
       <Filter>TestCases</Filter>
+    </ClInclude>
+    <ClInclude Include="TUI.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicInteraction.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

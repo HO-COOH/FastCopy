@@ -3,13 +3,14 @@
 #include <filesystem>
 
 //Represents a single test operation (a file or a folder)
-struct TestOperation
+template<typename Char>
+struct BasicTestOperation
 {
 	//Source path of file/folder
-	std::string source;
+	std::basic_string<Char> source;
 
 	//Destination path of file/folder
-	std::string destination;
+	std::basic_string<Char> destination;
 
 	//Operation, default to copy
 	enum class Operation
@@ -24,3 +25,5 @@ struct TestOperation
 		return std::filesystem::is_directory(source);
 	}
 };
+
+using TestOperation = BasicTestOperation<wchar_t>;

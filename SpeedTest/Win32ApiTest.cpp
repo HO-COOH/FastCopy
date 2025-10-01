@@ -9,7 +9,7 @@ bool Win32ApiTest::Run(std::vector<TestOperation> const& paths)
 {
 	for (auto const& path : paths)
 	{
-		SHFILEOPSTRUCTA info{};
+		SHFILEOPSTRUCT info{};
 		switch (path.operation)
 		{
 			case TestOperation::Operation::Copy:	info.wFunc = FO_COPY;	break;
@@ -19,18 +19,18 @@ bool Win32ApiTest::Run(std::vector<TestOperation> const& paths)
 				throw std::runtime_error{ "Unknown operation" };
 		}
 		
-		std::string sourceBuffer(MAX_PATH + 1, {});
+		std::wstring sourceBuffer(MAX_PATH + 1, {});
 		sourceBuffer.assign(path.source);
 		if(path.isFolder())
-			sourceBuffer += R"(\*)";
+			sourceBuffer += LR"(\*)";
 
-		char destBuffer[MAX_PATH + 1]{}; //for double termination
+		wchar_t destBuffer[MAX_PATH + 1]{}; //for double termination
 		std::ranges::copy(path.destination, destBuffer);
 
 		info.pFrom = sourceBuffer.data();
 		info.pTo = destBuffer;
 		info.fFlags = FOF_NO_UI;
-		if (int const result = SHFileOperationA(&info); result != 0)
+		if (int const result = SHFileOperation(&info); result != 0)
 		{
 			Env::Puts(std::format("Error code: {} in SHFileOperationW", result).data());
 			return false;

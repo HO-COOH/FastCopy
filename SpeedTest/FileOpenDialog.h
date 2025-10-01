@@ -9,13 +9,13 @@ class FileOpenDialog
 public:
 	FileOpenDialog();
 	void SetOptions(FILEOPENDIALOGOPTIONS options);
-
+	void SetTitle(LPCWSTR pszTitle);
 	/**
 	 * @throw HRESULT_CANCELLED if user cancelled the dialog
 	 */
 	void Show(HWND hwndOwner = nullptr);
 	ShellItem GetResult();
 
-	static ShellItem PickSingleFolder();
+	static ShellItem PickSingleFolder(LPCWSTR title = nullptr);
 };
 

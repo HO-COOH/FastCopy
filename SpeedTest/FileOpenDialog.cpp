@@ -16,6 +16,11 @@ void FileOpenDialog::SetOptions(FILEOPENDIALOGOPTIONS options)
 	THROW_IF_FAILED(m_ptr->SetOptions(options));
 }
 
+void FileOpenDialog::SetTitle(LPCWSTR pszTitle)
+{
+	THROW_IF_FAILED(m_ptr->SetTitle(pszTitle));
+}
+
 void FileOpenDialog::Show(HWND hwndOwner)
 {
 	THROW_IF_FAILED(m_ptr->Show(hwndOwner));
@@ -28,10 +33,12 @@ ShellItem FileOpenDialog::GetResult()
 	return ShellItem{ item };
 }
 
-ShellItem FileOpenDialog::PickSingleFolder()
+ShellItem FileOpenDialog::PickSingleFolder(LPCWSTR title)
 {
 	FileOpenDialog dialog;
 	dialog.SetOptions(FOS_PICKFOLDERS);
+	if (title)
+		dialog.SetTitle(title);
 	dialog.Show();
 	return ShellItem{ dialog.GetResult() };
 }
