@@ -21,7 +21,7 @@ public:
 		auto duration = std::chrono::steady_clock::now() - m_current;
 		auto totalSeconds = std::chrono::duration_cast<std::chrono::seconds>(duration);
 		auto min = std::chrono::duration_cast<std::chrono::minutes>(totalSeconds);
-		puts(std::format("{} finished in {}:{:02d}", m_name, min.count(), (totalSeconds - min).count()).data());
+		puts(std::format("===={} finished in {}:{:02d}====", m_name, min.count(), (totalSeconds - min).count()).data());
 	}
 };
 
@@ -29,7 +29,7 @@ void BasicInteraction::generateFiles()
 {
 	for (auto option : {
 		"[1]: Generate 4K files",
-		"[2]: Generate big files"
+		"[2]: Generate big files",
 		"Select an option: "
 		})
 		puts(option);
@@ -40,19 +40,27 @@ void BasicInteraction::generateFiles()
 	if (selection != 1 && selection != 2)
 		return;
 
-	source = FileOpenDialog::PickSingleFolder();
-	destination = FileOpenDialog::PickSingleFolder();
+	auto source = FileOpenDialog::PickSingleFolder(L"Pick a source folder where test files are generated");
+	auto destination = FileOpenDialog::PickSingleFolder(L"Pick a destination folder where test files are copied / moved");
 
 	switch (selection)
 	{
 		case 1:
 		{
-			Random4KFiles{ 1024 * 1024 * 1024, source.GetDisplayName(), destination.GetDisplayName() }.Generate();
+#if (defined DEBUG) || (defined _DEBUG)
+			constexpr static auto RandomFileSize = 1024 * 1024 * 1;
+#else
+			constexpr static auto RandomFileSize = 1024 * 1024 * 1024;
+#endif
+			test = std::make_unique<Random4KFiles>(RandomFileSize, source.GetDisplayName(), destination.GetDisplayName());
+			test->Generate();
 			break;
 		}
 		case 2:
 		{
-			BigFile{ 1024 * 1024 * 1024 * 4ull, source.GetDisplayName(), destination.GetDisplayName() }.Generate();
+			test = std::make_unique<BigFile>(1024 * 1024 * 1024 * 4ull, source.GetDisplayName(), destination.GetDisplayName());
+			test->Generate();
+			m_forceSleep = true;
 			break;
 		}
 		default:
@@ -77,53 +85,65 @@ void BasicInteraction::runImplementation()
 
 	TestOperation op
 	{
-		.source = source.GetDisplayName(),
-		.destination = destination.GetDisplayName(),
+		.source = test->GetSource(),
+		.destination = test->GetDestination(),
 		.operation = static_cast<TestOperation::Operation>(selection - 1)
 	};
-
-	TestCaseBase base{ source.GetDisplayName(), destination.GetDisplayName() };
+	test->SetRestoreAction(op.operation, std::chrono::seconds{ m_forceSleep ? 10 : 0 });
 	
 	if (op.operation != TestOperation::Operation::Delete && op.operation != TestOperation::Operation::Move)
 	{
-		ScopeTimer t{ "XCopy" };
-		XCopyTest xcopy;
-		xcopy.Run({ op });
+		{
+			ScopeTimer t{ "XCopy" };
+			XCopyTest xcopy;
+			xcopy.Run({ op });
+		}
+		test->Restore();
 	}
 	else
 	{
 		std::cerr << "XCopy does not support move / delete operation, skipping...\n";
 	}
-	base.ClearDestination();
 
 	if (op.operation != TestOperation::Operation::Delete)
 	{
-		ScopeTimer t{ "Robocopy" };
-		RobocopyTest robocopy;
-		robocopy.Run({ op });
+		{
+			ScopeTimer t{ "Robocopy" };
+			RobocopyTest robocopy;
+			robocopy.Run({ op });
+		}
+		test->Restore();
 	}
 	else
 	{
 		std::cerr << "Robocopy does not support delete operation, skipping...\n";
 	}
-	base.ClearDestination();
 
 	{
-		ScopeTimer t{ "std::filesystem" };
-		FilesystemApiTest stdFileSystem;
-		stdFileSystem.Run({ op });
+		{
+			ScopeTimer t{ "std::filesystem" };
+			FilesystemApiTest stdFileSystem;
+			stdFileSystem.Run({ op });
+		}
+		test->Restore();
 	}
 
 	{
-		ScopeTimer t{ "IFileOperation" };
-		COMApiTest comApi;
-		comApi.Run({ op });
+		{
+			ScopeTimer t{ "IFileOperation" };
+			COMApiTest comApi;
+			comApi.Run({ op });
+		}
+		test->Restore();
 	}
 
 	{
-		ScopeTimer t{ "Win32 SHFileOperation" };
-		Win32ApiTest win32Api;
-		win32Api.Run({ op });
+		{
+			ScopeTimer t{ "Win32 SHFileOperation" };
+			Win32ApiTest win32Api;
+			win32Api.Run({ op });
+		}
+		test->Restore();
 	}
 }
 

@@ -18,17 +18,14 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="TestCases">
-      <UniqueIdentifier>{7457cf2c-97e8-4713-9671-a98f05131c33}</UniqueIdentifier>
-    </Filter>
     <Filter Include="UI">
       <UniqueIdentifier>{9b384f1f-ed18-4aca-98ea-f737c9035d70}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TestCases">
+      <UniqueIdentifier>{7457cf2c-97e8-4713-9671-a98f05131c33}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TestFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -83,6 +80,7 @@
     <ClCompile Include="BigFiles.cpp">
       <Filter>TestCases</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ICopyBase.h">

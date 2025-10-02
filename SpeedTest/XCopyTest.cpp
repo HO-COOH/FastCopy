@@ -2,6 +2,7 @@
 #include "Process.h"
 #include "Env.h"
 #include "Config.h"
+#include <iostream>
 
 std::wstring const XCopyTest::Application = Env::GetFolderPath(Env::SpecialFolder::System32) + LR"(\xcopy.exe)";
 bool XCopyTest::Run(std::vector<TestOperation> const& paths)
@@ -9,9 +10,11 @@ bool XCopyTest::Run(std::vector<TestOperation> const& paths)
 	std::vector<Process<wchar_t>> processes;
 	for (auto const& item : paths)
 	{
+		auto cmd = std::format(LR"("{}" "{}" /Y /E /C /I /H)", item.source, item.destination);
+		std::wcout << L"Execute xcopy: " << cmd << '\n';
 		processes.push_back(Process<wchar_t>{
 			XCopyTest::Application,
-			std::format(LR"("{}" "{}" /Y /E /C /I /H)", item.source, item.destination)
+			std::move(cmd)
 		});
 	}
 	WaitForAllProcesses<wchar_t>(processes);

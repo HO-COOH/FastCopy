@@ -2,6 +2,8 @@
 #include <filesystem>
 #include <execution>
 #include <cassert>
+#include <iostream>
+
 bool FilesystemApiTest::Run(std::vector<TestOperation> const& paths)
 {
 	try
@@ -11,19 +13,40 @@ bool FilesystemApiTest::Run(std::vector<TestOperation> const& paths)
 			std::begin(paths),
 			std::end(paths),
 			[](TestOperation const& test) {
-				switch (test.operation)
+				try
 				{
-					case TestOperation::Operation::Copy:
-						std::filesystem::copy(test.source, test.destination, std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing);
-						break;
-					case TestOperation::Operation::Move:
-						std::filesystem::rename(test.source, test.destination);
-						break;
-					case TestOperation::Operation::Delete:
-						std::filesystem::remove_all(test.source);
-						break;
-					default:
-						assert(false);
+					switch (test.operation)
+					{
+						case TestOperation::Operation::Copy:
+							std::filesystem::copy(test.source, test.destination, std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing);
+							break;
+						case TestOperation::Operation::Move:
+
+							//if destination is an empty folder, we simply delete the destination folder, rename the source to destination
+							if (std::filesystem::is_directory(test.destination))
+							{
+								if (std::filesystem::is_empty(test.destination))
+								{
+									std::filesystem::remove(test.destination);
+									std::filesystem::rename(test.source, test.destination);
+								}
+							}
+							else
+							{
+								std::filesystem::path oldPath{ test.source };
+								auto newPath = test.destination / oldPath.filename();
+								std::filesystem::rename(oldPath, newPath);
+							}
+							break;
+						case TestOperation::Operation::Delete:
+							std::filesystem::remove_all(test.source);
+							break;
+					}
+				}
+				catch (std::exception const& e)
+				{
+					std::cerr << e.what() << '\n' << "Did you use std::filesystem::rename to move across different disk?\n";
+
 				}
 			}
 		);

@@ -38,10 +38,11 @@ bool COMApiTest::Run(std::vector<TestOperation> const& paths)
             COMInitializeHelper s_helper;
 
             //ShellItem psiFrom{ test.isFolder()? test.source + L"\\*" : test.source};
+            std::filesystem::path destinationPath{ test.destination };
 			ShellItem psiFrom{ test.source };
-            ShellItem psiDest{ test.destination };
+            ShellItem psiDest{ destinationPath.parent_path().wstring() };
 
-			performOpImpl(psiFrom.GetPtr(), psiDest.GetPtr(), test.operation);
+            performOpImpl(psiFrom.GetPtr(), psiDest.GetPtr(), destinationPath.filename().wstring().data(), test.operation);
             return true;
         }
     );
@@ -72,10 +73,10 @@ void COMApiTest::copyItemImpl(IShellItemArray* from, IShellItem* to)
     THROW_IF_FAILED(op->PerformOperations());
 }
 
-void COMApiTest::copyItemImpl(IShellItem* from, IShellItem* to)
+void COMApiTest::copyItemImpl(IShellItem* from, IShellItem* to, LPCWSTR name)
 {
     auto op = getOp();
-    THROW_IF_FAILED(op->CopyItem(from, to, nullptr, nullptr));
+    THROW_IF_FAILED(op->CopyItem(from, to, name, nullptr));
     THROW_IF_FAILED(op->PerformOperations());
 }
 
@@ -86,10 +87,10 @@ void COMApiTest::moveItemImpl(IShellItemArray* from, IShellItem* to)
     THROW_IF_FAILED(op->PerformOperations());
 }
 
-void COMApiTest::moveItemImpl(IShellItem* from, IShellItem* to)
+void COMApiTest::moveItemImpl(IShellItem* from, IShellItem* to, LPCWSTR name)
 {
     auto op = getOp();
-    THROW_IF_FAILED(op->MoveItem(from, to, nullptr, nullptr));
+    THROW_IF_FAILED(op->MoveItem(from, to, name, nullptr));
 	THROW_IF_FAILED(op->PerformOperations());
 }
 
@@ -117,5 +118,18 @@ void COMApiTest::performOpImpl(auto* from, auto* to, TestOperation::Operation op
             return moveItemImpl(from, to);
 		case TestOperation::Operation::Delete:
 			return deleteItemImpl(from);
+    }
+}
+
+void COMApiTest::performOpImpl(auto* from, auto* to, LPCWSTR name, TestOperation::Operation op)
+{
+    switch (op)
+    {
+        case TestOperation::Operation::Copy:
+            return copyItemImpl(from, to, name);
+        case TestOperation::Operation::Move:
+            return moveItemImpl(from, to, name);
+        case TestOperation::Operation::Delete:
+            return deleteItemImpl(from);
     }
 }

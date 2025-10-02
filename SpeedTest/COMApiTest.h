@@ -23,14 +23,15 @@ private:
 	static wil::com_ptr<IFileOperation> getOp();
 
 	static void copyItemImpl(IShellItemArray* from, IShellItem* to);
-	static void copyItemImpl(IShellItem* from, IShellItem* to);
+	static void copyItemImpl(IShellItem* from, IShellItem* to, LPCWSTR name);
 
 	static void moveItemImpl(IShellItemArray* from, IShellItem* to);
-	static void moveItemImpl(IShellItem* from, IShellItem* to);
+	static void moveItemImpl(IShellItem* from, IShellItem* to, LPCWSTR name);
 
 	static void deleteItemImpl(IShellItemArray* from);
 	static void deleteItemImpl(IShellItem* from);
 
 	static void performOpImpl(auto* from, auto* to, TestOperation::Operation op);
+	static void performOpImpl(auto* from, auto* to, LPCWSTR name, TestOperation::Operation op);
 };
 

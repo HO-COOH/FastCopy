@@ -13,7 +13,7 @@ public:
 	{
 	}
 
-	void Generate();
+	void Generate() override;
 private:
 	uint64_t m_bigFileSize{};
 };

@@ -131,8 +131,87 @@ For contribution to translation, there are 2 places to be translated:
 ![image](https://user-images.githubusercontent.com/6630660/212826583-75744773-2f10-45a7-8e5d-281ab1f9eee3.png)
 
 
-### Behind the scene
-#### Parsing `robocopy` output
+---
+## Technical details
+### Speed comparison
+In the `SpeedTest` project, you can find the speed comparison between various copying methods we investigated. A table for summary:
+
+| Method | Copy | Move | Delete|
+|--------|------|------|-------|
+|xcopy|✅|❌|❌|
+|robocopy|✅|✅|❌|
+|std::filesystem|✅|✅|✅|
+|IFileOperation|✅|✅|✅|
+|SHFileOperation|✅|✅|✅|
+
+My spec:
+- CPU: AMD Ryzen 9950x
+- SSD
+  + Same drive: Samsung 870 QVO 1TB @ SATA 6Gbps
+  + Different drive: Fanxiang S500 Pro 2TB @ PCI-E 3.0 4x -> Samsung 870 QVO 1TB @ SATA 6Gbps
+- Motherboard: MSI X870 Tomahawk Wifi
+
+
+The Results:
+
+1. Copy same drive -> same drive:
+
+|Method         | 1 GB of 4 KB small files | 4 GB of 1 GB large files |
+|---------------|--------------------------|--------------------------|
+|xcopy          | 2:29					   | ~~0:00~~                 |
+|robocopy       |  **2:19**		           |  **0:30**				  |
+|std::filesystem| 2:25   		           | 0:54				      |
+|IFileOperation | 6:19   			       | ~~0:00~~			      |
+|SHFileOperation| 8:59  			       | ~~0:00~~       	      |
+
+*IFileOperation and SHFileOperation actually keeps eating 100% of Disk usage in taskmgr after the API returns, 
+meaning the API does an early return, which does not really counts.
+
+
+2. Copy different drive -> different drive:
+
+|Method         | 1 GB of 4 KB small files | 4 GB of 1 GB large files |
+|---------------|--------------------------|--------------------------|
+|xcopy          | 2:20					   | ~~0:00~~                 |
+|robocopy       |  **1:58**		           | **0:08**                 |
+|std::filesystem| 2:39   		           | ~~0:01~~                 |
+|IFileOperation | 6:12   			       | ~~0:00~~                 |
+|SHFileOperation| 8:50				       | ~~0:00~~	              |
+
+
+3. Move same drive -> same drive:
+
+|Method         | 1 GB of 4 KB small files | 4 GB of 1 GB large files |
+|---------------|--------------------------|--------------------------|
+|xcopy          | N/A                      | N/A                      |
+|robocopy       | 2:52                     |  **0:17**				  |
+|std::filesystem| ~~0:00~~                 | ~~0:00~~    		      |
+|IFileOperation | 3:44                     | ~~0:01~~			      |
+|SHFileOperation| 5:31                     | ~~0:00~~     		      |
+
+
+4. Move different drive -> different drive:
+
+|Method         | 1 GB of 4 KB small files | 4 GB of 1 GB large files |
+|---------------|--------------------------|--------------------------|
+|xcopy          | N/A                      | N/A                      |
+|robocopy       | **2:25**                 | 0:08   				  |
+|std::filesystem| N/A                      | N/A	    		      |
+|IFileOperation | 12:58                    | 0:08    			      |
+|SHFileOperation| 15:48 			       | **0:06**      		      |
+
+
+5. Delete:
+
+|Method         | 1 GB of 4 KB small files | 4 GB of 1 GB large files |
+|---------------|--------------------------|--------------------------|
+|xcopy          | N/A                      | N/A                      |
+|robocopy       | N/A                      | N/A				      |
+|std::filesystem| **0:19**                 | 0:01				      |
+|IFileOperation | 0:42                     | ~~0:00~~			      |
+|SHFileOperation| 2:28			           | ~~0:00~~      		      |
+
+### Parsing `robocopy` output
 1. New file line has the form of this
 ```
 New File  		     485	CMakeLists.txt	20:58 -> 20:58

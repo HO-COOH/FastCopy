@@ -56,8 +56,23 @@ static void RunCommandLineConfig(...)
 //5.Run move
 //6.Run delete
 
+#include "COMApiTest.h"
+static void test()
+{
+	TestOperation op
+	{
+		.source = LR"(F:\testSource)",
+		.destination = LR"(F:\testDestination)",
+		.operation = TestOperation::Operation::Copy
+	};
+
+	COMApiTest comApi;
+	comApi.Run({ op });
+}
+
 int main(int argc, char** argv)
 {
+	//test();
 	try 
 	{
 		if (argc == 1)
