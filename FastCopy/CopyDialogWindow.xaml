@@ -1,19 +1,17 @@
-<!-- Copyright (c) Microsoft Corporation and Contributors. -->
-<!-- Licensed under the MIT License. -->
-
 <essential:WindowEx
     x:Class="FastCopy.CopyDialogWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:FastCopy"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:essential="using:WinUI3Package"
-    
+    xmlns:local="using:FastCopy"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     IsMaximizable="False"
-    IsMinimizable="False"
+    IsMinimizable="True"
     IsResizable="False"
+    TitleBarAutoDarkMode="True"
+    TitleBarDarkMode="True"
     mc:Ignorable="d">
 
-    <local:CopyDialog x:Name="CopyDialog"/>
+    <local:CopyDialog x:Name="CopyDialog" />
 </essential:WindowEx>

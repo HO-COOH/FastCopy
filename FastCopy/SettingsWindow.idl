@@ -1,0 +1,12 @@
+import "SettingsViewModel.idl";
+
+namespace FastCopy
+{
+    [default_interface]
+    runtimeclass SettingsWindow : WinUI3Package.WindowEx
+    {
+        SettingsWindow();
+
+        FastCopy.SettingsViewModel ViewModel{ get; };
+    }
+}

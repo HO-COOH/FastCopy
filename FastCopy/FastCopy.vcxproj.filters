@@ -4,12 +4,6 @@
     <ApplicationDefinition Include="App.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="MainWindow.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="MainPage.xaml">
-      <Filter>Views</Filter>
-    </Page>
     <Page Include="CopyDialog.xaml">
       <Filter>Views</Filter>
     </Page>
@@ -18,6 +12,9 @@
     </Page>
     <Page Include="SpeedGraph.xaml">
       <Filter>Views\Controls</Filter>
+    </Page>
+    <Page Include="SettingsWindow.xaml">
+      <Filter>Views</Filter>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -133,6 +130,9 @@
     <ClCompile Include="FileTime.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Console.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -224,6 +224,9 @@
       <Filter>Views\Controls</Filter>
     </ClInclude>
     <ClInclude Include="FileTime.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Console.h">
       <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
@@ -464,8 +467,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="FastCopy_TemporaryKey.pfx" />
-    <None Include="..\x64\Release\FastCopy\FastCopyShellExtension.dll" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\en-US\Resources.resw">
@@ -474,5 +475,8 @@
     <PRIResource Include="Strings\zh-CN\Resources.resw">
       <Filter>Strings\zh-CN</Filter>
     </PRIResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
   </ItemGroup>
 </Project>

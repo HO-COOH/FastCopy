@@ -27,12 +27,7 @@ namespace winrt::FastCopy::implementation
         InitializeComponent();
 
         CenterWindow(*this, m_currentSize);
-        auto appWindow = GetAppWindow(*this);
-
-        auto titleBar = appWindow.TitleBar();
-        titleBar.ExtendsContentIntoTitleBar(true);
-        titleBar.ButtonBackgroundColor(winrt::Windows::UI::Colors::Transparent());
-        titleBar.ButtonInactiveBackgroundColor(winrt::Windows::UI::Colors::Transparent());
+        ExtendsContentIntoTitleBar(true);
         Global::UIThread = DispatcherQueue();
         Taskbar::SetProgressState(Global::MainHwnd, Taskbar::ProgressState::Indeterminate);
 
