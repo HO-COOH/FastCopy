@@ -2,7 +2,7 @@
 #include "UIThreadWrapper.h"
 #include <ppltasks.h>
 
-UIThreadWrapper& UIThreadWrapper::operator=(winrt::Microsoft::UI::Dispatching::DispatcherQueue queue)
+UIThreadWrapper& UIThreadWrapper::operator=(winrt::Microsoft::UI::Dispatching::DispatcherQueue const& queue)
 {
 	assert(m_queue == nullptr);
 	m_queue = queue;

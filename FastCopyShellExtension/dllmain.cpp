@@ -163,101 +163,8 @@ public:
     #pragma endregion
 };
 
-#include <atlcomcli.h>  // for COM smart pointers
-#include <atlbase.h>    // for COM smart pointers
-#include <ShlObj_core.h>
-#include <shlobj.h>
 
-void ThrowIfFailed(...) {}
-// Deleter for a PIDL allocated by the shell.
-struct CoTaskMemDeleter
-{
-    void operator()(ITEMIDLIST* pidl) const { ::CoTaskMemFree(pidl); }
-};
-using UniquePidlPtr = std::unique_ptr< ITEMIDLIST, CoTaskMemDeleter >;
-// Return value of GetCurrentExplorerFolders()
-struct ExplorerFolderInfo
-{
-    HWND hwnd = nullptr;  // window handle of explorer
-    UniquePidlPtr pidl;   // PIDL that points to current folder
-};
-
-// Get information about all currently open explorer windows.
-// Throws std::system_error exception to report errors.
-static std::vector< ExplorerFolderInfo > GetCurrentExplorerFolders()
-{
-    CComPtr< IShellWindows > pshWindows;
-    ThrowIfFailed(
-        pshWindows.CoCreateInstance(CLSID_ShellWindows),
-        "Could not create instance of IShellWindows");
-
-    long count = 0;
-    ThrowIfFailed(
-        pshWindows->get_Count(&count),
-        "Could not get number of shell windows");
-
-    std::vector< ExplorerFolderInfo > result;
-    result.reserve(count);
-
-    for (long i = 0; i < count; ++i)
-    {
-        ExplorerFolderInfo info;
-
-        CComVariant vi{ i };
-        CComPtr< IDispatch > pDisp;
-        ThrowIfFailed(
-            pshWindows->Item(vi, &pDisp),
-            "Could not get item from IShellWindows");
-
-        if (!pDisp)
-            // Skip - this shell window was registered with a NULL IDispatch
-            continue;
-
-        CComQIPtr< IWebBrowserApp > pApp{ pDisp };
-        if (!pApp)
-            // This window doesn't implement IWebBrowserApp 
-            continue;
-
-        // Get the window handle.
-        pApp->get_HWND(reinterpret_cast<SHANDLE_PTR*>(&info.hwnd));
-
-        CComQIPtr< IServiceProvider > psp{ pApp };
-        if (!psp)
-            // This window doesn't implement IServiceProvider
-            continue;
-
-        CComPtr< IShellBrowser > pBrowser;
-        if (FAILED(psp->QueryService(SID_STopLevelBrowser, &pBrowser)))
-            // This window doesn't provide IShellBrowser
-            continue;
-
-        CComPtr< IShellView > pShellView;
-        if (FAILED(pBrowser->QueryActiveShellView(&pShellView)))
-            // For some reason there is no active shell view
-            continue;
-
-        CComQIPtr< IFolderView > pFolderView{ pShellView };
-        if (!pFolderView)
-            // The shell view doesn't implement IFolderView
-            continue;
-
-        // Get the interface from which we can finally query the PIDL of
-        // the current folder.
-        CComPtr< IPersistFolder2 > pFolder;
-        if (FAILED(pFolderView->GetFolder(IID_IPersistFolder2, (void**)&pFolder)))
-            continue;
-
-        LPITEMIDLIST pidl = nullptr;
-        if (SUCCEEDED(pFolder->GetCurFolder(&pidl)))
-        {
-            // Take ownership of the PIDL via std::unique_ptr.
-            info.pidl = UniquePidlPtr{ pidl };
-            result.push_back(std::move(info));
-        }
-    }
-
-    return result;
-}
+#include "ShellWindows.h"
 
 class SubCommand final : 
     public Microsoft::WRL::RuntimeClass<
@@ -283,7 +190,7 @@ class SubCommand final :
         auto result = ShellExecute(
             NULL,
             L"open",
-            std::format(LR"(fastcopy://"{}"|{})", argTransform, Registry{}.read(L"record")).data(),
+            std::format(LR"(fastcopy://"{}"|{})", argTransform, Registry::Record()).data(),
             nullptr,
             nullptr,
             SW_SHOW
@@ -386,13 +293,16 @@ public:
             case CopyOperation::Paste:
             {
 
-                for (auto const& info : GetCurrentExplorerFolders())
+                for (auto& info : ShellWindows::GetCurrentOpenedExplorerFolders())
                 {
-                    if (info.hwnd == hwnd)
+                    if (info.HWND() == hwnd)
                     {
-                        TCHAR* ptr;
-                        SHGetNameFromIDList(info.pidl.get(), SIGDN_FILESYSPATH, &ptr);
-                        return callMainProgramImpl(ptr);
+                        constexpr static std::wstring_view protocolPrefix{ L"file:///" };
+                        auto path = info.LocationURL();
+                        std::wstring_view pathView{ path.get() };
+                        assert(pathView.starts_with(protocolPrefix));
+                        
+                        return callMainProgramImpl(pathView.substr(protocolPrefix.size()));
                     }
                 }
 

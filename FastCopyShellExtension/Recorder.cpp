@@ -35,7 +35,7 @@ Recorder::Recorder(CopyOperation op)
 {
 	std::filesystem::create_directory(GetLocalDataFolder());
 	auto const filename = GetRecordFilePath(op);
-	Registry{}.write(L"record", filename);
+	Registry::Record(filename);
 	m_fs = _wfopen(filename.data(), L"wb");
 	if (!m_fs)
 		throw std::runtime_error{ "Cannot open file" };

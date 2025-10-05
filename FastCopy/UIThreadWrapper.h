@@ -8,7 +8,7 @@ class UIThreadWrapper
 	std::queue<std::function<void()>> m_tasks;
 public:
 
-	UIThreadWrapper& operator=(winrt::Microsoft::UI::Dispatching::DispatcherQueue queue);
+	UIThreadWrapper& operator=(winrt::Microsoft::UI::Dispatching::DispatcherQueue const& queue);
 
 	template<typename Func>
 	void TryEnqueue(Func&& f)
