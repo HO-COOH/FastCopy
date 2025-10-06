@@ -16,12 +16,15 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="ExplorerCommand">
+      <UniqueIdentifier>{721b3a7c-6783-4134-8f10-d1f0b65cc35c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Icons">
+      <UniqueIdentifier>{47d4d382-fdd4-49c8-a947-61f6a46619c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Recorder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="IconProvider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CopyOperationNames.cpp">
@@ -42,6 +45,18 @@
     </ClCompile>
     <ClCompile Include="WebBrowser2.cpp">
       <Filter>COM</Filter>
+    </ClCompile>
+    <ClCompile Include="FastCopyRootCommand.cpp">
+      <Filter>ExplorerCommand</Filter>
+    </ClCompile>
+    <ClCompile Include="FastCopySubCommand.cpp">
+      <Filter>ExplorerCommand</Filter>
+    </ClCompile>
+    <ClCompile Include="IconProvider.cpp">
+      <Filter>Icons</Filter>
+    </ClCompile>
+    <ClCompile Include="DllIconFormatter.cpp">
+      <Filter>Icons</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -64,9 +79,6 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IconProvider.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CopyOperationNames.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -84,6 +96,18 @@
     </ClInclude>
     <ClInclude Include="WebBrowser2.h">
       <Filter>COM</Filter>
+    </ClInclude>
+    <ClInclude Include="FastCopyRootCommand.h">
+      <Filter>ExplorerCommand</Filter>
+    </ClInclude>
+    <ClInclude Include="FastCopySubCommand.h">
+      <Filter>ExplorerCommand</Filter>
+    </ClInclude>
+    <ClInclude Include="IconProvider.h">
+      <Filter>Icons</Filter>
+    </ClInclude>
+    <ClInclude Include="DllIconFormatter.h">
+      <Filter>Icons</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

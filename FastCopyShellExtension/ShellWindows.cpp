@@ -1,6 +1,7 @@
 #include "ShellWindows.h"
 #include <wil/result_macros.h>
 #include <atlcomcli.h>
+#include <cassert>
 
 long ShellWindows::Count()
 {
@@ -16,19 +17,26 @@ WebBrowser2 ShellWindows::Item(VARIANT index)
 	return WebBrowser2{ value.query<IWebBrowser2>() };
 }
 
-std::vector<WebBrowser2> ShellWindows::GetCurrentOpenedExplorerFolders()
+std::optional<WebBrowser2> ShellWindows::GetForegroundExplorer()
 {
+    std::optional<WebBrowser2> ret;
+
+    auto const hwnd = GetForegroundWindow();
     ShellWindows shellWindows;
 
     auto const count = shellWindows.Count();
-    std::vector<WebBrowser2> result;
-    result.reserve(count);
     for (long i = 0; i < count; ++i)
     {
         CComVariant vi{ i };
-        result.emplace_back(shellWindows.Item(vi));
+        auto item = shellWindows.Item(vi);
+        if (item.HWND() == hwnd)
+        {
+            ret.emplace(std::move(item));
+            break;
+        }
     }
-    return result;
+
+    return ret;
 }
 
 

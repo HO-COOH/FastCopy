@@ -10,7 +10,6 @@ inline static bool isColorLight(winrt::Windows::UI::Color clr)
 
 IconProvider const& IconProvider::GetForCurrentTheme()
 {
-    static winrt::Windows::UI::ViewManagement::UISettings settings;
     static IconProvider provider
     {
         isColorLight(winrt::Windows::UI::ViewManagement::UISettings{}.GetColorValue(winrt::Windows::UI::ViewManagement::UIColorType::Foreground)) ? 

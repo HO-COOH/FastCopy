@@ -143,8 +143,7 @@
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>xcopy "$(OutputPath)\$(ProjectName).dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\Appx" /Y /I /C</Command>
     </PostBuildEvent>
     <ResourceCompile>
       <ResourceOutputFileName>FastCopyShellExtension.res</ResourceOutputFileName>
@@ -182,7 +181,10 @@
     <ClCompile Include="..\Public\ShellItem.cpp" />
     <ClCompile Include="..\Public\ShellItemArray.cpp" />
     <ClCompile Include="CopyOperationNames.cpp" />
+    <ClCompile Include="DllIconFormatter.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="FastCopyRootCommand.cpp" />
+    <ClCompile Include="FastCopySubCommand.cpp" />
     <ClCompile Include="IconProvider.cpp" />
     <ClCompile Include="Recorder.cpp" />
     <ClCompile Include="Registry.cpp" />
@@ -198,6 +200,9 @@
     <ClInclude Include="..\Public\ShellItemArray.h" />
     <ClInclude Include="CopyOperation.h" />
     <ClInclude Include="CopyOperationNames.h" />
+    <ClInclude Include="DllIconFormatter.h" />
+    <ClInclude Include="FastCopyRootCommand.h" />
+    <ClInclude Include="FastCopySubCommand.h" />
     <ClInclude Include="IconProvider.h" />
     <ClInclude Include="Recorder.h" />
     <ClInclude Include="Registry.h" />
