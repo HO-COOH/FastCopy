@@ -19,9 +19,7 @@ HWND GetHwnd(winrt::Microsoft::UI::Xaml::Window& window)
 
 winrt::Microsoft::UI::Windowing::AppWindow GetAppWindow(winrt::Microsoft::UI::Xaml::Window window)
 {
-    return winrt::Microsoft::UI::Windowing::AppWindow::GetFromWindowId(
-        winrt::Microsoft::UI::GetWindowIdFromWindow(GetHwnd(window))
-    );
+    return window.AppWindow();
 }
 
 void MoveAndResizeWindow(winrt::Microsoft::UI::Xaml::Window window, winrt::Windows::Graphics::RectInt32 windowRect)

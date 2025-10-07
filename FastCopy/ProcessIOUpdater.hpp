@@ -11,6 +11,7 @@ class ProcessIOUpdater
 	}
 
 	ProcessIoCounter m_counter;
+	winrt::Windows::System::Threading::ThreadPoolTimer m_timer{ nullptr };
 public:
 	void SetHandle(HANDLE handle)
 	{
@@ -20,7 +21,7 @@ public:
 	template<typename Duration>
 	void Start(Duration duration)
 	{
-		winrt::Windows::System::Threading::ThreadPoolTimer::CreatePeriodicTimer(
+		m_timer = winrt::Windows::System::Threading::ThreadPoolTimer::CreatePeriodicTimer(
 			[this](auto)
 			{
 				getSelf().OnUpdateCopySpeed(m_counter.Update());
@@ -28,8 +29,13 @@ public:
 		);
 	}
 
-	auto GetTotal()
+	void Stop()
 	{
-		return m_counter.GetTotal();
+		m_timer.Cancel();
+	}
+
+	~ProcessIOUpdater()
+	{
+		Stop();
 	}
 };

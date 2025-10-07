@@ -16,7 +16,6 @@
 #include <filesystem>
 #include "Global.h"
 #include "MutexWrapper.h"
-#include "Console.h"
 
 
 namespace winrt::FastCopy::implementation

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "RobocopyArgs.h"
+#include <iostream>
 
 RobocopyArgsBuilder::RobocopyArgsBuilder(StringView source, StringView destination, StringView builtArg) : 
 	m_arg{std::format(R"("{}" "{}" {})", source, destination, builtArg)},
@@ -9,6 +10,7 @@ RobocopyArgsBuilder::RobocopyArgsBuilder(StringView source, StringView destinati
 
 std::string const& RobocopyArgsBuilder::Build() const
 {
+	std::cout << "Running robocopy: " << m_arg << '\n';
 	return m_arg;
 }
 

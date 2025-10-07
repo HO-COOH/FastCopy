@@ -9,9 +9,11 @@
     IsMaximizable="False"
     IsMinimizable="True"
     IsResizable="False"
-    TitleBarAutoDarkMode="True"
-    TitleBarDarkMode="True"
     mc:Ignorable="d">
 
-    <local:CopyDialog x:Name="CopyDialog" />
+    <Grid>
+        <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind}" />
+        <local:CopyDialog x:Name="CopyDialog" />
+    </Grid>
+
 </essential:WindowEx>

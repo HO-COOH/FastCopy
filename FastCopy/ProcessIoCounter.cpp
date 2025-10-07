@@ -1,50 +1,39 @@
 #include "pch.h"
 #include "ProcessIoCounter.h"
 
-ProcessIoCounter::ProcessIoCounter(HANDLE handle) : m_handle{handle}
+
+IO_COUNTERS& ProcessIoCounter::getCounterPrev(size_t i)
 {
+	return firstCounterAsCurrent ? m_counter[i].second : m_counter[i].first;
+}
+
+IO_COUNTERS& ProcessIoCounter::getCounterCur(size_t i)
+{
+	return firstCounterAsCurrent ? m_counter[i].first : m_counter[i].second;
 }
 
 void ProcessIoCounter::SetHandle(HANDLE handle)
 {
-	memset(m_counter, 0, sizeof(m_counter));
-	m_handle = handle;
+	m_handle.emplace_back(handle);
+	m_counter.emplace_back();
 }
 
 ProcessIoCounter::IOCounterDiff ProcessIoCounter::Update()
 {
-	if (!GetProcessIoCounters(m_handle, m_counterCur))
-		return {};
+	IOCounterDiff diff{};
 
-	IOCounterDiff const diff
+	for (size_t i = 0; i < m_counter.size(); ++i)
 	{
-		m_counterCur->ReadTransferCount - m_counterPrev->ReadTransferCount,
-		m_counterCur->WriteTransferCount - m_counterPrev->WriteTransferCount,
-		std::chrono::steady_clock::now() - m_lastUpdate
-	};
-	std::swap(m_counterPrev, m_counterCur);
+		auto& counterCur = getCounterCur(i);
+		if (!GetProcessIoCounters(m_handle[i], &counterCur))
+			continue;
+
+		auto& counterPrev = getCounterPrev(i);
+		diff.read += counterCur.ReadTransferCount - counterPrev.ReadTransferCount;
+		diff.write += counterCur.WriteTransferCount - counterPrev.WriteTransferCount;
+	}
+
+	firstCounterAsCurrent = !firstCounterAsCurrent;
 	m_lastUpdate = std::chrono::steady_clock::now();
 	return diff;
-}
-
-ProcessIoCounter::IOCounter ProcessIoCounter::GetTotal()
-{
-	return IOCounter{
-		.read = m_counterCur->ReadTransferCount,
-		.write = m_counterCur->WriteTransferCount
-	};
-}
-
-ProcessIoCounter::IOCounter& ProcessIoCounter::IOCounter::operator+=(IOCounter rhs)
-{
-	read += rhs.read; 
-	write += rhs.write;
-	return *this;
-}
-
-ProcessIoCounter::IOCounter ProcessIoCounter::IOCounter::operator+(IOCounter rhs)
-{
-	auto copy = *this;
-	copy += rhs;
-	return copy;
 }

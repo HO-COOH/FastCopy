@@ -150,10 +150,9 @@ namespace winrt::FastCopy::implementation
 				}
 				else if (canUseRobocopy())
 				{
-					m_process.emplace(getRobocopyArg(),
+					m_process.emplace_back(getRobocopyArg(),
 						[this](float progress)
 						{
-							OutputDebugString(std::format(L"{}\n", progress).data());
 							m_copiedBytes = bytes + currentItemSize * progress / 100.f;
 							if (progress == 100.f)
 							{
@@ -168,8 +167,7 @@ namespace winrt::FastCopy::implementation
 
 						});
 					
-					SetHandle(m_process->Handle());
-					m_process->WaitForExit();
+					SetHandle(m_process.back().Handle());
 					//auto const ret = m_process->WaitForExit();
 
 
@@ -213,9 +211,16 @@ namespace winrt::FastCopy::implementation
 	{
 		m_bytesPerSec = ReadableUnitConverter::Speed::BytesPerSec(diff.read, diff.duration);
 		//m_copiedBytes += GetTotal().read;
-		Global::UIThread.TryEnqueue([this] {
-			raisePropertyChange(L"SpeedText");
-			raisePropertyChange(L"Speed");
+		Global::UIThread.TryEnqueue([weakThis = get_weak()] {
+			try
+			{
+				if (auto strongThis = weakThis.get())
+				{
+					strongThis->raisePropertyChange(L"SpeedText");
+					strongThis->raisePropertyChange(L"Speed");
+				}
+			}
+			catch (...) {}
 		});
 	}
 	winrt::Windows::Foundation::IReference<bool> RobocopyViewModel::UseSource()
@@ -320,43 +325,40 @@ namespace winrt::FastCopy::implementation
 	RobocopyArgsBuilder RobocopyViewModel::getRobocopyArg()
 	{
 		RobocopyArgsBuilder args;
-		args.Source(winrt::to_string(**m_iter))
+		auto const isDirectory = std::filesystem::is_directory(**m_iter);
+		std::filesystem::path source{ **m_iter };
+		args.Source(isDirectory? winrt::to_string(**m_iter) : source.parent_path().string())
 			.Destination(
-				std::filesystem::is_directory(**m_iter)?
-				winrt::to_string(m_destination + std::filesystem::path{ **m_iter }.filename().wstring()) : 
+				isDirectory?
+				(std::filesystem::path{ m_destination.data() } / std::filesystem::path{ **m_iter }.filename().wstring()).string() :
 				winrt::to_string(m_destination)
 			)
-			.E(true)
+			.E(isDirectory)
 			.ETA(true)
 			.V(true)
 			.NJS(true)
 			.NJH(true)
 			.BYTES(true);
+		if (!isDirectory)
+		{
+			auto sourceFileName = source.filename().string();
+			std::array<std::string_view, 1> fileArg{ sourceFileName };
+			args.File(fileArg);
+		}
 		if (m_recordFile->GetOperation() == CopyOperation::Move)
 			args.MOVE(true);
 
-		//if (std::filesystem::is_directory(**m_iter))
-		//{
-		//	args.Source(winrt::to_string(**m_iter));
-		//	args.destinationDir += L"\\" + std::filesystem::path{ **m_iter }.filename().wstring();
-		//	args.copySubDirectoriesIncludeEmpty.value = true;
-		//}
-		//else
-		//{
-		//	std::filesystem::path path{ **m_iter };
-		//	args.sourceDir = path.parent_path().wstring();
-		//	args.files.push_back(path.filename().wstring());
-		//}
 		return args;
 	}
 
 	bool RobocopyViewModel::canUseRobocopy() const
 	{
 		std::filesystem::path sourcePath{ **m_iter };
+		std::filesystem::path destinationPath{ m_destination.data() };
 		auto const fileName = sourcePath.filename().wstring();
-		return !std::filesystem::exists(
-			std::format(LR"({}\{})", m_destination.data(), fileName)
-		) || sourcePath.parent_path() == std::filesystem::path{ m_destination.data() };
+		return 
+			!std::filesystem::exists(destinationPath / fileName)   //destination does not contain the same file name
+			|| sourcePath.parent_path() == destinationPath;		   //they are under the same path
 	}
 	bool RobocopyViewModel::canUseShellCopy() const
 	{

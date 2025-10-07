@@ -108,7 +108,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
-      <PreprocessorDefinitions>SPDLOG_WCHAR_TO_UTF8_SUPPORT;_DEBUG;__WRL_NO_DEFAULT_LIB__;_UNICODE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DISABLE_XAML_GENERATED_MAIN;SPDLOG_WCHAR_TO_UTF8_SUPPORT;_DEBUG;__WRL_NO_DEFAULT_LIB__;_UNICODE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp20</LanguageStandard>
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'">false</SDLCheck>
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</SDLCheck>
@@ -222,6 +222,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceHelper.h" />
     <ClInclude Include="RobocopyArgs.h" />
+    <ClInclude Include="RobocopyJobFile.h" />
     <ClInclude Include="RobocopyProcess.h" />
     <ClInclude Include="RobocopyViewModel.h">
       <DependentUpon>RobocopyViewModel.idl</DependentUpon>
@@ -313,6 +314,7 @@
     <ClCompile Include="FileWrapper.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="ImageUtils.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="MutexWrapper.cpp" />
     <ClCompile Include="Notification.cpp" />
     <ClCompile Include="NumberToStringConverter.cpp">
@@ -543,7 +545,7 @@
     <Import Project="..\packages\Microsoft.WindowsAppSDK.Widgets.1.8.250904007\build\native\Microsoft.WindowsAppSDK.Widgets.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.Widgets.1.8.250904007\build\native\Microsoft.WindowsAppSDK.Widgets.targets')" />
     <Import Project="..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.250906003\build\native\Microsoft.WindowsAppSDK.WinUI.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.250906003\build\native\Microsoft.WindowsAppSDK.WinUI.targets')" />
     <Import Project="..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.targets')" />
-    <Import Project="..\packages\WinUIEssential.WinUI3.1.3.16\build\native\WinUIEssential.WinUI3.targets" Condition="Exists('..\packages\WinUIEssential.WinUI3.1.3.16\build\native\WinUIEssential.WinUI3.targets')" />
+    <Import Project="..\packages\WinUIEssential.WinUI3.1.3.17\build\native\WinUIEssential.WinUI3.targets" Condition="Exists('..\packages\WinUIEssential.WinUI3.1.3.17\build\native\WinUIEssential.WinUI3.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -579,6 +581,6 @@
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.250906003\build\native\Microsoft.WindowsAppSDK.WinUI.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.250906003\build\native\Microsoft.WindowsAppSDK.WinUI.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.targets'))" />
-    <Error Condition="!Exists('..\packages\WinUIEssential.WinUI3.1.3.16\build\native\WinUIEssential.WinUI3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinUIEssential.WinUI3.1.3.16\build\native\WinUIEssential.WinUI3.targets'))" />
+    <Error Condition="!Exists('..\packages\WinUIEssential.WinUI3.1.3.17\build\native\WinUIEssential.WinUI3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinUIEssential.WinUI3.1.3.17\build\native\WinUIEssential.WinUI3.targets'))" />
   </Target>
 </Project>

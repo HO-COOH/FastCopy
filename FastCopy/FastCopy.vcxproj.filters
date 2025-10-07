@@ -19,7 +19,6 @@
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
-    <Midl Include="MainWindow.idl" />
     <Midl Include="NumberToStringConverter.idl">
       <Filter>Converter</Filter>
     </Midl>
@@ -133,6 +132,7 @@
     <ClCompile Include="Console.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -228,6 +228,9 @@
     </ClInclude>
     <ClInclude Include="Console.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="RobocopyJobFile.h">
+      <Filter>Utils\Robocopy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

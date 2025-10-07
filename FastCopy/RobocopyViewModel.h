@@ -64,7 +64,7 @@ namespace winrt::FastCopy::implementation
         int m_useSourceCount{};
         int m_useDestinationCount{};
         winrt::event<winrt::Windows::Foundation::EventHandler<winrt::FastCopy::FinishState>> m_finishEvent;
-        std::optional<RobocopyProcess> m_process;
+        std::vector<RobocopyProcess> m_process;
         winrt::hstring m_destination;
         uint64_t m_copiedBytes{};
         uint64_t m_size{};

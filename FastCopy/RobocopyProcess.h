@@ -6,6 +6,7 @@
 #include <regex>
 #include "RobocopyArgs.h"
 #include <absl/strings/str_split.h>
+#include <iostream>
 
 //Forward declaration
 struct RobocopyArgs;
@@ -26,7 +27,7 @@ class RobocopyProcess
 public:
 	RobocopyProcess(RobocopyArgsBuilder const& builder, auto onProgress, auto onNewFile) :
 		m_child{
-			std::string{R"(C:\Windows\System32\Robocopy.exe )"} + builder.Build(),
+			boost::process::cmd(boost::process::search_path("robocopy.exe").string() + " " + builder.Build()),
 			boost::process::std_out > pipeOut
 		}
 	{
@@ -41,6 +42,7 @@ public:
 					{
 						auto n = co_await boost::asio::async_read_until(pipeOut, buf, boost::regex{ "\r|\n" }, boost::asio::use_awaitable);
 						std::string_view data{ outBuf.begin(), outBuf.begin() + n };
+						std::cout << data << '\n';
 						data.remove_prefix((std::min)(data.find_first_not_of(" \r\t"), data.size()));
 						data.remove_suffix((std::min)(data.size() - 1 - data.find_last_not_of(" \r\n\t"), data.size()));
 						if (!data.empty())
@@ -62,8 +64,8 @@ public:
 				}
 				catch (std::exception const& e)
 				{
-					co_return;
 				}
+
 			}, boost::asio::detached);
 	}
 
@@ -73,6 +75,7 @@ public:
 	{
 		ios.run();
 		m_child.wait();
+		std::cout << "Child exit with code: " << m_child.native_exit_code() << '\n';
 	}
 };
 
