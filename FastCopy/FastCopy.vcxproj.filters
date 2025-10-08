@@ -133,6 +133,12 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="NewDir.cpp">
+      <Filter>Utils\Robocopy\Output</Filter>
+    </ClCompile>
+    <ClCompile Include="NewFile.cpp">
+      <Filter>Utils\Robocopy\Output</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -231,6 +237,12 @@
     </ClInclude>
     <ClInclude Include="RobocopyJobFile.h">
       <Filter>Utils\Robocopy</Filter>
+    </ClInclude>
+    <ClInclude Include="NewDir.h">
+      <Filter>Utils\Robocopy\Output</Filter>
+    </ClInclude>
+    <ClInclude Include="NewFile.h">
+      <Filter>Utils\Robocopy\Output</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -460,6 +472,9 @@
     </Filter>
     <Filter Include="ViewModel\Robocopy">
       <UniqueIdentifier>{a3f4d143-a3b2-4385-9a07-60ca6769cf1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\Robocopy\Output">
+      <UniqueIdentifier>{eb744bf1-a4fa-46c6-9fb6-d8209beb2719}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

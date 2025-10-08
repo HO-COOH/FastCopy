@@ -5,7 +5,8 @@
 #include <boost/regex.hpp>
 #include <regex>
 #include "RobocopyArgs.h"
-#include <absl/strings/str_split.h>
+#include "NewFile.h"
+#include "NewDir.h"
 #include <iostream>
 
 //Forward declaration
@@ -19,64 +20,89 @@ class RobocopyArgsBuilder;
 class RobocopyProcess
 {
 	static inline boost::asio::io_service ios;
+	static inline auto work = boost::asio::make_work_guard(ios);
 	constexpr static auto k_OutBufferSize = MAX_PATH + 20;
 
 
 	boost::process::async_pipe pipeOut{ ios };
 	boost::process::child m_child;
+
+	static void runContext();
 public:
-	RobocopyProcess(RobocopyArgsBuilder const& builder, auto onProgress, auto onNewFile) :
-		m_child{
+	RobocopyProcess(RobocopyArgsBuilder const& builder, auto onProgress, auto onNewFile, auto onNewFolder, auto onProcessExit) :
+		m_child
+		{
 			boost::process::cmd(boost::process::search_path("robocopy.exe").string() + " " + builder.Build()),
 			boost::process::std_out > pipeOut
 		}
 	{
+		runContext();
+
 		static std::regex Progress{ "^[0-9]+[.]?[0-9]*%" };
-		boost::asio::co_spawn(ios, [this, onProgress = std::move(onProgress), onNewFile = std::move(onNewFile)]()->boost::asio::awaitable<void>
+		boost::asio::co_spawn(ios, [this, onProgress = std::move(onProgress), onNewFile = std::move(onNewFile), onNewFolder = std::move(onNewFolder), onProcessExit = std::move(onProcessExit)]()->boost::asio::awaitable<void>
+		{
+			auto onProgressCopy = std::move(onProgress);
+			auto onNewFileCopy = std::move(onNewFile);
+			auto onNewFolderCopy = std::move(onNewFolder);
+			auto onProcessExitCopy = std::move(onProcessExit);
+			auto thisCopy = this;
+
+			std::vector<char> outBuf(k_OutBufferSize);           // that worked well for my decoding app.
+			try
 			{
-				std::vector<char> outBuf(k_OutBufferSize);           // that worked well for my decoding app.
-				try
+				auto buf = boost::asio::dynamic_buffer(outBuf);
+				while (true)
 				{
-					auto buf = boost::asio::dynamic_buffer(outBuf);
-					while (true)
+					auto n = co_await boost::asio::async_read_until(thisCopy->pipeOut, buf, boost::regex{ "\r|\n" }, boost::asio::use_awaitable);
+					std::string_view data{ outBuf.begin(), outBuf.begin() + n };
+					std::cout << data << '\n';
+					data.remove_prefix((std::min)(data.find_first_not_of(" \r\t"), data.size()));
+					data.remove_suffix((std::min)(data.size() - 1 - data.find_last_not_of(" \r\n\t"), data.size()));
+					if (!data.empty())
 					{
-						auto n = co_await boost::asio::async_read_until(pipeOut, buf, boost::regex{ "\r|\n" }, boost::asio::use_awaitable);
-						std::string_view data{ outBuf.begin(), outBuf.begin() + n };
-						std::cout << data << '\n';
-						data.remove_prefix((std::min)(data.find_first_not_of(" \r\t"), data.size()));
-						data.remove_suffix((std::min)(data.size() - 1 - data.find_last_not_of(" \r\n\t"), data.size()));
-						if (!data.empty())
+						if (data.starts_with(NewFile::Prefix))
 						{
-							if (data.starts_with("New File"))
-							{
-								auto splited = absl::StrSplit(absl::string_view{ data.data(), data.length() }, "\t", absl::SkipEmpty());
-								
-								onNewFile(std::stoull((++splited.begin())->data()));
-							}
-							else if (std::regex_match(data.data(), data.data() + data.size(), Progress))
-							{
-								onProgress(std::strtof(data.data(), nullptr));
-							}
+							onNewFileCopy(NewFile{data});
 						}
-						buf.consume(n);
-						auto c = buf.data().begin();
+						else if (data.starts_with(NewDir::Prefix))
+						{
+							onNewFolderCopy(NewDir{ data });
+						}
+						else if (std::regex_match(data.data(), data.data() + data.size(), Progress))
+						{
+							onProgressCopy(std::strtof(data.data(), nullptr));
+						}
 					}
+					buf.consume(n);
 				}
-				catch (std::exception const& e)
+			}
+			catch (boost::system::system_error const& e)
+			{
+				//auto category = e.code().category();
+				if (auto code = e.code(); code == boost::asio::error::eof || code == boost::asio::error::broken_pipe)
 				{
+					onProcessExitCopy();
 				}
+			}
+			catch (std::exception const& e)
+			{
+				std::cerr << "[E]: " << e.what() << '\n';
+			}
+			//co_return;
+		}, boost::asio::detached);
 
-			}, boost::asio::detached);
+
 	}
 
-	HANDLE Handle() { return m_child.native_handle(); }
+	HANDLE Handle() const { return m_child.native_handle(); }
 
-	void WaitForExit()
-	{
-		ios.run();
-		m_child.wait();
-		std::cout << "Child exit with code: " << m_child.native_exit_code() << '\n';
-	}
+	void WaitForExit();
+
+	//RobocopyProcess(RobocopyProcess&&) noexcept = default;
+	//~RobocopyProcess()
+	//{
+	//	OutputDebugString(L"Exited\n");
+	//}
 };
 
 /**

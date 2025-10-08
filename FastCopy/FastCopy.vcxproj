@@ -201,6 +201,7 @@
     <ClInclude Include="HandleWrapper.hpp" />
     <ClInclude Include="ImageUtils.h" />
     <ClInclude Include="MutexWrapper.h" />
+    <ClInclude Include="NewFile.h" />
     <ClInclude Include="Notification.h" />
     <ClInclude Include="NumberToStringConverter.h">
       <DependentUpon>NumberToStringConverter.idl</DependentUpon>
@@ -223,6 +224,7 @@
     <ClInclude Include="ResourceHelper.h" />
     <ClInclude Include="RobocopyArgs.h" />
     <ClInclude Include="RobocopyJobFile.h" />
+    <ClInclude Include="NewDir.h" />
     <ClInclude Include="RobocopyProcess.h" />
     <ClInclude Include="RobocopyViewModel.h">
       <DependentUpon>RobocopyViewModel.idl</DependentUpon>
@@ -316,6 +318,8 @@
     <ClCompile Include="ImageUtils.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MutexWrapper.cpp" />
+    <ClCompile Include="NewDir.cpp" />
+    <ClCompile Include="NewFile.cpp" />
     <ClCompile Include="Notification.cpp" />
     <ClCompile Include="NumberToStringConverter.cpp">
       <DependentUpon>NumberToStringConverter.idl</DependentUpon>

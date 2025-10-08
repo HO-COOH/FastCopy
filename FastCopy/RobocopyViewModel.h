@@ -8,7 +8,7 @@
 #include "TaskFile.h"
 #include <ppltasks.h>
 #include "FileCompareViewModel.g.h"
-#include <winrt/Windows.Foundation.Collections.h>
+#include <filesystem>
 
 namespace winrt::FastCopy::implementation
 {
@@ -64,11 +64,11 @@ namespace winrt::FastCopy::implementation
         int m_useSourceCount{};
         int m_useDestinationCount{};
         winrt::event<winrt::Windows::Foundation::EventHandler<winrt::FastCopy::FinishState>> m_finishEvent;
-        std::vector<RobocopyProcess> m_process;
+        std::vector<std::unique_ptr<RobocopyProcess>> m_process; 
+        std::vector<uint64_t> m_perProcessCopiedBytes;
         winrt::hstring m_destination;
         uint64_t m_copiedBytes{};
         uint64_t m_size{};
-
         std::optional<TaskFile> m_recordFile;
         uint64_t m_totalSize{};
         mutable std::optional<TaskFile::TaskFileIterator<typename std::vector<std::wstring>::iterator>> m_iter;

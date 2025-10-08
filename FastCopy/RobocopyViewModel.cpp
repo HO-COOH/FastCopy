@@ -16,6 +16,7 @@
 #include <winrt/Microsoft.Windows.ApplicationModel.Resources.h>
 #include "ResourceHelper.h"
 #include <pplawait.h>
+#include <numeric>
 
 namespace winrt::FastCopy::implementation
 {
@@ -117,7 +118,7 @@ namespace winrt::FastCopy::implementation
 		//Taskbar::SetProgressValue(Global::MainHwnd, std::clamp<int>(result, 1, 100));
 		//return result;
 
-		auto const percent = static_cast<double>(m_copiedBytes) * 100.0 / m_totalSize;
+		auto const percent = (static_cast<double>(m_copiedBytes) + std::accumulate(m_perProcessCopiedBytes.begin(), m_perProcessCopiedBytes.end(), 0ull)) * 100.0 / m_totalSize;
 		Taskbar::SetProgressValue(Global::MainHwnd, std::clamp<int>(percent, 1, 100));
 		return percent;
 	}
@@ -135,43 +136,53 @@ namespace winrt::FastCopy::implementation
 		concurrency::create_task([this]
 		{
 			m_countItemTask.get();
-			static uint64_t bytes{};
-			static uint64_t currentItemSize{};
 			while (*m_iter != m_recordFile->end() && m_status == Status::Running)
 			{
-				currentItemSize = TaskFile::GetSizeOfPath(**m_iter);
-				OutputDebugString(std::format(L"{}: {} MB\n", (**m_iter), currentItemSize / 1024 / 1024).data());
+				auto currentItemSize = TaskFile::GetSizeOfPath(**m_iter);
 				Global::UIThread.TryEnqueue([this] {raisePropertyChange(L"Source"); });
 				if (canUseShellCopy())
 				{
 					ShellCopy::Move(**m_iter, m_destination);
 					m_finishedFiles += m_recordFile->GetNumFiles(m_recordFile->IndexOf(*m_iter));
-					bytes += currentItemSize;
+					m_copiedBytes += currentItemSize;
 				}
 				else if (canUseRobocopy())
 				{
-					m_process.emplace_back(getRobocopyArg(),
-						[this](float progress)
+					auto currentIndex = m_process.size();
+					m_perProcessCopiedBytes.emplace_back();
+					m_process.emplace_back(std::make_unique<RobocopyProcess>(getRobocopyArg(),
+						/*onProgress*/
+						[this, currentItemSize, currentIndex](float progress)
 						{
-							m_copiedBytes = bytes + currentItemSize * progress / 100.f;
+							m_perProcessCopiedBytes[currentIndex] = currentItemSize * progress / 100.f;
 							if (progress == 100.f)
 							{
-								bytes += currentItemSize;
 								++m_finishedFiles;
+								m_copiedBytes += m_perProcessCopiedBytes[currentIndex];
+								m_perProcessCopiedBytes[currentIndex] = 0;
+								if (m_finishedFiles == ItemCount())
+									onNormalRobocopyFinished();
 							}
 							raiseProgressChange();
 						},
-						[&](uint64_t current)
+						/*onNewFile*/
+						[&](auto&&)
 						{
-							currentItemSize = current;
+							//currentItemSize = current;
 
-						});
+						},
+						/*onNewFolder*/
+						[](auto&&){},
+						/*onProcessExit*/
+						[this] 
+						{
+							//++m_finishedFiles;
+							//if (m_finishedFiles == ItemCount())
+							//	onNormalRobocopyFinished();
+						}
+					));
 					
-					SetHandle(m_process.back().Handle());
-					//auto const ret = m_process->WaitForExit();
-
-
-					//m_finishedFiles += m_recordFile->GetNumFiles(m_recordFile->IndexOf(*m_iter));
+					SetHandle(m_process.back()->Handle());
 				}
 				else
 				{
@@ -184,17 +195,16 @@ namespace winrt::FastCopy::implementation
 						});
 					});
 					m_hasDuplicates = true;
-					bytes += currentItemSize;
+					m_copiedBytes += currentItemSize;
 				}
 
-				m_copiedBytes = bytes;
 				raiseProgressChange();
 				++*m_iter;
 			}
-			if (*m_iter == m_recordFile->end())
-			{
-				onNormalRobocopyFinished();
-			}
+			//if (*m_iter == m_recordFile->end())
+			//{
+			//	onNormalRobocopyFinished();
+			//}
 			if (m_hasConfirmed)
 				ConfirmDuplicates();
 		});
