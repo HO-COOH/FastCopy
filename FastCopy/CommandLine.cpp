@@ -6,21 +6,17 @@
 #include <shellapi.h>
 #pragma comment(lib, "Shell32.lib")
 
-static std::vector<std::wstring> const& GetCommandArgs()
+
+void Command::Set(PWSTR cmd)
 {
-    static auto const ret = []
+    int argc{};
+    m_args.reserve(argc);
+    auto argv = CommandLineToArgvW(cmd, &argc);
+    std::copy(argv, argv + argc, std::back_inserter(m_args));
+    if (m_args.size() > 1 && m_args[1].back() == L'/')
     {
-        auto const cmd = GetCommandLine();
-        int argc{};
-        auto argv = CommandLineToArgvW(cmd, &argc);
-        auto ret = std::vector<std::wstring>(argv, argv + argc);
-        if (ret.size() > 1 && ret[1].back() == L'/')
-        {
-            ret[1] = ret[1].substr(0, ret[1].find_last_not_of(L"/\\\"") + 1);
-        }
-        return ret;
-    }();
-    return ret;
+        m_args[1] = m_args[1].substr(0, m_args[1].find_last_not_of(L"/\\\"") + 1);
+    }
 }
 
 Command& Command::Get()
@@ -29,21 +25,11 @@ Command& Command::Get()
     return s_instance;
 }
 
-int Command::Size() const
-{
-    return GetCommandArgs().size();
-}
-
 winrt::hstring Command::GetDestination()
 {
-    auto& args = GetCommandArgs();
     constexpr static std::wstring_view protocol = L"fastcopy://";
     
-    return args.size() == 1 ? winrt::hstring{
-#ifdef _DEBUG
-        LR"(E:\test\Intel Unison)"
-#endif
-    } : winrt::hstring{ args[1].substr(protocol.size(), args[1].find(L"|") - protocol.size()) };
+    return winrt::hstring{ m_args[0].substr(protocol.size(), m_args[0].find(L"|") - protocol.size()) };
 
 }
 
@@ -56,8 +42,7 @@ static auto GetLocalDataFolder()
 
 std::wstring Command::RecordFile()
 {
-    auto& args = GetCommandArgs();
-    if (args.size() == 1)
+    if (m_args.size() == 1)
     {
         return std::filesystem::is_empty(GetLocalDataFolder().data()) ?
             L"" :
@@ -65,11 +50,11 @@ std::wstring Command::RecordFile()
     }
     else
     {
-        auto result = args[1].substr(args[1].find(L"|") + 1);
-        for (int i = 2; i < args.size(); ++i)
+        auto result = m_args[0].substr(m_args[0].find(L"|") + 2);
+        for (int i = 1; i < m_args.size(); ++i)
         {
             result += L" ";
-            result += args[i];
+            result += m_args[i];
         }
         return result.substr(0, result.find_last_not_of(L"/\\ ") + 1);
     }

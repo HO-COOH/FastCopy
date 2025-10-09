@@ -46,7 +46,7 @@ namespace Notification
 		builder.AddText(prompt);
 		
 		AddButtonTo(builder, L"Open", L"open", destination, winrt::Microsoft::Windows::AppNotifications::Builder::AppNotificationButtonStyle::Success);
-		AddButtonTo(builder, L"Dismiss");
+		AddButtonTo(builder, L"Dismiss", L"dismiss", L"");
 		winrt::Microsoft::Windows::AppNotifications::AppNotificationManager::Default().Show(builder.BuildNotification());
 	}
 

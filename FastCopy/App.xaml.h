@@ -4,9 +4,10 @@
 #pragma once
 
 #include "App.xaml.g.h"
-#include "AcrylicHelper.h"
 #include <optional>
 #include <winrt/Microsoft.Windows.AppLifecycle.h>
+#include "AppLaunchMode.h"
+#include "FastcopySettingsSingleInstanceLock.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -15,36 +16,22 @@ namespace winrt::FastCopy::implementation
         App();
 
         void OnLaunched(Microsoft::UI::Xaml::LaunchActivatedEventArgs const&);
+
+
+        /**
+         * @brief Checks whether there is another instance of FastCopy running in settings window
+         */
+        static bool HasAnotherInstance();
     private:
-        winrt::Microsoft::UI::Xaml::Window window{ nullptr };
+        winrt::Microsoft::UI::Xaml::Window copyDialogWindow{ nullptr };
         winrt::Microsoft::UI::Xaml::Window setting{ nullptr };
 
-        /**
-         * @brief Check if launched by toast notification, if is, return the argument
-         * @details Currently there is [Open] and [Dismiss]
-         */
-        static std::optional<winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments> isLaunchByToastNotification();
-
-        /**
-         * @brief Handle launch by toast notification
-         * @details Currently only [Open] is handled. It opens the path in `explorer.exe` then exit
-         */
-        static void launchByToastNotification(winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments const& args);
-
-        /**
-         * @brief Check if launched by running the main program
-         */
-        static bool isLaunchSettings();
+        std::optional<FastcopySettingsSingleInstanceLock> m_settingsLock;
 
         /**
          * @brief Open the settings GUI.
          */
         void launchSettings();
-
-        /**
-         * @brief Checks whether there is another instance of FastCopy running in settings window
-         */
-        static bool hasAnotherInstance();
 
         /**
          * @brief This should be the last function to call in `App::OnLaunched()`, it runs all the copy logic.

@@ -15,7 +15,8 @@
 #include <winrt/Windows.System.h>
 #include <filesystem>
 #include "Global.h"
-#include "MutexWrapper.h"
+#include "RobocopyViewModel.h"
+#include "CommandLineHandler.h"
 
 
 namespace winrt::FastCopy::implementation
@@ -36,73 +37,22 @@ namespace winrt::FastCopy::implementation
 #endif
     }
 
-
-
-    static std::pair<std::wstring_view, std::wstring_view> ParseToastArgument(std::wstring_view argument)
-    {
-        auto const index = argument.find(L'=');
-        return { argument.substr(0, index), argument.substr(index + 1) };
-    }
-
     void App::OnLaunched(winrt::Microsoft::UI::Xaml::LaunchActivatedEventArgs const&)
     {
-        if (auto arg = isLaunchByToastNotification(); arg)
-            return launchByToastNotification(*arg);
-
-        if (isLaunchSettings())
-            return launchSettings();
-
-        normalLaunch();
-    }
-
-    std::optional<winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments> App::isLaunchByToastNotification()
-    {
-        if (auto activateArg = winrt::Microsoft::Windows::AppLifecycle::AppInstance::GetCurrent().GetActivatedEventArgs();
-            activateArg && activateArg.Kind() == winrt::Microsoft::Windows::AppLifecycle::ExtendedActivationKind::ToastNotification)
-        {
-            return activateArg;
-        }
-        return {};
-    }
-
-    void App::launchByToastNotification(winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments const& args)
-    {
-        auto argument = args
-            .Data()
-            .as<winrt::Windows::ApplicationModel::Activation::ToastNotificationActivatedEventArgs>()
-            .Argument();
-
-        if (argument.empty())
-            exit(-1); //dismiss
-
-        auto const [action, arg] = ParseToastArgument(argument);
-        if (action == L"open")
-        {
-            winrt::Windows::System::Launcher::LaunchUriAsync(winrt::Windows::Foundation::Uri{ arg });
-        }
-
-        exit(0);
-    }
-
-    bool App::isLaunchSettings()
-    {
-        return Command::Get().Size() == 1;
+        return CommandLineHandler::AppLaunchMode == AppLaunchMode::LaunchSettings ? launchSettings() : normalLaunch();
     }
 
     void App::launchSettings()
     {
-        //ensure singleton if launching settings
-        if (hasAnotherInstance())
-            exit(0);
-
+        m_settingsLock.emplace();
         setting = make<SettingsWindow>();
         setting.Activate();
         Global::windowEffectHelper.SetTarget(setting);
     }
 
-    bool winrt::FastCopy::implementation::App::hasAnotherInstance()
+    bool winrt::FastCopy::implementation::App::HasAnotherInstance()
     {
-        return !MutexWrapper{ L"FastCopySettingsLock", false }.TryLock();
+        return !FastcopySettingsSingleInstanceLock{ false }.TryLock();
     }
 
     void App::normalLaunch()
@@ -112,17 +62,17 @@ namespace winrt::FastCopy::implementation
             return;
 
         auto const recordFile = Command::Get().RecordFile();
-        auto viewModel = ViewModelLocator::GetInstance().RobocopyViewModel();
-
+        auto viewModelRef = ViewModelLocator::GetInstance().RobocopyViewModel();
+        auto viewModel = winrt::get_self<winrt::FastCopy::implementation::RobocopyViewModel>(viewModelRef);
 #ifndef _DEBUG
         if (recordFile.empty())
             return;
 #endif // !_DEBUG
 
 
-        viewModel.Destination(destination);
-        viewModel.RecordFile(recordFile);
-        viewModel.Finished([recordFile](auto, FinishState state) {
+        viewModel->Destination(destination);
+        viewModel->RecordFile(winrt::hstring{ recordFile });
+        viewModel->Finished([recordFile](auto, FinishState state) {
 #ifndef _DEBUG
             if (state == FinishState::Success)
                 std::filesystem::remove(recordFile.data());
@@ -131,11 +81,11 @@ namespace winrt::FastCopy::implementation
 
         LOGI(L"App started, record file: {}", recordFile.data());
 
-        window = make<CopyDialogWindow>();
-        window.Activate();
-        Global::windowEffectHelper.SetTarget(window);
+        copyDialogWindow = make<CopyDialogWindow>();
+        copyDialogWindow.Activate();
+        Global::windowEffectHelper.SetTarget(copyDialogWindow);
         Global::windowEffectHelper.SetListenThemeChange();
-        viewModel.Start();
+        viewModel->Start();
     }
 
 }

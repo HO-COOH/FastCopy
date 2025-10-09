@@ -7,7 +7,7 @@ public:
 	/**
 	 * @brief Create or opens a mutex
 	 */
-	MutexWrapper(wchar_t const* name, bool owning = true) : m_handle{ CreateMutex(nullptr, owning, name) } {}
+		MutexWrapper(wchar_t const* name, bool owning = true) : m_handle{ CreateMutex(nullptr, owning, name) } {}
 	
 	/**
 	 * @brief Try lock the mutex, returns immediately whether it's successful or not

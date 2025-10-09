@@ -113,6 +113,9 @@
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'">false</SDLCheck>
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</SDLCheck>
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</SDLCheck>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'">$(SolutionDir)Public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)Public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)Public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <PostBuildEvent>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
@@ -131,6 +134,9 @@
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Release|arm64'">false</SDLCheck>
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</SDLCheck>
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</SDLCheck>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|arm64'">$(SolutionDir)Public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)Public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)Public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -157,7 +163,9 @@
   <ItemGroup>
     <ClInclude Include="AcrylicHelper.h" />
     <ClInclude Include="AnimatedValue.h" />
+    <ClInclude Include="AppLaunchMode.h" />
     <ClInclude Include="CommandLine.h" />
+    <ClInclude Include="CommandLineHandler.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="CopyDialog.h">
       <DependentUpon>CopyDialog.xaml</DependentUpon>
@@ -186,6 +194,7 @@
     </ClInclude>
     <ClInclude Include="Fallback.h" />
     <ClInclude Include="FastCopyCommandParser.h" />
+    <ClInclude Include="FastcopySettingsSingleInstanceLock.h" />
     <ClInclude Include="FileCompareViewModel.h">
       <DependentUpon>FileCompareViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -275,6 +284,7 @@
     <ClCompile Include="AcrylicHelper.cpp" />
     <ClCompile Include="AnimatedValue.cpp" />
     <ClCompile Include="CommandLine.cpp" />
+    <ClCompile Include="CommandLineHandler.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="CopyDialog.cpp">
       <DependentUpon>CopyDialog.xaml</DependentUpon>
@@ -303,6 +313,7 @@
     </ClCompile>
     <ClCompile Include="Fallback.cpp" />
     <ClCompile Include="FastCopyCommandParser.cpp" />
+    <ClCompile Include="FastcopySettingsSingleInstanceLock.cpp" />
     <ClCompile Include="FileCompareViewModel.cpp">
       <DependentUpon>FileCompareViewModel.idl</DependentUpon>
       <SubType>Code</SubType>

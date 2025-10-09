@@ -1,16 +1,12 @@
 #include "pch.h"
-#include "App.xaml.h"
-#include "Console.h"
+#include "CommandLineHandler.h"
 
-int __stdcall wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
+int __stdcall wWinMain(
+    _In_ HINSTANCE, 
+    _In_opt_ HINSTANCE, 
+    _In_ PWSTR cmd, 
+    _In_ int)
 {
-    Console::Create();
-    winrt::init_apartment(winrt::apartment_type::single_threaded);
-    ::winrt::Microsoft::UI::Xaml::Application::Start(
-        [](auto&&)
-        {
-            ::winrt::make<::winrt::FastCopy::implementation::App>();
-        });
-
+    CommandLineHandler{ cmd }.Run();
     return 0;
 }

@@ -140,9 +140,6 @@
     <ClInclude Include="..\Public\ShellItemArray.h">
       <Filter>COM</Filter>
     </ClInclude>
-    <ClInclude Include="COMInitializeHelper.h">
-      <Filter>COM</Filter>
-    </ClInclude>
     <ClInclude Include="FileOpenDialog.h">
       <Filter>COM</Filter>
     </ClInclude>
@@ -160,6 +157,9 @@
     </ClInclude>
     <ClInclude Include="BasicInteraction.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\COMInitializeHelper.h">
+      <Filter>COM</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

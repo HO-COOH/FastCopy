@@ -25,7 +25,7 @@ void FastCopySubCommand::callMainProgramImpl(std::wstring_view arg)
 {
     std::wstring argTransform{ arg };
     std::transform(argTransform.begin(), argTransform.end(), argTransform.begin(), [](wchar_t c) { return c == L'\\' ? L'/' : c; });
-    auto cmd = std::format(LR"(fastcopy://"{}"|{})", argTransform, Registry::Record());
+    auto cmd = std::format(LR"(fastcopy://"{}"|"{}")", argTransform, Registry::Record());
 #if (defined _DEBUG) || (defined DEBUG)
     OutputDebugString(cmd.data());
 #endif

@@ -168,6 +168,7 @@
     <ClCompile Include="XCopyTest.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Public\COMInitializeHelper.h" />
     <ClInclude Include="..\Public\ShellItem.h" />
     <ClInclude Include="..\Public\ShellItemArray.h" />
     <ClInclude Include="AllImplementations.h" />
@@ -175,7 +176,6 @@
     <ClInclude Include="BasicInteraction.h" />
     <ClInclude Include="BigFiles.h" />
     <ClInclude Include="COMApiTest.h" />
-    <ClInclude Include="COMInitializeHelper.h" />
     <ClInclude Include="CommandLineConfig.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="ConfigArchive.h" />

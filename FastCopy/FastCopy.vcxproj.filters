@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml" />
-  </ItemGroup>
-  <ItemGroup>
     <Page Include="CopyDialog.xaml">
       <Filter>Views</Filter>
     </Page>
@@ -67,9 +64,6 @@
     </ClCompile>
     <ClCompile Include="AcrylicHelper.cpp">
       <Filter>ViewHelper</Filter>
-    </ClCompile>
-    <ClCompile Include="CommandLine.cpp">
-      <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="UIThreadWrapper.cpp" />
     <ClCompile Include="ProcessIoCounter.cpp">
@@ -139,6 +133,15 @@
     <ClCompile Include="NewFile.cpp">
       <Filter>Utils\Robocopy\Output</Filter>
     </ClCompile>
+    <ClCompile Include="CommandLineHandler.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandLine.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="FastcopySettingsSingleInstanceLock.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -156,9 +159,6 @@
     </ClInclude>
     <ClInclude Include="PropertyChangeHelper.hpp">
       <Filter>ViewHelper</Filter>
-    </ClInclude>
-    <ClInclude Include="CommandLine.h">
-      <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
     <ClInclude Include="ProcessIOUpdater.hpp">
@@ -243,6 +243,18 @@
     </ClInclude>
     <ClInclude Include="NewFile.h">
       <Filter>Utils\Robocopy\Output</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandLineHandler.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandLine.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="AppLaunchMode.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="FastcopySettingsSingleInstanceLock.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -476,6 +488,9 @@
     <Filter Include="Utils\Robocopy\Output">
       <UniqueIdentifier>{eb744bf1-a4fa-46c6-9fb6-d8209beb2719}</UniqueIdentifier>
     </Filter>
+    <Filter Include="App">
+      <UniqueIdentifier>{e382f58c-73f0-4c1e-994a-237437d1232b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="app.manifest" />
@@ -496,5 +511,10 @@
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Filter>App</Filter>
+    </ApplicationDefinition>
   </ItemGroup>
 </Project>
