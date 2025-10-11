@@ -18,6 +18,7 @@
     <StackPanel Margin="20">
         <StackPanel.Resources>
             <ResourceDictionary>
+                <essential:ModernStandardWindowContextMenu x:Name="WindowContextMenu" Window="{x:Bind}" />
                 <!--  Glyphs  -->
                 <x:String x:Key="NotificationGlyph">&#xE7E7;</x:String>
                 <x:String x:Key="MultipleWindowGlyph">&#xF7ED;</x:String>

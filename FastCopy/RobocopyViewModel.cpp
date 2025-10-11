@@ -109,16 +109,21 @@ namespace winrt::FastCopy::implementation
 		if (!m_recordFile.has_value() || !m_countItemTask.is_done())
 			return 0;
 
-		//auto const numFiles = m_recordFile->GetNumFiles();
-		//if (numFiles == 0)
-		//	return 0;
-		//
+		double percent{};
+		if (m_totalSize)
+		{
+			percent = (
+				static_cast<double>(m_copiedBytes) + 
+				std::accumulate(m_perProcessCopiedBytes.begin(), m_perProcessCopiedBytes.end(), 0ull)
+			) * 100.0 / m_totalSize;
+		}
+		else
+		{
+			//Sometimes all files are 0 bytes, we use file count as percent
+			percent = m_finishedFiles / ItemCount();
+		}
 
-		//auto const result = min(100.0, static_cast<float>(m_finishedFiles) / numFiles * 100.0);
-		//Taskbar::SetProgressValue(Global::MainHwnd, std::clamp<int>(result, 1, 100));
-		//return result;
 
-		auto const percent = (static_cast<double>(m_copiedBytes) + std::accumulate(m_perProcessCopiedBytes.begin(), m_perProcessCopiedBytes.end(), 0ull)) * 100.0 / m_totalSize;
 		Taskbar::SetProgressValue(Global::MainHwnd, std::clamp<int>(percent, 1, 100));
 		return percent;
 	}
@@ -131,7 +136,7 @@ namespace winrt::FastCopy::implementation
 		if (!m_recordFile)
 			co_return;
 		co_await m_countItemTask;
-		ProcessIOUpdater::Start(std::chrono::milliseconds{ 100 });
+		ProcessIOUpdater::Start(std::chrono::milliseconds{ 100 }, Global::UIThread.m_queue);
 		m_status = Status::Running; 
 		concurrency::create_task([this]
 		{
@@ -150,29 +155,37 @@ namespace winrt::FastCopy::implementation
 				{
 					auto currentIndex = m_process.size();
 					m_perProcessCopiedBytes.emplace_back();
+					m_currentFile.emplace_back();
 					m_process.emplace_back(std::make_unique<RobocopyProcess>(getRobocopyArg(),
 						/*onProgress*/
 						[this, currentItemSize, currentIndex](float progress)
 						{
 							m_perProcessCopiedBytes[currentIndex] = currentItemSize * progress / 100.f;
-							if (progress == 100.f)
+							//if (progress == 100.f)
+							//{
+
+							//}
+							raiseProgressChange();
+						},
+						/*onNewFile*/
+						[this, currentItemSize, currentIndex](NewFile&& newFile)
+						{
+							if (m_currentFile[currentIndex] != newFile)
 							{
+								m_currentFile[currentIndex] = std::move(newFile);
 								++m_finishedFiles;
 								m_copiedBytes += m_perProcessCopiedBytes[currentIndex];
 								m_perProcessCopiedBytes[currentIndex] = 0;
 								if (m_finishedFiles == ItemCount())
 									onNormalRobocopyFinished();
+								raiseProgressChange();
 							}
-							raiseProgressChange();
-						},
-						/*onNewFile*/
-						[&](auto&&)
-						{
-							//currentItemSize = current;
-
 						},
 						/*onNewFolder*/
-						[](auto&&){},
+						[this, currentIndex](auto&&)
+						{
+							m_currentFile[currentIndex].Clear();
+						},
 						/*onProcessExit*/
 						[this] 
 						{
@@ -220,18 +233,8 @@ namespace winrt::FastCopy::implementation
 	void RobocopyViewModel::OnUpdateCopySpeed(ProcessIoCounter::IOCounterDiff diff)
 	{
 		m_bytesPerSec = ReadableUnitConverter::Speed::BytesPerSec(diff.read, diff.duration);
-		//m_copiedBytes += GetTotal().read;
-		Global::UIThread.TryEnqueue([weakThis = get_weak()] {
-			try
-			{
-				if (auto strongThis = weakThis.get())
-				{
-					strongThis->raisePropertyChange(L"SpeedText");
-					strongThis->raisePropertyChange(L"Speed");
-				}
-			}
-			catch (...) {}
-		});
+		raisePropertyChange(L"SpeedText");
+		raisePropertyChange(L"Speed");
 	}
 	winrt::Windows::Foundation::IReference<bool> RobocopyViewModel::UseSource()
 	{
@@ -366,9 +369,11 @@ namespace winrt::FastCopy::implementation
 		std::filesystem::path sourcePath{ **m_iter };
 		std::filesystem::path destinationPath{ m_destination.data() };
 		auto const fileName = sourcePath.filename().wstring();
-		return 
-			!std::filesystem::exists(destinationPath / fileName)   //destination does not contain the same file name
-			|| sourcePath.parent_path() == destinationPath;		   //they are under the same path
+		if (std::filesystem::is_directory(sourcePath))
+			return true;
+
+		return
+			!std::filesystem::exists(destinationPath / fileName);   //destination does not contain the same file name
 	}
 	bool RobocopyViewModel::canUseShellCopy() const
 	{

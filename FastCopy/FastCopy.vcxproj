@@ -193,7 +193,6 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="Fallback.h" />
-    <ClInclude Include="FastCopyCommandParser.h" />
     <ClInclude Include="FastcopySettingsSingleInstanceLock.h" />
     <ClInclude Include="FileCompareViewModel.h">
       <DependentUpon>FileCompareViewModel.idl</DependentUpon>
@@ -207,7 +206,6 @@
     <ClInclude Include="FileTime.h" />
     <ClInclude Include="FileWrapper.h" />
     <ClInclude Include="Global.h" />
-    <ClInclude Include="HandleWrapper.hpp" />
     <ClInclude Include="ImageUtils.h" />
     <ClInclude Include="MutexWrapper.h" />
     <ClInclude Include="NewFile.h" />
@@ -260,7 +258,6 @@
       <DependentUpon>TilesControl.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="UIDispatcher.h" />
     <ClInclude Include="UIThreadWrapper.h" />
     <ClInclude Include="ViewModelLocator.h" />
     <ClInclude Include="WindowHelper.h" />
@@ -312,7 +309,6 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Fallback.cpp" />
-    <ClCompile Include="FastCopyCommandParser.cpp" />
     <ClCompile Include="FastcopySettingsSingleInstanceLock.cpp" />
     <ClCompile Include="FileCompareViewModel.cpp">
       <DependentUpon>FileCompareViewModel.idl</DependentUpon>

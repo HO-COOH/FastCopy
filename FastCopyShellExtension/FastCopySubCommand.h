@@ -15,7 +15,7 @@ class FastCopySubCommand final :
     IShellItem* m_parent{};
 
     void recordFilesImpl(IShellItemArray* selection);
-    void callMainProgramImpl(std::wstring_view arg);
+    static void callMainProgramImpl(std::wstring_view arg);
 public:
     FastCopySubCommand(CopyOperation op);
 

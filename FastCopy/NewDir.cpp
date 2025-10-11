@@ -5,9 +5,13 @@
 
 NewDir::NewDir(std::string_view data)
 {
-	std::vector<std::string> splited = absl::StrSplit(data, "\t");
-	assert(splited.size() == 3);
+	std::vector<std::string> splited = absl::StrSplit(data, absl::ByAnyChar{" \t"}, absl::SkipEmpty{});
+	assert(splited[0] == "New" && splited[1] == "Dir");
 
-	count = std::stoi(splited[1]);
-	fullPath = std::move(splited[2]);
+	count = std::stoi(splited[2]);
+
+	for (auto i = 3; i < splited.size(); ++i)
+		splited[3].append(std::move(splited[i]));
+
+	fullPath = std::move(splited[3]);
 }

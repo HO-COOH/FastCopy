@@ -1,5 +1,5 @@
 #pragma once
-#include <winrt/Windows.System.Threading.h>
+#include <winrt/Microsoft.UI.Dispatching.h>
 #include "ProcessIoCounter.h"
 
 template<typename Self>
@@ -11,7 +11,7 @@ class ProcessIOUpdater
 	}
 
 	ProcessIoCounter m_counter;
-	winrt::Windows::System::Threading::ThreadPoolTimer m_timer{ nullptr };
+	winrt::Microsoft::UI::Dispatching::DispatcherQueueTimer m_timer{ nullptr };
 public:
 	void SetHandle(HANDLE handle)
 	{
@@ -19,19 +19,21 @@ public:
 	}
 
 	template<typename Duration>
-	void Start(Duration duration)
+	void Start(Duration duration, winrt::Microsoft::UI::Dispatching::DispatcherQueue const& dispatcherQueue)
 	{
-		m_timer = winrt::Windows::System::Threading::ThreadPoolTimer::CreatePeriodicTimer(
-			[this](auto)
+		m_timer = dispatcherQueue.CreateTimer();
+		m_timer.Interval(duration);
+		m_timer.Tick(
+			[this](auto&&...)
 			{
 				getSelf().OnUpdateCopySpeed(m_counter.Update());
-			}, duration
+			}
 		);
 	}
 
 	void Stop()
 	{
-		m_timer.Cancel();
+		m_timer.Stop();
 	}
 
 	~ProcessIOUpdater()

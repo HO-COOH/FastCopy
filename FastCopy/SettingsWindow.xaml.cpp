@@ -5,17 +5,9 @@
 #endif
 
 #include "ViewModelLocator.h"
-#include "UIDispatcher.h"
-
 
 namespace winrt::FastCopy::implementation
 {
-    SettingsWindow::SettingsWindow()
-    {
-        UIDispatcher::g_dispatcher = DispatcherQueue();
-        UIDispatcher::g_mainWindow = *this;
-    }
-
     winrt::FastCopy::SettingsViewModel SettingsWindow::ViewModel()
     {
         return ViewModelLocator::GetInstance().SettingsViewModel();

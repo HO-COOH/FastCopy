@@ -4,10 +4,10 @@
 #include <functional>
 class UIThreadWrapper
 {
-	winrt::Microsoft::UI::Dispatching::DispatcherQueue m_queue{ nullptr };
 	std::queue<std::function<void()>> m_tasks;
 public:
-
+	winrt::Microsoft::UI::Dispatching::DispatcherQueue m_queue{ nullptr };
+	
 	UIThreadWrapper& operator=(winrt::Microsoft::UI::Dispatching::DispatcherQueue const& queue);
 
 	template<typename Func>

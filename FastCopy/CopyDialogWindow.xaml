@@ -12,6 +12,9 @@
     mc:Ignorable="d">
 
     <Grid>
+        <Grid.Resources>
+            <essential:ModernStandardWindowContextMenu x:Name="WindowContextMenu" Window="{x:Bind}" />
+        </Grid.Resources>
         <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind}" />
         <local:CopyDialog x:Name="CopyDialog" />
     </Grid>

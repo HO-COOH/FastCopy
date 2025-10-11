@@ -10,3 +10,9 @@ NewFile::NewFile(std::string_view data)
 	bytes = std::stoull(split[1]);
 	name = std::move(split[2]);
 }
+
+void NewFile::Clear() noexcept
+{
+	bytes = {};
+	name.clear();
+}

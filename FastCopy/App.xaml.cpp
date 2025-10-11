@@ -7,11 +7,9 @@
 #include "CopyDialogWindow.xaml.h"
 #include "SettingsWindow.xaml.h"
 #include "ViewModelLocator.h"
-#include "FastCopyCommandParser.h"
 #include <winrt/Windows.ApplicationModel.DataTransfer.h>
 #include "CommandLine.h"
 #include "DebugLogger.h"
-#include <winrt/Microsoft.Windows.AppLifecycle.h>
 #include <winrt/Windows.System.h>
 #include <filesystem>
 #include "Global.h"

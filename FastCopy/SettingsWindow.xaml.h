@@ -6,7 +6,7 @@ namespace winrt::FastCopy::implementation
 {
     struct SettingsWindow : SettingsWindowT<SettingsWindow>
     {
-        SettingsWindow();
+        SettingsWindow() = default;
 
         winrt::FastCopy::SettingsViewModel ViewModel();
     };

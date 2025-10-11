@@ -56,9 +56,6 @@
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
-    <ClCompile Include="FastCopyCommandParser.cpp">
-      <Filter>ViewModel</Filter>
-    </ClCompile>
     <ClCompile Include="ViewModelLocator.cpp">
       <Filter>ViewModel</Filter>
     </ClCompile>
@@ -105,9 +102,6 @@
     <ClCompile Include="AnimatedValue.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="MutexWrapper.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
     <ClCompile Include="ResourceHelper.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
@@ -140,21 +134,18 @@
       <Filter>App</Filter>
     </ClCompile>
     <ClCompile Include="FastcopySettingsSingleInstanceLock.cpp">
-      <Filter>Utils</Filter>
+      <Filter>Utils\Mutex</Filter>
+    </ClCompile>
+    <ClCompile Include="MutexWrapper.cpp">
+      <Filter>Utils\Mutex</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="FastCopyCommandParser.h">
-      <Filter>ViewModel</Filter>
-    </ClInclude>
     <ClInclude Include="ViewModelLocator.h">
       <Filter>ViewModel</Filter>
     </ClInclude>
     <ClInclude Include="AcrylicHelper.h">
-      <Filter>ViewHelper</Filter>
-    </ClInclude>
-    <ClInclude Include="UIDispatcher.h">
       <Filter>ViewHelper</Filter>
     </ClInclude>
     <ClInclude Include="PropertyChangeHelper.hpp">
@@ -211,9 +202,6 @@
     <ClInclude Include="AnimatedValue.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="MutexWrapper.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="ResourceHelper.h">
       <Filter>Utils</Filter>
     </ClInclude>
@@ -221,9 +209,6 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="ImageUtils.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="HandleWrapper.hpp">
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="FileContextMenu.h">
@@ -254,7 +239,10 @@
       <Filter>App</Filter>
     </ClInclude>
     <ClInclude Include="FastcopySettingsSingleInstanceLock.h">
-      <Filter>Utils</Filter>
+      <Filter>Utils\Mutex</Filter>
+    </ClInclude>
+    <ClInclude Include="MutexWrapper.h">
+      <Filter>Utils\Mutex</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -490,6 +478,9 @@
     </Filter>
     <Filter Include="App">
       <UniqueIdentifier>{e382f58c-73f0-4c1e-994a-237437d1232b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\Mutex">
+      <UniqueIdentifier>{3a953c3c-00e5-4f38-8159-d45a839b023a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

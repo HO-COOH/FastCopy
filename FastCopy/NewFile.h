@@ -12,5 +12,8 @@ struct NewFile
 	uint64_t bytes;
 	std::string name;
 
+	NewFile() = default;
 	NewFile(std::string_view data);
+	auto operator<=>(NewFile const&) const noexcept = default;
+	void Clear() noexcept;
 };

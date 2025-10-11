@@ -29,7 +29,10 @@ winrt::hstring Command::GetDestination()
 {
     constexpr static std::wstring_view protocol = L"fastcopy://";
     
-    return winrt::hstring{ m_args[0].substr(protocol.size(), m_args[0].find(L"|") - protocol.size()) };
+    auto destination = m_args[0].substr(protocol.size(), m_args[0].find(L"|") - protocol.size());
+    bool const isQuoted = destination.starts_with(L"\"");
+    assert(isQuoted && destination.ends_with(L"\""));
+    return winrt::hstring{ isQuoted ? destination.substr(1, destination.size() - 2) : std::move(destination) };
 
 }
 
