@@ -121,9 +121,6 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="NewDir.cpp">
-      <Filter>Utils\Robocopy\Output</Filter>
-    </ClCompile>
     <ClCompile Include="NewFile.cpp">
       <Filter>Utils\Robocopy\Output</Filter>
     </ClCompile>
@@ -243,6 +240,18 @@
     </ClInclude>
     <ClInclude Include="MutexWrapper.h">
       <Filter>Utils\Mutex</Filter>
+    </ClInclude>
+    <ClInclude Include="Same.h">
+      <Filter>Utils\Robocopy\Output</Filter>
+    </ClInclude>
+    <ClInclude Include="Conflict.h">
+      <Filter>Utils\Robocopy\Output</Filter>
+    </ClInclude>
+    <ClInclude Include="OutputRegexParseBase.hpp">
+      <Filter>Utils\Robocopy\Output</Filter>
+    </ClInclude>
+    <ClInclude Include="ExistingDir.h">
+      <Filter>Utils\Robocopy\Output</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -155,7 +155,8 @@ namespace winrt::FastCopy::implementation
 				{
 					auto currentIndex = m_process.size();
 					m_perProcessCopiedBytes.emplace_back();
-					m_currentFile.emplace_back();
+					m_perProcessCurrentFile.emplace_back();
+					m_perProcessCurrentDir.emplace_back();
 					m_process.emplace_back(std::make_unique<RobocopyProcess>(getRobocopyArg(),
 						/*onProgress*/
 						[this, currentItemSize, currentIndex](float progress)
@@ -170,9 +171,9 @@ namespace winrt::FastCopy::implementation
 						/*onNewFile*/
 						[this, currentItemSize, currentIndex](NewFile&& newFile)
 						{
-							if (m_currentFile[currentIndex] != newFile)
+							if (m_perProcessCurrentFile[currentIndex] != newFile)
 							{
-								m_currentFile[currentIndex] = std::move(newFile);
+								m_perProcessCurrentFile[currentIndex] = std::move(newFile);
 								++m_finishedFiles;
 								m_copiedBytes += m_perProcessCopiedBytes[currentIndex];
 								m_perProcessCopiedBytes[currentIndex] = 0;
@@ -182,9 +183,39 @@ namespace winrt::FastCopy::implementation
 							}
 						},
 						/*onNewFolder*/
-						[this, currentIndex](auto&&)
+						[this, currentIndex](NewDir&& newDir)
 						{
-							m_currentFile[currentIndex].Clear();
+							m_perProcessCurrentFile[currentIndex].Clear();
+							m_perProcessCurrentDir[currentIndex] = std::move(newDir);
+						},
+						/*on same*/
+						[this, currentIndex](Same&& sameFile)
+						{
+							++m_finishedFiles;
+							m_copiedBytes += sameFile.bytes;
+							m_perProcessCopiedBytes[currentIndex] = 0;
+							if (m_finishedFiles == ItemCount())
+								onNormalRobocopyFinished();
+							raiseProgressChange();
+						},
+						/*on different*/
+						[this, currentIndex, currentSource = **m_iter](Conflict&& conflict)
+						{
+							auto const currentItemSize = conflict.bytes;
+							Global::UIThread.TryEnqueue([this, conflict = std::move(conflict), currentDestinationFolder = m_perProcessCurrentDir[currentIndex].fullPath, currentSource = std::move(currentSource)] {
+								m_duplicateFiles.Append({
+									(std::filesystem::path{currentSource} / conflict.name).wstring(),
+									(std::filesystem::path{currentDestinationFolder} / conflict.name).wstring()
+								});
+							});
+							m_hasDuplicates = true;
+							m_copiedBytes += currentItemSize;
+						},
+						/*onExistingDir*/
+						[this, currentIndex](ExistingDir&& existingDir)
+						{
+							m_perProcessCurrentDir[currentIndex].count = existingDir.count;
+							m_perProcessCurrentDir[currentIndex].fullPath = std::move(existingDir.name);
 						},
 						/*onProcessExit*/
 						[this] 
@@ -351,7 +382,10 @@ namespace winrt::FastCopy::implementation
 			.V(true)
 			.NJS(true)
 			.NJH(true)
-			.BYTES(true);
+			.BYTES(true)
+			.XC(true)  //exclude size different
+			.XN(true)  //exclude newer
+			.XO(true);	//exclude older
 		if (!isDirectory)
 		{
 			auto sourceFileName = source.filename().string();

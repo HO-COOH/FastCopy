@@ -7,6 +7,9 @@
 #include "RobocopyArgs.h"
 #include "NewFile.h"
 #include "NewDir.h"
+#include "Same.h"
+#include "Conflict.h"
+#include "ExistingDir.h"
 #include <iostream>
 
 //Forward declaration
@@ -29,7 +32,7 @@ class RobocopyProcess
 
 	static void runContext();
 public:
-	RobocopyProcess(RobocopyArgsBuilder const& builder, auto onProgress, auto onNewFile, auto onNewFolder, auto onProcessExit) :
+	RobocopyProcess(RobocopyArgsBuilder const& builder, auto onProgress, auto onNewFile, auto onNewFolder, auto onSame, auto onConfict, auto onExistingDir, auto onProcessExit) :
 		m_child
 		{
 			boost::process::cmd(boost::process::search_path("robocopy.exe").string() + " " + builder.Build()),
@@ -39,12 +42,23 @@ public:
 		runContext();
 
 		static std::regex Progress{ "^[0-9]+[.]?[0-9]*%" };
-		boost::asio::co_spawn(ios, [this, onProgress = std::move(onProgress), onNewFile = std::move(onNewFile), onNewFolder = std::move(onNewFolder), onProcessExit = std::move(onProcessExit)]()->boost::asio::awaitable<void>
+		boost::asio::co_spawn(ios, [this, 
+			onProgress = std::move(onProgress), 
+			onNewFile = std::move(onNewFile), 
+			onNewFolder = std::move(onNewFolder), 
+			onSame = std::move(onSame), 
+			onConflict = std::move(onConfict),
+			onExistingDir = std::move(onExistingDir),
+			onProcessExit = std::move(onProcessExit)
+		]()->boost::asio::awaitable<void>
 		{
 			auto onProgressCopy = std::move(onProgress);
 			auto onNewFileCopy = std::move(onNewFile);
 			auto onNewFolderCopy = std::move(onNewFolder);
 			auto onProcessExitCopy = std::move(onProcessExit);
+			auto onSameCopy = std::move(onSame);
+			auto onConflictCopy = std::move(onConflict);
+			auto onExistingDirCopy = std::move(onExistingDir);
 			auto thisCopy = this;
 
 			std::vector<char> outBuf(k_OutBufferSize);           // that worked well for my decoding app.
@@ -62,15 +76,35 @@ public:
 					{
 						if (data.starts_with(NewFile::Prefix))
 						{
-							onNewFileCopy(NewFile{data});
+							if (auto newFile = NewFile::TryParse(data))
+								onNewFileCopy(std::move(*newFile));
 						}
 						else if (data.starts_with(NewDir::Prefix))
 						{
-							onNewFolderCopy(NewDir{ data });
+							if (auto newDir = NewDir::TryParse(data))
+								onNewFolderCopy(std::move(*newDir));
+						}
+						else if (data.starts_with(Same::Prefix))
+						{
+							if (auto same = Same::TryParse(data))
+								onSameCopy(std::move(*same));
+						}
+						else if (std::ranges::any_of(Conflict::Prefix, [&data](auto prefix) {return data.starts_with(prefix); }))
+						{
+							if(auto conflict = Conflict::TryParse(data))
+								onConflict(std::move(*conflict));
+						}
+						else if (auto existingDir = ExistingDir::TryParse(data))
+						{
+							onExistingDirCopy(std::move(*existingDir));
 						}
 						else if (std::regex_match(data.data(), data.data() + data.size(), Progress))
 						{
 							onProgressCopy(std::strtof(data.data(), nullptr));
+						}
+						else
+						{
+							auto str = data;
 						}
 					}
 					buf.consume(n);

@@ -66,7 +66,8 @@ namespace winrt::FastCopy::implementation
         winrt::event<winrt::Windows::Foundation::EventHandler<winrt::FastCopy::FinishState>> m_finishEvent;
         std::vector<std::unique_ptr<RobocopyProcess>> m_process; 
         std::vector<uint64_t> m_perProcessCopiedBytes;
-        std::vector<NewFile> m_currentFile;
+        std::vector<NewFile> m_perProcessCurrentFile;
+        std::vector<NewDir> m_perProcessCurrentDir;
 
         winrt::hstring m_destination;
         uint64_t m_copiedBytes{};
