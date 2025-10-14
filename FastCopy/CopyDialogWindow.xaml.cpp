@@ -10,25 +10,17 @@
 #include "WindowHelper.h"
 #include "Global.h"
 #include "Taskbar.h"
-#include <winrt/Windows.Graphics.h>
-#include <winrt/Microsoft.UI.Xaml.Media.Animation.h>
 #include "ViewModelLocator.h"
 
-using namespace winrt;
-using namespace Microsoft::UI::Xaml;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace winrt::FastCopy::implementation
 {
-    CopyDialogWindow::CopyDialogWindow()
+    CopyDialogWindow::CopyDialogWindow() : AnimatedWindowSize{GetHwnd(*this)}
     {
         CenterWindow(*this, m_currentSize);
         ExtendsContentIntoTitleBar(true);
         Global::UIThread = DispatcherQueue();
         Taskbar::SetProgressState(Global::MainHwnd, Taskbar::ProgressState::Indeterminate);
-
 
         ViewModelLocator::GetInstance().RobocopyViewModel().DuplicateFiles().VectorChanged(
             [this](winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::FileCompareViewModel> original, auto)
@@ -46,34 +38,6 @@ namespace winrt::FastCopy::implementation
             }
         );
         Global::copyWindow = *this;
-    }
-    void CopyDialogWindow::Resize(winrt::Windows::Graphics::SizeInt32 size)
-    {
-        playWindowAnimation(size);
-        m_currentSize = size;
-    }
-    void CopyDialogWindow::playWindowAnimation(winrt::Windows::Graphics::SizeInt32 targetSize)
-    {
-        winrt::Microsoft::UI::Xaml::Media::Animation::CircleEase f;
-        f.EasingMode(winrt::Microsoft::UI::Xaml::Media::Animation::EasingMode::EaseInOut);
-        m_heightValue
-            .From(m_currentSize.Height)
-            .To(targetSize.Height)
-            .EasingFunction(f)
-            .Duration(WindowAnimationDuration);
-        m_widthValue
-            .From(m_currentSize.Width)
-            .To(targetSize.Width)
-            .EasingFunction(f)
-            .Duration(WindowAnimationDuration);
-
-        (m_storyboardWrapper << m_heightValue << m_widthValue).Begin();
-
-        m_heightValue.OnValueChange([this](auto, double value) {
-            auto const widthValue = (int)m_widthValue;
-            if (widthValue != 0 && value != 0)
-                ResizeWindow(*this, { .Width = widthValue, .Height = (int)value });
-        });
     }
 }
 

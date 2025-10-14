@@ -9,8 +9,8 @@
 #include "Taskbar.h"
 #include "Global.h"
 #include "SettingsChangeListener.h"
-
 #include "FileContextMenu.h"
+#include "CopyDialogWindow.xaml.h"
 #pragma comment(lib, "gdiplus.lib")
 
 using namespace winrt;
@@ -129,12 +129,13 @@ namespace winrt::FastCopy::implementation
 
 	void CopyDialog::ShowGraphButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
+		auto copyWindow = winrt::get_self<CopyDialogWindow>(Global::copyWindow);
 		if (m_showSpeedGraph)
 		{
 			HideGraphAnimation().Completed([this](auto...) { UnloadObject(SpeedGraph()); });
 			HideGraphAnimation().Begin();
 			winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"HideGraph", false);
-			Global::copyWindow.Resize(m_originalWindowSize);
+			copyWindow->Resize(m_originalWindowSize);
 			ViewModel().PropertyChanged(m_speedUpdateRevoker);
 		}
 		else
@@ -151,8 +152,8 @@ namespace winrt::FastCopy::implementation
 			});
 
 			winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"ShowGraph", false);
-			m_originalWindowSize = Global::copyWindow.ActualSize();
-			Global::copyWindow.Resize({ (int)m_originalWindowSize.Width, (int)m_originalWindowSize.Height + 190 });
+			m_originalWindowSize = copyWindow->ActualSize();
+			copyWindow->Resize({ (int)m_originalWindowSize.Width, (int)m_originalWindowSize.Height + 190 });
 		}
 		m_showSpeedGraph = !m_showSpeedGraph;
 	}
@@ -162,22 +163,15 @@ namespace winrt::FastCopy::implementation
 		std::make_shared<FileContextMenu>(path)->ShowAt(flyout);
 	}
 
-}
+	void CopyDialog::MenuFlyout_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	{
+		auto menu = sender
+			.as<winrt::Microsoft::UI::Xaml::Controls::MenuFlyout>();
+		auto fileInfoViewModel = menu
+			.GetValue(winrt::FastCopy::DataInjector::DataProperty())
+			.as<winrt::FastCopy::FileInfoViewModel>();
 
+		ShowMenu(fileInfoViewModel.Path(), menu);
+	}
 
-void winrt::FastCopy::implementation::CopyDialog::CheckBox_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
-{
-	OutputDebugString(L"Checkbox clicked\n");
-}
-
-
-void winrt::FastCopy::implementation::CopyDialog::MenuFlyout_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
-{
-	auto menu = sender
-		.as<winrt::Microsoft::UI::Xaml::Controls::MenuFlyout>();
-	auto fileInfoViewModel = menu
-		.GetValue(winrt::FastCopy::DataInjector::DataProperty())
-		.as<winrt::FastCopy::FileInfoViewModel>();
-
-	ShowMenu(fileInfoViewModel.Path(), menu);
 }

@@ -10,7 +10,7 @@
 #include <shellapi.h>
 #include <atlbase.h>
 #include <ShlObj_core.h>
-
+#include <wil/com.h>
 
 namespace winrt::FastCopy::implementation
 {
@@ -55,24 +55,13 @@ namespace winrt::FastCopy::implementation
 		return image;
 	}
 
-	static std::wstring GetShellPropStringFromPath(LPCWSTR pPath, PROPERTYKEY const& key)
+	static auto GetShellPropStringFromPath(LPCWSTR pPath, PROPERTYKEY const& key)
 	{
-		try 
-		{
-			// Use CComPtr to automatically release the IShellItem2 interface when the function returns
-			// or an exception is thrown.
-			winrt::com_ptr<IShellItem2> pItem = CreateItemFromParsingName<IShellItem2>(pPath);
+		winrt::com_ptr<IShellItem2> pItem = CreateItemFromParsingName<IShellItem2>(pPath);
 
-			// Use CComHeapPtr to automatically release the string allocated by the shell when the function returns
-			// or an exception is thrown (calls CoTaskMemFree).
-			CComHeapPtr<WCHAR> pValue;
-			winrt::check_hresult(pItem->GetString(key, &pValue));
-
-			// Copy to wstring for convenience
-			return std::wstring(pValue);
-		}
-		catch (...) {}
-		return {};
+		wil::unique_cotaskmem_string pValue;
+		winrt::check_hresult(pItem->GetString(key, &pValue));
+		return pValue;
 	}
 
 	winrt::Windows::Foundation::Collections::IVector<winrt::Windows::Foundation::IInspectable> FileInfoViewModel::tooltipInfo()
@@ -85,10 +74,14 @@ namespace winrt::FastCopy::implementation
 				std::pair{L"Copyright", PKEY_Copyright } 
 			})
 		{
-			auto value = GetShellPropStringFromPath(m_path.data(), key);
-			if (value.empty())
-				continue;
-			m_tooltipInfo.push_back(winrt::box_value(winrt::FastCopy::ExtendedFileInfo{.name = name, .value = value.data()}));
+			try 
+			{
+				auto value = GetShellPropStringFromPath(m_path.data(), key);
+				if (value)
+					continue;
+				m_tooltipInfo.push_back(winrt::box_value(winrt::FastCopy::ExtendedFileInfo{ .name = name, .value = value.get() }));
+			}
+			catch(...){}
 		}
 		return winrt::single_threaded_vector(std::move(m_tooltipInfo));
 	}

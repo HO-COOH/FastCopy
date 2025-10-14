@@ -21,7 +21,7 @@ struct MonitorInfo
 /**
  * Get HWND from a xaml window
  */
-HWND GetHwnd(winrt::Microsoft::UI::Xaml::Window& window);
+HWND GetHwnd(winrt::Microsoft::UI::Xaml::Window window);
 
 /**
  * Get AppWindow from a xaml window
@@ -38,7 +38,8 @@ void MoveAndResizeWindow(winrt::Microsoft::UI::Xaml::Window window, winrt::Windo
  * Center and resize window, with dpi scaled to primary monitor
  */
 void CenterWindow(winrt::Microsoft::UI::Xaml::Window window, winrt::Windows::Graphics::SizeInt32 size);
+void CenterWindow(HWND hwnd, winrt::Windows::Graphics::SizeInt32 size);
 
 
-void ResizeWindow(winrt::Microsoft::UI::Xaml::Window window, winrt::Windows::Graphics::SizeInt32 size);
+void ResizeWindowForDpi(HWND hwnd, winrt::Windows::Graphics::SizeInt32 size, UINT dpi);
 

@@ -62,7 +62,6 @@
     <ClCompile Include="AcrylicHelper.cpp">
       <Filter>ViewHelper</Filter>
     </ClCompile>
-    <ClCompile Include="UIThreadWrapper.cpp" />
     <ClCompile Include="ProcessIoCounter.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
@@ -99,9 +98,6 @@
     <ClCompile Include="ShellCopy.cpp">
       <Filter>Utils\ShellCopy</Filter>
     </ClCompile>
-    <ClCompile Include="AnimatedValue.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
     <ClCompile Include="ResourceHelper.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
@@ -136,6 +132,18 @@
     <ClCompile Include="MutexWrapper.cpp">
       <Filter>Utils\Mutex</Filter>
     </ClCompile>
+    <ClCompile Include="StoryboardWrapper.cpp">
+      <Filter>ViewHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatedWindowSize.cpp">
+      <Filter>ViewHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatedValue.cpp">
+      <Filter>ViewHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="UIThreadWrapper.cpp">
+      <Filter>ViewHelper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -156,7 +164,6 @@
       <Filter>Converter</Filter>
     </ClInclude>
     <ClInclude Include="Global.h" />
-    <ClInclude Include="UIThreadWrapper.h" />
     <ClInclude Include="ProcessIoCounter.h">
       <Filter>Utils</Filter>
     </ClInclude>
@@ -195,9 +202,6 @@
     </ClInclude>
     <ClInclude Include="ShellCopy.h">
       <Filter>Utils\ShellCopy</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimatedValue.h">
-      <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="ResourceHelper.h">
       <Filter>Utils</Filter>
@@ -252,6 +256,18 @@
     </ClInclude>
     <ClInclude Include="ExistingDir.h">
       <Filter>Utils\Robocopy\Output</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatedWindowSize.h">
+      <Filter>ViewHelper</Filter>
+    </ClInclude>
+    <ClInclude Include="StoryboardWrapper.h">
+      <Filter>ViewHelper</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatedValue.h">
+      <Filter>ViewHelper</Filter>
+    </ClInclude>
+    <ClInclude Include="UIThreadWrapper.h">
+      <Filter>ViewHelper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

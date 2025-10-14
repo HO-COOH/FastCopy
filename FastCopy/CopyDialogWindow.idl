@@ -7,10 +7,5 @@ namespace FastCopy
     runtimeclass CopyDialogWindow : WinUI3Package.WindowEx
     {
         CopyDialogWindow();
-
-        //Size unit is before scaled to DPI
-        void Resize(Windows.Graphics.SizeInt32 size);
-
-        Windows.Graphics.SizeInt32 ActualSize{get; };
     }
 }

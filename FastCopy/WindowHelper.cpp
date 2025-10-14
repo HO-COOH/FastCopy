@@ -9,7 +9,7 @@ LONG ScaleForDpi(UINT value, UINT dpi)
     return static_cast<LONG>(value * (dpi / 96.0));
 }
 
-HWND GetHwnd(winrt::Microsoft::UI::Xaml::Window& window)
+HWND GetHwnd(winrt::Microsoft::UI::Xaml::Window window)
 {
     HWND hwnd{};
     window.as<IWindowNative>()->get_WindowHandle(&hwnd);
@@ -43,12 +43,19 @@ void CenterWindow(winrt::Microsoft::UI::Xaml::Window window, winrt::Windows::Gra
     });
 }
 
-void ResizeWindow(winrt::Microsoft::UI::Xaml::Window window, winrt::Windows::Graphics::SizeInt32 size)
+void ResizeWindowForDpi(HWND hwnd, winrt::Windows::Graphics::SizeInt32 size, UINT dpi)
 {
-    auto const dpi = GetDpiForWindow(GetHwnd(window));
     size.Height = ScaleForDpi(size.Height, dpi);
     size.Width = ScaleForDpi(size.Width, dpi);
-    GetAppWindow(window).Resize(size);
+    SetWindowPos(
+        hwnd,
+        nullptr,
+        0,
+        0,
+        size.Width,
+        size.Height,
+        SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOZORDER
+    );
 }
 
 MONITORINFO MonitorInfo::GetFromPoint(POINT p)

@@ -9,7 +9,7 @@
 inline std::wstring ToBackslash(std::wstring_view source)
 {
     std::wstring ret(source.size(), {});
-    std::transform(source.begin(), source.end(), ret.begin(), [](wchar_t c) {return c == L'/' ? L'\\' : c; });
+    std::ranges::transform(source, ret.begin(), [](wchar_t c) {return c == L'/' ? L'\\' : c; });
     return ret;
 }
 
@@ -18,6 +18,7 @@ inline std::wstring ToBackslash(std::wstring_view source)
  * @warning Throws if operation failed
  */
 template<typename ShellItemInterface = IShellItem>
+    requires std::is_same_v<ShellItemInterface, IShellItem> || std::is_same_v<ShellItemInterface, IShellItem2>
 auto CreateItemFromParsingName(wchar_t const* path)
 {
     winrt::com_ptr<ShellItemInterface> item;
