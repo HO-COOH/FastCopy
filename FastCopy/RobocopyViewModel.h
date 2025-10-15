@@ -53,13 +53,12 @@ namespace winrt::FastCopy::implementation
         void RemoveDestination() { --m_useDestinationCount; raisePropertyChange(L"UseDestination"); }
 
         void ConfirmDuplicates();
-        bool CanContinue() { return m_canContinue; }
+        bool CanContinue();
         double Speed() { return m_bytesPerSec; }
         winrt::Windows::Foundation::IAsyncOperation<uint64_t> GetTotalSize();
     private:
         double m_bytesPerSec{};
 
-        bool m_canContinue = false;
         bool m_hasDuplicates = false;
         int m_useSourceCount{};
         int m_useDestinationCount{};

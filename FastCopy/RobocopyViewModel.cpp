@@ -414,13 +414,12 @@ namespace winrt::FastCopy::implementation
 		return m_recordFile->GetOperation() == CopyOperation::Move &&
 			ShellCopy::IsInSameDiskPartition(**m_iter, m_destination);
 	}
+
 	void RobocopyViewModel::onNormalRobocopyFinished()
 	{
 		if (m_hasDuplicates)
 		{
-			m_canContinue = true;
 			Taskbar::SetProgressState(Global::MainHwnd, Taskbar::ProgressState::Paused);
-			Global::UIThread.TryEnqueue([this] {raisePropertyChange(L"CanContinue"); });
 		}
 		else
 		{

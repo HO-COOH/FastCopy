@@ -89,8 +89,15 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock Margin="0,0,10,0" Text="{x:Bind name}" />
-                <TextBlock Grid.Column="1" Text="{x:Bind value}" />
+                <TextBlock
+                    Margin="0,0,10,0"
+                    FontSize="10"
+                    FontWeight="SemiBold"
+                    Text="{x:Bind name}" />
+                <TextBlock
+                    Grid.Column="1"
+                    FontSize="10"
+                    Text="{x:Bind value}" />
             </Grid>
         </DataTemplate>
 
@@ -107,14 +114,55 @@
         <DataTemplate x:Key="FileInfoControlTemplate" x:DataType="local:FileInfoViewModel">
             <CheckBox
                 Grid.Row="1"
-                Margin="0,5,0,0"
+                Margin="0,4,0,0"
                 IsChecked="{x:Bind Selected, Mode=TwoWay}"
                 IsRightTapEnabled="True"
                 Style="{StaticResource ButtonCheckBoxStyle}">
+                <CheckBox.Resources>
+                    <ResourceDictionary>
+                        <ResourceDictionary.ThemeDictionaries>
+                            <ResourceDictionary x:Key="Default">
+                                <!--  Uncheck pointer over  -->
+                                <StaticResource x:Key="CheckBoxBackgroundUncheckedPointerOver" ResourceKey="ButtonBackground" />
+                                <StaticResource x:Key="CheckBoxBorderBrushUncheckedPointerOver" ResourceKey="ButtonBorderBrushPointerOver" />
+
+                                <!--  Checked pointer over  -->
+                                <StaticResource x:Key="CheckBoxBackgroundCheckedPointerOver" ResourceKey="ButtonBackground" />
+                                <StaticResource x:Key="CheckBoxBorderBrushCheckedPointerOver" ResourceKey="ButtonBorderBrushPointerOver" />
+
+                                <!--  Unchecked pressed  -->
+                                <StaticResource x:Key="CheckBoxBackgroundUncheckedPressed" ResourceKey="ButtonBackgroundPressed" />
+                                <StaticResource x:Key="CheckBoxBorderBrushUncheckedPressed" ResourceKey="ButtonBorderBrushPressed" />
+
+                                <!--  Checked pressed  -->
+                                <StaticResource x:Key="CheckBoxBackgroundCheckedPressed" ResourceKey="ButtonBackgroundPressed" />
+                                <StaticResource x:Key="CheckBoxBorderBrushCheckedPressed" ResourceKey="ButtonBorderBrushPressed" />
+                            </ResourceDictionary>
+
+                            <ResourceDictionary x:Key="Light">
+                                <!--  Uncheck pointer over  -->
+                                <StaticResource x:Key="CheckBoxBackgroundUncheckedPointerOver" ResourceKey="ButtonBackground" />
+                                <StaticResource x:Key="CheckBoxBorderBrushUncheckedPointerOver" ResourceKey="ButtonBorderBrushPointerOver" />
+
+                                <!--  Checked pointer over  -->
+                                <StaticResource x:Key="CheckBoxBackgroundCheckedPointerOver" ResourceKey="ButtonBackground" />
+                                <StaticResource x:Key="CheckBoxBorderBrushCheckedPointerOver" ResourceKey="ButtonBorderBrushPointerOver" />
+
+                                <!--  Unchecked pressed  -->
+                                <StaticResource x:Key="CheckBoxBackgroundUncheckedPressed" ResourceKey="ButtonBackgroundPressed" />
+                                <StaticResource x:Key="CheckBoxBorderBrushUncheckedPressed" ResourceKey="ButtonBorderBrushPressed" />
+
+                                <!--  Checked pressed  -->
+                                <StaticResource x:Key="CheckBoxBackgroundCheckedPressed" ResourceKey="ButtonBackgroundPressed" />
+                                <StaticResource x:Key="CheckBoxBorderBrushCheckedPressed" ResourceKey="ButtonBorderBrushPressed" />
+                            </ResourceDictionary>
+                        </ResourceDictionary.ThemeDictionaries>
+                    </ResourceDictionary>
+                </CheckBox.Resources>
                 <CheckBox.ContextFlyout>
                     <MenuFlyout local:DataInjector.Data="{x:Bind}" Opening="MenuFlyout_Opening" />
                 </CheckBox.ContextFlyout>
-                <StackPanel Margin="11,0,0,0" Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal">
                     <Image
                         Width="48"
                         Height="48"
@@ -126,7 +174,7 @@
                             </ToolTip>
                         </ToolTipService.ToolTip>
                     </Image>
-                    <StackPanel Margin="2,0,0,0" Orientation="Vertical">
+                    <StackPanel Orientation="Vertical">
                         <local:TilesControl>
                             <StackPanel Orientation="Horizontal" Spacing="5">
                                 <Border Background="#2cff006f" Style="{StaticResource TimeLabelBorderStyle}">
@@ -144,7 +192,7 @@
                                 <Border Background="#2c00ff30" Style="{StaticResource TimeLabelBorderStyle}">
                                     <TextBlock
                                         x:Uid="LastAccessTimeAbbreviation"
-                                        Foreground="DarkGreen"
+                                        Foreground="Green"
                                         Style="{StaticResource TimeLabelTextStyle}" />
                                 </Border>
                                 <TextBlock VerticalAlignment="Center" Text="{x:Bind LastAccessTime, Converter={StaticResource DateTimeToStringConverter}}" />
@@ -188,6 +236,7 @@
                     <ControlTemplate TargetType="CheckBox">
                         <Grid
                             x:Name="RootGrid"
+                            Padding="4,0,4,4"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
@@ -196,6 +245,9 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
+                            <Grid.BackgroundTransition>
+                                <BrushTransition />
+                            </Grid.BackgroundTransition>
                             <Grid
                                 Grid.Column="0"
                                 Width="{StaticResource CheckBoxSize}"
@@ -816,11 +868,10 @@
             x:Name="ContinueButton"
             x:Uid="ContinueButton"
             Grid.Row="5"
-            Margin="0,10,0,0"
+            Margin="0,8,-4,8"
             HorizontalAlignment="Right"
             x:Load="False"
             Click="{x:Bind ViewModel.ConfirmDuplicates}"
-            IsEnabled="{x:Bind ViewModel.CanContinue, Mode=OneWay}"
             Style="{StaticResource AccentButtonStyle}" />
 
         <VisualStateManager.VisualStateGroups>

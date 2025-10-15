@@ -7,11 +7,9 @@
 
 namespace winrt::FastCopy::implementation
 {
-    struct FileInfoViewModel : FileInfoViewModelT<FileInfoViewModel>, PropertyChangeHelper<FileInfoViewModel>
+    struct FileInfoViewModel : FileInfoViewModelT<FileInfoViewModel>
     {
-        FileInfoViewModel(winrt::hstring path) : m_fileTime{ path }, m_path { ToBackslash(path) }
-        {
-        }
+        FileInfoViewModel(winrt::hstring path, bool isSource);
 
         winrt::hstring Path() { return m_path; }
         winrt::hstring Filename();
@@ -26,15 +24,11 @@ namespace winrt::FastCopy::implementation
 
         winrt::Microsoft::UI::Xaml::Media::ImageSource Bitmap();
 
-        winrt::event_token SelectionChanged(winrt::Windows::Foundation::EventHandler<bool> const& handler) { return m_selectionChanged.add(handler); }
-        void SelectionChanged(winrt::event_token const& token) { m_selectionChanged.remove(token); }
-
         winrt::Windows::Foundation::Collections::IVector<winrt::Windows::Foundation::IInspectable> tooltipInfo();
     private:
         WinRTFileTime m_fileTime;
-        std::vector<winrt::Windows::Foundation::IInspectable> m_tooltipInfo;
-        winrt::event<Windows::Foundation::EventHandler<bool>> m_selectionChanged;
         winrt::hstring m_path;
+        bool const m_isSource;
         bool m_selected = false;
     };
 }

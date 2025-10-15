@@ -12,7 +12,6 @@ namespace winrt::FastCopy::implementation
         winrt::FastCopy::FileInfoViewModel File1() { return m_file1; }
         winrt::FastCopy::FileInfoViewModel File2() { return m_file2; }
     private:
-        void setRobocopyViewModelDuplicateSelection(bool isFile1, bool isSelected);
         winrt::FastCopy::FileInfoViewModel m_file1;
         winrt::FastCopy::FileInfoViewModel m_file2;
     };

@@ -11,14 +11,19 @@
 #include <atlbase.h>
 #include <ShlObj_core.h>
 #include <wil/com.h>
+#include "ViewModelLocator.h"
+#include "RobocopyViewModel.h"
 
 namespace winrt::FastCopy::implementation
 {
+	FileInfoViewModel::FileInfoViewModel(winrt::hstring path, bool isSource) : m_fileTime{ path }, m_path{ ToBackslash(path) }, m_isSource{ isSource }
+	{
+	}
+
     winrt::hstring FileInfoViewModel::Filename()
     {
 		return std::filesystem::path{ m_path.data()}.filename().wstring().data();
     }
-
 
     uint64_t FileInfoViewModel::Bytes()
     {
@@ -27,12 +32,19 @@ namespace winrt::FastCopy::implementation
 
     void FileInfoViewModel::Selected(bool value)
     {
-		if (value != m_selected)
-		{
-			m_selected = value;
-			raisePropertyChange(L"Selected");
-			m_selectionChanged(*this, value);
-		}
+		m_selected = value;
+		auto robocopyViewModelImpl = winrt::get_self<RobocopyViewModel>(ViewModelLocator::GetInstance().RobocopyViewModel());
+		value?
+			(
+				m_isSource? 
+					robocopyViewModelImpl->AddSource() :
+					robocopyViewModelImpl->AddDestination()
+			) :
+			(
+				m_isSource?
+					robocopyViewModelImpl->RemoveSource() :
+					robocopyViewModelImpl->RemoveDestination()
+			);
     }
 
 	winrt::Microsoft::UI::Xaml::Media::ImageSource FileInfoViewModel::Bitmap()
@@ -66,6 +78,7 @@ namespace winrt::FastCopy::implementation
 
 	winrt::Windows::Foundation::Collections::IVector<winrt::Windows::Foundation::IInspectable> FileInfoViewModel::tooltipInfo()
 	{
+		std::vector<winrt::Windows::Foundation::IInspectable> m_tooltipInfo;
 		for (auto&& [name, key] : 
 			{
 				std::pair{L"FileDescription", PKEY_FileDescription},
