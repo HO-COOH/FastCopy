@@ -29,6 +29,7 @@ public:
 				getSelf().OnUpdateCopySpeed(m_counter.Update());
 			}
 		);
+		m_timer.Start();
 	}
 
 	void Stop()

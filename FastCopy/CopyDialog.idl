@@ -7,6 +7,5 @@ namespace FastCopy
     {
         CopyDialog();
         RobocopyViewModel ViewModel{ get; };
-        WinUI3Package.ProgressBarEx ProgressBar{ get; };
     }
 }

@@ -6,3 +6,8 @@ void NewFile::Clear() noexcept
 	bytes = {};
 	name.clear();
 }
+
+NewFile::operator bool() const
+{
+	return bytes && !name.empty();
+}

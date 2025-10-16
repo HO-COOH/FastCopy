@@ -17,6 +17,7 @@
 #include "ResourceHelper.h"
 #include <pplawait.h>
 #include <numeric>
+#include "FileInfoViewModel.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -114,17 +115,22 @@ namespace winrt::FastCopy::implementation
 		{
 			percent = (
 				static_cast<double>(m_copiedBytes) + 
-				std::accumulate(m_perProcessCopiedBytes.begin(), m_perProcessCopiedBytes.end(), 0ull)
-			) * 100.0 / m_totalSize;
+				std::accumulate(m_perProcessStatus.begin(), m_perProcessStatus.end(), 0ull, [](uint64_t sum, RobocopyProcessStatus const& status) {
+					return sum + status.m_copiedBytes;
+				})
+			) / m_totalSize;
 		}
 		else
 		{
 			//Sometimes all files are 0 bytes, we use file count as percent
-			percent = m_finishedFiles / ItemCount();
+			percent = static_cast<double>(m_finishedFiles) / ItemCount();
 		}
 
-
-		Taskbar::SetProgressValue(Global::MainHwnd, std::clamp<int>(percent, 1, 100));
+		//if (percent > 1.0)
+		//{
+		//	OutputDebugString(L"Warning");
+		//}
+		Taskbar::SetProgressValue(Global::MainHwnd, std::clamp<int>(percent * 100, 1, 100));
 		return percent;
 	}
 	winrt::hstring RobocopyViewModel::SpeedText()
@@ -143,10 +149,10 @@ namespace winrt::FastCopy::implementation
 			m_countItemTask.get();
 			while (*m_iter != m_recordFile->end() && m_status == Status::Running)
 			{
-				auto currentItemSize = TaskFile::GetSizeOfPath(**m_iter);
 				Global::UIThread.TryEnqueue([this] {raisePropertyChange(L"Source"); });
 				if (canUseShellCopy())
 				{
+					auto currentItemSize = TaskFile::GetSizeOfPath(**m_iter);
 					ShellCopy::Move(**m_iter, m_destination);
 					m_finishedFiles += m_recordFile->GetNumFiles(m_recordFile->IndexOf(*m_iter));
 					m_copiedBytes += currentItemSize;
@@ -154,46 +160,43 @@ namespace winrt::FastCopy::implementation
 				else if (canUseRobocopy())
 				{
 					auto currentIndex = m_process.size();
-					m_perProcessCopiedBytes.emplace_back();
-					m_perProcessCurrentFile.emplace_back();
-					m_perProcessCurrentDir.emplace_back();
-					m_process.emplace_back(std::make_unique<RobocopyProcess>(getRobocopyArg(),
+					m_process.emplace_back(std::make_unique<RobocopyProcess>(m_perProcessStatus, getRobocopyArg(),
 						/*onProgress*/
-						[this, currentItemSize, currentIndex](float progress)
+						[this, currentIndex](float progress)
 						{
-							m_perProcessCopiedBytes[currentIndex] = currentItemSize * progress / 100.f;
-							//if (progress == 100.f)
-							//{
-
-							//}
+							m_perProcessStatus[currentIndex].m_copiedBytes = m_perProcessStatus[currentIndex].m_currentFile.bytes * progress / 100.f;
 							raiseProgressChange();
 						},
 						/*onNewFile*/
-						[this, currentItemSize, currentIndex](NewFile&& newFile)
+						[this, currentIndex](NewFile&& newFile)
 						{
-							if (m_perProcessCurrentFile[currentIndex] != newFile)
-							{
-								m_perProcessCurrentFile[currentIndex] = std::move(newFile);
-								++m_finishedFiles;
-								m_copiedBytes += m_perProcessCopiedBytes[currentIndex];
-								m_perProcessCopiedBytes[currentIndex] = 0;
-								if (m_finishedFiles == ItemCount())
-									onNormalRobocopyFinished();
-								raiseProgressChange();
-							}
+							if (m_perProcessStatus[currentIndex].m_currentFile == newFile)
+								return;
+
+							auto const previousFileEmpty = static_cast<bool>(m_perProcessStatus[currentIndex].m_currentFile);
+							m_perProcessStatus[currentIndex].m_currentFile = std::move(newFile);
+							
+							if (!previousFileEmpty)
+								return;
+
+							++m_finishedFiles;
+							m_copiedBytes += std::exchange(m_perProcessStatus[currentIndex].m_copiedBytes, 0);
+							if (m_finishedFiles == ItemCount())
+								onNormalRobocopyFinished();
+							raiseProgressChange();
 						},
 						/*onNewFolder*/
 						[this, currentIndex](NewDir&& newDir)
 						{
-							m_perProcessCurrentFile[currentIndex].Clear();
-							m_perProcessCurrentDir[currentIndex] = std::move(newDir);
+							m_perProcessStatus[currentIndex].m_currentFile.Clear();
+							m_perProcessStatus[currentIndex].m_currentDir = std::move(newDir);
 						},
 						/*on same*/
 						[this, currentIndex](Same&& sameFile)
 						{
 							++m_finishedFiles;
 							m_copiedBytes += sameFile.bytes;
-							m_perProcessCopiedBytes[currentIndex] = 0;
+							m_perProcessStatus[currentIndex].m_copiedBytes = 0;
 							if (m_finishedFiles == ItemCount())
 								onNormalRobocopyFinished();
 							raiseProgressChange();
@@ -202,7 +205,7 @@ namespace winrt::FastCopy::implementation
 						[this, currentIndex, currentSource = **m_iter](Conflict&& conflict)
 						{
 							auto const currentItemSize = conflict.bytes;
-							Global::UIThread.TryEnqueue([this, conflict = std::move(conflict), currentDestinationFolder = m_perProcessCurrentDir[currentIndex].fullPath, currentSource = std::move(currentSource)] {
+							Global::UIThread.TryEnqueue([this, conflict = std::move(conflict), currentDestinationFolder = m_perProcessStatus[currentIndex].m_currentDir.fullPath, currentSource = std::move(currentSource)] {
 								m_duplicateFiles.Append({
 									(std::filesystem::path{currentSource} / conflict.name).wstring(),
 									(std::filesystem::path{currentDestinationFolder} / conflict.name).wstring()
@@ -212,17 +215,32 @@ namespace winrt::FastCopy::implementation
 							m_copiedBytes += currentItemSize;
 						},
 						/*onExistingDir*/
-						[this, currentIndex](ExistingDir&& existingDir)
+						[this, currentIndex, currentSource = **m_iter](ExistingDir&& existingDir)
 						{
-							m_perProcessCurrentDir[currentIndex].count = existingDir.count;
-							m_perProcessCurrentDir[currentIndex].fullPath = std::move(existingDir.name);
+							m_perProcessStatus[currentIndex].m_currentDir.count = existingDir.count;
+							
+							// Calculate the correct destination subfolder path using recorded source path
+							std::filesystem::path currentSubfolderPath{ existingDir.name };
+							std::filesystem::path destinationBasePath{ m_destination.data() };
+							
+							// Get the relative path from recorded source to current subfolder
+							std::filesystem::path relativePath = std::filesystem::relative(currentSubfolderPath, std::filesystem::path{ currentSource }.parent_path());
+							
+							// Calculate destination subfolder path: destination/relative_path
+							std::filesystem::path destinationSubfolderPath = destinationBasePath / relativePath;
+							
+							m_perProcessStatus[currentIndex].m_currentDir.fullPath = destinationSubfolderPath.string();
 						},
 						/*onProcessExit*/
-						[this] 
+						[this, currentIndex] 
 						{
-							//++m_finishedFiles;
-							//if (m_finishedFiles == ItemCount())
-							//	onNormalRobocopyFinished();
+							if (m_perProcessStatus[currentIndex].m_copiedBytes)
+							{
+								++m_finishedFiles;
+								m_copiedBytes += std::exchange(m_perProcessStatus[currentIndex].m_copiedBytes, 0);
+							}
+							if (m_finishedFiles == ItemCount())
+								onNormalRobocopyFinished();
 						}
 					));
 					
@@ -235,11 +253,10 @@ namespace winrt::FastCopy::implementation
 					Global::UIThread.TryEnqueue([this, value = **m_iter] {
 						m_duplicateFiles.Append({
 							value,
-							std::format(LR"({}\{})", m_destination.data(), std::filesystem::path{ value }.filename().wstring())
+							(std::filesystem::path{m_destination.data()} / std::filesystem::path{value}.filename()).wstring()
 						});
 					});
 					m_hasDuplicates = true;
-					m_copiedBytes += currentItemSize;
 				}
 
 				raiseProgressChange();
@@ -312,28 +329,40 @@ namespace winrt::FastCopy::implementation
 		while(m_duplicateFileTaskIter != m_duplicateFileTask->end() && m_status == Status::Running)
 		{
 			auto duplicate = **m_duplicateFileTaskIter;
-			auto file1 = duplicate.File1();
-			auto file2 = duplicate.File2();
-			auto const file1Selected = file1.Selected();
-			auto const file2Selected = file2.Selected();
+			auto file1 = winrt::get_self<FileInfoViewModel>(duplicate.File1());
+			auto file2 = winrt::get_self<FileInfoViewModel>(duplicate.File2());
+			auto const file1Selected = file1->Selected();
+			auto const file2Selected = file2->Selected();
 
 			if (file1Selected && file2Selected)
 			{
-				std::wstring_view destinationView{ m_destination };
+				//rename
+				std::filesystem::path destinationPath{ file2->Path().data() };
 				Fallback::CopyAddSuffix(
-					file1.Path().data(),
-					std::wstring_view{ destinationView.substr(0, destinationView.find_last_not_of(L"/\\") + 1) },
+					file1->Path().data(),
+					destinationPath.parent_path(),
 					m_recordFile->GetOperation() == CopyOperation::Move
 				);
 			}
 			else if (file1Selected)
 			{
-				try {
-					std::filesystem::copy(file1.Path().data(), m_destination.data(), std::filesystem::copy_options::overwrite_existing);
+				//overwrite
+				try 
+				{
+					std::filesystem::copy(
+						file1->Path().data(), 
+						std::filesystem::path{ file2->Path().data() }.parent_path(),
+						std::filesystem::copy_options::overwrite_existing
+					);
 				}
 				catch (std::exception const& e)
 				{
-					OutputDebugStringA(e.what());
+					MessageBox(
+						NULL,
+						std::format(L"Overwriting: {} -> {} failed: {}", file1->Path(), file2->Path(), winrt::to_hstring(e.what())).data(),
+						L"RobocopyEx Error",
+						NULL
+					);
 				}
 			}
 			++m_finishedFiles;
@@ -378,7 +407,6 @@ namespace winrt::FastCopy::implementation
 				winrt::to_string(m_destination)
 			)
 			.E(isDirectory)
-			.ETA(true)
 			.V(true)
 			.NJS(true)
 			.NJH(true)
@@ -423,7 +451,6 @@ namespace winrt::FastCopy::implementation
 		}
 		else
 		{
-			m_copiedBytes = m_totalSize;
 			raiseProgressChange();
 			onAllFinished();
 		}
@@ -443,6 +470,7 @@ namespace winrt::FastCopy::implementation
 		);
 		std::filesystem::remove(m_recordFile->GetPath().data());
 		m_finishEvent(*this, FinishState::Success);
+		Stop();
 	}
 
 	winrt::hstring RobocopyViewModel::finishedOperationString()

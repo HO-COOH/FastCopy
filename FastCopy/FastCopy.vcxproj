@@ -237,6 +237,7 @@
     <ClInclude Include="RobocopyJobFile.h" />
     <ClInclude Include="NewDir.h" />
     <ClInclude Include="RobocopyProcess.h" />
+    <ClInclude Include="RobocopyProcessStatus.h" />
     <ClInclude Include="RobocopyViewModel.h">
       <DependentUpon>RobocopyViewModel.idl</DependentUpon>
       <SubType>Code</SubType>

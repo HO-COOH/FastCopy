@@ -19,31 +19,6 @@
             <Setter Property="Opacity" Value="0.8" />
         </Style>
 
-        <Storyboard x:Name="ProgressBarEntranceAnimation">
-            <DoubleAnimation
-                x:Name="WidthAnimation"
-                EnableDependentAnimation="True"
-                Storyboard.TargetName="ProgressBar"
-                Storyboard.TargetProperty="(ProgressBarEx.Width)"
-                From="5"
-                Duration="0:0:0.5">
-                <DoubleAnimation.EasingFunction>
-                    <QuadraticEase EasingMode="EaseOut" />
-                </DoubleAnimation.EasingFunction>
-            </DoubleAnimation>
-            <DoubleAnimation
-                EnableDependentAnimation="True"
-                Storyboard.TargetName="ProgressBar"
-                Storyboard.TargetProperty="(ProgressBarEx.Height)"
-                From="10"
-                To="5"
-                Duration="0:0:0.5">
-                <DoubleAnimation.EasingFunction>
-                    <QuadraticEase EasingMode="EaseOut" />
-                </DoubleAnimation.EasingFunction>
-            </DoubleAnimation>
-        </Storyboard>
-
         <local:DoubleToStringConverter x:Key="NumberToStringConverter" />
         <local:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
         <local:ReadableSizeConverter x:Key="ReadableSizeConverter" />
@@ -623,10 +598,7 @@
         </Style>
     </Page.Resources>
 
-    <Grid
-        x:Name="MainPanel"
-        Margin="15,15,15,0"
-        SizeChanged="MainPanel_SizeChanged">
+    <Grid x:Name="MainPanel" Margin="15,15,15,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -705,15 +677,35 @@
         </StackPanel>
 
         <essential:ProgressBarEx
-            x:Name="ProgressBar"
             Grid.Row="2"
             Height="5"
             Margin="0,10,0,0"
             HorizontalAlignment="Stretch"
             Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
             CornerRadius="5"
-            Loaded="ProgressBar_Loaded"
-            Percent="{x:Bind ViewModel.Percent, Mode=OneWay}" />
+            Percent="50">
+            <essential:ProgressBarEx.RenderTransform>
+                <ScaleTransform x:Name="ProgressBarScaleX" ScaleX="0" />
+            </essential:ProgressBarEx.RenderTransform>
+            <essential:ProgressBarEx.Triggers>
+                <EventTrigger>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="ProgressBarScaleX"
+                                Storyboard.TargetProperty="ScaleX"
+                                From="0"
+                                To="1"
+                                Duration="0:0:0.5">
+                                <DoubleAnimation.EasingFunction>
+                                    <ExponentialEase EasingMode="EaseOut" Exponent="4" />
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </essential:ProgressBarEx.Triggers>
+        </essential:ProgressBarEx>
 
         <!--  SpeedGraph area  -->
         <Button

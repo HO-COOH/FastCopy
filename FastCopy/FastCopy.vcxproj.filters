@@ -269,6 +269,9 @@
     <ClInclude Include="UIThreadWrapper.h">
       <Filter>ViewHelper</Filter>
     </ClInclude>
+    <ClInclude Include="RobocopyProcessStatus.h">
+      <Filter>ViewModel\Robocopy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">

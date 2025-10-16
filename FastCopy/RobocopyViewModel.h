@@ -9,6 +9,7 @@
 #include <ppltasks.h>
 #include "FileCompareViewModel.g.h"
 #include <filesystem>
+#include "RobocopyProcessStatus.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -53,7 +54,6 @@ namespace winrt::FastCopy::implementation
         void RemoveDestination() { --m_useDestinationCount; raisePropertyChange(L"UseDestination"); }
 
         void ConfirmDuplicates();
-        bool CanContinue();
         double Speed() { return m_bytesPerSec; }
         winrt::Windows::Foundation::IAsyncOperation<uint64_t> GetTotalSize();
     private:
@@ -64,12 +64,10 @@ namespace winrt::FastCopy::implementation
         int m_useDestinationCount{};
         winrt::event<winrt::Windows::Foundation::EventHandler<winrt::FastCopy::FinishState>> m_finishEvent;
         std::vector<std::unique_ptr<RobocopyProcess>> m_process; 
-        std::vector<uint64_t> m_perProcessCopiedBytes;
-        std::vector<NewFile> m_perProcessCurrentFile;
-        std::vector<NewDir> m_perProcessCurrentDir;
+        std::vector<RobocopyProcessStatus> m_perProcessStatus;
 
         winrt::hstring m_destination;
-        uint64_t m_copiedBytes{};
+        std::atomic_uint64_t m_copiedBytes{};
         uint64_t m_size{};
         std::optional<TaskFile> m_recordFile;
         uint64_t m_totalSize{};

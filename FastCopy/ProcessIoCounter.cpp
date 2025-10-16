@@ -34,6 +34,8 @@ ProcessIoCounter::IOCounterDiff ProcessIoCounter::Update()
 	}
 
 	firstCounterAsCurrent = !firstCounterAsCurrent;
-	m_lastUpdate = std::chrono::steady_clock::now();
+	auto const now = std::chrono::steady_clock::now();
+	diff.duration = now - m_lastUpdate;
+	m_lastUpdate = now;
 	return diff;
 }

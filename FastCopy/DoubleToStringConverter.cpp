@@ -13,7 +13,7 @@ namespace winrt::FastCopy::implementation
 		winrt::Windows::Foundation::IInspectable const& parameter, 
 		winrt::hstring const& language)
 	{
-		auto const doubleValue = winrt::unbox_value<double>(value);
+		auto const doubleValue = winrt::unbox_value<double>(value) * 100.0;
 		auto const numDigits = std::stoi(winrt::unbox_value_or<winrt::hstring>(parameter, L"0").data());
 		std::wstringstream ss;
 		ss << std::fixed << std::setprecision(numDigits) << doubleValue;

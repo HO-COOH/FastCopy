@@ -23,17 +23,6 @@ namespace winrt::FastCopy::implementation
 		return ViewModelLocator::GetInstance().RobocopyViewModel();
 	}
 
-
-	void CopyDialog::ProgressBar_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
-	{
-		if (ProgressBar().ActualWidth() != 0 && !std::isnan(ProgressBar().ActualWidth()))
-		{
-		 
-			WidthAnimation().To(ProgressBar().ActualWidth());
-			ProgressBarEntranceAnimation().Begin();
-		}
-	}
-
 	void CopyDialog::HyperlinkButton_Click(
 		winrt::Windows::Foundation::IInspectable const& sender, 
 		winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
@@ -118,14 +107,6 @@ namespace winrt::FastCopy::implementation
 		);
 	}
 
-	void CopyDialog::MainPanel_SizeChanged(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e)
-	{
-		//The width will not automatically resized after applying storyboard animation
-		//need this function to set it manually
-		auto width = e.NewSize().Width;
-		if (width != 0 && !std::isnan(width))
-			ProgressBar().Width(width);
-	}
 
 	void CopyDialog::ShowGraphButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
@@ -147,7 +128,7 @@ namespace winrt::FastCopy::implementation
 			m_speedUpdateRevoker = ViewModel().PropertyChanged([this](auto, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs e) {
 				if (e.PropertyName() == L"Speed")
 				{
-					SpeedGraph().SetSpeed(ViewModel().Percent(), ViewModel().Speed());
+					SpeedGraph().SetSpeed(ViewModel().Percent() * 100.0, ViewModel().Speed());
 				}
 			});
 
