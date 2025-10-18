@@ -260,6 +260,10 @@
     </ClInclude>
     <ClInclude Include="StoryboardWrapper.h" />
     <ClInclude Include="Taskbar.h" />
+    <ClInclude Include="TaskbarControl.h">
+      <DependentUpon>TaskbarControl.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="TaskFile.h" />
     <ClInclude Include="TilesControl.h">
       <DependentUpon>TilesControl.idl</DependentUpon>
@@ -374,6 +378,10 @@
     </ClCompile>
     <ClCompile Include="StoryboardWrapper.cpp" />
     <ClCompile Include="Taskbar.cpp" />
+    <ClCompile Include="TaskbarControl.cpp">
+      <DependentUpon>TaskbarControl.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="TaskFile.cpp" />
     <ClCompile Include="TilesControl.cpp">
       <DependentUpon>TilesControl.idl</DependentUpon>
@@ -434,6 +442,9 @@
     <Midl Include="SpeedGraph.idl">
       <DependentUpon>SpeedGraph.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="TaskbarControl.idl">
+      <SubType>Designer</SubType>
     </Midl>
     <Midl Include="TilesControl.idl">
       <SubType>Designer</SubType>
@@ -564,7 +575,7 @@
     <Import Project="..\packages\Microsoft.WindowsAppSDK.Widgets.1.8.250904007\build\native\Microsoft.WindowsAppSDK.Widgets.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.Widgets.1.8.250904007\build\native\Microsoft.WindowsAppSDK.Widgets.targets')" />
     <Import Project="..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.250906003\build\native\Microsoft.WindowsAppSDK.WinUI.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.250906003\build\native\Microsoft.WindowsAppSDK.WinUI.targets')" />
     <Import Project="..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.targets')" />
-    <Import Project="..\packages\WinUIEssential.WinUI3.1.3.17\build\native\WinUIEssential.WinUI3.targets" Condition="Exists('..\packages\WinUIEssential.WinUI3.1.3.17\build\native\WinUIEssential.WinUI3.targets')" />
+    <Import Project="..\packages\WinUIEssential.WinUI3.1.3.18\build\native\WinUIEssential.WinUI3.targets" Condition="Exists('..\packages\WinUIEssential.WinUI3.1.3.18\build\native\WinUIEssential.WinUI3.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -600,6 +611,6 @@
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.250906003\build\native\Microsoft.WindowsAppSDK.WinUI.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.250906003\build\native\Microsoft.WindowsAppSDK.WinUI.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.targets'))" />
-    <Error Condition="!Exists('..\packages\WinUIEssential.WinUI3.1.3.17\build\native\WinUIEssential.WinUI3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinUIEssential.WinUI3.1.3.17\build\native\WinUIEssential.WinUI3.targets'))" />
+    <Error Condition="!Exists('..\packages\WinUIEssential.WinUI3.1.3.18\build\native\WinUIEssential.WinUI3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinUIEssential.WinUI3.1.3.18\build\native\WinUIEssential.WinUI3.targets'))" />
   </Target>
 </Project>

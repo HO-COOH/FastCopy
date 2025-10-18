@@ -14,6 +14,10 @@
     <Grid>
         <Grid.Resources>
             <essential:ModernStandardWindowContextMenu x:Name="WindowContextMenu" Window="{x:Bind}" />
+            <local:TaskbarControl
+                x:Name="TaskbarControl"
+                Window="{x:Bind}"
+                Value="{x:Bind ViewModel.Percent, Mode=OneWay}" />
         </Grid.Resources>
         <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind}" />
         <local:CopyDialog x:Name="CopyDialog" />

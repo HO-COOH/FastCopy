@@ -1,0 +1,13 @@
+namespace FastCopy
+{
+    [bindable]
+    [default_interface]
+    runtimeclass TaskbarControl : Microsoft.UI.Xaml.Controls.Control
+    {
+        TaskbarControl();
+        
+        Microsoft.UI.Xaml.Window Window;
+
+        Double Value;
+    }
+}

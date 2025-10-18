@@ -130,7 +130,7 @@ namespace winrt::FastCopy::implementation
 		//{
 		//	OutputDebugString(L"Warning");
 		//}
-		Taskbar::SetProgressValue(Global::MainHwnd, std::clamp<int>(percent * 100, 1, 100));
+		//Taskbar::SetProgressValue(Global::MainHwnd, std::clamp<int>(percent * 100, 1, 100));
 		return percent;
 	}
 	winrt::hstring RobocopyViewModel::SpeedText()

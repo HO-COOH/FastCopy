@@ -1,5 +1,6 @@
 import "RobocopyViewModel.idl";
 
+//Do not combine CopyDialog into CopyDialogWindow, this causes compilation error
 namespace FastCopy
 {
     [default_interface]
@@ -7,5 +8,7 @@ namespace FastCopy
     {
         CopyDialog();
         RobocopyViewModel ViewModel{ get; };
+
+        static Double PercentConvert(Double value);
     }
 }

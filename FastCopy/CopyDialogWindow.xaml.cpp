@@ -22,7 +22,7 @@ namespace winrt::FastCopy::implementation
         Global::UIThread = DispatcherQueue();
         Taskbar::SetProgressState(Global::MainHwnd, Taskbar::ProgressState::Indeterminate);
 
-        ViewModelLocator::GetInstance().RobocopyViewModel().DuplicateFiles().VectorChanged(
+        ViewModel().DuplicateFiles().VectorChanged(
             [this](winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::FileCompareViewModel> original, auto)
             {
                 auto const numElements = original.Size();
@@ -38,6 +38,11 @@ namespace winrt::FastCopy::implementation
             }
         );
         Global::copyWindow = *this;
+    }
+
+    winrt::FastCopy::RobocopyViewModel CopyDialogWindow::ViewModel()
+    {
+        return ViewModelLocator::GetInstance().RobocopyViewModel();
     }
 }
 

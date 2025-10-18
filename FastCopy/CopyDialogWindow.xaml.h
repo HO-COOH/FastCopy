@@ -11,6 +11,8 @@ namespace winrt::FastCopy::implementation
     struct CopyDialogWindow : CopyDialogWindowT<CopyDialogWindow>, AnimatedWindowSize
     {
         CopyDialogWindow();
+
+        winrt::FastCopy::RobocopyViewModel ViewModel();
     };
 }
 

@@ -1,5 +1,4 @@
-// Copyright (c) Microsoft Corporation and Contributors.
-// Licensed under the MIT License.
+import "RobocopyViewModel.idl";
 
 namespace FastCopy
 {
@@ -7,5 +6,7 @@ namespace FastCopy
     runtimeclass CopyDialogWindow : WinUI3Package.WindowEx
     {
         CopyDialogWindow();
+        
+        RobocopyViewModel ViewModel{ get; };
     }
 }

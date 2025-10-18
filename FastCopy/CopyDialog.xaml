@@ -683,7 +683,7 @@
             HorizontalAlignment="Stretch"
             Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
             CornerRadius="5"
-            Percent="50">
+            Percent="{x:Bind local:CopyDialog.PercentConvert(ViewModel.Percent), Mode=OneWay}">
             <essential:ProgressBarEx.RenderTransform>
                 <ScaleTransform x:Name="ProgressBarScaleX" ScaleX="0" />
             </essential:ProgressBarEx.RenderTransform>
