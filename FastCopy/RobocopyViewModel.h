@@ -17,7 +17,6 @@ namespace winrt::FastCopy::implementation
     {
         RobocopyViewModel() = default;
 
-        winrt::hstring RecordFile();
         void RecordFile(winrt::hstring value);
 
         winrt::Windows::Foundation::Uri DestinationUri();
@@ -56,6 +55,8 @@ namespace winrt::FastCopy::implementation
         void ConfirmDuplicates();
         double Speed() { return m_bytesPerSec; }
         winrt::Windows::Foundation::IAsyncOperation<uint64_t> GetTotalSize();
+
+		FastCopy::TaskbarState State();
     private:
         double m_bytesPerSec{};
 
@@ -65,6 +66,7 @@ namespace winrt::FastCopy::implementation
         winrt::event<winrt::Windows::Foundation::EventHandler<winrt::FastCopy::FinishState>> m_finishEvent;
         std::vector<std::unique_ptr<RobocopyProcess>> m_process; 
         std::vector<RobocopyProcessStatus> m_perProcessStatus;
+        FastCopy::TaskbarState m_state{ FastCopy::TaskbarState::Indeterminate };
 
         winrt::hstring m_destination;
         std::atomic_uint64_t m_copiedBytes{};

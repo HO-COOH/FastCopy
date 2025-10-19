@@ -20,7 +20,6 @@ namespace winrt::FastCopy::implementation
         CenterWindow(*this, m_currentSize);
         ExtendsContentIntoTitleBar(true);
         Global::UIThread = DispatcherQueue();
-        Taskbar::SetProgressState(Global::MainHwnd, Taskbar::ProgressState::Indeterminate);
 
         ViewModel().DuplicateFiles().VectorChanged(
             [this](winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::FileCompareViewModel> original, auto)

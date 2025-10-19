@@ -16,6 +16,7 @@
             <essential:ModernStandardWindowContextMenu x:Name="WindowContextMenu" Window="{x:Bind}" />
             <local:TaskbarControl
                 x:Name="TaskbarControl"
+                State="{x:Bind ViewModel.State, Mode=OneWay}"
                 Window="{x:Bind}"
                 Value="{x:Bind ViewModel.Percent, Mode=OneWay}" />
         </Grid.Resources>

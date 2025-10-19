@@ -1,14 +1,8 @@
 #include "pch.h"
 #include "Taskbar.h"
 
-#if __has_include("winrt/base.h")
-#include <winrt/base.h>
-#define FastCopy_UseWinRT
-#endif
-
 ITaskbarList3* Taskbar::getPtr()
 {
-#ifdef FastCopy_UseWinRT
     static winrt::com_ptr<ITaskbarList3> instance = []
     {
         winrt::com_ptr<ITaskbarList3> ptr;
@@ -16,12 +10,11 @@ ITaskbarList3* Taskbar::getPtr()
         return ptr;
     }();
     return instance.get();
-#endif
 }
 
-void Taskbar::SetProgressState(HWND hwnd, ProgressState state)
+void Taskbar::SetProgressState(HWND hwnd, TBPFLAG state)
 {
-    getPtr()->SetProgressState(hwnd, static_cast<TBPFLAG>(state));
+    getPtr()->SetProgressState(hwnd, state);
 }
 
 void Taskbar::SetProgressValue(HWND hwnd, ULONGLONG current, ULONGLONG maximum)

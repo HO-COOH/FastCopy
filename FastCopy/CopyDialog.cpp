@@ -6,15 +6,12 @@
 
 #include "ViewModelLocator.h"
 #include <winrt/Windows.System.h>
-#include "Taskbar.h"
 #include "Global.h"
 #include "SettingsChangeListener.h"
 #include "FileContextMenu.h"
 #include "CopyDialogWindow.xaml.h"
 #pragma comment(lib, "gdiplus.lib")
 
-using namespace winrt;
-using namespace Windows::UI::Xaml;
 
 namespace winrt::FastCopy::implementation
 {
@@ -24,8 +21,8 @@ namespace winrt::FastCopy::implementation
 	}
 
 	void CopyDialog::HyperlinkButton_Click(
-		winrt::Windows::Foundation::IInspectable const& sender, 
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+		winrt::Windows::Foundation::IInspectable const&, 
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		winrt::Windows::System::Launcher::LaunchUriAsync(ViewModel().DestinationUri());
 	}
@@ -42,7 +39,6 @@ namespace winrt::FastCopy::implementation
 				L"PausedState",
 				false
 			);
-			Taskbar::SetProgressState(Global::MainHwnd, Taskbar::ProgressState::Paused);
 		}
 		else
 		{
@@ -53,7 +49,6 @@ namespace winrt::FastCopy::implementation
 				L"NormalState",
 				false
 			);
-			Taskbar::SetProgressState(Global::MainHwnd, Taskbar::ProgressState::Normal);
 		}
 	}
 

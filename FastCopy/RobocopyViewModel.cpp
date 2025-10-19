@@ -21,11 +21,6 @@
 
 namespace winrt::FastCopy::implementation
 {
-
-	winrt::hstring RobocopyViewModel::RecordFile()
-	{
-		throw std::logic_error{"Dead code"};
-	}
 	void RobocopyViewModel::RecordFile(winrt::hstring value)
 	{
 		if (value.empty())
@@ -60,7 +55,7 @@ namespace winrt::FastCopy::implementation
 	winrt::Windows::Foundation::Uri RobocopyViewModel::DestinationUri()
 	{
 		return winrt::Windows::Foundation::Uri{ 
-			std::format(L"file://{}", backSlashToForwardSlash(m_destination))
+			std::format(L"file:///{}", backSlashToForwardSlash(m_destination))
 		};
 	}
 
@@ -130,7 +125,6 @@ namespace winrt::FastCopy::implementation
 		//{
 		//	OutputDebugString(L"Warning");
 		//}
-		//Taskbar::SetProgressValue(Global::MainHwnd, std::clamp<int>(percent * 100, 1, 100));
 		return percent;
 	}
 	winrt::hstring RobocopyViewModel::SpeedText()
@@ -173,14 +167,18 @@ namespace winrt::FastCopy::implementation
 							if (m_perProcessStatus[currentIndex].m_currentFile == newFile)
 								return;
 
-							auto const previousFileEmpty = static_cast<bool>(m_perProcessStatus[currentIndex].m_currentFile);
+							std::cout << "!!!New file: " << m_perProcessStatus[currentIndex].m_currentFile.name << " -> " << m_perProcessStatus[currentIndex].m_currentFile.bytes << '\n';
+
+							auto const hasPreviousFile = static_cast<bool>(m_perProcessStatus[currentIndex].m_currentFile);
+							auto const previousFileSize = std::exchange(m_perProcessStatus[currentIndex].m_copiedBytes, 0);
+							
 							m_perProcessStatus[currentIndex].m_currentFile = std::move(newFile);
 							
-							if (!previousFileEmpty)
+							if (!hasPreviousFile)
 								return;
 
 							++m_finishedFiles;
-							m_copiedBytes += std::exchange(m_perProcessStatus[currentIndex].m_copiedBytes, 0);
+							m_copiedBytes += previousFileSize;
 							if (m_finishedFiles == ItemCount())
 								onNormalRobocopyFinished();
 							raiseProgressChange();
@@ -188,7 +186,6 @@ namespace winrt::FastCopy::implementation
 						/*onNewFolder*/
 						[this, currentIndex](NewDir&& newDir)
 						{
-							m_perProcessStatus[currentIndex].m_currentFile.Clear();
 							m_perProcessStatus[currentIndex].m_currentDir = std::move(newDir);
 						},
 						/*on same*/
@@ -232,13 +229,11 @@ namespace winrt::FastCopy::implementation
 							m_perProcessStatus[currentIndex].m_currentDir.fullPath = destinationSubfolderPath.string();
 						},
 						/*onProcessExit*/
-						[this, currentIndex] 
+						[this, currentIndex, currentSource = **m_iter] 
 						{
-							if (m_perProcessStatus[currentIndex].m_copiedBytes)
-							{
+							if (!std::filesystem::is_directory(currentSource))
 								++m_finishedFiles;
-								m_copiedBytes += std::exchange(m_perProcessStatus[currentIndex].m_copiedBytes, 0);
-							}
+							m_copiedBytes += std::exchange(m_perProcessStatus[currentIndex].m_copiedBytes, 0);
 							if (m_finishedFiles == ItemCount())
 								onNormalRobocopyFinished();
 						}
@@ -262,17 +257,17 @@ namespace winrt::FastCopy::implementation
 				raiseProgressChange();
 				++*m_iter;
 			}
-			//if (*m_iter == m_recordFile->end())
-			//{
-			//	onNormalRobocopyFinished();
-			//}
 			if (m_hasConfirmed)
 				ConfirmDuplicates();
 		});
+		m_state = TaskbarState::Normal;
+		raisePropertyChange(L"State");
 	}
 	void RobocopyViewModel::Pause()
 	{
 		m_status = Status::Pause;
+		m_state = TaskbarState::Paused;
+		raisePropertyChange(L"State");
 	}
 	void RobocopyViewModel::Cancel()
 	{
@@ -447,7 +442,8 @@ namespace winrt::FastCopy::implementation
 	{
 		if (m_hasDuplicates)
 		{
-			Taskbar::SetProgressState(Global::MainHwnd, Taskbar::ProgressState::Paused);
+			m_state = TaskbarState::Paused;
+			raisePropertyChange(L"State");
 		}
 		else
 		{
@@ -490,5 +486,10 @@ namespace winrt::FastCopy::implementation
 			raisePropertyChange(L"Percent");
 			raisePropertyChange(L"FinishedItemCount");
 		});
+	}
+
+	FastCopy::TaskbarState RobocopyViewModel::State()
+	{
+		return m_state;
 	}
 }

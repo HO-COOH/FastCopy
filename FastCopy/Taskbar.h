@@ -8,21 +8,13 @@ class Taskbar
 {
 	static ITaskbarList3* getPtr();
 public:
-	enum class ProgressState
-	{
-		NoProgress = TBPF_NOPROGRESS,
-		Indeterminate = TBPF_INDETERMINATE,
-		Normal = TBPF_NORMAL,
-		Error = TBPF_ERROR,
-		Paused = TBPF_PAUSED
-	};
 
 	/**
 	 * @brief Set taskbar icon progress state of a window
 	 * 
 	 * @param hwnd window handle
 	 */
-	static void SetProgressState(HWND hwnd, ProgressState state);
+	static void SetProgressState(HWND hwnd, TBPFLAG state);
 
 	/**
 	 * @brief Set taskbar icon progress value

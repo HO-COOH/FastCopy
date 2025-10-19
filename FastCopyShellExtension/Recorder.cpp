@@ -6,18 +6,15 @@
 #include <filesystem>
 #include "ShellItem.h"
 #include "Registry.h"
-
+#include <wil/com.h>
+#include <wil/win32_helpers.h>
 static auto GetLocalDataFolder()
 {
-	static std::wstring ret = []
+	static std::filesystem::path ret = []
 	{
-		wchar_t* ptr;
-		SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, NULL, &ptr);
-		std::wstring result{ ptr };
-		CoTaskMemFree(ptr);
-		auto ret = result + LR"(\packages\FastCopy_tp1tpcm9wdwpy\LocalCache\Local)";
-
-		return ret;
+		wil::unique_cotaskmem_string localAppData;
+		SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, NULL, localAppData.put());
+		return std::filesystem::path{ localAppData.get() } / LR"(packages\FastCopy_tp1tpcm9wdwpy\LocalCache\Local)";
 	}();
 	return ret;
 }
@@ -34,7 +31,7 @@ static auto GetTimeString()
 Recorder::Recorder(CopyOperation op) 
 {
 	std::filesystem::create_directory(GetLocalDataFolder());
-	auto const filename = GetRecordFilePath(op);
+	auto const filename = GetRecordFilePath(op).wstring();
 	Registry::Record(filename);
 	m_fs = _wfopen(filename.data(), L"wb");
 	if (!m_fs)
@@ -73,15 +70,15 @@ static wchar_t toFlag(CopyOperation op)
 	}
 }
 
-std::wstring Recorder::GetRecordFilePath(CopyOperation op)
+std::filesystem::path Recorder::GetRecordFilePath(CopyOperation op)
 {
-	auto ret = std::format(L"{}\\{}{}.txt", GetLocalDataFolder(), toFlag(op), GetTimeString());
-	//MessageBoxW(NULL, ret.data(), L"", 0);
-	return ret;
+	return 	GetLocalDataFolder() / std::format(L"{}{}.txt", toFlag(op), GetTimeString());
 }
 
 bool Recorder::HasRecord()
 {
-	return !(std::filesystem::is_empty(GetLocalDataFolder()) ||
-		std::filesystem::directory_iterator{ GetLocalDataFolder() }->path().filename().string()[0] == 'D');
+	return std::find_if(std::filesystem::directory_iterator{ GetLocalDataFolder() }, std::filesystem::directory_iterator{}, [](std::filesystem::directory_entry const& fileEntry) {
+		auto str = fileEntry.path().filename().wstring();
+		return str.starts_with(L'C') || str.starts_with(L"M2") || str.starts_with(L'P');
+	}) != std::filesystem::directory_iterator{};
 }

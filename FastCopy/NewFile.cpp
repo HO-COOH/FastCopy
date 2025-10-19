@@ -9,5 +9,5 @@ void NewFile::Clear() noexcept
 
 NewFile::operator bool() const
 {
-	return bytes && !name.empty();
+	return !name.empty();
 }

@@ -14,6 +14,8 @@ namespace winrt::FastCopy::implementation
         winrt::Microsoft::UI::Xaml::Window Window();
         void Window(winrt::Microsoft::UI::Xaml::Window const& value);
 
+        FastCopy::TaskbarState State();
+		void State(FastCopy::TaskbarState value);
     private:
         HWND m_hwnd;
     };

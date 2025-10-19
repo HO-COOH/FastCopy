@@ -1,5 +1,6 @@
 import "ICopyBase.idl";
 import "FileCompareViewModel.idl";
+import "TaskbarControl.idl";
 
 namespace FastCopy
 {
@@ -10,7 +11,6 @@ namespace FastCopy
     {
         RobocopyViewModel();
         
-        String RecordFile;
         String SizeText{ get; };
 
         Windows.Foundation.Uri DestinationUri{ get; };
@@ -24,5 +24,6 @@ namespace FastCopy
         void ConfirmDuplicates();
 
         Windows.Foundation.IAsyncOperation<UInt64> GetTotalSize();
+        TaskbarState State{ get; };
     }
 }

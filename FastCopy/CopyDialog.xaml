@@ -647,6 +647,17 @@
                 Content="{x:Bind ViewModel.Destination, Mode=OneWay}"
                 FontSize="11"
                 Foreground="LightGreen" />
+
+            <!--  file:// scheme is specifically blocked. See https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.hyperlinkbutton.navigateuri?view=windows-app-sdk-1.8  -->
+            <!--<HyperlinkButton
+                Margin="2,-3,0,0"
+                Padding="2"
+                Background="Transparent"
+                BorderThickness="0"
+                Content="{x:Bind ViewModel.Destination, Mode=OneWay}"
+                FontSize="11"
+                Foreground="LightGreen"
+                NavigateUri="{x:Bind ViewModel.DestinationUri, Mode=OneWay}" />-->
         </StackPanel>
 
         <StackPanel

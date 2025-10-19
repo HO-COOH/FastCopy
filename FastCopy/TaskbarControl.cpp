@@ -6,6 +6,19 @@
 #include "Taskbar.h"
 #include "WindowHelper.h"
 
+constexpr static auto toWin32TaskbarState(winrt::FastCopy::TaskbarState state)
+{
+	switch (state)
+	{
+		case winrt::FastCopy::TaskbarState::NoProgress: return TBPF_NOPROGRESS;
+		case winrt::FastCopy::TaskbarState::Indeterminate: return TBPF_INDETERMINATE;
+		case winrt::FastCopy::TaskbarState::Normal: return TBPF_NORMAL;
+		case winrt::FastCopy::TaskbarState::Error: return TBPF_ERROR;
+		case winrt::FastCopy::TaskbarState::Paused: return TBPF_PAUSED;
+	}
+}
+
+
 namespace winrt::FastCopy::implementation
 {
 	double TaskbarControl::Value()
@@ -26,5 +39,15 @@ namespace winrt::FastCopy::implementation
 	void TaskbarControl::Window(winrt::Microsoft::UI::Xaml::Window const& value)
 	{
 		m_hwnd = GetHwnd(value);
+	}
+
+	void TaskbarControl::State(FastCopy::TaskbarState value)
+	{
+		Taskbar::SetProgressState(m_hwnd, toWin32TaskbarState(value));
+	}
+
+	FastCopy::TaskbarState TaskbarControl::State()
+	{
+		throw winrt::hresult_not_implemented{};
 	}
 }

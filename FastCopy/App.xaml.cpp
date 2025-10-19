@@ -71,11 +71,9 @@ namespace winrt::FastCopy::implementation
         viewModel->Destination(destination);
         viewModel->RecordFile(winrt::hstring{ recordFile });
         viewModel->Finished([recordFile](auto, FinishState state) {
-#ifndef _DEBUG
             if (state == FinishState::Success)
                 std::filesystem::remove(recordFile.data());
-#endif
-            });
+        });
 
         LOGI(L"App started, record file: {}", recordFile.data());
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <fstream>
+#include <filesystem>
 #include "CopyOperation.h"
 class ShellItem;
 
@@ -17,6 +18,6 @@ private:
 	 * Return the file name of the record file
 	 * @example "C:\Users\Peter\AppData\Local\Temp\FastCopy\C2023-4-13-23:32:01"
 	 */
-	static std::wstring GetRecordFilePath(CopyOperation op);
+	static std::filesystem::path GetRecordFilePath(CopyOperation op);
 
 };
