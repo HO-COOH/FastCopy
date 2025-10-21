@@ -522,6 +522,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="FastCopy_TemporaryKey.pfx" />
+    <None Include="..\PackageDlls\boost_filesystem-vc143-mt-x64-1_82.dll" />
+    <None Include="..\PackageDlls\fmt.dll" />
+    <None Include="..\x64\Package\FastCopy\FastCopyShellExtension.dll" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\en-US\Resources.resw">

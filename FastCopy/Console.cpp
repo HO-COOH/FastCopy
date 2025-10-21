@@ -38,9 +38,9 @@ static std::optional<Console> s_console;
 
 void Console::Create()
 {
-#if (defined _DEBUG) || (defined DEBUG)
+//#if (defined _DEBUG) || (defined DEBUG) ||
 	s_console.emplace();
-#endif
+//#endif
 }
 
 void Console::Destroy()

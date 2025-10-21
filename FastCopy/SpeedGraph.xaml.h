@@ -18,11 +18,8 @@ namespace winrt::FastCopy::implementation
 {
     struct SpeedGraph : SpeedGraphT<SpeedGraph>
     {
-        SpeedGraph();
+        SpeedGraph() = default;
 
-        void SetTotal(uint64_t bytes) { m_total = bytes; }
-        void AddPoint(uint64_t progressBytes, uint64_t speed);
-        void SetSpeed(uint64_t speed);
         void SetSpeed(double percent, uint64_t speed);
 
         void Pause();
@@ -35,9 +32,11 @@ namespace winrt::FastCopy::implementation
 
         float getX(uint64_t progressBytes);
         float getY(uint64_t speed);
+        
+        void addInitialPointIfNeeded(uint32_t& count, winrt::Microsoft::UI::Xaml::Media::PointCollection& points);
 
         /**
-         * @brief Recaculate graph point because of the speed scale changed
+         * @brief Recalculate graph point because of the speed scale changed
          */
         void resizeGraphPoint(float ratio);
         float m_ratio = 1.0f;
@@ -49,8 +48,13 @@ namespace winrt::FastCopy::implementation
         void makeAnimation();
 
         void makeAnimation(float y);
-        std::chrono::steady_clock::time_point m_start{};
         constexpr static auto BackgroundCircleDistance = 6;
+
+        constexpr static winrt::Microsoft::UI::Xaml::Duration speedLineAndTextAnimationDuration
+        {
+            .TimeSpan = std::chrono::milliseconds{300},
+            .Type = winrt::Microsoft::UI::Xaml::DurationType::TimeSpan
+        };
     public:
         void CanvasControl_Draw(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl const& sender, winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasDrawEventArgs const& args);
         void UserControl_SizeChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e);

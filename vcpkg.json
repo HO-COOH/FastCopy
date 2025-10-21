@@ -6,8 +6,12 @@
         "platform": "x64"
     },
     {
-        "name": "abseil",
-        "platform": "x64"
+      "name": "abseil",
+      "platform": "x64"
+    },
+    {
+      "name": "boost-process",
+      "platform": "x64"
     }
   ],
   "builtin-baseline": "3426db05b996481ca31e95fff3734cf23e0f51bc"

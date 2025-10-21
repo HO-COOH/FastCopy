@@ -8,9 +8,6 @@ namespace FastCopy
     {
         SpeedGraph();
 
-        void SetTotal(UInt64 bytes);
-        void AddPoint(UInt64 progressBytes, UInt64 speed);
-        void SetSpeed(UInt64 speed);
         void SetSpeed(Double percent, UInt64 speed);
 
         void Pause();

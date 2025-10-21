@@ -50,6 +50,18 @@
       <Configuration>Debug</Configuration>
       <Platform>arm64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Package|arm64">
+      <Configuration>Package</Configuration>
+      <Platform>arm64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Package|Win32">
+      <Configuration>Package</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Package|x64">
+      <Configuration>Package</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
@@ -79,6 +91,11 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Package'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
@@ -87,15 +104,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros">
     <GenerateAppInstallerFile>True</GenerateAppInstallerFile>
-    <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
+    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
-    <AppxBundle>Auto</AppxBundle>
+    <AppxBundle>Never</AppxBundle>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <AppInstallerUri>E:\</AppInstallerUri>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
+    <PackageCertificateThumbprint>F7539DEAF3852524FA0AB4747C30678203CB8343</PackageCertificateThumbprint>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -108,7 +126,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
-      <PreprocessorDefinitions>DISABLE_XAML_GENERATED_MAIN;DISABLE_XAML_GENERATED_MAIN;SPDLOG_WCHAR_TO_UTF8_SUPPORT;_DEBUG;__WRL_NO_DEFAULT_LIB__;_UNICODE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DISABLE_XAML_GENERATED_MAIN;SPDLOG_WCHAR_TO_UTF8_SUPPORT;_DEBUG;__WRL_NO_DEFAULT_LIB__;_UNICODE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp20</LanguageStandard>
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'">false</SDLCheck>
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</SDLCheck>
@@ -118,13 +136,16 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)Public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <PostBuildEvent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX"
+xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'">xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'">mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX"
+xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX"
+xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
@@ -143,13 +164,44 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|arm64'">xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|arm64'">mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX"
+xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX"
+xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
     </PostBuildEvent>
     <PostBuildEvent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX"
+xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Package'">
+    <ClCompile>
+      <PreprocessorDefinitions>DISABLE_XAML_GENERATED_MAIN;SPDLOG_WCHAR_TO_UTF8_SUPPORT;NDEBUG;__WRL_NO_DEFAULT_LIB__;_UNICODE;WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Package|x64'">stdcpp20</LanguageStandard>
+      <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Package|arm64'">false</SDLCheck>
+      <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">false</SDLCheck>
+      <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Package|x64'">false</SDLCheck>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Package|arm64'">$(SolutionDir)Public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">$(SolutionDir)Public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Package|x64'">$(SolutionDir)Public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <PostBuildEvent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Package|arm64'">mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX"
+xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX"
+xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Package|x64'">mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX"
+xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup Condition="'$(WindowsPackageType)'!='None' and Exists('Package.appxmanifest')">
@@ -519,6 +571,24 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\PackageDlls\boost_filesystem-vc143-mt-x64-1_82.dll">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|arm64'">true</DeploymentContent>
+      <FileType>Document</FileType>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|x64'">true</DeploymentContent>
+    </None>
+    <None Include="..\PackageDlls\fmt.dll">
+      <FileType>Document</FileType>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|arm64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|x64'">true</DeploymentContent>
+    </None>
+    <None Include="..\x64\Package\FastCopy\FastCopyShellExtension.dll">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|arm64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|x64'">true</DeploymentContent>
+    </None>
+    <None Include="FastCopy_TemporaryKey.pfx" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -544,10 +614,16 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'">
     <MultiProcMIDL>true</MultiProcMIDL>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Package|arm64'">
+    <MultiProcMIDL>true</MultiProcMIDL>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <MultiProcMIDL>true</MultiProcMIDL>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <MultiProcMIDL>true</MultiProcMIDL>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">
     <MultiProcMIDL>true</MultiProcMIDL>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -555,6 +631,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <MultiProcMIDL>true</MultiProcMIDL>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Package|x64'">
+    <MultiProcMIDL>true</MultiProcMIDL>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnableManifest>false</VcpkgEnableManifest>
+    <VcpkgXUseBuiltInApplocalDeps>true</VcpkgXUseBuiltInApplocalDeps>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
