@@ -31,7 +31,7 @@ Console::Console()
 
 Console::~Console()
 {
-	winrt::check_bool(FreeConsole());
+	FreeConsole();
 }
 
 static std::optional<Console> s_console;

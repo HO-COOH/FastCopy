@@ -7,16 +7,12 @@
 
 namespace winrt::FastCopy::implementation
 {
-    struct FileInfoViewModel : FileInfoViewModelT<FileInfoViewModel>
+    struct FileInfoViewModel : FileInfoViewModelT<FileInfoViewModel>, WinRTFileTime
     {
         FileInfoViewModel(winrt::hstring path, bool isSource);
 
         winrt::hstring Path() { return m_path; }
         winrt::hstring Filename();
-
-        winrt::Windows::Foundation::DateTime CreateTime() { return m_fileTime.CreateTime(); }
-        winrt::Windows::Foundation::DateTime LastAccessTime() { return m_fileTime.LastAccessTime(); }
-        winrt::Windows::Foundation::DateTime LastWriteTime() { return m_fileTime.LastWriteTime(); }
         
         uint64_t Bytes();
         bool Selected() { return m_selected; }
@@ -26,7 +22,6 @@ namespace winrt::FastCopy::implementation
 
         winrt::Windows::Foundation::Collections::IVector<winrt::Windows::Foundation::IInspectable> tooltipInfo();
     private:
-        WinRTFileTime m_fileTime;
         winrt::hstring m_path;
         bool const m_isSource;
         bool m_selected = false;

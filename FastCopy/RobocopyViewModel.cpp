@@ -229,9 +229,9 @@ namespace winrt::FastCopy::implementation
 							m_perProcessStatus[currentIndex].m_currentDir.fullPath = destinationSubfolderPath.string();
 						},
 						/*onProcessExit*/
-						[this, currentIndex, currentSource = **m_iter] 
+						[this, currentIndex] 
 						{
-							if (!std::filesystem::is_directory(currentSource))
+							if (m_perProcessStatus[currentIndex].m_currentFile)
 								++m_finishedFiles;
 							m_copiedBytes += std::exchange(m_perProcessStatus[currentIndex].m_copiedBytes, 0);
 							if (m_finishedFiles == ItemCount())
@@ -261,6 +261,7 @@ namespace winrt::FastCopy::implementation
 				ConfirmDuplicates();
 		});
 		m_state = TaskbarState::Normal;
+		co_await wil::resume_foreground(Global::UIThread.m_queue);
 		raisePropertyChange(L"State");
 	}
 	void RobocopyViewModel::Pause()

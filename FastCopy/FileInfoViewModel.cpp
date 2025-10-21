@@ -16,7 +16,7 @@
 
 namespace winrt::FastCopy::implementation
 {
-	FileInfoViewModel::FileInfoViewModel(winrt::hstring path, bool isSource) : m_fileTime{ path }, m_path{ ToBackslash(path) }, m_isSource{ isSource }
+	FileInfoViewModel::FileInfoViewModel(winrt::hstring path, bool isSource) : WinRTFileTime{ path }, m_path{ ToBackslash(path) }, m_isSource{ isSource }
 	{
 	}
 
@@ -79,6 +79,7 @@ namespace winrt::FastCopy::implementation
 	winrt::Windows::Foundation::Collections::IVector<winrt::Windows::Foundation::IInspectable> FileInfoViewModel::tooltipInfo()
 	{
 		std::vector<winrt::Windows::Foundation::IInspectable> m_tooltipInfo;
+		m_tooltipInfo.reserve(4);
 		for (auto&& [name, key] : 
 			{
 				std::pair{L"FileDescription", PKEY_FileDescription},
