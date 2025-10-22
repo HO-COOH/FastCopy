@@ -27,22 +27,23 @@ class RobocopyProcess
 	static inline auto work = boost::asio::make_work_guard(ios);
 	constexpr static auto k_OutBufferSize = MAX_PATH + 20;
 
-
 	boost::process::async_pipe pipeOut{ ios };
 	boost::process::child m_child;
 
 	static void runContext();
+	static std::regex& progressRegex();
 public:
 	RobocopyProcess(std::vector<RobocopyProcessStatus>& status, RobocopyArgsBuilder const& builder, auto onProgress, auto onNewFile, auto onNewFolder, auto onSame, auto onConfict, auto onExistingDir, auto onProcessExit) :
 		m_child
 		{
-			boost::process::cmd(boost::process::search_path("robocopy.exe").string() + " " + builder.Build()),
+			boost::process::cmd(boost::process::search_path("robocopy.exe").wstring() + L" " + builder.Build()),
 			boost::process::std_out > pipeOut
 		}
 	{
+		SetConsoleCP(65001);
+		SetConsoleOutputCP(65001);
 		runContext();
 
-		static std::regex Progress{ "^[0-9]+[.]?[0-9]*%" };
 		boost::asio::co_spawn(ios, [this, 
 			onProgress = std::move(onProgress), 
 			onNewFile = std::move(onNewFile), 
@@ -101,14 +102,14 @@ public:
 						{
 							onExistingDirCopy(std::move(*existingDir));
 						}
-						else if (std::regex_match(data.data(), data.data() + data.size(), Progress))
+						else if (std::regex_match(data.data(), data.data() + data.size(), progressRegex()))
 						{
 							onProgressCopy(std::strtof(data.data(), nullptr));
 						}
-						else
-						{
-							auto str = data;
-						}
+						//else
+						//{
+						//	auto str = data;
+						//}
 					}
 					buf.consume(n);
 				}

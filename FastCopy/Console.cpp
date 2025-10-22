@@ -6,6 +6,8 @@
 Console::Console()
 {
 	winrt::check_bool(AllocConsole());
+    SetConsoleCP(65001);
+    SetConsoleOutputCP(65001);
 
     // std::cout, std::clog, std::cerr, std::cin
     FILE* fDummy;

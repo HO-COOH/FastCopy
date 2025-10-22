@@ -15,21 +15,21 @@ namespace winrt::FastCopy::implementation
 			auto dispatcher = DispatcherQueue();
 			auto thisPtr = this;
 			
-			Width(Items().GetAt(0).as<Type>().ActualWidth());
-			Height(Items().GetAt(0).as<Type>().ActualHeight());
+			Width(Items().GetAt(0).as<ChildItem>().ActualWidth());
+			Height(Items().GetAt(0).as<ChildItem>().ActualHeight());
 			
 			auto const size = Items().Size();
 			m_renderOffsets.resize(size);
 			m_renderOffsets[0] = 0;
 
-			Items().GetAt(0).as<Type>().RenderTransform(winrt::Microsoft::UI::Xaml::Media::TranslateTransform{});
+			Items().GetAt(0).as<ChildItem>().RenderTransform(winrt::Microsoft::UI::Xaml::Media::TranslateTransform{});
 
 			for (int i = 1; i < size; ++i)
 			{
 				winrt::Microsoft::UI::Xaml::Media::TranslateTransform translate;
 				translate.Y(10000);
-				Items().GetAt(i).as<Type>().RenderTransform(translate);
-				m_renderOffsets[i] = m_renderOffsets[i - 1] + Items().GetAt(i - 1).as<Type>().ActualHeight();
+				Items().GetAt(i).as<ChildItem>().RenderTransform(translate);
+				m_renderOffsets[i] = m_renderOffsets[i - 1] + Items().GetAt(i - 1).as<ChildItem>().ActualHeight();
 			}
 			co_await std::chrono::seconds{3};
 
@@ -52,11 +52,8 @@ namespace winrt::FastCopy::implementation
 
 	void TilesControl::makeAnimation(int previousItemIndex, int currentItemIndex)
 	{
-		winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard s;
-		winrt::Microsoft::UI::Xaml::Media::Animation::DoubleAnimation d[2];
-		
-		auto& previousItemAnimation = d[0];
-		auto& currentItemAnimation = d[1];
+		winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard itemAnimations;
+		winrt::Microsoft::UI::Xaml::Media::Animation::DoubleAnimation previousItemAnimation, currentItemAnimation;
 
 		previousItemAnimation.From(-m_renderOffsets[previousItemIndex]);
 		previousItemAnimation.To(-(m_renderOffsets[previousItemIndex] + ActualHeight()));
@@ -68,13 +65,11 @@ namespace winrt::FastCopy::implementation
 		currentItemAnimation.Duration({ std::chrono::milliseconds{300}, winrt::Microsoft::UI::Xaml::DurationType::TimeSpan });
 
 		winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTargetProperty(previousItemAnimation, L"Y");
-		winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTarget(previousItemAnimation, Items().GetAt(previousItemIndex).as<Type>().RenderTransform());
+		winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTarget(previousItemAnimation, Items().GetAt(previousItemIndex).as<ChildItem>().RenderTransform());
 		winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTargetProperty(currentItemAnimation, L"Y");
-		winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTarget(currentItemAnimation, Items().GetAt(currentItemIndex).as<Type>().RenderTransform());
+		winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTarget(currentItemAnimation, Items().GetAt(currentItemIndex).as<ChildItem>().RenderTransform());
 
-
-		s.Children().Append(d[0]);
-		s.Children().Append(d[1]);
-		s.Begin();
+		itemAnimations.Children().ReplaceAll({ previousItemAnimation, currentItemAnimation });
+		itemAnimations.Begin();
 	}
 }

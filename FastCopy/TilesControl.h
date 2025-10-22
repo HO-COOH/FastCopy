@@ -11,7 +11,7 @@ namespace winrt::FastCopy::implementation
         winrt::Microsoft::UI::Xaml::Controls::ItemsControl control{ nullptr };
         Loaded_revoker m_loadedRevoker;
         std::vector<double> m_renderOffsets;
-        using Type = winrt::Microsoft::UI::Xaml::FrameworkElement;
+        using ChildItem = winrt::Microsoft::UI::Xaml::FrameworkElement;
 
         /**
          * @brief Make sliding animation

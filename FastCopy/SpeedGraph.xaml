@@ -45,6 +45,7 @@
         <canvas:CanvasControl
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
+            ActualThemeChanged="CanvasControl_ActualThemeChanged"
             ClearColor="Transparent"
             Draw="CanvasControl_Draw" />
 

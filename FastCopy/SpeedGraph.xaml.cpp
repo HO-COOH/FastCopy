@@ -131,7 +131,9 @@ namespace winrt::FastCopy::implementation
 
         auto const width = sender.ActualWidth();
         auto const height = sender.ActualHeight();
-        auto const color = winrt::Windows::UI::ColorHelper::FromArgb(32, 255, 255, 255);
+        auto const color = ActualTheme() == winrt::Microsoft::UI::Xaml::ElementTheme::Light?
+			winrt::Windows::UI::ColorHelper::FromArgb(32, 0, 0, 0) :
+            winrt::Windows::UI::ColorHelper::FromArgb(32, 255, 255, 255);
 
         for (int i = 0; i < width; i += BackgroundCircleDistance)
         {
@@ -140,6 +142,11 @@ namespace winrt::FastCopy::implementation
                 drawingSession.FillCircle(i, j, 1, color);
             }
         }
+    }
+
+    void SpeedGraph::CanvasControl_ActualThemeChanged(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const&)
+    {
+		sender.as<winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl>().Invalidate();
     }
 
     void SpeedGraph::Pause()

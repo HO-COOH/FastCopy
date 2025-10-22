@@ -434,7 +434,7 @@
             </essential:Segmented>
         </essential:SettingsCard>
 
-        <essential:SettingsCard x:Uid="ThemeSettingItem">
+        <essential:SettingsCard x:Uid="ThemeSettingItem" IsEnabled="False">
             <essential:SettingsCard.HeaderIcon>
                 <FontIcon Glyph="{StaticResource ThemeGlyph}" />
             </essential:SettingsCard.HeaderIcon>

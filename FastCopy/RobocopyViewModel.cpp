@@ -396,11 +396,11 @@ namespace winrt::FastCopy::implementation
 		RobocopyArgsBuilder args;
 		auto const isDirectory = std::filesystem::is_directory(**m_iter);
 		std::filesystem::path source{ **m_iter };
-		args.Source(isDirectory? winrt::to_string(**m_iter) : source.parent_path().string())
+		args.Source(isDirectory ? **m_iter : source.parent_path().wstring())
 			.Destination(
-				isDirectory?
-				(std::filesystem::path{ m_destination.data() } / std::filesystem::path{ **m_iter }.filename().wstring()).string() :
-				winrt::to_string(m_destination)
+				isDirectory ?
+				(std::filesystem::path{ m_destination.data() } / std::filesystem::path{ **m_iter }.filename().wstring()).wstring() :
+				std::wstring{ m_destination }
 			)
 			.E(isDirectory)
 			.V(true)
@@ -409,11 +409,12 @@ namespace winrt::FastCopy::implementation
 			.BYTES(true)
 			.XC(true)  //exclude size different
 			.XN(true)  //exclude newer
-			.XO(true);	//exclude older
+			.XO(true)	//exclude older
+			.Unicode(true);
 		if (!isDirectory)
 		{
-			auto sourceFileName = source.filename().string();
-			std::array<std::string_view, 1> fileArg{ sourceFileName };
+			auto sourceFileName = source.filename().wstring();
+			std::array<std::wstring_view, 1> fileArg{ sourceFileName };
 			args.File(fileArg);
 		}
 		if (m_recordFile->GetOperation() == CopyOperation::Move)

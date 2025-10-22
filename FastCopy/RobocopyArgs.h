@@ -37,13 +37,13 @@ struct Variable
 
 class RobocopyArgsBuilder
 {
-	std::string m_arg = R"("{}" "{}" )";
+	std::wstring m_arg = LR"("{}" "{}" )";
 	bool m_sourceSet = false;
 	bool m_destinationSet = false;
 
 
 public:
-	using StringView = std::string_view;
+	using StringView = std::wstring_view;
 
 	constexpr RobocopyArgsBuilder& addOrRemoveFlag(StringView name, bool value)
 	{
@@ -67,7 +67,7 @@ public:
 
 	RobocopyArgsBuilder(StringView source, StringView destination, StringView builtArg);
 
-	std::string const& Build() const;
+	std::wstring const& Build() const;
 
 	//Source Directory (drive:\path or \\server\share\path)
 	RobocopyArgsBuilder& Source(StringView value);
@@ -138,10 +138,10 @@ public:
 	RobocopyArgsBuilder& MOVE(bool value);
 
 	//add the given Attributes to copied files.
-	RobocopyArgsBuilder& A_plus(std::string_view value);
+	RobocopyArgsBuilder& A_plus(StringView value);
 
 	//remove the given Attributes from copied files.
-	RobocopyArgsBuilder& A_minus(std::string_view value);
+	RobocopyArgsBuilder& A_minus(StringView value);
 
 	//CREATE directory tree and zero-length files only.
 	RobocopyArgsBuilder& CREATE(bool value);
@@ -335,9 +335,7 @@ public:
 	RobocopyArgsBuilder& NJS(bool value);
 
 	//output status as UNICODE.
-#ifndef UNICODE
-	RobocopyArgsBuilder& UNICODE(bool value);
-#endif
+	RobocopyArgsBuilder& Unicode(bool value);
 #pragma endregion
 	
 #pragma region JobOptions

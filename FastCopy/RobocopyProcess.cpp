@@ -16,6 +16,12 @@ void RobocopyProcess::runContext()
 	}();
 }
 
+std::regex& RobocopyProcess::progressRegex()
+{
+	static std::regex Progress{ "^[0-9]+[.]?[0-9]*%" };
+	return Progress;
+}
+
 void RobocopyProcess::WaitForExit()
 {
 	ios.run();
