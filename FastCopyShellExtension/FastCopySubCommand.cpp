@@ -111,10 +111,27 @@ HRESULT FastCopySubCommand::Invoke(IShellItemArray* selection, IBindCtx* ctx)
             {
                 constexpr static std::wstring_view protocolPrefix{ L"file:///" };
                 auto path = currentForegroundExplorer->LocationURL();
-                std::wstring_view pathView{ path.get() };
-                assert(pathView.starts_with(protocolPrefix));
 
-                callMainProgramImpl(pathView.substr(protocolPrefix.size()));
+                std::wstring pathUnescaped(wcslen(path.get()), L'\0');
+                DWORD bufferSize = pathUnescaped.size();
+                if (UrlUnescape(
+                    path.get(),
+                    pathUnescaped.data(),
+                    &bufferSize,
+                    URL_DONT_UNESCAPE_EXTRA_INFO
+                ) == E_POINTER)
+                {
+                    pathUnescaped.resize(bufferSize + 1);
+                    UrlUnescape(
+                        path.get(),
+                        pathUnescaped.data(),
+                        &bufferSize,
+                        URL_DONT_UNESCAPE_EXTRA_INFO
+                    );
+                }
+
+                assert(pathUnescaped.starts_with(protocolPrefix));
+                callMainProgramImpl(std::wstring{ pathUnescaped.substr(protocolPrefix.size()).data()});
                 return S_OK;
             }
 

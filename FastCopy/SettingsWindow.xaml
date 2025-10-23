@@ -15,7 +15,7 @@
     IsResizable="False"
     mc:Ignorable="d">
 
-    <StackPanel Margin="20">
+    <StackPanel x:Name="RootPanel" Margin="20">
         <StackPanel.Resources>
             <ResourceDictionary>
                 <essential:ModernStandardWindowContextMenu x:Name="WindowContextMenu" Window="{x:Bind}" />
@@ -406,14 +406,14 @@
                 Style="{StaticResource ToggleSwitchLeftLabelStyle}" />
         </essential:SettingsCard>
 
-        <essential:SettingsCard x:Uid="MultipleInstanceBehaviorSettingItem">
+        <essential:SettingsCard x:Uid="MultipleInstanceBehaviorSettingItem" IsEnabled="False">
             <ToolTipService.ToolTip>
                 <ToolTip x:Uid="UnderDevelopmentTooltip" />
             </ToolTipService.ToolTip>
             <essential:SettingsCard.HeaderIcon>
                 <FontIcon Glyph="{StaticResource MultipleWindowGlyph}" />
             </essential:SettingsCard.HeaderIcon>
-            <essential:Segmented IsEnabled="False" Style="{StaticResource ButtonSegmentedStyle}">
+            <essential:Segmented SelectedIndex="0">
                 <essential:SegmentedItem>
                     <StackPanel Orientation="Horizontal" Spacing="7">
                         <FontIcon FontSize="13" Glyph="{StaticResource ChromeRestore}" />
@@ -434,7 +434,7 @@
             </essential:Segmented>
         </essential:SettingsCard>
 
-        <essential:SettingsCard x:Uid="ThemeSettingItem" IsEnabled="False">
+        <essential:SettingsCard x:Uid="ThemeSettingItem">
             <essential:SettingsCard.HeaderIcon>
                 <FontIcon Glyph="{StaticResource ThemeGlyph}" />
             </essential:SettingsCard.HeaderIcon>
@@ -442,7 +442,8 @@
                 x:Name="ThemeSelectionComboBox"
                 MinWidth="200"
                 essential:ComboBoxHelper.AcrylicWorkaround="True"
-                SelectedIndex="{x:Bind ViewModel.ThemeSelection, Mode=TwoWay}">
+                SelectedIndex="{x:Bind ViewModel.ThemeSelection, Mode=TwoWay}"
+                SelectionChanged="ThemeSelectionComboBox_SelectionChanged">
                 <ComboBoxItem x:Uid="DefaultThemeItem" />
                 <ComboBoxItem x:Uid="LightThemeItem" />
                 <ComboBoxItem x:Uid="DarkThemeItem" />

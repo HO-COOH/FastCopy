@@ -26,6 +26,8 @@ namespace winrt::FastCopy::implementation
         winrt::Windows::Graphics::SizeInt32 m_originalWindowSize;
         bool m_showSpeedGraph = false;
         winrt::event_token m_speedUpdateRevoker;
+
+        void applyTheme(int themeIndex);
     public:
         void MenuFlyout_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e);
     };

@@ -10,8 +10,13 @@
 void Command::Set(PWSTR cmd)
 {
     int argc{};
-    m_args.reserve(argc);
     auto argv = CommandLineToArgvW(cmd, &argc);
+    if (std::wstring_view{ cmd }.starts_with(protocol))
+    {
+        m_args.push_back(std::wstring{ cmd });
+        return;
+    }
+
     std::copy(argv, argv + argc, std::back_inserter(m_args));
     if (m_args.size() > 1 && m_args[1].back() == L'/')
     {
@@ -27,13 +32,10 @@ Command& Command::Get()
 
 winrt::hstring Command::GetDestination()
 {
-    constexpr static std::wstring_view protocol = L"fastcopy://";
-    
     auto destination = m_args[0].substr(protocol.size(), m_args[0].find(L"|") - protocol.size());
     bool const isQuoted = destination.starts_with(L"\"");
     assert(isQuoted && destination.ends_with(L"\""));
     return winrt::hstring{ isQuoted ? destination.substr(1, destination.size() - 2) : std::move(destination) };
-
 }
 
 static auto GetLocalDataFolder()

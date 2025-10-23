@@ -77,17 +77,16 @@ namespace winrt::FastCopy::implementation
 		SettingsChangeListener::GetInstance().OnThemeChange(
 			[this](SettingsChangeListener::ThemeChangeEventArg e)
 			{
-				if (e.effect == 2)
+				if (IsLoaded())
 				{
-					switch (e.theme)
-					{
-					case 0: Background(nullptr); break;
-					case 1: Background(winrt::Microsoft::UI::Xaml::Media::SolidColorBrush{winrt::Windows::UI::Colors::White()}); break;
-					case 2: Background(winrt::Microsoft::UI::Xaml::Media::SolidColorBrush{winrt::Windows::UI::Colors::Black()}); break;
-					}
+					applyTheme(e.theme);
+					return;
 				}
-				else
-					Background(nullptr);
+
+				Loaded([this, theme = e.theme](auto&&...) 
+				{
+					applyTheme(theme);
+				});
 			}
 		);
 		ViewModelLocator::GetInstance().RobocopyViewModel().DuplicateFiles().VectorChanged(
@@ -139,7 +138,17 @@ namespace winrt::FastCopy::implementation
 		std::make_shared<FileContextMenu>(path)->ShowAt(flyout);
 	}
 
-	void CopyDialog::MenuFlyout_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e)
+	void CopyDialog::applyTheme(int themeIndex)
+	{
+		switch (themeIndex)
+		{
+			case 0: return Parent().as<winrt::Microsoft::UI::Xaml::FrameworkElement>().RequestedTheme(winrt::Microsoft::UI::Xaml::ElementTheme::Default);
+			case 1: return Parent().as<winrt::Microsoft::UI::Xaml::FrameworkElement>().RequestedTheme(winrt::Microsoft::UI::Xaml::ElementTheme::Light);
+			case 2: return Parent().as<winrt::Microsoft::UI::Xaml::FrameworkElement>().RequestedTheme(winrt::Microsoft::UI::Xaml::ElementTheme::Dark);
+		}
+	}
+
+	void CopyDialog::MenuFlyout_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const&)
 	{
 		auto menu = sender
 			.as<winrt::Microsoft::UI::Xaml::Controls::MenuFlyout>();

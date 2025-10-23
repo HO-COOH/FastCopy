@@ -30,10 +30,8 @@ namespace winrt::FastCopy::implementation
                 if (m_currentSize == Sizes[clamped])
                     return;
 
-                playWindowAnimation(Sizes[clamped]);
-
-                /*set size cache*/
-                m_currentSize = Sizes[clamped];
+                //set size cache and play window animation
+                playWindowAnimation(m_currentSize = Sizes[clamped]);
             }
         );
         Global::copyWindow = *this;
