@@ -27,31 +27,6 @@ namespace winrt::FastCopy::implementation
 		winrt::Windows::System::Launcher::LaunchUriAsync(ViewModel().DestinationUri());
 	}
 
-
-	void CopyDialog::PauseButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
-	{
-		if (PauseIcon().Symbol() == winrt::Microsoft::UI::Xaml::Controls::Symbol::Pause)
-		{
-			ViewModel().Pause();
-			PauseIcon().Symbol(winrt::Microsoft::UI::Xaml::Controls::Symbol::Play);
-			winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(
-				*this,
-				L"PausedState",
-				false
-			);
-		}
-		else
-		{
-			ViewModel().Start();
-			PauseIcon().Symbol(winrt::Microsoft::UI::Xaml::Controls::Symbol::Pause);
-			winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(
-				*this,
-				L"NormalState",
-				false
-			);
-		}
-	}
-
 	CopyDialog::CopyDialog()
 	{
 		InitializeComponent();

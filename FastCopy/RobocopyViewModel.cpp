@@ -18,6 +18,7 @@
 #include <pplawait.h>
 #include <numeric>
 #include "FileInfoViewModel.h"
+#include "Ntdll.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -120,11 +121,6 @@ namespace winrt::FastCopy::implementation
 			//Sometimes all files are 0 bytes, we use file count as percent
 			percent = static_cast<double>(m_finishedFiles) / ItemCount();
 		}
-
-		//if (percent > 1.0)
-		//{
-		//	OutputDebugString(L"Warning");
-		//}
 		return percent;
 	}
 	winrt::hstring RobocopyViewModel::SpeedText()
@@ -264,10 +260,22 @@ namespace winrt::FastCopy::implementation
 		co_await wil::resume_foreground(Global::UIThread.m_queue);
 		raisePropertyChange(L"State");
 	}
-	void RobocopyViewModel::Pause()
+	void RobocopyViewModel::TogglePause()
 	{
-		m_status = Status::Pause;
-		m_state = TaskbarState::Paused;
+		if (m_status == Status::Running)
+		{
+			m_status = Status::Pause;
+			m_state = TaskbarState::Paused;
+			for (auto& process : m_process)
+				NtDll::NtSuspendProcess(process->Handle());
+		}
+		else
+		{
+			m_status = Status::Running;
+			m_state = TaskbarState::Normal;
+			for (auto& process : m_process)
+				NtDll::NtResumeProcess(process->Handle());
+		}
 		raisePropertyChange(L"State");
 	}
 	void RobocopyViewModel::Cancel()

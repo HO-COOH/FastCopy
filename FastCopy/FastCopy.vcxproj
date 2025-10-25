@@ -265,6 +265,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
     <ClInclude Include="MutexWrapper.h" />
     <ClInclude Include="NewFile.h" />
     <ClInclude Include="Notification.h" />
+    <ClInclude Include="Ntdll.h" />
     <ClInclude Include="NumberToStringConverter.h">
       <DependentUpon>NumberToStringConverter.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -391,6 +392,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
     <ClCompile Include="MutexWrapper.cpp" />
     <ClCompile Include="NewFile.cpp" />
     <ClCompile Include="Notification.cpp" />
+    <ClCompile Include="Ntdll.cpp" />
     <ClCompile Include="NumberToStringConverter.cpp">
       <DependentUpon>NumberToStringConverter.idl</DependentUpon>
       <SubType>Code</SubType>

@@ -684,13 +684,26 @@
                 x:Name="PauseButton"
                 Background="Transparent"
                 BorderBrush="Transparent"
-                Click="PauseButton_Click">
+                Click="{x:Bind ViewModel.TogglePause}">
                 <Viewbox Width="15" Height="15">
-                    <SymbolIcon x:Name="PauseIcon" Symbol="Pause" />
+                    <essential:SwitchPresenter Value="{x:Bind ViewModel.State, Mode=OneWay}">
+                        <essential:Case>
+                            <essential:Case.Value>
+                                <local:TaskbarState>Paused</local:TaskbarState>
+                            </essential:Case.Value>
+                            <SymbolIcon Symbol="Play" />
+                        </essential:Case>
+                        <essential:Case IsDefault="True">
+                            <essential:Case.Value>
+                                <local:TaskbarState>Normal</local:TaskbarState>
+                            </essential:Case.Value>
+                            <SymbolIcon x:Name="PauseIcon" Symbol="Pause" />
+                        </essential:Case>
+                    </essential:SwitchPresenter>
                 </Viewbox>
             </Button>
 
-            <Button
+            <!--<Button
                 Background="Transparent"
                 BorderBrush="Transparent"
                 Click="{x:Bind ViewModel.Cancel}"
@@ -698,10 +711,11 @@
                 <Viewbox Width="15" Height="15">
                     <SymbolIcon Symbol="Cancel" />
                 </Viewbox>
-            </Button>
+            </Button>-->
         </StackPanel>
 
         <essential:ProgressBarEx
+            x:Name="ProgressBar"
             Grid.Row="2"
             Height="5"
             Margin="0,10,0,0"
@@ -965,12 +979,20 @@
             <VisualStateGroup x:Name="ProgressBarStates">
                 <VisualState x:Name="NormalState" />
                 <VisualState x:Name="PausedState">
+                    <VisualState.StateTriggers>
+                        <essential:IsEqualStateTrigger Value="{x:Bind ViewModel.State, Mode=OneWay}">
+                            <essential:IsEqualStateTrigger.To>
+                                <local:TaskbarState>Paused</local:TaskbarState>
+                            </essential:IsEqualStateTrigger.To>
+                        </essential:IsEqualStateTrigger>
+                    </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="ProgressBar.HighColor" Value="#FFFFFF00" />
                         <Setter Target="ProgressBar.BaseColor" Value="#B3FFFF00" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
+
         </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>

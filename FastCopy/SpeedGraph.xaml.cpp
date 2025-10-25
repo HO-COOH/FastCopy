@@ -23,8 +23,13 @@ namespace winrt::FastCopy::implementation
         if (m_currentMax == 0 && speed == 0)
             return;
 
-		auto points = Shape().Points();
+        //If we don't have progress on this new data point, don't show it on the graph
+        if (percent <= m_currentPercent)
+            return;
 
+		m_currentPercent = percent;
+
+		auto points = Shape().Points();
 
         auto count = points.Size();
         float const x = percent / 100.0 * m_graphSize.Width;

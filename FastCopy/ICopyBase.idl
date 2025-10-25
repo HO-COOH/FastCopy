@@ -12,11 +12,11 @@ namespace FastCopy
 		Int32 FinishedItemCount{ get; };
 		Int32 ItemCount{get; };
 		String Source{ get; };
-		String Destination;
+		String Destination{ get; };
 
 		Double Percent{ get; };
-		Windows.Foundation.IAsyncAction Start();
-		void Pause();
+
+		void TogglePause();
 		void Cancel();
 
 		String SpeedText{ get; };

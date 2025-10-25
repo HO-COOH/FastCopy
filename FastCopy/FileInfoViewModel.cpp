@@ -72,7 +72,7 @@ namespace winrt::FastCopy::implementation
 		winrt::com_ptr<IShellItem2> pItem = CreateItemFromParsingName<IShellItem2>(pPath);
 
 		wil::unique_cotaskmem_string pValue;
-		winrt::check_hresult(pItem->GetString(key, &pValue));
+		pItem->GetString(key, &pValue);
 		return pValue;
 	}
 
@@ -91,7 +91,7 @@ namespace winrt::FastCopy::implementation
 			try 
 			{
 				auto value = GetShellPropStringFromPath(m_path.data(), key);
-				if (value)
+				if (!value)
 					continue;
 				m_tooltipInfo.push_back(winrt::box_value(winrt::FastCopy::ExtendedFileInfo{ .name = name, .value = value.get() }));
 			}

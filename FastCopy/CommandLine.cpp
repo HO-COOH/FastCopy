@@ -47,20 +47,12 @@ static auto GetLocalDataFolder()
 
 std::wstring Command::RecordFile()
 {
-    if (m_args.size() == 1)
+    auto result = m_args[0].substr(m_args[0].find(L"|") + 2);
+    for (int i = 1; i < m_args.size(); ++i)
     {
-        return std::filesystem::is_empty(GetLocalDataFolder().data()) ?
-            L"" :
-            std::filesystem::directory_iterator{ GetLocalDataFolder().data() }->path().wstring();
+        result += L" ";
+        result += m_args[i];
     }
-    else
-    {
-        auto result = m_args[0].substr(m_args[0].find(L"|") + 2);
-        for (int i = 1; i < m_args.size(); ++i)
-        {
-            result += L" ";
-            result += m_args[i];
-        }
-        return result.substr(0, result.find_last_not_of(L"/\\ ") + 1);
-    }
+    return result.substr(0, result.find_last_not_of(L"/\\ \"") + 1);
+
 }

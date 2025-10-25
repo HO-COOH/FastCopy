@@ -147,6 +147,9 @@
     <ClCompile Include="UIThreadWrapper.cpp">
       <Filter>ViewHelper</Filter>
     </ClCompile>
+    <ClCompile Include="Ntdll.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -274,6 +277,9 @@
     </ClInclude>
     <ClInclude Include="RobocopyProcessStatus.h">
       <Filter>ViewModel\Robocopy</Filter>
+    </ClInclude>
+    <ClInclude Include="Ntdll.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

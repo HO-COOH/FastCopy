@@ -25,6 +25,7 @@ namespace winrt::FastCopy::implementation
         void Pause();
         void Error();
     private:
+        double m_currentPercent{};
         uint64_t m_total{};
         uint64_t m_currentMax = 1024;
 

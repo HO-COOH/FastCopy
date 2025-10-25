@@ -32,7 +32,7 @@ namespace winrt::FastCopy::implementation
         winrt::hstring SizeText();
 
         winrt::Windows::Foundation::IAsyncAction Start();
-        void Pause();
+        void TogglePause();
         void Cancel();
 
         winrt::event_token Finished(winrt::Windows::Foundation::EventHandler<winrt::FastCopy::FinishState> const& handler);
