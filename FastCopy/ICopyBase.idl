@@ -19,7 +19,6 @@ namespace FastCopy
 		void TogglePause();
 		void Cancel();
 
-		String SpeedText{ get; };
 		Double Speed{ get; };
 		event Windows.Foundation.EventHandler<FinishState> Finished;
 	}

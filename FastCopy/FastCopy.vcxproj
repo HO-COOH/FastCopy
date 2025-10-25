@@ -242,10 +242,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
       <DependentUpon>DependentValue.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DoubleToStringConverter.h">
-      <DependentUpon>DoubleToStringConverter.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
     <ClInclude Include="ExistingDir.h" />
     <ClInclude Include="Fallback.h" />
     <ClInclude Include="FastcopySettingsSingleInstanceLock.h" />
@@ -279,11 +275,11 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
     <ClInclude Include="ProcessIoCounter.h" />
     <ClInclude Include="ProcessIOUpdater.hpp" />
     <ClInclude Include="PropertyChangeHelper.hpp" />
-    <ClInclude Include="ReadableSizeConverter.h">
-      <DependentUpon>ReadableSizeConverter.idl</DependentUpon>
+    <ClInclude Include="ReadableUnitConverter.h" />
+    <ClInclude Include="ReadableUnitConverterWinRT.h">
+      <DependentUpon>ReadableUnitConverterWinRT.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="ReadableUnitConverter.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceHelper.h" />
     <ClInclude Include="RobocopyArgs.h" />
@@ -369,10 +365,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
       <DependentUpon>DependentValue.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DoubleToStringConverter.cpp">
-      <DependentUpon>DoubleToStringConverter.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
     <ClCompile Include="Fallback.cpp" />
     <ClCompile Include="FastcopySettingsSingleInstanceLock.cpp" />
     <ClCompile Include="FileCompareViewModel.cpp">
@@ -405,8 +397,8 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
     </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
     <ClCompile Include="ProcessIoCounter.cpp" />
-    <ClCompile Include="ReadableSizeConverter.cpp">
-      <DependentUpon>ReadableSizeConverter.idl</DependentUpon>
+    <ClCompile Include="ReadableUnitConverterWinRT.cpp">
+      <DependentUpon>ReadableUnitConverterWinRT.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ResourceHelper.cpp" />
@@ -467,9 +459,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
     <Midl Include="DependentValue.idl">
       <SubType>Designer</SubType>
     </Midl>
-    <Midl Include="DoubleToStringConverter.idl">
-      <SubType>Designer</SubType>
-    </Midl>
     <Midl Include="FileCompareViewModel.idl">
       <SubType>Designer</SubType>
     </Midl>
@@ -480,7 +469,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
     <Midl Include="NumberToStringConverter.idl">
       <SubType>Designer</SubType>
     </Midl>
-    <Midl Include="ReadableSizeConverter.idl">
+    <Midl Include="ReadableUnitConverterWinRT.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="RobocopyViewModel.idl">

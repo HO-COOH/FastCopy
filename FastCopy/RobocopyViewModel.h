@@ -28,8 +28,6 @@ namespace winrt::FastCopy::implementation
         winrt::hstring Destination();
         void Destination(winrt::hstring value);
         double Percent();
-        winrt::hstring SpeedText();
-        winrt::hstring SizeText();
 
         winrt::Windows::Foundation::IAsyncAction Start();
         void TogglePause();

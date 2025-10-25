@@ -22,9 +22,6 @@
     <Midl Include="ICopyBase.idl">
       <Filter>ViewModel</Filter>
     </Midl>
-    <Midl Include="DoubleToStringConverter.idl">
-      <Filter>Views\Converters</Filter>
-    </Midl>
     <Midl Include="RobocopyViewModel.idl">
       <Filter>ViewModel\Robocopy</Filter>
     </Midl>
@@ -35,9 +32,6 @@
       <Filter>ViewModel\Robocopy</Filter>
     </Midl>
     <Midl Include="DateTimeToStringConverter.idl">
-      <Filter>Views\Converters</Filter>
-    </Midl>
-    <Midl Include="ReadableSizeConverter.idl">
       <Filter>Views\Converters</Filter>
     </Midl>
     <Midl Include="SettingsViewModel.idl">
@@ -54,6 +48,9 @@
     </Midl>
     <Midl Include="TaskbarControl.idl">
       <Filter>Utils\SystemIntegration</Filter>
+    </Midl>
+    <Midl Include="ReadableUnitConverterWinRT.idl">
+      <Filter>Views\Converters</Filter>
     </Midl>
   </ItemGroup>
   <ItemGroup>

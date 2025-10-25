@@ -32,9 +32,7 @@
                 <Setter Property="Opacity" Value="0.8" />
             </Style>
 
-            <local:DoubleToStringConverter x:Key="NumberToStringConverter" />
             <local:DateTimeToStringConverter x:Key="DateTimeToStringConverter" />
-            <local:ReadableSizeConverter x:Key="ReadableSizeConverter" />
 
             <Style x:Key="DuplicateFilenameTextStyle" TargetType="TextBlock">
                 <Setter Property="FontSize" Value="14" />
@@ -622,16 +620,14 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Style="{StaticResource HeaderTextStyle}">
-            <Run Text="{x:Bind ViewModel.Percent, Converter={StaticResource NumberToStringConverter}, ConverterParameter=2, Mode=OneWay}" />
-            %</TextBlock>
+        <TextBlock Style="{StaticResource HeaderTextStyle}" Text="{x:Bind local:ReadableUnitConverterWinRT.ConvertPercent(ViewModel.Percent), Mode=OneWay}" />
 
         <TextBlock
             x:Name="SpeedText"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
             Style="{StaticResource StatusTextStyle}"
-            Text="{x:Bind ViewModel.SpeedText, Mode=OneWay}" />
+            Text="{x:Bind local:ReadableUnitConverterWinRT.ConvertSpeed(ViewModel.Speed), Mode=OneWay}" />
 
 
         <StackPanel

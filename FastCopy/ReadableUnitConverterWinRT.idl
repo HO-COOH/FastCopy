@@ -1,0 +1,11 @@
+namespace FastCopy
+{
+    [bindable]
+    [default_interface]
+    runtimeclass ReadableUnitConverterWinRT 
+    {
+		static String ConvertSize(UInt64 size);
+	    static String ConvertSpeed(Double speed);
+        static String ConvertPercent(Double percentOfOne);
+    }
+}

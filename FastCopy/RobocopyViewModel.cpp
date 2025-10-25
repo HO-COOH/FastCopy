@@ -123,10 +123,7 @@ namespace winrt::FastCopy::implementation
 		}
 		return percent;
 	}
-	winrt::hstring RobocopyViewModel::SpeedText()
-	{
-		return ReadableUnitConverter::Speed::ToString<wchar_t>(m_bytesPerSec).data();
-	}
+
 	winrt::Windows::Foundation::IAsyncAction RobocopyViewModel::Start()
 	{
 		if (!m_recordFile)
@@ -285,7 +282,6 @@ namespace winrt::FastCopy::implementation
 	void RobocopyViewModel::OnUpdateCopySpeed(ProcessIoCounter::IOCounterDiff diff)
 	{
 		m_bytesPerSec = ReadableUnitConverter::Speed::BytesPerSec(diff.read, diff.duration);
-		raisePropertyChange(L"SpeedText");
 		raisePropertyChange(L"Speed");
 	}
 	winrt::Windows::Foundation::IReference<bool> RobocopyViewModel::UseSource()
@@ -385,12 +381,6 @@ namespace winrt::FastCopy::implementation
 		co_return m_recordFile ? m_recordFile->GetTotalSize() : 0;
 	}
 
-	winrt::hstring RobocopyViewModel::SizeText()
-	{
-		return m_size == 0 ?
-			L"---" :
-			ReadableUnitConverter::Size::ToString<wchar_t>(m_size).data();
-	}
 	winrt::event_token RobocopyViewModel::Finished(winrt::Windows::Foundation::EventHandler<winrt::FastCopy::FinishState> const& handler)
 	{
 		return m_finishEvent.add(handler);

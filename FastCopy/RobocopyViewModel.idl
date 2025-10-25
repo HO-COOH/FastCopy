@@ -11,8 +11,6 @@ namespace FastCopy
     {
         RobocopyViewModel();
         
-        String SizeText{ get; };
-
         Windows.Foundation.Uri DestinationUri{ get; };
 
         /*Duplicate files*/
