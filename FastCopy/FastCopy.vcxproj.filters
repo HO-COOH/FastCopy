@@ -147,6 +147,9 @@
     <ClCompile Include="Ntdll.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="SpeedGraphData.cpp">
+      <Filter>ViewModel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -277,6 +280,9 @@
     </ClInclude>
     <ClInclude Include="Ntdll.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="SpeedGraphData.h">
+      <Filter>ViewModel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

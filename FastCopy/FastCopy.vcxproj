@@ -307,6 +307,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
       <DependentUpon>SpeedGraph.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="SpeedGraphData.h" />
     <ClInclude Include="StoryboardWrapper.h" />
     <ClInclude Include="Taskbar.h" />
     <ClInclude Include="TaskbarControl.h">
@@ -422,6 +423,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
       <DependentUpon>SpeedGraph.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="SpeedGraphData.cpp" />
     <ClCompile Include="StoryboardWrapper.cpp" />
     <ClCompile Include="Taskbar.cpp" />
     <ClCompile Include="TaskbarControl.cpp">

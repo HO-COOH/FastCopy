@@ -194,7 +194,7 @@
                                 </StackPanel>
                             </local:TilesControl>
 
-                            <TextBlock Text="{x:Bind Bytes, Converter={StaticResource ReadableSizeConverter}}" />
+                            <TextBlock Text="{x:Bind local:ReadableUnitConverterWinRT.ConvertSize(Bytes)}" />
                         </StackPanel>
                     </StackPanel>
                 </CheckBox>

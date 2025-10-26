@@ -63,6 +63,7 @@ namespace winrt::FastCopy::implementation
         int m_useDestinationCount{};
         winrt::event<winrt::Windows::Foundation::EventHandler<winrt::FastCopy::FinishState>> m_finishEvent;
         std::vector<std::unique_ptr<RobocopyProcess>> m_process; 
+        std::mutex m_processStatusMutex;
         std::vector<RobocopyProcessStatus> m_perProcessStatus;
         FastCopy::TaskbarState m_state{ FastCopy::TaskbarState::Indeterminate };
 

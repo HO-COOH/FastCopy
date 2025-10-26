@@ -82,28 +82,42 @@ namespace winrt::FastCopy::implementation
 		auto copyWindow = winrt::get_self<CopyDialogWindow>(Global::copyWindow);
 		if (m_showSpeedGraph)
 		{
-			HideGraphAnimation().Completed([this](auto...) { UnloadObject(SpeedGraph()); });
+			HideGraphAnimation().Completed([this](auto...) 
+				{
+					SpeedGraph().Margin({});
+					SpeedGraph().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Collapsed); 
+				});
 			HideGraphAnimation().Begin();
 			winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"HideGraph", false);
 			copyWindow->Resize(m_originalWindowSize);
-			ViewModel().PropertyChanged(m_speedUpdateRevoker);
+			//ViewModel().PropertyChanged(m_speedUpdateRevoker);
 		}
 		else
 		{
-			FindName(L"SpeedGraph").as<winrt::FastCopy::SpeedGraph>().Loaded([this](auto...)
+			if (m_speedGraphLoaded)
+			{
+				SpeedGraph().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
+				SpeedGraph().Margin({ 0.0, 20.0, 0.0, 3.0 });
+				GraphAnimation().Begin();
+			}
+			else
 			{ 
-				GraphAnimation().Begin(); 
-			});
-			m_speedUpdateRevoker = ViewModel().PropertyChanged([this](auto, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs e) {
-				if (e.PropertyName() == L"Speed")
-				{
-					SpeedGraph().SetSpeed(ViewModel().Percent() * 100.0, ViewModel().Speed());
-				}
-			});
+				FindName(L"SpeedGraph").as<winrt::FastCopy::SpeedGraph>().Loaded([this](auto...)
+				{ 
+					GraphAnimation().Begin(); 
+				});
+				m_speedUpdateRevoker = ViewModel().PropertyChanged([this](auto, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs e) {
+					if (e.PropertyName() == L"Speed")
+					{
+						SpeedGraph().SetSpeed(ViewModel().Percent() * 100.0, ViewModel().Speed());
+					}
+				});
+			}
 
 			winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"ShowGraph", false);
 			m_originalWindowSize = copyWindow->ActualSize();
 			copyWindow->Resize({ (int)m_originalWindowSize.Width, (int)m_originalWindowSize.Height + 190 });
+			m_speedGraphLoaded = true;
 		}
 		m_showSpeedGraph = !m_showSpeedGraph;
 	}

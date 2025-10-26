@@ -52,7 +52,7 @@
         <Polygon
             x:Name="Shape"
             Fill="{StaticResource Brush}"
-            Points=""
+            Points="{x:Bind Points}"
             RenderTransformOrigin="0 1.0">
             <Polygon.RenderTransform>
                 <ScaleTransform x:Name="GraphScale" />

@@ -18,80 +18,31 @@ using namespace Microsoft::UI::Xaml;
 
 namespace winrt::FastCopy::implementation
 {
+    winrt::Microsoft::UI::Xaml::Media::PointCollection SpeedGraph::Points()
+    {
+        return m_graphData.Points();
+	}
+
     void SpeedGraph::SetSpeed(double percent, uint64_t speed)
     {
-        if (m_currentMax == 0 && speed == 0)
-            return;
+        float newScaleRatio = 1.0f;
+        bool needAnimation = false;
 
-        //If we don't have progress on this new data point, don't show it on the graph
-        if (percent <= m_currentPercent)
-            return;
-
-		m_currentPercent = percent;
-
-		auto points = Shape().Points();
-
-        auto count = points.Size();
-        float const x = percent / 100.0 * m_graphSize.Width;
-        auto const y = getY(speed);
-
-        assert(count != 1);
-        switch (count)
-        {
-            case 0:
-                addInitialPointIfNeeded(count, points);
-                // add first real points
-				points.Append({ x, y });
-                break;
-            case 2:
-                // now we can show the graph by adding this data point and the bottom point of the graph so that the polygon end at the axis
-				points.Append({ x, y });
-                points.Append({ x, m_graphSize.Height });
-				break;
-            default:
-				// we modify last point (which is the bottom point of the graph) to the new data point, and add a new bottom point
-				points.SetAt(points.Size() - 1, { x, y });
-				points.Append({ x, m_graphSize.Height });
-                break;
-        }
-
-      
-        if (m_currentMax < speed)
-        {
-            resizeGraphPoint(static_cast<float>(m_currentMax) / speed);
-            m_currentMax = speed;
-        }
-
-        if (count > 2)
+		m_graphData.SetSpeed(percent, speed, newScaleRatio, needAnimation);
+        
+        if (newScaleRatio != 1.0f)
+            resizeGraphPoint(newScaleRatio);
+        
+        if (needAnimation)
         {
             AverageSpeedText().Text(ReadableUnitConverter::Speed::ToString<wchar_t>(speed).data());
             makeAnimation();
         }
     }
-
-    float SpeedGraph::getX(uint64_t progressBytes)
-    {
-        return m_graphSize.Width * (static_cast<float>(progressBytes) / m_total);
-    }
-
-    float SpeedGraph::getY(uint64_t speed)
-    {
-        return m_graphSize.Height * (1.0f - static_cast<float>(speed) / m_currentMax / m_ratio);
-    }
-
-    void SpeedGraph::addInitialPointIfNeeded(uint32_t& count, winrt::Microsoft::UI::Xaml::Media::PointCollection& points)
-    {
-        if (count == 0)
-        {
-            points.Append({ 0, m_graphSize.Height });
-            ++count;
-        }
-    }
-
     void SpeedGraph::resizeGraphPoint(float ratio)
     {
-        m_ratio *= ratio;
-        ScaleDownAnimation().To(m_ratio);
+        m_graphData.SetRatio(ratio);
+        ScaleDownAnimation().To(m_graphData.GetRatio());
         ScaleDown().Begin();
     }
 
@@ -125,8 +76,8 @@ namespace winrt::FastCopy::implementation
 
     void SpeedGraph::makeAnimation()
     {
-        auto const p = Shape().Points().GetAt(Shape().Points().Size() - 2);
-        auto const y = m_graphSize.Height - ((m_graphSize.Height - p.Y) * m_ratio);
+        auto const p = m_graphData.GetLastPoint();
+        auto const y = m_graphData.Height() - ((m_graphData.Height() - p.Y) * m_graphData.GetRatio());
         makeAnimation(y);
     }
 
@@ -164,9 +115,11 @@ namespace winrt::FastCopy::implementation
         winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"Error", false);
     }
 
-    void winrt::FastCopy::implementation::SpeedGraph::UserControl_SizeChanged(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e)
+    void winrt::FastCopy::implementation::SpeedGraph::UserControl_SizeChanged(
+        winrt::Windows::Foundation::IInspectable const&, 
+        winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e)
     {
-		m_graphSize = e.NewSize();
+        m_graphData.NewSize(e.NewSize());
     }
 
 }

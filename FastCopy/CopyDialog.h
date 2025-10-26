@@ -24,6 +24,7 @@ namespace winrt::FastCopy::implementation
         winrt::FastCopy::DependentValue m_height;
         winrt::Windows::Graphics::SizeInt32 m_originalWindowSize;
         bool m_showSpeedGraph = false;
+		bool m_speedGraphLoaded = false;
         winrt::event_token m_speedUpdateRevoker;
 
         void applyTheme(int themeIndex);

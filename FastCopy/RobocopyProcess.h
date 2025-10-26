@@ -33,7 +33,7 @@ class RobocopyProcess
 	static void runContext();
 	static std::regex& progressRegex();
 public:
-	RobocopyProcess(std::vector<RobocopyProcessStatus>& status, RobocopyArgsBuilder const& builder, auto onProgress, auto onNewFile, auto onNewFolder, auto onSame, auto onConfict, auto onExistingDir, auto onProcessExit) :
+	RobocopyProcess(RobocopyArgsBuilder const& builder, auto onProgress, auto onNewFile, auto onNewFolder, auto onSame, auto onConfict, auto onExistingDir, auto onProcessExit) :
 		m_child
 		{
 			boost::process::cmd(boost::process::search_path("robocopy.exe").wstring() + L" " + builder.Build()),
@@ -51,11 +51,9 @@ public:
 			onSame = std::move(onSame), 
 			onConflict = std::move(onConfict),
 			onExistingDir = std::move(onExistingDir),
-			onProcessExit = std::move(onProcessExit),
-			&status
+			onProcessExit = std::move(onProcessExit)
 		]()->boost::asio::awaitable<void>
 		{
-			status.emplace_back();
 			auto onProgressCopy = std::move(onProgress);
 			auto onNewFileCopy = std::move(onNewFile);
 			auto onNewFolderCopy = std::move(onNewFolder);

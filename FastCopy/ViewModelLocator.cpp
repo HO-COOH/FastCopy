@@ -7,16 +7,21 @@ ViewModelLocator& ViewModelLocator::GetInstance()
     return s_locator;
 }
 
-winrt::FastCopy::RobocopyViewModel ViewModelLocator::RobocopyViewModel()
+winrt::FastCopy::RobocopyViewModel& ViewModelLocator::RobocopyViewModel()
 {
     if (!m_robocopyViewModel)
         m_robocopyViewModel = winrt::FastCopy::RobocopyViewModel();
     return m_robocopyViewModel;
 }
 
-winrt::FastCopy::SettingsViewModel ViewModelLocator::SettingsViewModel()
+winrt::FastCopy::SettingsViewModel& ViewModelLocator::SettingsViewModel()
 {
     if (!m_settingsViewModel)
         m_settingsViewModel = winrt::FastCopy::SettingsViewModel();
     return m_settingsViewModel;
+}
+
+SpeedGraphData& ViewModelLocator::SpeedGraphData()
+{
+    return m_speedGraphData;
 }

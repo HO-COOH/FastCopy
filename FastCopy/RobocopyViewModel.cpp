@@ -19,6 +19,7 @@
 #include <numeric>
 #include "FileInfoViewModel.h"
 #include "Ntdll.h"
+#include "ViewModelLocator.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -109,6 +110,7 @@ namespace winrt::FastCopy::implementation
 		double percent{};
 		if (m_totalSize)
 		{
+			std::lock_guard lock{ m_processStatusMutex };
 			percent = (
 				static_cast<double>(m_copiedBytes) + 
 				std::accumulate(m_perProcessStatus.begin(), m_perProcessStatus.end(), 0ull, [](uint64_t sum, RobocopyProcessStatus const& status) {
@@ -147,7 +149,11 @@ namespace winrt::FastCopy::implementation
 				else if (canUseRobocopy())
 				{
 					auto currentIndex = m_process.size();
-					m_process.emplace_back(std::make_unique<RobocopyProcess>(m_perProcessStatus, getRobocopyArg(),
+					{
+						std::lock_guard lock{ m_processStatusMutex };
+						m_perProcessStatus.emplace_back();
+					}
+					m_process.emplace_back(std::make_unique<RobocopyProcess>(getRobocopyArg(),
 						/*onProgress*/
 						[this, currentIndex](float progress)
 						{
@@ -296,8 +302,8 @@ namespace winrt::FastCopy::implementation
 	void RobocopyViewModel::UseSource(winrt::Windows::Foundation::IReference<bool> value)
 	{
 		if (!value) return;
-		for (auto fileCompare : m_duplicateFiles)
-			fileCompare.File1().Selected(value.GetBoolean());
+		for (auto const selected = value.GetBoolean(); auto fileCompare : m_duplicateFiles)
+			fileCompare.File1().Selected(selected);
 	}
 	winrt::Windows::Foundation::IReference<bool> RobocopyViewModel::UseDestination()
 	{
@@ -311,8 +317,8 @@ namespace winrt::FastCopy::implementation
 	void RobocopyViewModel::UseDestination(winrt::Windows::Foundation::IReference<bool> value)
 	{
 		if (!value) return;
-		for (auto fileCompare : m_duplicateFiles)
-			fileCompare.File2().Selected(value.GetBoolean());
+		for (auto const selected = value.GetBoolean(); auto fileCompare : m_duplicateFiles)
+			fileCompare.File2().Selected(selected);
 	}
 
 	void RobocopyViewModel::ConfirmDuplicates()

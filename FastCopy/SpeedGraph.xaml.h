@@ -13,6 +13,8 @@
 #include <winrt/Microsoft.Graphics.Canvas.UI.Xaml.h>
 #include "SpeedGraph.g.h"
 #include <chrono>
+#include <SpeedGraphData.h>
+#include <ViewModelLocator.h>
 
 namespace winrt::FastCopy::implementation
 {
@@ -24,23 +26,16 @@ namespace winrt::FastCopy::implementation
 
         void Pause();
         void Error();
+
+        winrt::Microsoft::UI::Xaml::Media::PointCollection Points();
     private:
-        double m_currentPercent{};
-        uint64_t m_total{};
-        uint64_t m_currentMax = 1024;
-
-        winrt::Windows::Foundation::Size m_graphSize{};
-
-        float getX(uint64_t progressBytes);
-        float getY(uint64_t speed);
-        
-        void addInitialPointIfNeeded(uint32_t& count, winrt::Microsoft::UI::Xaml::Media::PointCollection& points);
+        SpeedGraphData& m_graphData{ ViewModelLocator::GetInstance().SpeedGraphData() };
 
         /**
          * @brief Recalculate graph point because of the speed scale changed
          */
         void resizeGraphPoint(float ratio);
-        float m_ratio = 1.0f;
+
 
 
         /**

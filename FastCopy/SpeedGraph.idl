@@ -12,5 +12,7 @@ namespace FastCopy
 
         void Pause();
         void Error();
+        
+        Microsoft.UI.Xaml.Media.PointCollection Points{ get; };
     }
 }
