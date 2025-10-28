@@ -23,7 +23,13 @@ class SpeedGraphData
 
 	void addInitialPointIfNeeded(uint32_t& count);
 public:
-	void SetSpeed(double percent, uint64_t speed, float& newScaleRatio, bool& needAnimation);
+	struct SetSpeedResult
+	{
+		float newScaleRatio = 1.0f;
+		bool needAnimation = false;
+	};
+
+	SetSpeedResult SetSpeed(double percent, uint64_t speed);
 	
 	constexpr void SetRatio(float ratio)
 	{

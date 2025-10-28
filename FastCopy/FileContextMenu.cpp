@@ -7,6 +7,7 @@
 #include <Windows.h>
 #include <gdiplus.h>
 #include <boost/algorithm/string.hpp>
+#include <wil/resource.h>
 
 class GdiplusInitializer
 {
@@ -84,7 +85,8 @@ winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem FileContextMenu::makeMenuFl
 
 void FileContextMenu::ShowAt(winrt::Microsoft::UI::Xaml::Controls::MenuFlyout& flyout)
 {
-	if (flyout.Items().Size() != 0)
+	auto flyoutItems = flyout.Items();
+	if (flyoutItems.Size() != 0)
 		return;
 
 	winrt::com_ptr<IShellItem> item = CreateItemFromParsingName(m_path.data()), folderItem;
@@ -103,26 +105,38 @@ void FileContextMenu::ShowAt(winrt::Microsoft::UI::Xaml::Controls::MenuFlyout& f
 
 	auto hr = folder->GetUIObjectOf(NULL, 1, &idl[0], IID_IContextMenu, nullptr, m_menu.put_void());
 
-	auto hMenu = CreatePopupMenu();
-	m_menu->QueryContextMenu(hMenu, 0, 1, 0x7fff, CMF_NORMAL);
+	wil::unique_hmenu hMenu{ CreatePopupMenu() };
+	m_menu->QueryContextMenu(hMenu.get(), 0, 1, 0x7fff, CMF_NORMAL);
 
-	auto const itemCount = GetMenuItemCount(hMenu);
-	MENUITEMINFO menuItemInfo{
+	auto const itemCount = GetMenuItemCount(hMenu.get());
+	MENUITEMINFO menuItemInfo
+	{
 		.cbSize = sizeof(menuItemInfo),
 		.fMask = MIIM_BITMAP | MIIM_FTYPE | MIIM_STRING | MIIM_ID | MIIM_SUBMENU
 	};
+
+	std::vector<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItemBase> menuItems;
+	menuItems.reserve(itemCount);
 	for (int i = 0; i < itemCount; ++i)
 	{
 		TCHAR buffer[500]{};
 		menuItemInfo.dwTypeData = buffer;
 		menuItemInfo.cch = std::size(buffer);
-		GetMenuItemInfo(hMenu, i, true, &menuItemInfo);
+		GetMenuItemInfo(
+			hMenu.get(),	//hmenu
+			i,				//item
+			true,			//by position
+			&menuItemInfo	//menuItemInfo
+		);
 		if (!std::wstring_view{buffer}.empty() && m_menu)
 		{
-			flyout.Items().Append(makeMenuFlyout(menuItemInfo));
+			if (auto flyoutItem = makeMenuFlyout(menuItemInfo))
+				menuItems.push_back(flyoutItem);
 			std::wstring command(100, {});
 			m_menu->GetCommandString(menuItemInfo.wID - 1, GCS_VERB, nullptr, reinterpret_cast<char*>(command.data()), command.size());
 			m_menuData.push_back(MenuData{ .menuId = menuItemInfo.wID - 1, .verb = std::move(command) });
 		}
 	}
+
+	flyoutItems.ReplaceAll(menuItems);
 }

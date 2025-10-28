@@ -25,10 +25,7 @@ namespace winrt::FastCopy::implementation
 
     void SpeedGraph::SetSpeed(double percent, uint64_t speed)
     {
-        float newScaleRatio = 1.0f;
-        bool needAnimation = false;
-
-		m_graphData.SetSpeed(percent, speed, newScaleRatio, needAnimation);
+		auto const [newScaleRatio, needAnimation] = m_graphData.SetSpeed(percent, speed);
         
         if (newScaleRatio != 1.0f)
             resizeGraphPoint(newScaleRatio);

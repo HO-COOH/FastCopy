@@ -17,17 +17,19 @@ void SpeedGraphData::addInitialPointIfNeeded(uint32_t& count)
     }
 }
 
-void SpeedGraphData::SetSpeed(double percent, uint64_t speed, float& newScaleRatio, bool& needAnimation)
+SpeedGraphData::SetSpeedResult SpeedGraphData::SetSpeed(double percent, uint64_t speed)
 {
+    SetSpeedResult result;
+
     if (m_currentMax == 0 && speed == 0)
-        return;
+        return result;
 
     //If we don't have progress on this new data point, don't show it on the graph
     if (percent <= m_currentPercent)
-        return;
+        return result;
 
     if (!m_points)
-        return;
+        return result;
 
     m_currentPercent = percent;
 
@@ -58,10 +60,12 @@ void SpeedGraphData::SetSpeed(double percent, uint64_t speed, float& newScaleRat
 
     if (m_currentMax < speed)
     {
-        newScaleRatio = static_cast<float>(m_currentMax) / speed;
+        result.newScaleRatio = static_cast<float>(m_currentMax) / speed;
         m_currentMax = speed;
     }
 
     if (count > 2)
-        needAnimation = true;
+        result.needAnimation = true;
+
+    return result;
 }
