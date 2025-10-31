@@ -35,6 +35,14 @@ namespace winrt::FastCopy::implementation
             AverageSpeedText().Text(ReadableUnitConverter::Speed::ToString<wchar_t>(speed).data());
             makeAnimation();
         }
+
+        if (!m_hasData)
+        {
+            GraphGrid().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
+            SpeedGraphNoDataAvailableText().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
+            //m_graphData.NewSize(ActualSize());
+            m_hasData = true;
+        }
     }
     void SpeedGraph::resizeGraphPoint(float ratio)
     {

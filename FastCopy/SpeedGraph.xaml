@@ -42,45 +42,54 @@
     </UserControl.Resources>
 
     <Grid>
-        <canvas:CanvasControl
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            ActualThemeChanged="CanvasControl_ActualThemeChanged"
-            ClearColor="Transparent"
-            Draw="CanvasControl_Draw" />
+        <Grid x:Name="GraphGrid" Visibility="Collapsed">
+            <canvas:CanvasControl
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                ActualThemeChanged="CanvasControl_ActualThemeChanged"
+                ClearColor="Transparent"
+                Draw="CanvasControl_Draw" />
 
-        <Polygon
-            x:Name="Shape"
-            Fill="{StaticResource Brush}"
-            Points="{x:Bind Points}"
-            RenderTransformOrigin="0 1.0">
-            <Polygon.RenderTransform>
-                <ScaleTransform x:Name="GraphScale" />
-            </Polygon.RenderTransform>
-        </Polygon>
+            <Polygon
+                x:Name="Shape"
+                Fill="{StaticResource Brush}"
+                Points="{x:Bind Points}"
+                RenderTransformOrigin="0 1.0">
+                <Polygon.RenderTransform>
+                    <ScaleTransform x:Name="GraphScale" />
+                </Polygon.RenderTransform>
+            </Polygon>
 
-        <Line
-            x:Name="AverageSpeedLine"
-            Opacity="0.3"
-            Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}"
-            X1="0"
-            X2="10000">
-            <Line.RenderTransform>
-                <TranslateTransform x:Name="LineTranslate" />
-            </Line.RenderTransform>
-        </Line>
+            <Line
+                x:Name="AverageSpeedLine"
+                Opacity="0.3"
+                Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                X1="0"
+                X2="10000">
+                <Line.RenderTransform>
+                    <TranslateTransform x:Name="LineTranslate" />
+                </Line.RenderTransform>
+            </Line>
+
+            <TextBlock
+                x:Name="AverageSpeedText"
+                Margin="0,-20,10,0"
+                HorizontalAlignment="Right"
+                Opacity="0.8"
+                Text="--- MB/s">
+                <TextBlock.RenderTransform>
+                    <TranslateTransform x:Name="TextTranslate" />
+                </TextBlock.RenderTransform>
+            </TextBlock>
+        </Grid>
 
         <TextBlock
-            x:Name="AverageSpeedText"
-            Margin="0,-20,10,0"
-            HorizontalAlignment="Right"
-            Opacity="0.8"
-            Text="--- MB/s">
-            <TextBlock.RenderTransform>
-                <TranslateTransform x:Name="TextTranslate" />
-            </TextBlock.RenderTransform>
-        </TextBlock>
-
+            x:Name="SpeedGraphNoDataAvailableText"
+            x:Uid="SpeedGraphNoDataAvailableText"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            FontSize="30"
+            Opacity="0.5" />
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="States">
                 <VisualState x:Name="Normal">

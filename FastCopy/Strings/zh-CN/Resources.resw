@@ -207,6 +207,9 @@
   <data name="ShowSeperateWindows.Text" xml:space="preserve">
     <value>显示多个窗口</value>
   </data>
+  <data name="SpeedGraphNoDataAvailableText.Text" xml:space="preserve">
+    <value>暂无速度数据</value>
+  </data>
   <data name="ThemeSettingItem.Description" xml:space="preserve">
     <value>切换亮色/暗色主题</value>
   </data>

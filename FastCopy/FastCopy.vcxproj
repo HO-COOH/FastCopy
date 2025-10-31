@@ -237,6 +237,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
       <DependentUpon>DateTimeToStringConverter.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="DebugFileSize.h" />
     <ClInclude Include="DebugLogger.h" />
     <ClInclude Include="DependentValue.h">
       <DependentUpon>DependentValue.idl</DependentUpon>
@@ -361,6 +362,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
       <DependentUpon>DateTimeToStringConverter.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="DebugFileSize.cpp" />
     <ClCompile Include="DebugLogger.cpp" />
     <ClCompile Include="DependentValue.cpp">
       <DependentUpon>DependentValue.idl</DependentUpon>
@@ -405,6 +407,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
     <ClCompile Include="ResourceHelper.cpp" />
     <ClCompile Include="RobocopyArgs.cpp" />
     <ClCompile Include="RobocopyProcess.cpp" />
+    <ClCompile Include="RobocopyProcessStatus.cpp" />
     <ClCompile Include="RobocopyViewModel.cpp">
       <DependentUpon>RobocopyViewModel.idl</DependentUpon>
       <SubType>Code</SubType>

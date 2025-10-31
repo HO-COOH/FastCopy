@@ -71,7 +71,7 @@ public:
 				{
 					auto n = co_await boost::asio::async_read_until(thisCopy->pipeOut, buf, boost::regex{ "\r|\n" }, boost::asio::use_awaitable);
 					std::string_view data{ outBuf.begin(), outBuf.begin() + n };
-					std::cout << data << '\n';
+					//std::cout << data << '\n';
 					data.remove_prefix((std::min)(data.find_first_not_of(" \r\t"), data.size()));
 					data.remove_suffix((std::min)(data.size() - 1 - data.find_last_not_of(" \r\n\t"), data.size()));
 					if (!data.empty())

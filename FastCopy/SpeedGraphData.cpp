@@ -35,6 +35,14 @@ SpeedGraphData::SetSpeedResult SpeedGraphData::SetSpeed(double percent, uint64_t
 
     auto count = m_points.Size();
     float const x = percent / 100.0 * m_graphSize.Width;
+
+
+    if (m_currentMax < speed)
+    {
+        result.newScaleRatio = static_cast<float>(m_currentMax) / speed;
+        m_currentMax = speed;
+    }
+
     auto const y = getY(speed);
 
     assert(count != 1);
@@ -55,13 +63,6 @@ SpeedGraphData::SetSpeedResult SpeedGraphData::SetSpeed(double percent, uint64_t
             m_points.SetAt(m_points.Size() - 1, { x, y });
             m_points.Append({ x, m_graphSize.Height });
             break;
-    }
-
-
-    if (m_currentMax < speed)
-    {
-        result.newScaleRatio = static_cast<float>(m_currentMax) / speed;
-        m_currentMax = speed;
     }
 
     if (count > 2)

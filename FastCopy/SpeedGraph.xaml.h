@@ -30,6 +30,7 @@ namespace winrt::FastCopy::implementation
         winrt::Microsoft::UI::Xaml::Media::PointCollection Points();
     private:
         SpeedGraphData& m_graphData{ ViewModelLocator::GetInstance().SpeedGraphData() };
+        bool m_hasData{};
 
         /**
          * @brief Recalculate graph point because of the speed scale changed

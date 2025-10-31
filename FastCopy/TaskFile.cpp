@@ -5,6 +5,7 @@
 #include <codecvt>
 #include "FileWrapper.h"
 #include <numeric>
+#include "DebugFileSize.h"
 
 static int32_t getNumFilesInFolder(std::wstring_view path)
 {
@@ -22,14 +23,22 @@ static uint64_t getFileSizeInFolder(std::wstring_view path)
 		0ull,
 		[](uint64_t lhs, std::filesystem::directory_entry p)
 		{
-			return lhs + std::filesystem::file_size(p);
+			/*DebugFileSize(p);*/
+			return lhs + (p.is_directory() ? 0 : std::filesystem::file_size(p));
 		}
 	);
 }
 
+
 uint64_t TaskFile::GetSizeOfPath(std::wstring_view path)
 {
-	return std::filesystem::is_directory(path) ?
+	auto const isDir = std::filesystem::is_directory(path);
+#if (defined DEBUG) || (defined _DEBUG)
+	if (!isDir)
+		DebugFileSize(path);
+#endif
+
+	return isDir ?
 		getFileSizeInFolder(path) : std::filesystem::file_size(path);
 }
 

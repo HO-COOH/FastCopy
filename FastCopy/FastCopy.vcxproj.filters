@@ -68,9 +68,6 @@
     <ClCompile Include="TaskFile.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="DebugLogger.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
     <ClCompile Include="RobocopyProcess.cpp">
       <Filter>Utils\Robocopy</Filter>
     </ClCompile>
@@ -150,6 +147,15 @@
     <ClCompile Include="SpeedGraphData.cpp">
       <Filter>ViewModel</Filter>
     </ClCompile>
+    <ClCompile Include="DebugLogger.cpp">
+      <Filter>Utils\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugFileSize.cpp">
+      <Filter>Utils\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="RobocopyProcessStatus.cpp">
+      <Filter>ViewModel\Robocopy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -174,9 +180,6 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="TaskFile.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugLogger.h">
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="RobocopyProcess.h">
@@ -283,6 +286,12 @@
     </ClInclude>
     <ClInclude Include="SpeedGraphData.h">
       <Filter>ViewModel</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugLogger.h">
+      <Filter>Utils\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugFileSize.h">
+      <Filter>Utils\Debug</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -521,6 +530,9 @@
     </Filter>
     <Filter Include="Utils\Mutex">
       <UniqueIdentifier>{3a953c3c-00e5-4f38-8159-d45a839b023a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\Debug">
+      <UniqueIdentifier>{bac36f11-96d7-48fb-b686-1030f98a2c8f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

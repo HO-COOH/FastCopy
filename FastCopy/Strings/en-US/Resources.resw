@@ -207,6 +207,9 @@
   <data name="ShowSeperateWindows.Text" xml:space="preserve">
     <value>Show seperate windows</value>
   </data>
+  <data name="SpeedGraphNoDataAvailableText.Text" xml:space="preserve">
+    <value>No speed data available!</value>
+  </data>
   <data name="ThemeSettingItem.Description" xml:space="preserve">
     <value>Toggle between light/dark theme</value>
   </data>

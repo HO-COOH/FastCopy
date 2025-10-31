@@ -7,7 +7,7 @@ class SpeedGraphData
 	winrt::Microsoft::UI::Xaml::Media::PointCollection m_points{ nullptr };
 	winrt::Windows::Foundation::Size m_graphSize{};
 	uint64_t m_total{};
-	uint64_t m_currentMax = 1024;
+	uint64_t m_currentMax = 1024 * 1024;
 	float m_ratio = 1.0f;
 	double m_currentPercent{};
 

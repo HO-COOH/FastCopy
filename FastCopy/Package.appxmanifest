@@ -13,7 +13,7 @@
   <Identity
     Name="FastCopy"
     Publisher="CN=Peter"
-    Version="1.0.3.0" />
+    Version="1.0.4.0" />
 
   <Properties>
     <DisplayName>FastCopy</DisplayName>

@@ -21,6 +21,7 @@
 #include "Ntdll.h"
 #include "ViewModelLocator.h"
 
+
 namespace winrt::FastCopy::implementation
 {
 	void RobocopyViewModel::RecordFile(winrt::hstring value)
@@ -166,13 +167,17 @@ namespace winrt::FastCopy::implementation
 							if (m_perProcessStatus[currentIndex].m_currentFile == newFile)
 								return;
 
-							std::cout << "!!!New file: " << m_perProcessStatus[currentIndex].m_currentFile.name << " -> " << m_perProcessStatus[currentIndex].m_currentFile.bytes << '\n';
+							//std::cout << "!!!New file: " << m_perProcessStatus[currentIndex].m_currentFile.name << " -> " << m_perProcessStatus[currentIndex].m_currentFile.bytes << '\n';
 
 							auto const hasPreviousFile = static_cast<bool>(m_perProcessStatus[currentIndex].m_currentFile);
 							auto const previousFileSize = std::exchange(m_perProcessStatus[currentIndex].m_copiedBytes, 0);
 							
 							m_perProcessStatus[currentIndex].m_currentFile = std::move(newFile);
-							
+
+#if (defined DEBUG) || (defined _DEBUG)
+							m_perProcessStatus[currentIndex].DebugSize();
+#endif
+
 							if (!hasPreviousFile)
 								return;
 
