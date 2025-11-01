@@ -10,6 +10,7 @@ struct Settings
 	constexpr static auto MultipleWindowBehavior = L"MultipleWindowBehavior";
 	constexpr static auto ThemeSelection = L"ThemeSelection";
 	constexpr static auto BackgroundSelection = L"BackSelection";
+	constexpr static auto IsFirstLaunch = L"IsFirstLaunch";
 
 	/**
 	 * @brief Get settings value of a specific type, will throw if the key is not found

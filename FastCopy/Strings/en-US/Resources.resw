@@ -165,6 +165,9 @@
   <data name="ItemsFromText.Text" xml:space="preserve">
     <value>items from </value>
   </data>
+  <data name="KillExplorerButton.Content" xml:space="preserve">
+    <value>Force restart explorer</value>
+  </data>
   <data name="LastAccessTimeAbbreviation.Text" xml:space="preserve">
     <value>R</value>
   </data>
@@ -227,6 +230,15 @@
   </data>
   <data name="UseSourceCheckBox.Content" xml:space="preserve">
     <value>Use source</value>
+  </data>
+  <data name="WelcomeScreenConfirmation.Content" xml:space="preserve">
+    <value>I can see a FastCopy menu item</value>
+  </data>
+  <data name="WelcomeScreenInstruction.Text" xml:space="preserve">
+    <value>Please right click on any file or folder, and check if you can see a FastCopy menu item</value>
+  </data>
+  <data name="WelcomeScreenTitle.Text" xml:space="preserve">
+    <value>Welcome to use FastCopy</value>
   </data>
   <data name="WindowBackgroundSettingItem.Description" xml:space="preserve">
     <value>Controls the background of all windows</value>

@@ -8,7 +8,5 @@ struct RobocopyProcessStatus
 	NewFile m_currentFile;
 	NewDir m_currentDir;
 
-#if (defined DEBUG) || (defined _DEBUG)
 	void DebugSize() const;
-#endif
 };

@@ -322,6 +322,10 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
     </ClInclude>
     <ClInclude Include="UIThreadWrapper.h" />
     <ClInclude Include="ViewModelLocator.h" />
+    <ClInclude Include="WelcomeWindow.xaml.h">
+      <DependentUpon>WelcomeWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="WindowHelper.h" />
   </ItemGroup>
   <ItemGroup>
@@ -336,6 +340,9 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
       <SubType>Designer</SubType>
     </Page>
     <Page Include="SpeedGraph.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="WelcomeWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
@@ -440,6 +447,10 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
     </ClCompile>
     <ClCompile Include="UIThreadWrapper.cpp" />
     <ClCompile Include="ViewModelLocator.cpp" />
+    <ClCompile Include="WelcomeWindow.xaml.cpp">
+      <DependentUpon>WelcomeWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="WindowHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -496,6 +507,10 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
     </Midl>
     <Midl Include="TilesControl.idl">
       <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="WelcomeWindow.idl">
+      <DependentUpon>WelcomeWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Midl>
   </ItemGroup>
   <ItemGroup>

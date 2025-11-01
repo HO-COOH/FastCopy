@@ -6,6 +6,7 @@
 #include "App.xaml.h"
 #include "CopyDialogWindow.xaml.h"
 #include "SettingsWindow.xaml.h"
+#include "WelcomeWindow.xaml.h"
 #include "ViewModelLocator.h"
 #include <winrt/Windows.ApplicationModel.DataTransfer.h>
 #include "CommandLine.h"
@@ -15,6 +16,7 @@
 #include "Global.h"
 #include "RobocopyViewModel.h"
 #include "CommandLineHandler.h"
+#include "Settings.h"
 
 
 namespace winrt::FastCopy::implementation
@@ -37,15 +39,23 @@ namespace winrt::FastCopy::implementation
 
     void App::OnLaunched(winrt::Microsoft::UI::Xaml::LaunchActivatedEventArgs const&)
     {
-        return CommandLineHandler::AppLaunchMode == AppLaunchMode::LaunchSettings ? launchSettings() : normalLaunch();
+        CommandLineHandler::AppLaunchMode == AppLaunchMode::LaunchSettings ? launchSettings() : normalLaunch();
+        m_mainWindow.Activate();
     }
 
     void App::launchSettings()
     {
         m_settingsLock.emplace();
-        setting = make<SettingsWindow>();
-        setting.Activate();
-        Global::windowEffectHelper.SetTarget(setting);
+        if (Settings settings; settings.Get(Settings::IsFirstLaunch, true)/*true*/)
+        {
+            m_mainWindow = make<WelcomeWindow>();
+            settings.Set(Settings::IsFirstLaunch, false);
+        }
+        else
+        {
+            m_mainWindow = make<SettingsWindow>();
+            Global::windowEffectHelper.SetTarget(m_mainWindow);
+        }
     }
 
     bool winrt::FastCopy::implementation::App::HasAnotherInstance()
@@ -77,9 +87,8 @@ namespace winrt::FastCopy::implementation
 
         LOGI(L"App started, record file: {}", recordFile.data());
 
-        copyDialogWindow = make<CopyDialogWindow>();
-        copyDialogWindow.Activate();
-        Global::windowEffectHelper.SetTarget(copyDialogWindow);
+        m_mainWindow = make<CopyDialogWindow>();
+        Global::windowEffectHelper.SetTarget(m_mainWindow);
         Global::windowEffectHelper.SetListenThemeChange();
         viewModel->Start();
     }

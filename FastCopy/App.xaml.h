@@ -23,8 +23,7 @@ namespace winrt::FastCopy::implementation
          */
         static bool HasAnotherInstance();
     private:
-        winrt::Microsoft::UI::Xaml::Window copyDialogWindow{ nullptr };
-        winrt::Microsoft::UI::Xaml::Window setting{ nullptr };
+        winrt::Microsoft::UI::Xaml::Window m_mainWindow{ nullptr };
 
         std::optional<FastcopySettingsSingleInstanceLock> m_settingsLock;
 

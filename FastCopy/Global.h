@@ -10,5 +10,6 @@ struct Global
 	static inline HWND MainHwnd;
 	static inline WindowEffectHelper windowEffectHelper;
 	static inline winrt::FastCopy::CopyDialogWindow copyWindow{nullptr};
+	static inline winrt::Microsoft::UI::Xaml::Window settingsWindow{ nullptr };
 };
 

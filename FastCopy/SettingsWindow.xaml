@@ -454,8 +454,11 @@
             <essential:SettingsCard.HeaderIcon>
                 <FontIcon Glyph="{StaticResource WindowBackgroundGlyph}" />
             </essential:SettingsCard.HeaderIcon>
-            <ComboBox essential:ComboBoxHelper.AcrylicWorkaround="True" SelectedIndex="{x:Bind ViewModel.BackgroundSelection, Mode=TwoWay}">
-                <ComboBoxItem x:Uid="MicaItem" />
+            <ComboBox
+                xmlns:backdrops="using:Microsoft.UI.Composition.SystemBackdrops"
+                essential:ComboBoxHelper.AcrylicWorkaround="True"
+                SelectedIndex="{x:Bind ViewModel.BackgroundSelection, Mode=TwoWay}">
+                <ComboBoxItem x:Uid="MicaItem" IsEnabled="{x:Bind backdrops:MicaController.IsSupported()}" />
                 <ComboBoxItem x:Uid="AcrylicItem" />
                 <ComboBoxItem x:Uid="CustomItem" />
             </ComboBox>

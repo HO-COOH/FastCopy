@@ -165,6 +165,9 @@
   <data name="ItemsFromText.Text" xml:space="preserve">
     <value>从</value>
   </data>
+  <data name="KillExplorerButton.Content" xml:space="preserve">
+    <value>强制重启Explorer</value>
+  </data>
   <data name="LastAccessTimeAbbreviation.Text" xml:space="preserve">
     <value>读</value>
   </data>
@@ -227,6 +230,15 @@
   </data>
   <data name="UseSourceCheckBox.Content" xml:space="preserve">
     <value>使用源</value>
+  </data>
+  <data name="WelcomeScreenConfirmation.Content" xml:space="preserve">
+    <value>FastCopy菜单项已经出现</value>
+  </data>
+  <data name="WelcomeScreenInstruction.Text" xml:space="preserve">
+    <value>请右键任意文件，并确认有FastCopy的菜单项</value>
+  </data>
+  <data name="WelcomeScreenTitle.Text" xml:space="preserve">
+    <value>欢迎使用FastCopy</value>
   </data>
   <data name="WindowBackgroundSettingItem.Description" xml:space="preserve">
     <value>控制所有窗口的背景</value>

@@ -1,0 +1,8 @@
+namespace FastCopy
+{
+    [default_interface]
+    runtimeclass WelcomeWindow : Microsoft.UI.Xaml.Window
+    {
+        WelcomeWindow();
+    }
+}
