@@ -21,6 +21,11 @@ class FileContextMenu : public std::enable_shared_from_this<FileContextMenu>
 
 	static winrt::Microsoft::UI::Xaml::Media::ImageSource getIconFromWin32Menu(HBITMAP menuItemInfoBitmap);
 	winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem makeMenuFlyout(MENUITEMINFO const& menuItemInfo);
+
+	void menuFlyoutFromHMenu(
+		std::vector<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItemBase>& items,
+		HMENU menu
+	);
 public:
 	FileContextMenu(winrt::hstring path) : m_path{ ToBackslash(path)} {}
 

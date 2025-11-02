@@ -133,6 +133,7 @@
                 Click="Button_Click"
                 IsEnabled="{x:Bind WelcomeScreenConfirmation.IsChecked.Value, Mode=OneWay}"
                 Style="{StaticResource AccentButtonStyleSupportAnimatedIcon}">
+                <!--  Can't directly apply a Rotation on AnimatedIcon, see https://github.com/microsoft/microsoft-ui-xaml/issues/10866  -->
                 <AnimatedIcon>
                     <animatedVisual:AnimatedBackVisualSource />
                     <AnimatedIcon.RenderTransform>

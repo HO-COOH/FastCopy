@@ -83,6 +83,64 @@ winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem FileContextMenu::makeMenuFl
 	return item;
 }
 
+void FileContextMenu::menuFlyoutFromHMenu(std::vector<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItemBase>& items, HMENU menu)
+{
+	auto const itemCount = GetMenuItemCount(menu);
+	items.reserve(items.size() + itemCount);
+
+	MENUITEMINFO menuItemInfo
+	{
+		.cbSize = sizeof(menuItemInfo),
+		.fMask = MIIM_BITMAP | MIIM_FTYPE | MIIM_STRING | MIIM_ID | MIIM_SUBMENU
+	};
+
+
+	for (int i = 0; i < itemCount; ++i)
+	{
+		TCHAR buffer[500]{};
+		menuItemInfo.dwTypeData = buffer;
+		menuItemInfo.cch = std::size(buffer);
+		GetMenuItemInfo(
+			menu,	//hmenu
+			i,				//item
+			true,			//by position
+			&menuItemInfo	//menuItemInfo
+		);
+
+		if (menuItemInfo.fType & MFT_SEPARATOR)
+		{
+			items.push_back(winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutSeparator{});
+			continue;
+		}
+
+		std::wstring_view itemName{ buffer };
+		if (itemName == L"FastCopy")
+			continue;
+
+		if (!itemName.empty() && m_menu)
+		{
+			if (menuItemInfo.hSubMenu)
+			{
+				winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutSubItem subItem;
+				std::wstring subItemText{ buffer };
+				boost::replace_all(subItemText, L"&", L"");
+				subItem.Text(subItemText);
+				std::vector<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItemBase> subItems;
+				menuFlyoutFromHMenu(subItems, menuItemInfo.hSubMenu);
+				subItem.Items().ReplaceAll(subItems);
+				items.push_back(subItem);
+				continue;
+			}
+			if (auto flyoutItem = makeMenuFlyout(menuItemInfo))
+				items.push_back(flyoutItem);
+			std::wstring command(100, {});
+			m_menu->GetCommandString(menuItemInfo.wID - 1, GCS_VERB, nullptr, reinterpret_cast<char*>(command.data()), command.size());
+			m_menuData.push_back(MenuData{ .menuId = menuItemInfo.wID - 1, .verb = std::move(command) });
+		}
+	}
+}
+
+
 void FileContextMenu::ShowAt(winrt::Microsoft::UI::Xaml::Controls::MenuFlyout& flyout)
 {
 	auto flyoutItems = flyout.Items();
@@ -108,35 +166,10 @@ void FileContextMenu::ShowAt(winrt::Microsoft::UI::Xaml::Controls::MenuFlyout& f
 	wil::unique_hmenu hMenu{ CreatePopupMenu() };
 	m_menu->QueryContextMenu(hMenu.get(), 0, 1, 0x7fff, CMF_NORMAL);
 
-	auto const itemCount = GetMenuItemCount(hMenu.get());
-	MENUITEMINFO menuItemInfo
-	{
-		.cbSize = sizeof(menuItemInfo),
-		.fMask = MIIM_BITMAP | MIIM_FTYPE | MIIM_STRING | MIIM_ID | MIIM_SUBMENU
-	};
+
 
 	std::vector<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItemBase> menuItems;
-	menuItems.reserve(itemCount);
-	for (int i = 0; i < itemCount; ++i)
-	{
-		TCHAR buffer[500]{};
-		menuItemInfo.dwTypeData = buffer;
-		menuItemInfo.cch = std::size(buffer);
-		GetMenuItemInfo(
-			hMenu.get(),	//hmenu
-			i,				//item
-			true,			//by position
-			&menuItemInfo	//menuItemInfo
-		);
-		if (!std::wstring_view{buffer}.empty() && m_menu)
-		{
-			if (auto flyoutItem = makeMenuFlyout(menuItemInfo))
-				menuItems.push_back(flyoutItem);
-			std::wstring command(100, {});
-			m_menu->GetCommandString(menuItemInfo.wID - 1, GCS_VERB, nullptr, reinterpret_cast<char*>(command.data()), command.size());
-			m_menuData.push_back(MenuData{ .menuId = menuItemInfo.wID - 1, .verb = std::move(command) });
-		}
-	}
+	menuFlyoutFromHMenu(menuItems, hMenu.get());
 
 	flyoutItems.ReplaceAll(menuItems);
 }
