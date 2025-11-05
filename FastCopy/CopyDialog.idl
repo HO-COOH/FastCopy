@@ -10,5 +10,6 @@ namespace FastCopy
         RobocopyViewModel ViewModel{ get; };
 
         static Double PercentConvert(Double value);
+        static String GetTextFromKeyboardAccelerators(Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.Input.KeyboardAccelerator> keys);
     }
 }

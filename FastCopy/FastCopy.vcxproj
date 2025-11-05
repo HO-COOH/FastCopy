@@ -229,10 +229,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
       <DependentUpon>CopyDialogWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DataInjector.h">
-      <DependentUpon>DataInjector.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
     <ClInclude Include="DateTimeToStringConverter.h">
       <DependentUpon>DateTimeToStringConverter.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -250,13 +246,17 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
       <DependentUpon>FileCompareViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="FileContextMenu.h" />
     <ClInclude Include="FileInfoViewModel.h">
       <DependentUpon>FileInfoViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="FileMenu.h">
+      <DependentUpon>FileMenu.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="FileTime.h" />
     <ClInclude Include="FileWrapper.h" />
+    <ClInclude Include="GdiplusInitializer.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="ImageUtils.h" />
     <ClInclude Include="MutexWrapper.h" />
@@ -361,10 +361,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
       <DependentUpon>CopyDialogWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="DataInjector.cpp">
-      <DependentUpon>DataInjector.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
     <ClCompile Include="DateTimeToStringConverter.cpp">
       <DependentUpon>DateTimeToStringConverter.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -381,9 +377,12 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
       <DependentUpon>FileCompareViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="FileContextMenu.cpp" />
     <ClCompile Include="FileInfoViewModel.cpp">
       <DependentUpon>FileInfoViewModel.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="FileMenu.cpp">
+      <DependentUpon>FileMenu.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="FileTime.cpp" />
@@ -466,9 +465,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
       <DependentUpon>CopyDialogWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="DataInjector.idl">
-      <SubType>Designer</SubType>
-    </Midl>
     <Midl Include="DateTimeToStringConverter.idl">
       <SubType>Designer</SubType>
     </Midl>
@@ -479,6 +475,9 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="FileInfoViewModel.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="FileMenu.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="ICopyBase.idl" />

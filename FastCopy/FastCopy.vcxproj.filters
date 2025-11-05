@@ -43,9 +43,6 @@
     <Midl Include="DependentValue.idl">
       <Filter>Utils</Filter>
     </Midl>
-    <Midl Include="DataInjector.idl">
-      <Filter>Views\Controls</Filter>
-    </Midl>
     <Midl Include="TilesControl.idl">
       <Filter>Views\Controls</Filter>
     </Midl>
@@ -54,6 +51,9 @@
     </Midl>
     <Midl Include="ReadableUnitConverterWinRT.idl">
       <Filter>Views\Converters</Filter>
+    </Midl>
+    <Midl Include="FileMenu.idl">
+      <Filter>Views\Controls</Filter>
     </Midl>
   </ItemGroup>
   <ItemGroup>
@@ -103,9 +103,6 @@
     </ClCompile>
     <ClCompile Include="ImageUtils.cpp">
       <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="FileContextMenu.cpp">
-      <Filter>Views\Controls</Filter>
     </ClCompile>
     <ClCompile Include="Global.cpp">
       <Filter>Utils</Filter>
@@ -224,9 +221,6 @@
     <ClInclude Include="ImageUtils.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="FileContextMenu.h">
-      <Filter>Views\Controls</Filter>
-    </ClInclude>
     <ClInclude Include="FileTime.h">
       <Filter>Utils</Filter>
     </ClInclude>
@@ -296,6 +290,7 @@
     <ClInclude Include="DebugFileSize.h">
       <Filter>Utils\Debug</Filter>
     </ClInclude>
+    <ClInclude Include="GdiplusInitializer.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">

@@ -13,13 +13,16 @@ namespace winrt::FastCopy::implementation
         void HyperlinkButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 
         void ShowGraphButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-
-        void ShowMenu(winrt::hstring path, winrt::Microsoft::UI::Xaml::Controls::MenuFlyout flyout);
-    
         static constexpr double PercentConvert(double value)
         {
             return value * 100.0;
         }
+
+        static winrt::hstring GetTextFromKeyboardAccelerators(winrt::Windows::Foundation::Collections::IVector<winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator> const& keys);
+
+        static winrt::Microsoft::UI::Xaml::Style MenuFlyoutItemNoSubItemStyle;
+        static winrt::Microsoft::UI::Xaml::Style MenuFlyoutItemHasSubItemStyle;
+        static winrt::Microsoft::UI::Xaml::Style MenuFlyoutSubItemStyle;
     private:
         winrt::FastCopy::DependentValue m_height;
         winrt::Windows::Graphics::SizeInt32 m_originalWindowSize;
@@ -28,8 +31,6 @@ namespace winrt::FastCopy::implementation
         winrt::event_token m_speedUpdateRevoker;
 
         void applyTheme(int themeIndex);
-    public:
-        void MenuFlyout_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& e);
     };
 }
 

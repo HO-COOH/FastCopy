@@ -1,0 +1,13 @@
+import "FileInfoViewModel.idl";
+
+namespace FastCopy
+{
+    [bindable]
+    [default_interface]
+    runtimeclass FileMenu : Microsoft.UI.Xaml.Controls.MenuFlyout
+    {
+        FileMenu();
+
+        FileInfoViewModel File;
+    }
+}
