@@ -332,7 +332,10 @@ namespace winrt::FastCopy::implementation
 			return {};
 
 		auto key = *keys.First();
-		return winrt::hstring{ std::format(L"{}+{}", modifierToText(key.Modifiers()), virtualKeyToText(key.Key())) };
+		auto const modifiers = key.Modifiers();
+		if (modifiers == winrt::Windows::System::VirtualKeyModifiers::None)
+			return virtualKeyToText(key.Key());
+		return winrt::hstring{ std::format(L"{}+{}", modifierToText(modifiers), virtualKeyToText(key.Key())) };
 	}
 
 	void CopyDialog::applyTheme(int themeIndex)

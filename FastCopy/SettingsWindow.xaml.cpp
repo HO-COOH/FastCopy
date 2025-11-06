@@ -8,6 +8,11 @@
 
 namespace winrt::FastCopy::implementation
 {
+    SettingsWindow::SettingsWindow()
+    {
+        ExtendsContentIntoTitleBar(true);
+    }
+
     winrt::FastCopy::SettingsViewModel SettingsWindow::ViewModel()
     {
         return ViewModelLocator::GetInstance().SettingsViewModel();
@@ -23,6 +28,11 @@ namespace winrt::FastCopy::implementation
             case 1: return RootPanel().RequestedTheme(winrt::Microsoft::UI::Xaml::ElementTheme::Light);
             case 2: return RootPanel().RequestedTheme(winrt::Microsoft::UI::Xaml::ElementTheme::Dark);
         }
+    }
+
+    void SettingsWindow::WindowEx_Activated(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::WindowActivatedEventArgs const& args)
+    {
+        TitleBarTextBlock().Opacity(args.WindowActivationState() == winrt::Microsoft::UI::Xaml::WindowActivationState::Deactivated ? 0.5f : 1.0f);
     }
 
 }

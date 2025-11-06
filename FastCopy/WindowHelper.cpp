@@ -43,6 +43,24 @@ void CenterWindow(winrt::Microsoft::UI::Xaml::Window window, winrt::Windows::Gra
     });
 }
 
+void CenterWindow(winrt::Microsoft::UI::Xaml::Window window)
+{
+    auto const hwnd = GetHwnd(window);
+    auto const monitorInfo = MonitorInfo::GetFromWindow(hwnd);
+    RECT rect;
+    GetWindowRect(hwnd, &rect);
+    auto const windowWidth = rect.right - rect.left;
+    auto const windowHeight = rect.bottom - rect.top;
+    SetWindowPos(
+        hwnd,
+        nullptr,
+        (monitorInfo.rcWork.right - monitorInfo.rcWork.left - windowWidth) / 2,
+        (monitorInfo.rcWork.bottom - monitorInfo.rcWork.top - windowHeight) / 2,
+        0, 0,
+        SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER
+    );
+}
+
 void ResizeWindowForDpi(HWND hwnd, winrt::Windows::Graphics::SizeInt32 size, UINT dpi)
 {
     size.Height = ScaleForDpi(size.Height, dpi);
@@ -75,5 +93,15 @@ MONITORINFO MonitorInfo::GetPrimary()
         .cbSize = sizeof(info)
     };
     GetMonitorInfo(MonitorFromPoint(POINT{}, MONITOR_DEFAULTTOPRIMARY), &info);
+    return info;
+}
+
+MONITORINFO MonitorInfo::GetFromWindow(HWND hwnd)
+{
+    MONITORINFO info
+    {
+        .cbSize = sizeof(info)
+    };
+    GetMonitorInfo(MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST), &info);
     return info;
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<Window
+<essential:WindowEx
     x:Class="FastCopy.WelcomeWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -7,14 +7,21 @@
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:FastCopy"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="WelcomeWindow"
+    IsMaximizable="False"
+    IsResizable="False"
     mc:Ignorable="d">
+
+    <essential:WindowEx.SystemBackdrop>
+        <MicaBackdrop />
+    </essential:WindowEx.SystemBackdrop>
+
     <StackPanel
         HorizontalAlignment="Stretch"
         VerticalAlignment="Center"
         Spacing="10">
 
         <StackPanel.Resources>
+            <essential:WindowCaptionButtonThemeWorkaround x:Name="CaptionButtonsWorkaround" Window="{x:Bind}" />
             <Style x:Key="AccentButtonStyleSupportAnimatedIcon" TargetType="Button">
                 <Setter Property="Foreground" Value="{ThemeResource AccentButtonForeground}" />
                 <Setter Property="Background" Value="{ThemeResource AccentButtonBackground}" />
@@ -146,4 +153,4 @@
 
         <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind}" />
     </StackPanel>
-</Window>
+</essential:WindowEx>

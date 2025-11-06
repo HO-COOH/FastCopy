@@ -10,8 +10,9 @@
 #include <ShlObj_core.h>
 #include <wil/resource.h>
 #include "ImageUtils.h"
+#include "CopyDialog.h"
 
-winrt::Microsoft::UI::Xaml::Media::ImageSource getIconFromWin32Menu(HBITMAP menuItemInfoBitmap)
+static winrt::Microsoft::UI::Xaml::Media::ImageSource getIconFromWin32Menu(HBITMAP menuItemInfoBitmap)
 {
 	static GdiplusInitializer s_gdiPlusInitializer;
 	if (!menuItemInfoBitmap)
@@ -36,6 +37,28 @@ winrt::Microsoft::UI::Xaml::Media::ImageSource getIconFromWin32Menu(HBITMAP menu
 	HBITMAP hbitmap{};
 	clone.GetHBITMAP(c, &hbitmap);
 	return HBitmapToWriteableBitmap(hbitmap);
+}
+
+static winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator getKeyboardAccelerator(std::wstring& menuText)
+{
+	auto const index = menuText.rfind(L"&");
+	if (index == std::wstring::npos)
+		return nullptr;
+
+	//auto const endIndex = menuText.find(L')', index + 1);
+	if (/*endIndex == std::wstring::npos*/menuText[index + 2] != L')')
+	{
+		boost::replace_all(menuText, L"&", L"");
+		return nullptr;
+	}
+
+	auto keyboardAcceleratorText = menuText.substr(index + 1, 1);
+	assert(keyboardAcceleratorText.size() == 1);
+	winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator result;
+	result.Key(static_cast<winrt::Windows::System::VirtualKey>(keyboardAcceleratorText[0]));
+	boost::replace_all(menuText, L"&", L"");
+	menuText.erase(menuText.end() - 3, menuText.end());
+	return result;
 }
 
 
@@ -87,7 +110,10 @@ namespace winrt::FastCopy::implementation
 	{
 		winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem item;
 		std::wstring buf{ menuItemInfo.dwTypeData };
-		boost::replace_all(buf, L"&", L"");
+		
+		if (auto keyboardAccelerator = getKeyboardAccelerator(buf))
+			item.KeyboardAccelerators().Append(keyboardAccelerator);
+
 		item.Text(std::move(buf)); //dwTypeData has additional '&' that needs to be removed, see Files ShellContextMenuHelper.cs LoadMenuFlyoutItem() function
 
 
@@ -124,6 +150,7 @@ namespace winrt::FastCopy::implementation
 			.fMask = MIIM_BITMAP | MIIM_FTYPE | MIIM_STRING | MIIM_ID | MIIM_SUBMENU
 		};
 
+		bool hasSubItem = false;
 
 		for (int i = 0; i < itemCount; ++i)
 		{
@@ -151,10 +178,12 @@ namespace winrt::FastCopy::implementation
 			{
 				if (menuItemInfo.hSubMenu)
 				{
+					hasSubItem = true;
 					winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutSubItem subItem;
 					std::wstring subItemText{ buffer };
-					boost::replace_all(subItemText, L"&", L"");
-					subItem.Text(subItemText);
+					if (auto keyboardAccelerator = getKeyboardAccelerator(subItemText))
+						subItem.KeyboardAccelerators().Append(keyboardAccelerator);
+					subItem.Text(std::move(subItemText));
 					std::vector<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItemBase> subItems;
 					menuFlyoutFromHMenu(subItems, menuItemInfo.hSubMenu);
 					subItem.Items().ReplaceAll(subItems);
@@ -167,6 +196,15 @@ namespace winrt::FastCopy::implementation
 				m_menu->GetCommandString(menuItemInfo.wID - 1, GCS_VERB, nullptr, reinterpret_cast<char*>(command.data()), command.size());
 				m_menuData.push_back(MenuData{ .menuId = menuItemInfo.wID - 1, .verb = std::move(command) });
 			}
+		}
+
+		//set style
+		for (auto& flyoutItem : items)
+		{
+			if (auto normalItem = flyoutItem.try_as<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem>(); normalItem && normalItem.KeyboardAccelerators().Size() != 0)
+				normalItem.Style(hasSubItem ? CopyDialog::MenuFlyoutItemHasSubItemStyle : CopyDialog::MenuFlyoutItemNoSubItemStyle);
+			else if (auto subItem = flyoutItem.try_as<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutSubItem>(); subItem && hasSubItem && subItem.KeyboardAccelerators().Size() != 0)
+				subItem.Style(CopyDialog::MenuFlyoutSubItemStyle);
 		}
 	}
 }

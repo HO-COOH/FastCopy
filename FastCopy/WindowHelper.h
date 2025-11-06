@@ -16,6 +16,7 @@ struct MonitorInfo
 {
 	static MONITORINFO GetFromPoint(POINT p);
 	static MONITORINFO GetPrimary();
+	static MONITORINFO GetFromWindow(HWND hwnd);
 };
 
 /**
@@ -38,7 +39,7 @@ void MoveAndResizeWindow(winrt::Microsoft::UI::Xaml::Window window, winrt::Windo
  * Center and resize window, with dpi scaled to primary monitor
  */
 void CenterWindow(winrt::Microsoft::UI::Xaml::Window window, winrt::Windows::Graphics::SizeInt32 size);
-void CenterWindow(HWND hwnd, winrt::Windows::Graphics::SizeInt32 size);
+void CenterWindow(winrt::Microsoft::UI::Xaml::Window window);
 
 
 void ResizeWindowForDpi(HWND hwnd, winrt::Windows::Graphics::SizeInt32 size, UINT dpi);

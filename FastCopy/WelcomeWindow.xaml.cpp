@@ -5,7 +5,7 @@
 #endif
 #include <SettingsWindow.xaml.h>
 #include "Global.h"
-
+#include "WindowHelper.h"
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -15,8 +15,11 @@ namespace winrt::FastCopy::implementation
 	WelcomeWindow::WelcomeWindow()
 	{
 		ExtendsContentIntoTitleBar(true);
+		CenterWindow(*this, winrt::Windows::Graphics::SizeInt32{
+			.Width = 500,
+			.Height = 300
+		});
 	}
-
 
 	void WelcomeWindow::Button_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
