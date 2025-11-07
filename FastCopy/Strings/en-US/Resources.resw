@@ -127,7 +127,7 @@
     <value>copied</value>
   </data>
   <data name="CopyFinishNotificationFormatString" xml:space="preserve">
-    <value>Successfully {} {} files</value>
+    <value>Successfully {} {} files to {}</value>
   </data>
   <data name="Copying" xml:space="preserve">
     <value>copying</value>
@@ -194,6 +194,15 @@
   </data>
   <data name="MultipleInstanceBehaviorSettingItem.Header" xml:space="preserve">
     <value>Multiple Instance</value>
+  </data>
+  <data name="NotificationDismissButtonText" xml:space="preserve">
+    <value>Dismiss</value>
+  </data>
+  <data name="NotificationOpenButtonText" xml:space="preserve">
+    <value>Open folder</value>
+  </data>
+  <data name="NotificationRetryButtonText" xml:space="preserve">
+    <value>Retry</value>
   </data>
   <data name="NotificationSettingItem.Description" xml:space="preserve">
     <value>Send a toast notification to Windows notification center after finish</value>

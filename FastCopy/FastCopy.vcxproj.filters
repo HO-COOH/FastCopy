@@ -175,7 +175,6 @@
     <ClInclude Include="ReadableUnitConverter.h">
       <Filter>Converter</Filter>
     </ClInclude>
-    <ClInclude Include="Global.h" />
     <ClInclude Include="ProcessIoCounter.h">
       <Filter>Utils</Filter>
     </ClInclude>
@@ -290,7 +289,13 @@
     <ClInclude Include="DebugFileSize.h">
       <Filter>Utils\Debug</Filter>
     </ClInclude>
-    <ClInclude Include="GdiplusInitializer.h" />
+    <ClInclude Include="resource1.h" />
+    <ClInclude Include="Global.h">
+      <Filter>Views</Filter>
+    </ClInclude>
+    <ClInclude Include="GdiplusInitializer.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -561,5 +566,8 @@
     <ApplicationDefinition Include="App.xaml">
       <Filter>App</Filter>
     </ApplicationDefinition>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
 </Project>

@@ -1118,6 +1118,7 @@
             </TextBlock>
 
             <TextBlock
+                MaxWidth="380"
                 Margin="3,0,0,0"
                 Foreground="{ThemeResource DestinationTextBrush}"
                 Style="{StaticResource StatusTextStyle}"

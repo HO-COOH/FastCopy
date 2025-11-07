@@ -46,7 +46,7 @@ namespace winrt::FastCopy::implementation
     void App::launchSettings()
     {
         m_settingsLock.emplace();
-        if (Settings settings; /*settings.Get(Settings::IsFirstLaunch, true)*/true)
+        if (Settings settings; settings.Get(Settings::IsFirstLaunch, true)/*true*/)
         {
             m_mainWindow = make<WelcomeWindow>();
             settings.Set(Settings::IsFirstLaunch, false);

@@ -9,7 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="SettingsWindow"
     Width="800"
-    Height="470"
+    Height="420"
     Activated="WindowEx_Activated"
     Icon="Assets/Main.ico"
     IsMaximizable="False"
@@ -44,10 +44,14 @@
                 x:Uid="SettingWindowTitle"
                 Grid.Column="2"
                 VerticalAlignment="Center"
-                Style="{StaticResource CaptionTextBlockStyle}" />
+                Style="{StaticResource CaptionTextBlockStyle}">
+                <TextBlock.OpacityTransition>
+                    <ScalarTransition />
+                </TextBlock.OpacityTransition>
+            </TextBlock>
         </Grid>
 
-        <StackPanel Grid.Row="1" Margin="20">
+        <StackPanel Grid.Row="1" Margin="20,42,20,0">
             <StackPanel.Resources>
                 <ResourceDictionary>
                     <essential:ModernStandardWindowContextMenu x:Name="WindowContextMenu" Window="{x:Bind}" />
@@ -418,14 +422,8 @@
 
 
             <StackPanel.ChildrenTransitions>
-                <EntranceThemeTransition />
+                <EntranceThemeTransition FromVerticalOffset="50" />
             </StackPanel.ChildrenTransitions>
-            <TextBlock
-                x:Uid="SettingWindowTitle"
-                MaxWidth="1000"
-                Margin="0,0,0,10"
-                FontSize="32"
-                FontWeight="Bold" />
 
             <essential:SettingsCard x:Uid="NotificationSettingItem">
                 <essential:SettingsCard.HeaderIcon>

@@ -4,6 +4,7 @@
 #include <winrt/Microsoft.Windows.AppNotifications.h>
 #include <format>
 #include "Settings.h"
+#include "ResourceHelper.h"
 
 namespace Notification
 {
@@ -20,6 +21,7 @@ namespace Notification
 	static void AddButtonTo(
 		winrt::Microsoft::Windows::AppNotifications::Builder::AppNotificationBuilder& builder,
 		winrt::hstring const& text,
+
 		winrt::hstring argumentName,
 		winrt::hstring argumentValue,
 		winrt::Microsoft::Windows::AppNotifications::Builder::AppNotificationButtonStyle style = winrt::Microsoft::Windows::AppNotifications::Builder::AppNotificationButtonStyle::Default)
@@ -45,8 +47,8 @@ namespace Notification
 		winrt::Microsoft::Windows::AppNotifications::Builder::AppNotificationBuilder builder;
 		builder.AddText(prompt);
 		
-		AddButtonTo(builder, L"Open", L"open", destination, winrt::Microsoft::Windows::AppNotifications::Builder::AppNotificationButtonStyle::Success);
-		AddButtonTo(builder, L"Dismiss", L"dismiss", L"");
+		AddButtonTo(builder, GetStringResource(L"NotificationOpenButtonText"), L"open", destination, winrt::Microsoft::Windows::AppNotifications::Builder::AppNotificationButtonStyle::Success);
+		AddButtonTo(builder, GetStringResource(L"NotificationDismissButtonText"), L"dismiss", L"");
 		winrt::Microsoft::Windows::AppNotifications::AppNotificationManager::Default().Show(builder.BuildNotification());
 	}
 
@@ -61,9 +63,9 @@ namespace Notification
 		winrt::Microsoft::Windows::AppNotifications::Builder::AppNotificationBuilder builder;
 		builder.AddText(prompt);
 
-		AddButtonTo(builder, L"Open", L"open", destination, winrt::Microsoft::Windows::AppNotifications::Builder::AppNotificationButtonStyle::Critical);
-		AddButtonTo(builder, L"Retry", L"retry", destination);
-		AddButtonTo(builder, L"Dismiss");
+		AddButtonTo(builder, GetStringResource(L"NotificationOpenButtonText"), L"open", destination, winrt::Microsoft::Windows::AppNotifications::Builder::AppNotificationButtonStyle::Critical);
+		AddButtonTo(builder, GetStringResource(L"NotificationRetryButtonText"), L"retry", destination);
+		AddButtonTo(builder, GetStringResource(L"NotificationDismissButtonText"));
 		winrt::Microsoft::Windows::AppNotifications::AppNotificationManager::Default().Show(builder.BuildNotification());
 	}
 }

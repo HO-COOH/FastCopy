@@ -472,7 +472,7 @@ namespace winrt::FastCopy::implementation
 		auto operationString = OperationString();
 		auto operationStringData = operationString.data();
 		Notification::SendSuccess(
-			std::vformat(std::wstring_view{formatString}, std::make_wformat_args(operationStringData, m_finishedFiles)).data(),
+			std::vformat(std::wstring_view{formatString}, std::make_wformat_args(operationStringData, m_finishedFiles, m_destination)).data(),
 			m_destination
 		);
 		std::filesystem::remove(m_recordFile->GetPath().data());

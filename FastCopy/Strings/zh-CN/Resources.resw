@@ -127,7 +127,7 @@
     <value>复制</value>
   </data>
   <data name="CopyFinishNotificationFormatString" xml:space="preserve">
-    <value>成功{}{}个文件</value>
+    <value>成功{}{}个文件到{}</value>
   </data>
   <data name="Copying" xml:space="preserve">
     <value>正在复制</value>
@@ -194,6 +194,15 @@
   </data>
   <data name="MultipleInstanceBehaviorSettingItem.Header" xml:space="preserve">
     <value>多窗口</value>
+  </data>
+  <data name="NotificationDismissButtonText" xml:space="preserve">
+    <value>消除通知</value>
+  </data>
+  <data name="NotificationOpenButtonText" xml:space="preserve">
+    <value>打开目标文件夹</value>
+  </data>
+  <data name="NotificationRetryButtonText" xml:space="preserve">
+    <value>重试</value>
   </data>
   <data name="NotificationSettingItem.Description" xml:space="preserve">
     <value>复制完成时向Windows通知中心发送通知</value>
