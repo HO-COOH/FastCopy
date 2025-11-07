@@ -7,5 +7,6 @@ namespace FastCopy
 		static String ConvertSize(UInt64 size);
 	    static String ConvertSpeed(Double speed);
         static String ConvertPercent(Double percentOfOne);
+        static String ConvertDateTime(Windows.Foundation.DateTime dateTime);
     }
 }

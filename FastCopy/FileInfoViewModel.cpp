@@ -13,6 +13,7 @@
 #include <wil/com.h>
 #include "ViewModelLocator.h"
 #include "RobocopyViewModel.h"
+#include "PathUtils.h"
 
 namespace winrt::FastCopy::implementation
 {

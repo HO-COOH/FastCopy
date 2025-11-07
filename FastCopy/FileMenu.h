@@ -1,8 +1,7 @@
 ﻿#pragma once
 
 #include "FileMenu.g.h"
-
-struct IContextMenu;
+#include <ShObjIdl_core.h>
 
 namespace winrt::FastCopy::implementation
 {

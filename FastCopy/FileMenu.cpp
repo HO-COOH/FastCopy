@@ -11,6 +11,7 @@
 #include <wil/resource.h>
 #include "ImageUtils.h"
 #include "CopyDialog.h"
+#include "PathUtils.h"
 
 static winrt::Microsoft::UI::Xaml::Media::ImageSource getIconFromWin32Menu(HBITMAP menuItemInfoBitmap)
 {
@@ -93,7 +94,7 @@ namespace winrt::FastCopy::implementation
 
 		LPCITEMIDLIST idl[2]{ last };
 
-		auto hr = folder->GetUIObjectOf(NULL, 1, &idl[0], IID_IContextMenu, nullptr, m_menu.put_void());
+		winrt::check_hresult(folder->GetUIObjectOf(NULL, 1, &idl[0], IID_IContextMenu, nullptr, m_menu.put_void()));
 
 		wil::unique_hmenu hMenu{ CreatePopupMenu() };
 		m_menu->QueryContextMenu(hMenu.get(), 0, 1, 0x7fff, CMF_NORMAL);
@@ -118,7 +119,7 @@ namespace winrt::FastCopy::implementation
 
 
 		item.Click([this](auto self, ...) {
-			int const id = winrt::unbox_value<decltype(m_menuData.size())>(self.as<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem>().Tag());
+			auto const id = winrt::unbox_value<decltype(m_menuData.size())>(self.as<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem>().Tag());
 			auto const& data = m_menuData[id];
 			CMINVOKECOMMANDINFOEX invokeInfo
 			{

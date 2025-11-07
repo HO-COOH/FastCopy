@@ -229,10 +229,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
       <DependentUpon>CopyDialogWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="DateTimeToStringConverter.h">
-      <DependentUpon>DateTimeToStringConverter.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
     <ClInclude Include="DebugFileSize.h" />
     <ClInclude Include="DebugLogger.h" />
     <ClInclude Include="DependentValue.h">
@@ -328,6 +324,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="WindowHelper.h" />
+    <ClInclude Include="WinRTFileTime.h" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
@@ -360,10 +357,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
     </ClCompile>
     <ClCompile Include="CopyDialogWindow.xaml.cpp">
       <DependentUpon>CopyDialogWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
-    <ClCompile Include="DateTimeToStringConverter.cpp">
-      <DependentUpon>DateTimeToStringConverter.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="DebugFileSize.cpp" />
@@ -452,6 +445,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="WindowHelper.cpp" />
+    <ClCompile Include="WinRTFileTime.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl">
@@ -465,9 +459,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
     <Midl Include="CopyDialogWindow.idl">
       <DependentUpon>CopyDialogWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
-    </Midl>
-    <Midl Include="DateTimeToStringConverter.idl">
-      <SubType>Designer</SubType>
     </Midl>
     <Midl Include="DependentValue.idl">
       <SubType>Designer</SubType>

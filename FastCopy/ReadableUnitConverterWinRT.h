@@ -9,6 +9,7 @@ namespace winrt::FastCopy::implementation
         static winrt::hstring ConvertSize(uint64_t size);
         static winrt::hstring ConvertSpeed(double speed);
 		static winrt::hstring ConvertPercent(double percentOfOne);
+        static winrt::hstring ConvertDateTime(winrt::Windows::Foundation::DateTime dateTime);
     };
 }
 

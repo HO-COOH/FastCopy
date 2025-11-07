@@ -1,9 +1,6 @@
 ﻿#pragma once
-
 #include "FileInfoViewModel.g.h"
-#include "PropertyChangeHelper.hpp"
-#include "PathUtils.h"
-#include "FileTime.h"
+#include "WinRTFileTime.h"
 
 namespace winrt::FastCopy::implementation
 {

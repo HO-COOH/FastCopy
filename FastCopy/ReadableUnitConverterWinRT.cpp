@@ -25,4 +25,11 @@ namespace winrt::FastCopy::implementation
 		ss << std::fixed << std::setprecision(numDigits) << doubleValue;
 		return winrt::hstring{ ss.str() + L" %" };
 	}
+	winrt::hstring ReadableUnitConverterWinRT::ConvertDateTime(winrt::Windows::Foundation::DateTime dateTime)
+	{
+		auto p2 = std::chrono::clock_cast<std::chrono::system_clock>(dateTime);
+		auto result = (std::wstringstream{} << p2).str();
+		result = result.substr(0, result.rfind(L"."));
+		return winrt::hstring{ std::move(result) };
+	}
 }

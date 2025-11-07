@@ -34,9 +34,6 @@
     <Midl Include="FileInfoViewModel.idl">
       <Filter>ViewModel\Robocopy</Filter>
     </Midl>
-    <Midl Include="DateTimeToStringConverter.idl">
-      <Filter>Views\Converters</Filter>
-    </Midl>
     <Midl Include="SettingsViewModel.idl">
       <Filter>ViewModel\Settings</Filter>
     </Midl>
@@ -64,9 +61,6 @@
     </ClCompile>
     <ClCompile Include="AcrylicHelper.cpp">
       <Filter>ViewHelper</Filter>
-    </ClCompile>
-    <ClCompile Include="ProcessIoCounter.cpp">
-      <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="TaskFile.cpp">
       <Filter>Utils</Filter>
@@ -105,9 +99,6 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="Global.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="FileTime.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="Console.cpp">
@@ -156,6 +147,15 @@
     <ClCompile Include="RobocopyProcessStatus.cpp">
       <Filter>ViewModel\Robocopy</Filter>
     </ClCompile>
+    <ClCompile Include="FileTime.cpp">
+      <Filter>Utils\FileTime</Filter>
+    </ClCompile>
+    <ClCompile Include="WinRTFileTime.cpp">
+      <Filter>Utils\FileTime</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcessIoCounter.cpp">
+      <Filter>Utils\ProcessIO</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -169,14 +169,8 @@
       <Filter>ViewHelper</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="ProcessIOUpdater.hpp">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="ReadableUnitConverter.h">
       <Filter>Converter</Filter>
-    </ClInclude>
-    <ClInclude Include="ProcessIoCounter.h">
-      <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="TaskFile.h">
       <Filter>Utils</Filter>
@@ -218,9 +212,6 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="ImageUtils.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="FileTime.h">
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="Console.h">
@@ -295,6 +286,18 @@
     </ClInclude>
     <ClInclude Include="GdiplusInitializer.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="FileTime.h">
+      <Filter>Utils\FileTime</Filter>
+    </ClInclude>
+    <ClInclude Include="WinRTFileTime.h">
+      <Filter>Utils\FileTime</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcessIoCounter.h">
+      <Filter>Utils\ProcessIO</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcessIOUpdater.hpp">
+      <Filter>Utils\ProcessIO</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -536,6 +539,12 @@
     </Filter>
     <Filter Include="Utils\Debug">
       <UniqueIdentifier>{bac36f11-96d7-48fb-b686-1030f98a2c8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\FileTime">
+      <UniqueIdentifier>{3d56f09f-5bd6-4531-b0bd-987d9de3978d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\ProcessIO">
+      <UniqueIdentifier>{61d56c46-334a-402f-ad49-b86530a4e28f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
