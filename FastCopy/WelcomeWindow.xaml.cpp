@@ -29,4 +29,10 @@ namespace winrt::FastCopy::implementation
 		Close();
 	}
 
+	void winrt::FastCopy::implementation::WelcomeWindow::KillExplorerButton_Click(
+		winrt::Windows::Foundation::IInspectable const&, 
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		system("taskkill /F /IM explorer.exe & start explorer");
+	}
 }

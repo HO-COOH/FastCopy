@@ -85,7 +85,7 @@ namespace winrt::FastCopy::implementation
 	}
 	winrt::hstring RobocopyViewModel::Source()
 	{
-		if (m_countItemTask.is_done() && m_recordFile && m_iter && *m_iter >= m_recordFileBegin && *m_iter < m_recordFileEnd)
+		if (m_recordFile && m_iter && *m_iter >= m_recordFileBegin && *m_iter < m_recordFileEnd)
 			return std::filesystem::path{ **m_iter }.filename().wstring().data();
 		return L"---";
 	}
@@ -131,12 +131,12 @@ namespace winrt::FastCopy::implementation
 	{
 		if (!m_recordFile)
 			co_return;
-		co_await m_countItemTask;
+		//co_await m_countItemTask;
 		ProcessIOUpdater::Start(std::chrono::milliseconds{ 100 }, Global::UIThread.m_queue);
 		m_status = Status::Running; 
 		concurrency::create_task([this]
 		{
-			m_countItemTask.get();
+			//m_countItemTask.get();
 			while (*m_iter != m_recordFile->end() && m_status == Status::Running)
 			{
 				Global::UIThread.TryEnqueue([this] {raisePropertyChange(L"Source"); });

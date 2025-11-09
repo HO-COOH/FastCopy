@@ -28,8 +28,7 @@ namespace winrt::FastCopy::implementation
         std::vector<MenuData> m_menuData;
         winrt::com_ptr<IContextMenu> m_menu;
 
-        void menuFlyoutFromHMenu(
-            std::vector<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItemBase>& items,
+        std::vector<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItemBase> menuFlyoutFromHMenu(
             HMENU menu
         );
 

@@ -2,6 +2,7 @@
 #include "Console.h"
 #include <optional>
 #include <iostream>
+#include "Settings.h"
 
 Console::Console()
 {
@@ -40,9 +41,8 @@ static std::optional<Console> s_console;
 
 void Console::Create()
 {
-//#if (defined _DEBUG) || (defined DEBUG) ||
-	s_console.emplace();
-//#endif
+    if (Settings{}.Get(Settings::DevMode, false))
+        s_console.emplace();
 }
 
 void Console::Destroy()

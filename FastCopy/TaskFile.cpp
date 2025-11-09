@@ -6,6 +6,7 @@
 #include "FileWrapper.h"
 #include <numeric>
 #include "DebugFileSize.h"
+#include <iostream>
 
 static int32_t getNumFilesInFolder(std::wstring_view path)
 {
@@ -47,31 +48,42 @@ int32_t TaskFile::GetNumFiles()
 	if (!lines.empty())
 		return totalFiles;
 
-	FileWrapper fs{ _wfopen(m_path.data(), L"rb") };
-	if (!fs)
-		return 0;
-
 	int32_t count{};
-	while (true)
 	{
-		size_t length{};
-		if (!fs.read(&length, sizeof(length), 1))
-			break;
+		FileWrapper fs{ _wfopen(m_path.data(), L"rb") };
+		if (!fs)
+			return 0;
 
-		std::wstring line(length, {});
-		
-		if (!fs.read(line.data(), 2, length))
-			break;
+		while (true)
+		{
+			size_t length{};
+			if (!fs.read(&length, sizeof(length), 1))
+				break;
 
-		if (std::filesystem::is_directory(line))
-			numFiles.push_back(getNumFilesInFolder(line));
-		else
-			numFiles.push_back(1);
-		count += numFiles.back();
-		lines.push_back(std::move(line));
+			std::wstring line(length, {});
+
+			if (!fs.read(line.data(), 2, length))
+				break;
+
+			if (std::filesystem::is_directory(line))
+				numFiles.push_back(getNumFilesInFolder(line));
+			else
+				numFiles.push_back(1);
+			count += numFiles.back();
+			lines.push_back(std::move(line));
+		}
+		numFiles.resize(lines.size());
+		totalFiles = count;
 	}
-	numFiles.resize(lines.size());
-	totalFiles = count;
+
+	try
+	{
+		std::filesystem::remove(m_path.data());
+	}
+	catch (std::exception const& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
 	return count;
 }
 

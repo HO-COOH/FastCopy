@@ -18,6 +18,26 @@ public:
 	 *
 	 * @param animatedValue
 	 */
-	StoryboardWrapper& operator<<(AnimatedValue const& animatedValue);
+	template<typename... Value>
+	StoryboardWrapper& Add(Value&&... animatedValue)
+	{
+		try
+		{
+			if (!m_completed)
+			{
+				m_completed = true;
+				m_storyboard.Stop();
+				m_storyboard.Children().Clear();
+			}
+
+			//This might be called too fast, so animatedValue is already child of an on-going storyboard
+			m_storyboard.Children().ReplaceAll({ (animatedValue.m_animation)... });
+		}
+		catch (...) {}
+
+		return *this;
+	}
 	void Begin();
+
+	~StoryboardWrapper();
 };

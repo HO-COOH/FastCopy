@@ -4,7 +4,6 @@
 #include "FileMenu.g.cpp"
 #endif
 #include "FileInfoViewModel.h"
-#include "GdiplusInitializer.h"
 #include <boost/algorithm/string.hpp>
 #include <ShlGuid.h>
 #include <ShlObj_core.h>
@@ -12,33 +11,6 @@
 #include "ImageUtils.h"
 #include "CopyDialog.h"
 #include "PathUtils.h"
-
-static winrt::Microsoft::UI::Xaml::Media::ImageSource getIconFromWin32Menu(HBITMAP menuItemInfoBitmap)
-{
-	static GdiplusInitializer s_gdiPlusInitializer;
-	if (!menuItemInfoBitmap)
-		return nullptr;
-
-	auto pbitmap = Gdiplus::Bitmap::FromHBITMAP(menuItemInfoBitmap, NULL);
-	INT const height = pbitmap->GetHeight();
-	INT const width = pbitmap->GetWidth();
-
-	Gdiplus::Color c{ Gdiplus::Color::MakeARGB(255, 0, 0, 0) };
-
-	Gdiplus::Rect bmBounds{ 0, 0, (INT)width, (INT)height };
-	Gdiplus::BitmapData data{};
-	pbitmap->LockBits(&bmBounds, Gdiplus::ImageLockModeRead, PixelFormat32bppRGB, &data);
-
-	Gdiplus::Bitmap tmp{ width, height, data.Stride, PixelFormat32bppARGB, (BYTE*)data.Scan0 };
-	Gdiplus::Bitmap clone{ width, height, PixelFormat32bppARGB };
-
-	Gdiplus::Graphics* gr = Gdiplus::Graphics::FromImage(&clone);
-	gr->DrawImage(&tmp, bmBounds);
-
-	HBITMAP hbitmap{};
-	clone.GetHBITMAP(c, &hbitmap);
-	return HBitmapToWriteableBitmap(hbitmap);
-}
 
 static winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator getKeyboardAccelerator(std::wstring& menuText)
 {
@@ -99,19 +71,14 @@ namespace winrt::FastCopy::implementation
 		wil::unique_hmenu hMenu{ CreatePopupMenu() };
 		m_menu->QueryContextMenu(hMenu.get(), 0, 1, 0x7fff, CMF_NORMAL);
 
-
-
-		std::vector<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItemBase> menuItems;
-		menuFlyoutFromHMenu(menuItems, hMenu.get());
-
-		flyoutItems.ReplaceAll(menuItems);
+		flyoutItems.ReplaceAll(menuFlyoutFromHMenu(hMenu.get()));
 	}
 
 	winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem FileMenu::makeMenuFlyout(MENUITEMINFO const& menuItemInfo)
 	{
-		winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem item;
 		std::wstring buf{ menuItemInfo.dwTypeData };
 		
+		winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem item;
 		if (auto keyboardAccelerator = getKeyboardAccelerator(buf))
 			item.KeyboardAccelerators().Append(keyboardAccelerator);
 
@@ -130,7 +97,7 @@ namespace winrt::FastCopy::implementation
 			m_menu->InvokeCommand(reinterpret_cast<CMINVOKECOMMANDINFO*>(&invokeInfo));
 			});
 
-		if (auto source = getIconFromWin32Menu(menuItemInfo.hbmpItem))
+		if (auto source = GetIconFromWin32Menu(menuItemInfo.hbmpItem))
 		{
 			winrt::Microsoft::UI::Xaml::Controls::ImageIcon icon;
 			icon.Source(source);
@@ -140,9 +107,10 @@ namespace winrt::FastCopy::implementation
 		return item;
 	}
 
-	void FileMenu::menuFlyoutFromHMenu(std::vector<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItemBase>& items, HMENU menu)
+	std::vector<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItemBase> FileMenu::menuFlyoutFromHMenu(HMENU menu)
 	{
 		auto const itemCount = GetMenuItemCount(menu);
+		std::vector<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItemBase> items;
 		items.reserve(items.size() + itemCount);
 
 		MENUITEMINFO menuItemInfo
@@ -185,9 +153,7 @@ namespace winrt::FastCopy::implementation
 					if (auto keyboardAccelerator = getKeyboardAccelerator(subItemText))
 						subItem.KeyboardAccelerators().Append(keyboardAccelerator);
 					subItem.Text(std::move(subItemText));
-					std::vector<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItemBase> subItems;
-					menuFlyoutFromHMenu(subItems, menuItemInfo.hSubMenu);
-					subItem.Items().ReplaceAll(subItems);
+					subItem.Items().ReplaceAll(menuFlyoutFromHMenu(menuItemInfo.hSubMenu));
 					items.push_back(subItem);
 					continue;
 				}
@@ -207,5 +173,7 @@ namespace winrt::FastCopy::implementation
 			else if (auto subItem = flyoutItem.try_as<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutSubItem>(); subItem && hasSubItem && subItem.KeyboardAccelerators().Size() != 0)
 				subItem.Style(CopyDialog::MenuFlyoutSubItemStyle);
 		}
+
+		return items;
 	}
 }

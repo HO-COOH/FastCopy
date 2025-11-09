@@ -27,6 +27,11 @@ AnimatedValue& AnimatedValue::To(double value)
 	return *this;
 }
 
+double AnimatedValue::To() const
+{
+	return m_animation.To().GetDouble();
+}
+
 AnimatedValue& AnimatedValue::EasingFunction(winrt::Microsoft::UI::Xaml::Media::Animation::EasingFunctionBase const& easing)
 {
 	create();

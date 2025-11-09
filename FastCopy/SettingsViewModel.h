@@ -20,6 +20,9 @@ namespace winrt::FastCopy::implementation
 
         int BackgroundSelection();
         void BackgroundSelection(int value);
+
+        bool DevMode();
+        void DevMode(bool value);
     private:
         Settings m_model;
     };

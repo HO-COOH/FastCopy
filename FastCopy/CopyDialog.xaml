@@ -1093,7 +1093,10 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Style="{StaticResource HeaderTextStyle}" Text="{x:Bind local:ReadableUnitConverterWinRT.ConvertPercent(ViewModel.Percent), Mode=OneWay}" />
+        <TextBlock
+            x:Name="PercentText"
+            Style="{StaticResource HeaderTextStyle}"
+            Text="{x:Bind local:ReadableUnitConverterWinRT.ConvertPercent(ViewModel.Percent), Mode=OneWay}" />
 
         <TextBlock
             x:Name="SpeedText"
@@ -1111,7 +1114,7 @@
             <TextBlock Style="{StaticResource StatusTextStyle}">
                 <Run Text="{x:Bind ViewModel.OperationString}" />
                 <Run Text="{x:Bind ViewModel.FinishedItemCount, Mode=OneWay}" />
-                /<Run Text="{x:Bind ViewModel.ItemCount, Mode=OneWay}" />
+                /<Run x:Name="ItemCountText" Text="{x:Bind ViewModel.ItemCount, Mode=OneWay}" />
                 <Run x:Uid="ItemsFromText" />
             </TextBlock>
 
@@ -1460,6 +1463,21 @@
                     <VisualState.Setters>
                         <Setter Target="ProgressBar.HighColor" Value="#FFFFFF00" />
                         <Setter Target="ProgressBar.BaseColor" Value="#B3FFFF00" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="IndeterminedState">
+                    <VisualState.StateTriggers>
+                        <essential:IsEqualStateTrigger Value="{x:Bind ViewModel.State, Mode=OneWay}">
+                            <essential:IsEqualStateTrigger.To>
+                                <local:TaskbarState>Indeterminate</local:TaskbarState>
+                            </essential:IsEqualStateTrigger.To>
+                        </essential:IsEqualStateTrigger>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <!--  Value set in string resources  -->
+                        <Setter x:Uid="IndeterminedStateTextSetter" Target="PercentText.Text" />
+                        <Setter x:Uid="IndeterminedStateTextSetter" Target="ItemCountText.Text" />
+                        <Setter Target="PauseButton.IsEnabled" Value="False" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

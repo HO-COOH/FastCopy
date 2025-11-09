@@ -51,7 +51,7 @@
             </TextBlock>
         </Grid>
 
-        <StackPanel Grid.Row="1" Margin="20,42,20,0">
+        <StackPanel Grid.Row="1" Margin="20,12,20,0">
             <StackPanel.Resources>
                 <ResourceDictionary>
                     <essential:ModernStandardWindowContextMenu x:Name="WindowContextMenu" Window="{x:Bind}" />
@@ -60,6 +60,7 @@
                     <x:String x:Key="MultipleWindowGlyph">&#xF7ED;</x:String>
                     <x:String x:Key="ThemeGlyph">&#xE790;</x:String>
                     <x:String x:Key="WindowBackgroundGlyph">&#xE81E;</x:String>
+                    <x:String x:Key="DevModeGlyph">&#xEC7A;</x:String>
 
                     <Style x:Key="ToggleSwitchLeftLabelStyle" TargetType="ToggleSwitch">
                         <Setter Property="Foreground" Value="{ThemeResource ToggleSwitchContentForeground}" />
@@ -492,6 +493,16 @@
                     <ComboBoxItem x:Uid="AcrylicItem" />
                     <ComboBoxItem x:Uid="CustomItem" />
                 </ComboBox>
+            </essential:SettingsCard>
+
+            <essential:SettingsCard x:Uid="DevModeSettingItem">
+                <essential:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="{StaticResource DevModeGlyph}" />
+                </essential:SettingsCard.HeaderIcon>
+                <ToggleSwitch
+                    Margin="0,0,-80,0"
+                    IsOn="{x:Bind ViewModel.DevMode, Mode=TwoWay}"
+                    Style="{StaticResource ToggleSwitchLeftLabelStyle}" />
             </essential:SettingsCard>
         </StackPanel>
     </Grid>

@@ -27,3 +27,5 @@ winrt::Microsoft::UI::Xaml::Media::Imaging::WriteableBitmap HBitmapToWriteableBi
  * @brief HICON -> winrt::Microsoft>>UI::Xaml::Meida::Imaging::WritableBitmap
  */
 winrt::Microsoft::UI::Xaml::Media::Imaging::WriteableBitmap HIconToWriteableBitmap(HICON hIcon);
+
+winrt::Microsoft::UI::Xaml::Media::ImageSource GetIconFromWin32Menu(HBITMAP menuItemInfoBitmap);

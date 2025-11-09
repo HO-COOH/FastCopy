@@ -28,6 +28,7 @@ public:
 
 	AnimatedValue& From(double value);
 	AnimatedValue& To(double value);
+	double To() const;
 	AnimatedValue& EasingFunction(winrt::Microsoft::UI::Xaml::Media::Animation::EasingFunctionBase const& easing);
 	
 	template<typename T>

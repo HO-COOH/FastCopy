@@ -6,6 +6,7 @@
 #include <shellapi.h>
 #include <ShObjIdl_core.h>
 #include "PathUtils.h"
+#include "GdiplusInitializer.h"
 
 HICON GetHIconFromFile(std::wstring_view path)
 {
@@ -48,13 +49,18 @@ winrt::Microsoft::UI::Xaml::Media::Imaging::WriteableBitmap HBitmapToWriteableBi
 		return nullptr;
 
 	// Set up BITMAPINFO
-	BITMAPINFO bmi = { 0 };
-	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	bmi.bmiHeader.biWidth = bm.bmWidth;
-	bmi.bmiHeader.biHeight = -bm.bmHeight;
-	bmi.bmiHeader.biPlanes = 1;
-	bmi.bmiHeader.biBitCount = 32;
-	bmi.bmiHeader.biCompression = BI_RGB;
+	BITMAPINFO bmi
+	{
+		.bmiHeader = BITMAPINFOHEADER
+		{
+			.biSize = sizeof(BITMAPINFOHEADER),
+			.biWidth = bm.bmWidth,
+			.biHeight = -bm.bmHeight,
+			.biPlanes = 1,
+			.biBitCount = 32,
+			.biCompression = BI_RGB
+		}
+	};
 
 	// Extract the color bitmap
 	int nBits = bm.bmWidth * bm.bmHeight;
@@ -113,4 +119,31 @@ winrt::Microsoft::UI::Xaml::Media::Imaging::WriteableBitmap HIconToWriteableBitm
 	ICONINFO iconInfo = { 0 };
 	GetIconInfo(hIcon, &iconInfo);
 	return HBitmapToWriteableBitmap(iconInfo.hbmColor, iconInfo.hbmMask);
+}
+
+winrt::Microsoft::UI::Xaml::Media::ImageSource GetIconFromWin32Menu(HBITMAP menuItemInfoBitmap)
+{
+	static GdiplusInitializer s_gdiPlusInitializer;
+	if (!menuItemInfoBitmap)
+		return nullptr;
+
+	auto pbitmap = Gdiplus::Bitmap::FromHBITMAP(menuItemInfoBitmap, NULL);
+	INT const height = pbitmap->GetHeight();
+	INT const width = pbitmap->GetWidth();
+
+	Gdiplus::Color c{ Gdiplus::Color::MakeARGB(255, 0, 0, 0) };
+
+	Gdiplus::Rect bmBounds{ 0, 0, (INT)width, (INT)height };
+	Gdiplus::BitmapData data{};
+	pbitmap->LockBits(&bmBounds, Gdiplus::ImageLockModeRead, PixelFormat32bppRGB, &data);
+
+	Gdiplus::Bitmap tmp{ width, height, data.Stride, PixelFormat32bppARGB, (BYTE*)data.Scan0 };
+	Gdiplus::Bitmap clone{ width, height, PixelFormat32bppARGB };
+
+	Gdiplus::Graphics* gr = Gdiplus::Graphics::FromImage(&clone);
+	gr->DrawImage(&tmp, bmBounds);
+
+	HBITMAP hbitmap{};
+	clone.GetHBITMAP(c, &hbitmap);
+	return HBitmapToWriteableBitmap(hbitmap);
 }

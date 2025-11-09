@@ -132,7 +132,10 @@
             HorizontalAlignment="Center"
             Orientation="Horizontal"
             Spacing="5">
-            <Button x:Uid="KillExplorerButton" VerticalAlignment="Stretch" />
+            <Button
+                x:Uid="KillExplorerButton"
+                VerticalAlignment="Stretch"
+                Click="KillExplorerButton_Click" />
 
             <Button
                 xmlns:animatedVisual="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"

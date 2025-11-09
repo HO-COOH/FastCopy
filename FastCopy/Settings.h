@@ -11,6 +11,7 @@ struct Settings
 	constexpr static auto ThemeSelection = L"ThemeSelection";
 	constexpr static auto BackgroundSelection = L"BackSelection";
 	constexpr static auto IsFirstLaunch = L"IsFirstLaunch";
+	constexpr static auto DevMode = L"DevMode";
 
 	/**
 	 * @brief Get settings value of a specific type, will throw if the key is not found

@@ -35,7 +35,7 @@ private:
 
     constexpr static std::chrono::milliseconds WindowAnimationDuration{ 500 };
 
-    StoryboardWrapper m_storyboardWrapper;
+    std::optional<StoryboardWrapper> m_storyboardWrapper;
 
     HWND m_hwnd;
     UINT m_dpi = 96;

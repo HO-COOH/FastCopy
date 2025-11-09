@@ -42,20 +42,14 @@ namespace winrt::FastCopy::implementation
 	{
 		m_model.Set(Settings::BackgroundSelection, value);
 		Global::windowEffectHelper.SetEffect(value);
-		//switch (value)
-		//{
-		//	case 0:
-		//		Global::windowEffectHelper.TrySetMica();
-		//		break;
-		//	case 1:
-		//		Global::windowEffectHelper.TrySetAcrylic();
-		//		break;
-		//	case 2:
-		//		Global::windowEffectHelper.Reset();
-		//		break;
-		//	default:
-		//		break;
-		//}
 		SettingsChangeListener::GetInstance().BroadcastThemeChange();
+	}
+	bool SettingsViewModel::DevMode()
+	{
+		return m_model.Get(Settings::DevMode, false);
+	}
+	void SettingsViewModel::DevMode(bool value)
+	{
+		m_model.Set(Settings::DevMode, value);
 	}
 }

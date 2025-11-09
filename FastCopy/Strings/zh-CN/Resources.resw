@@ -159,8 +159,17 @@
   <data name="DestinationFolderContains.Text" xml:space="preserve">
     <value>目标文件夹包含</value>
   </data>
+  <data name="DevModeSettingItem.Description" xml:space="preserve">
+    <value>打开一个终端显示诊断信息</value>
+  </data>
+  <data name="DevModeSettingItem.Header" xml:space="preserve">
+    <value>开发模式</value>
+  </data>
   <data name="Duplicates.Text" xml:space="preserve">
     <value>个重名文件</value>
+  </data>
+  <data name="IndeterminedStateTextSetter.Value" xml:space="preserve">
+    <value>计算中...</value>
   </data>
   <data name="ItemsFromText.Text" xml:space="preserve">
     <value>从</value>

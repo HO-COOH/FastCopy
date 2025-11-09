@@ -12,6 +12,7 @@
 #include "ExistingDir.h"
 #include <iostream>
 #include "RobocopyProcessStatus.h"
+#include <boost/process/windows.hpp>
 
 //Forward declaration
 struct RobocopyArgs;
@@ -37,7 +38,8 @@ public:
 		m_child
 		{
 			boost::process::cmd(boost::process::search_path("robocopy.exe").wstring() + L" " + builder.Build()),
-			boost::process::std_out > pipeOut
+			boost::process::std_out > pipeOut,
+			boost::process::windows::create_no_window
 		}
 	{
 		SetConsoleCP(65001);

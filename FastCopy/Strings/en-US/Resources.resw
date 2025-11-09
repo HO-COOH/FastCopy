@@ -159,8 +159,17 @@
   <data name="DestinationFolderContains.Text" xml:space="preserve">
     <value>Destination folder contains</value>
   </data>
+  <data name="DevModeSettingItem.Description" xml:space="preserve">
+    <value>Open a console window for additional diagnostic information</value>
+  </data>
+  <data name="DevModeSettingItem.Header" xml:space="preserve">
+    <value>Diagnostic Mode</value>
+  </data>
   <data name="Duplicates.Text" xml:space="preserve">
     <value>duplicates</value>
+  </data>
+  <data name="IndeterminedStateTextSetter.Value" xml:space="preserve">
+    <value>Calculating...</value>
   </data>
   <data name="ItemsFromText.Text" xml:space="preserve">
     <value>items from </value>
