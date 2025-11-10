@@ -8,16 +8,17 @@
   xmlns:desktop5="http://schemas.microsoft.com/appx/manifest/desktop/windows10/5"
   xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
   xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
-  IgnorableNamespaces="uap rescap com desktop">
+  xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+  IgnorableNamespaces="uap rescap com desktop mp">
 
   <Identity
-    Name="FastCopy"
-    Publisher="CN=Peter"
+    Name="HO-COOH.RoboCopyEx"
+    Publisher="CN=0000973C-93A8-4716-8C14-5EC442A69DBE"
     Version="1.0.6.0" />
 
   <Properties>
-    <DisplayName>FastCopy</DisplayName>
-    <PublisherDisplayName>Administrator</PublisherDisplayName>
+    <DisplayName>RoboCopyEx</DisplayName>
+    <PublisherDisplayName>HO-COOH</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
@@ -35,7 +36,7 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="FastCopy"
+        DisplayName="RoboCopyEx"
         Description="FastCopy"
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
@@ -87,4 +88,6 @@
   <Capabilities>
     <rescap:Capability Name="runFullTrust" />
   </Capabilities>
+
+  <mp:PhoneIdentity PhoneProductId="c4e1a2d2-5997-4fd2-8c9c-9aff5913a3bc" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 </Package>

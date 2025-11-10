@@ -95,9 +95,6 @@
     <ClCompile Include="ResourceHelper.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="ImageUtils.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
     <ClCompile Include="Global.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
@@ -156,6 +153,9 @@
     <ClCompile Include="ProcessIoCounter.cpp">
       <Filter>Utils\ProcessIO</Filter>
     </ClCompile>
+    <ClCompile Include="ImageUtils.cpp">
+      <Filter>Utils\ImageUtils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -209,9 +209,6 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="PathUtils.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageUtils.h">
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="Console.h">
@@ -284,9 +281,6 @@
     <ClInclude Include="Global.h">
       <Filter>Views</Filter>
     </ClInclude>
-    <ClInclude Include="GdiplusInitializer.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="FileTime.h">
       <Filter>Utils\FileTime</Filter>
     </ClInclude>
@@ -299,6 +293,13 @@
     <ClInclude Include="ProcessIOUpdater.hpp">
       <Filter>Utils\ProcessIO</Filter>
     </ClInclude>
+    <ClInclude Include="ImageUtils.h">
+      <Filter>Utils\ImageUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="GdiplusInitializer.h">
+      <Filter>Utils\ImageUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PackageConfig.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -546,6 +547,9 @@
     <Filter Include="Utils\ProcessIO">
       <UniqueIdentifier>{61d56c46-334a-402f-ad49-b86530a4e28f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utils\ImageUtils">
+      <UniqueIdentifier>{857576f0-998d-43af-9b51-be9318494a6a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="app.manifest" />
@@ -559,6 +563,7 @@
     <None Include="..\PackageDlls\boost_filesystem-vc143-mt-x64-1_82.dll" />
     <None Include="..\PackageDlls\fmt.dll" />
     <None Include="..\x64\Package\FastCopy\FastCopyShellExtension.dll" />
+    <None Include="Package.StoreAssociation.xml" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\en-US\Resources.resw">

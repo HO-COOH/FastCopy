@@ -220,7 +220,7 @@
     <value>Notify upon finish</value>
   </data>
   <data name="SettingWindowTitle.Text" xml:space="preserve">
-    <value>FastCopy Settings</value>
+    <value>RoboCopyEx Settings</value>
   </data>
   <data name="ShowCombinedWindow.Text" xml:space="preserve">
     <value>Combine into one window</value>
@@ -250,13 +250,13 @@
     <value>Use source</value>
   </data>
   <data name="WelcomeScreenConfirmation.Content" xml:space="preserve">
-    <value>I can see a FastCopy menu item</value>
+    <value>I can see a RoboCopyEx menu item</value>
   </data>
   <data name="WelcomeScreenInstruction.Text" xml:space="preserve">
-    <value>Please right click on any file or folder, and check if you can see a FastCopy menu item</value>
+    <value>Please right click on any file or folder, and check if you can see a RoboCopyEx menu item</value>
   </data>
   <data name="WelcomeScreenTitle.Text" xml:space="preserve">
-    <value>Welcome to use FastCopy</value>
+    <value>Welcome to use RoboCopyEx</value>
   </data>
   <data name="WindowBackgroundSettingItem.Description" xml:space="preserve">
     <value>Controls the background of all windows</value>

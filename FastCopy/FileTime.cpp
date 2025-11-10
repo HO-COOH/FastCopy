@@ -5,8 +5,7 @@
 
 FileTime::FileTime(HANDLE fileHandle)
 {
-	if (!GetFileTime(fileHandle, &createTime, &lastAccessTime, &lastWriteTime))
-		throw std::runtime_error{"Failed to GetFileTime"};
+	GetFileTime(fileHandle, &createTime, &lastAccessTime, &lastWriteTime);
 }
 
 FileTime::FileTime(std::wstring_view path) : 

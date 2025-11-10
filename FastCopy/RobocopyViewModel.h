@@ -75,6 +75,7 @@ namespace winrt::FastCopy::implementation
         mutable std::optional<TaskFile::TaskFileIterator<typename std::vector<std::wstring>::iterator>> m_iter;
         TaskFile::TaskFileIterator<typename std::vector<std::wstring>::iterator> m_recordFileBegin;
         TaskFile::TaskFileIterator<typename std::vector<std::wstring>::iterator> m_recordFileEnd;
+        std::optional<std::filesystem::path> m_sourceForUI;
 
         std::optional<std::vector<winrt::FastCopy::FileCompareViewModel>> m_duplicateFileTask;
         std::optional<std::vector<winrt::FastCopy::FileCompareViewModel>::iterator> m_duplicateFileTaskIter;

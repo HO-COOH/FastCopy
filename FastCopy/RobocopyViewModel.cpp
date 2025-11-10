@@ -30,18 +30,16 @@ namespace winrt::FastCopy::implementation
 			return;
 
 		m_recordFile.emplace(value);
+		m_recordFile->GetNumFiles();
+		m_iter = m_recordFile->begin();
+		m_recordFileBegin = m_recordFile->begin();
+		m_recordFileEnd = m_recordFile->end();
 
 		m_countItemTask = concurrency::create_task([this]
 		{
-			m_recordFile->GetNumFiles();
-			m_iter = m_recordFile->begin();
-			m_recordFileBegin = m_recordFile->begin();
-			m_recordFileEnd = m_recordFile->end();
 			m_totalSize = m_recordFile->GetTotalSize();
-
 			Global::UIThread.TryEnqueue([this] {
 				raisePropertyChange(L"ItemCount");
-				raisePropertyChange(L"Source");
 			});
 		});
 	}
@@ -85,9 +83,7 @@ namespace winrt::FastCopy::implementation
 	}
 	winrt::hstring RobocopyViewModel::Source()
 	{
-		if (m_recordFile && m_iter && *m_iter >= m_recordFileBegin && *m_iter < m_recordFileEnd)
-			return std::filesystem::path{ **m_iter }.filename().wstring().data();
-		return L"---";
+		return winrt::hstring{ m_sourceForUI ? m_sourceForUI->filename().wstring() : L"---" };
 	}
 	winrt::hstring RobocopyViewModel::Destination()
 	{
@@ -139,7 +135,10 @@ namespace winrt::FastCopy::implementation
 			//m_countItemTask.get();
 			while (*m_iter != m_recordFile->end() && m_status == Status::Running)
 			{
-				Global::UIThread.TryEnqueue([this] {raisePropertyChange(L"Source"); });
+				Global::UIThread.TryEnqueue([this, value = **m_iter] {
+					m_sourceForUI.emplace(std::move(value));
+					raisePropertyChange(L"Source"); 
+				});
 				if (canUseShellCopy())
 				{
 					auto currentItemSize = TaskFile::GetSizeOfPath(**m_iter);

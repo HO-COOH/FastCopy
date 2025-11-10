@@ -250,13 +250,13 @@
     <value>使用源</value>
   </data>
   <data name="WelcomeScreenConfirmation.Content" xml:space="preserve">
-    <value>FastCopy菜单项已经出现</value>
+    <value>RoboCopyEx菜单项已经出现</value>
   </data>
   <data name="WelcomeScreenInstruction.Text" xml:space="preserve">
-    <value>请右键任意文件，并确认有FastCopy的菜单项</value>
+    <value>请右键任意文件，并确认有RoboCopyEx的菜单项</value>
   </data>
   <data name="WelcomeScreenTitle.Text" xml:space="preserve">
-    <value>欢迎使用FastCopy</value>
+    <value>欢迎使用RoboCopyEx</value>
   </data>
   <data name="WindowBackgroundSettingItem.Description" xml:space="preserve">
     <value>控制所有窗口的背景</value>

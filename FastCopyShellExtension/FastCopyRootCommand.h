@@ -13,8 +13,6 @@ class __declspec(uuid("3282E233-C5D3-4533-9B25-44B8AAAFACFA")) FastCopyRootComma
         IEnumExplorerCommand
     >
 {
-    constexpr static auto inline CommandRootTitle = L"FastCopy";
-
     bool m_hasInit = false;
     boost::container::static_vector<Microsoft::WRL::ComPtr<FastCopySubCommand>, 3> m_subCommands{};
 

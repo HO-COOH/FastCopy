@@ -14,7 +14,7 @@ static auto GetLocalDataFolder()
 	{
 		wil::unique_cotaskmem_string localAppData;
 		SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, NULL, localAppData.put());
-		return std::filesystem::path{ localAppData.get() } / LR"(packages\FastCopy_tp1tpcm9wdwpy\LocalCache\Local)";
+		return std::filesystem::path{ localAppData.get() } / LR"(packages\HO-COOH.RoboCopyEx\LocalCache\Local)";
 	}();
 	return ret;
 }
@@ -30,7 +30,7 @@ static auto GetTimeString()
 
 Recorder::Recorder(CopyOperation op) 
 {
-	std::filesystem::create_directory(GetLocalDataFolder());
+	std::filesystem::create_directories(GetLocalDataFolder());
 	auto const filename = GetRecordFilePath(op).wstring();
 	Registry::Record(filename);
 	m_fs = _wfopen(filename.data(), L"wb");

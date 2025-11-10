@@ -7,6 +7,7 @@
 #include "DllIconFormatter.h"
 #include "FastCopySubCommand.h"
 #include "Recorder.h"
+#include "PackageConfig.h"
 
 bool FastCopyRootCommand::hasInvokedCopyOrCut()
 {
@@ -42,19 +43,11 @@ void FastCopyRootCommand::init(IShellItemArray* items)
 		m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Delete));
 		m_hasInit = true;
 	}
-
-	//if (!m_subCommands.empty() && std::none_of(m_subCommands.begin(), m_subCommands.end(), [items](Microsoft::WRL::ComPtr<FastCopySubCommand> const& subcommand) {
-	//	return subcommand->State(nullptr) == ECS_ENABLED;
-	//	}))
-	//{
-	//	m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Paste));
-	//	m_subCommands.back()-> SetParentForPasteForWindows10(ShellItemArray{ items }.front().GetPtr());
-	//}
 }
 
 HRESULT FastCopyRootCommand::GetTitle(IShellItemArray*, PWSTR* name)
 {
-	return SHStrDup(L"FastCopy", name);
+	return SHStrDup(PackageConfig::PackageName, name);
 }
 
 HRESULT FastCopyRootCommand::GetIcon(IShellItemArray*, PWSTR* icon)

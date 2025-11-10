@@ -1,10 +1,11 @@
 ﻿#pragma once
 #include "FileInfoViewModel.g.h"
 #include "WinRTFileTime.h"
+#include <include/PropertyChangeHelper.hpp>
 
 namespace winrt::FastCopy::implementation
 {
-    struct FileInfoViewModel : FileInfoViewModelT<FileInfoViewModel>, WinRTFileTime
+    struct FileInfoViewModel : FileInfoViewModelT<FileInfoViewModel>, WinRTFileTime, MvvmHelper::PropertyChangeHelper<FileInfoViewModel>
     {
         FileInfoViewModel(winrt::hstring path, bool isSource);
 

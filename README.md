@@ -210,38 +210,3 @@ meaning the API does an early return, which does not really counts.
 |std::filesystem| **0:19**                 | 0:01				      |
 |IFileOperation | 0:42                     | ~~0:00~~			      |
 |SHFileOperation| 2:28			           | ~~0:00~~      		      |
-
-### Parsing `robocopy` output
-1. New file line has the form of this
-```
-New File  		     485	CMakeLists.txt	20:58 -> 20:58
-```
-This can be matched with **staring with `New File` and containing 4 segments after split with `\t`**
-```cpp
-std::string_view{line}.starts_with("New File");
-std::vector<absl::string_view> v = absl::StrSplit(s.data(), "\t", absl::SkipEmpty()); 
-/*
-    New File
-    485
-    CMakeLists.txt
-    xx:xx -> xx:xx
-*/
-```
-2. New folder line has the form of this
-```
-New Dir       2000	D:\computecpp-sdk\.git\refs\
-```
-This can be matched with **starting with `New Dir` and containing 2 segments after split with `\t`** (the spacing between `New Dir` and number are spaces, not `\t`)
-```cpp
-std::string_view{line}.starts_with("New Dir");
-std::vector<std::string> splitted = absl::StrSplit(absl::string_view{ line.data(), line.length() }, "\t", absl::SkipEmpty());
-/*
-    New Dir       2000
-    D:\computecpp-sdk\.git\refs\
-*/
-std::pair<std::string, std::string> count = absl::StrSplit(splitted[0], "  ", absl::SkipEmpty());
-/*
-    New Dir
-    2000
-*/
-```

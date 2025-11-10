@@ -33,19 +33,23 @@ namespace winrt::FastCopy::implementation
 
     void FileInfoViewModel::Selected(bool value)
     {
-		m_selected = value;
-		auto robocopyViewModelImpl = winrt::get_self<RobocopyViewModel>(ViewModelLocator::GetInstance().RobocopyViewModel());
-		value?
-			(
-				m_isSource? 
-					robocopyViewModelImpl->AddSource() :
-					robocopyViewModelImpl->AddDestination()
-			) :
-			(
-				m_isSource?
-					robocopyViewModelImpl->RemoveSource() :
-					robocopyViewModelImpl->RemoveDestination()
-			);
+		if(m_selected != value)
+		{ 
+			m_selected = value;
+			raisePropertyChange(L"Selected");
+			auto robocopyViewModelImpl = winrt::get_self<RobocopyViewModel>(ViewModelLocator::GetInstance().RobocopyViewModel());
+			value?
+				(
+					m_isSource? 
+						robocopyViewModelImpl->AddSource() :
+						robocopyViewModelImpl->AddDestination()
+				) :
+				(
+					m_isSource?
+						robocopyViewModelImpl->RemoveSource() :
+						robocopyViewModelImpl->RemoveDestination()
+				);
+		}
     }
 
 	winrt::Microsoft::UI::Xaml::Media::ImageSource FileInfoViewModel::Bitmap()
