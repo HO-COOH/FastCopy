@@ -2,22 +2,13 @@
 #include <Windows.h>
 #include <algorithm>
 #include <string>
-
-static std::wstring getDefaultLanguage()
-{
-    ULONG bytes{};
-    ULONG numLanguages{};
-    GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &numLanguages, nullptr, &bytes);
-    std::wstring buffer(bytes, {});
-    GetUserPreferredUILanguages(MUI_LANGUAGE_NAME, &numLanguages, buffer.data(), &bytes);
-    return std::wstring{ buffer.data() };
-}
+#include <PackageConfig.h>
 
 CopyOperationNames& CopyOperationNames::GetInstance()
 {
     static CopyOperationNames s_instance = []
     {
-        auto defaultLang = getDefaultLanguage();
+        auto defaultLang = PackageConfig::GetDefaultLanguage();
         std::transform(defaultLang.begin(), defaultLang.end(), defaultLang.begin(), [](wchar_t c) { return towlower(c); });
         if (defaultLang == L"en-us")
         {

@@ -6,6 +6,7 @@
 #include <SettingsWindow.xaml.h>
 #include "Global.h"
 #include "WindowHelper.h"
+#include <PackageConfig.h>
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -16,8 +17,8 @@ namespace winrt::FastCopy::implementation
 	{
 		ExtendsContentIntoTitleBar(true);
 		CenterWindow(*this, winrt::Windows::Graphics::SizeInt32{
-			.Width = 500,
-			.Height = 300
+			.Width = PackageConfig::GetDefaultLanguage() == L"zh-cn" ? 500 : 600,
+			.Height = 280
 		});
 	}
 

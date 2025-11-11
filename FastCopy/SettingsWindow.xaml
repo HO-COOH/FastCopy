@@ -9,7 +9,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="SettingsWindow"
     Width="800"
-    Height="420"
     Activated="WindowEx_Activated"
     Icon="Assets/Main.ico"
     IsMaximizable="False"

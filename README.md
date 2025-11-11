@@ -49,9 +49,9 @@ A GUI wrapper for Windows' built-in `robocopy` ~~and `xcopy`~~.
 
 - Settings
 
-<p align="center">
-    <image src="Screenshots/settings.png">
-</p>
+|Chinese|English|
+|---|---|
+|![](Screenshots/settings.png)|![](Screenshots/settings-en.png)
 
 - Multi-language support
   + English
