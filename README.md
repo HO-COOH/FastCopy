@@ -2,6 +2,10 @@
 
 A GUI wrapper for Windows' built-in `robocopy` ~~and `xcopy`~~.
 
+<a href="https://apps.microsoft.com/detail/9pkjk0bhnvfn?referrer=appbadge&mode=direct">
+	<img src="https://get.microsoft.com/images/en-us%20light.svg" width="200"/>
+</a>
+
 ## Features
 - Easy to use copy/paste/move/delete dialog, just like your good old explorer, but much faster🚀
 

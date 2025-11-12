@@ -10,17 +10,7 @@ CopyOperationNames& CopyOperationNames::GetInstance()
     {
         auto defaultLang = PackageConfig::GetDefaultLanguage();
         std::transform(defaultLang.begin(), defaultLang.end(), defaultLang.begin(), [](wchar_t c) { return towlower(c); });
-        if (defaultLang == L"en-us")
-        {
-            return CopyOperationNames
-            {
-                .Copy = L"Copy",
-                .Move = L"Move",
-                .Paste = L"Paste",
-                .Delete = L"Delete"
-            };
-        }
-        else if (defaultLang == L"zh-cn")
+        if (defaultLang == L"zh-cn")
         {
             return CopyOperationNames
             {
@@ -48,6 +38,16 @@ CopyOperationNames& CopyOperationNames::GetInstance()
                 .Move = L"Mover",
                 .Paste = L"Pegar",
                 .Delete = L"Borrar"
+            };
+        }
+        else
+        {
+            return CopyOperationNames
+            {
+                .Copy = L"Copy",
+                .Move = L"Move",
+                .Paste = L"Paste",
+                .Delete = L"Delete"
             };
         }
         //Add more languages here
