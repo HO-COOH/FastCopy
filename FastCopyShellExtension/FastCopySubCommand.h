@@ -12,17 +12,11 @@ class FastCopySubCommand final :
     >
 {
     CopyOperation m_op;
-    IShellItem* m_parent{};
 
     void recordFilesImpl(IShellItemArray* selection);
     static void callMainProgramImpl(std::wstring_view arg);
 public:
     FastCopySubCommand(CopyOperation op);
-
-    void SetParentForPasteForWindows10(IShellItem* parent)
-    {
-        m_parent = parent;
-    }
 
     // IExplorerCommand
     HRESULT GetTitle(IShellItemArray* items, PWSTR* name) override;

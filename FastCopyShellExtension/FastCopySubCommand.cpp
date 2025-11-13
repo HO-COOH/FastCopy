@@ -107,6 +107,15 @@ HRESULT FastCopySubCommand::Invoke(IShellItemArray* selection, IBindCtx* ctx)
             break;
         case CopyOperation::Paste:
         {
+            //On Windows 11, use selection directly
+            if (ShellItemArray shellItemArray{ selection }; shellItemArray.size() != 0)
+            {
+                ShellItem psi{ shellItemArray[0] };
+                callMainProgramImpl(psi.GetDisplayName());
+                return S_OK;
+            }
+
+            //On Windows 10, selection will be nullptr, so we find the active shell window
             if (auto currentForegroundExplorer = ShellWindows::GetForegroundExplorer())
             {
                 constexpr static std::wstring_view protocolPrefix{ L"file:///" };
@@ -134,9 +143,6 @@ HRESULT FastCopySubCommand::Invoke(IShellItemArray* selection, IBindCtx* ctx)
                 callMainProgramImpl(std::wstring{ pathUnescaped.substr(protocolPrefix.size()).data()});
                 return S_OK;
             }
-
-            ShellItem psi{ selection ? ShellItemArray{ selection }[0] : m_parent };
-            callMainProgramImpl(psi.GetDisplayName());
             break;
         }
         case CopyOperation::Delete:
