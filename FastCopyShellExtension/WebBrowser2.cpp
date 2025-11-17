@@ -25,3 +25,10 @@ wil::unique_bstr WebBrowser2::LocationURL()
 	THROW_IF_FAILED(m_ptr->get_LocationURL(value.put()));
 	return value;
 }
+
+bool WebBrowser2::Visible()
+{
+	VARIANT_BOOL visible{};
+	THROW_IF_FAILED(m_ptr->get_Visible(&visible));
+	return static_cast<bool>(visible);
+}

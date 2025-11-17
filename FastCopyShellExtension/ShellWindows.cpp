@@ -29,7 +29,7 @@ std::optional<WebBrowser2> ShellWindows::GetForegroundExplorer()
     {
         CComVariant vi{ i };
         auto item = shellWindows.Item(vi);
-        if (item.HWND() == hwnd)
+        if (item.HWND() == hwnd && item.Visible())
         {
             ret.emplace(std::move(item));
             break;

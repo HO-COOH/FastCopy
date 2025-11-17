@@ -15,4 +15,6 @@ public:
 
 	//this will be a file URL, like: file:///c/
 	wil::unique_bstr LocationURL();
+
+	bool Visible();
 };
