@@ -16,6 +16,12 @@
     mc:Ignorable="d">
 
     <Grid x:Name="RootPanel">
+        <Grid.Resources>
+            <essential:WindowWorkaround
+                x:Name="NonMaximizableWindowWorkaround"
+                IsMaximizable="False"
+                Window="{x:Bind}" />
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />

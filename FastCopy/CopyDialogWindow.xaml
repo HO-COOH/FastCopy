@@ -14,6 +14,10 @@
     <Grid>
         <Grid.Resources>
             <essential:ModernStandardWindowContextMenu x:Name="WindowContextMenu" Window="{x:Bind}" />
+            <essential:WindowWorkaround
+                x:Name="NonMaximizableWindowWorkaround"
+                IsMaximizable="False"
+                Window="{x:Bind}" />
             <local:TaskbarControl
                 x:Name="TaskbarControl"
                 State="{x:Bind ViewModel.State, Mode=OneWay}"

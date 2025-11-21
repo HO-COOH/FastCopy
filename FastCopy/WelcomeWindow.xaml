@@ -22,6 +22,10 @@
 
         <StackPanel.Resources>
             <essential:WindowCaptionButtonThemeWorkaround x:Name="CaptionButtonsWorkaround" Window="{x:Bind}" />
+            <essential:WindowWorkaround
+                x:Name="NonMaximizableWindowWorkaround"
+                IsMaximizable="False"
+                Window="{x:Bind}" />
             <Style x:Key="AccentButtonStyleSupportAnimatedIcon" TargetType="Button">
                 <Setter Property="Foreground" Value="{ThemeResource AccentButtonForeground}" />
                 <Setter Property="Background" Value="{ThemeResource AccentButtonBackground}" />
