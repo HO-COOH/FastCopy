@@ -137,7 +137,8 @@
     </ClCompile>
     <PostBuildEvent>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX"
-xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
+xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I
+xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'">mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX"
@@ -173,7 +174,8 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
     </PostBuildEvent>
     <PostBuildEvent>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX"
-xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
+xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I
+xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Package'">
@@ -201,7 +203,8 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
     </PostBuildEvent>
     <PostBuildEvent>
       <Command Condition="'$(Configuration)|$(Platform)'=='Package|x64'">mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX"
-xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
+xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I
+xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup Condition="'$(WindowsPackageType)'!='None' and Exists('Package.appxmanifest')">
@@ -230,6 +233,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
       <DependentUpon>CopyDialogWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="CreateSuspend.h" />
     <ClInclude Include="DebugFileSize.h" />
     <ClInclude Include="DebugLogger.h" />
     <ClInclude Include="DependentValue.h">
@@ -282,6 +286,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
     <ClInclude Include="resource1.h" />
     <ClInclude Include="ResourceHelper.h" />
     <ClInclude Include="RobocopyArgs.h" />
+    <ClInclude Include="RobocopyInjectDll.h" />
     <ClInclude Include="RobocopyJobFile.h" />
     <ClInclude Include="NewDir.h" />
     <ClInclude Include="RobocopyProcess.h" />
@@ -407,6 +412,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
     </ClCompile>
     <ClCompile Include="ResourceHelper.cpp" />
     <ClCompile Include="RobocopyArgs.cpp" />
+    <ClCompile Include="RobocopyInjectDll.cpp" />
     <ClCompile Include="RobocopyProcess.cpp" />
     <ClCompile Include="RobocopyProcessStatus.cpp" />
     <ClCompile Include="RobocopyViewModel.cpp">
@@ -590,6 +596,9 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|arm64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|x64'">true</DeploymentContent>
+    </None>
+    <None Include="..\x64\Package\FastCopy\RobocopyInjection.dll">
+      <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="FastCopy_TemporaryKey.pfx" />
     <None Include="packages.config" />
