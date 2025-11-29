@@ -573,7 +573,6 @@
     <None Include="..\PackageDlls\fmt.dll" />
     <None Include="..\x64\Package\FastCopy\FastCopyShellExtension.dll" />
     <None Include="Package.StoreAssociation.xml" />
-    <None Include="..\x64\Package\FastCopy\RobocopyInjection.dll" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\en-US\Resources.resw">

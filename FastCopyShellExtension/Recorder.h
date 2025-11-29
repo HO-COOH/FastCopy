@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <fstream>
 #include <filesystem>
 #include "CopyOperation.h"
@@ -12,7 +12,7 @@ public:
 	~Recorder();
 	static bool HasRecord();
 private:
-	FILE* m_fs;
+	FILE* m_fs = nullptr;
 
 	/**
 	 * Return the file name of the record file
