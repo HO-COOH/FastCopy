@@ -23,7 +23,7 @@ namespace FastCopy::Settings
 
     void CommonSharedSettings::Shutdown()
     {
-        m_stopMonitor.store(true);
+        m_stopMonitor.store(true, std::memory_order_relaxed);
         if (m_monitorThread.joinable())
             m_monitorThread.join();
     }
@@ -130,6 +130,9 @@ namespace FastCopy::Settings
 
         for (;;)
         {
+            if (m_stopMonitor.load(std::memory_order_relaxed))
+                break;
+
             DWORD dwWait = WaitForSingleObject(m_hChange, INFINITE);
             if (dwWait != WAIT_OBJECT_0)
             {

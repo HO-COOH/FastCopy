@@ -3,6 +3,7 @@
 #include <chrono>
 #include <optional>
 #include <filesystem>
+#include <algorithm>
 
 #include <ShlObj_core.h>
 #include <Windows.h>

@@ -9,6 +9,7 @@
 #include <string_view>
 #include <vector>
 #include <filesystem>
+#include <thread>
 
 namespace FastCopy::Settings
 {
@@ -24,7 +25,7 @@ namespace FastCopy::Settings
 
         static CommonSharedSettings& Instance() noexcept;
 
-        // CAYUTION! Manually call in App, don't use this function in dll
+        // CAUTION! Manually call in App, don't use this function in dll
         void Shutdown();
 
         // Local data directory: %LocalAppData%\Packages\<family>\LocalCache\Local
