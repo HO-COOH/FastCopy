@@ -18,47 +18,6 @@
 
 namespace
 {
-    //[[nodiscard]]
-    //const std::optional<std::filesystem::path>& GetLocalDataFolder()
-    //{
-    //    static const std::optional<std::filesystem::path> folderPath =
-    //        []() -> std::optional<std::filesystem::path>
-    //        {
-    //            wil::unique_cotaskmem_string localAppData;
-    //            const HRESULT hr =
-    //                SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, nullptr, localAppData.put());
-    //            if (FAILED(hr) || !localAppData)
-    //            {
-    //                /*DebugPrint::LogFormatted(
-    //                    L"GetLocalDataFolder: SHGetKnownFolderPath failed hr=0x%08X", hr);*/
-    //                return std::nullopt;
-    //            }
-
-    //            std::array<wchar_t, PACKAGE_FAMILY_NAME_MAX_LENGTH + 1> familyName{};
-    //            UINT32 len = static_cast<UINT32>(familyName.size());
-    //            const LONG rc = GetCurrentPackageFamilyName(&len, familyName.data());
-    //            if (rc != ERROR_SUCCESS)
-    //            {
-    //                /*DebugPrint::LogFormatted(
-    //                    L"GetLocalDataFolder: GetCurrentPackageFamilyName failed rc=%ld", rc);*/
-    //                return std::nullopt;
-    //            }
-
-    //            const size_t nameLen = wcsnlen_s(familyName.data(), familyName.size());
-
-    //            std::filesystem::path result{ localAppData.get() };
-    //            result /= L"Packages";
-    //            result /= std::wstring_view{ familyName.data(), nameLen };
-    //            result /= L"LocalCache";
-    //            result /= L"Local";
-
-    //            //DebugPrint::LogFormatted(L"GetLocalDataFolder: '%s'", result.c_str());
-    //            return result;
-    //        }();
-
-    //    return folderPath;
-    //}
-
     static std::wstring GetTimeString()
     {
         //std::chrono::current_zone() gives exceptions on Windows 10, 17763 with MSVC cl.exe version 19.36.32535

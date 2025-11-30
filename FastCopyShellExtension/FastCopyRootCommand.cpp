@@ -25,7 +25,7 @@ void FastCopyRootCommand::init(IShellItemArray* items)
     DWORD const count = ShellItemArray{ items }.size();
     bool showPasteCommand = hasInvokedCopyOrCut();
 
-    FC_LOG_INFO(L"Site: {:p}, items count: %d, showPasteCommand: %d", 
+    FC_LOG_INFO(L"Site: {:p}, items count: {}, showPasteCommand: {}",
         static_cast<const void*>(m_site.Get()), count, showPasteCommand);
 
     m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Copy, m_site.Get()));
@@ -89,7 +89,7 @@ HRESULT FastCopyRootCommand::GetState(IShellItemArray* selection, BOOL okToBeSlo
     else
         *cmdState = ECS_DISABLED;
 
-    FC_LOG_DEBUG(L"GetState: cmd state: %d", *cmdState);
+    FC_LOG_DEBUG(L"GetState: cmd state:{}.", *cmdState);
     return S_OK;
 }
 
@@ -109,6 +109,13 @@ HRESULT FastCopyRootCommand::EnumSubCommands(IEnumExplorerCommand** enumCommands
     FC_LOG_DEBUG(L"EnumSubCommands: count={}", m_subCommands.size());
 
     m_subCommandIter = m_subCommands.begin();
+    // Do we need to call AddRef() manually here?
+    // DllCanUnloadNow() return false with non zero positive value of ref count.
+    // See: https://learn.microsoft.com/en-us/cpp/atl/queryinterface?view=msvc-170
+    // document says:
+    // If the object supports that interface, QueryInterface retrieves a pointer to the interface,
+    // while also calling AddRef. (Caution!!! It will call AddRef by itself.)
+    // Otherwise, it returns the E_NOINTERFACE error code.
     AddRef();
     auto hr = QueryInterface(IID_PPV_ARGS(enumCommands));
     FC_LOG_DEBUG(L"EnumSubCommands QI(IEnumExplorerCommand) hr=0x{:08X}", hr);

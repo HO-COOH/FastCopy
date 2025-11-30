@@ -32,8 +32,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{02EA68
 	ProjectSection(SolutionItems) = preProject
 		Shared\CommonSharedSettings.cpp = Shared\CommonSharedSettings.cpp
 		Shared\CommonSharedSettings.h = Shared\CommonSharedSettings.h
-		Shared\no_destructor.cpp = Shared\no_destructor.cpp
-		Shared\no_destructor.h = Shared\no_destructor.h
 		Shared\var_init_once.h = Shared\var_init_once.h
 	EndProjectSection
 EndProject

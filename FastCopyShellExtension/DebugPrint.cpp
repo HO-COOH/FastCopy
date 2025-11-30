@@ -1,15 +1,19 @@
 ﻿#include "DebugPrint.h"
 
 #include "CommonSharedSettings.h"
+#include "var_init_once.h"
 
 namespace
 {
     FastCopyLogger::Verbosity GetVerbosityFromConfig() noexcept {
         try {
             auto& s = FastCopy::Settings::CommonSharedSettings::Instance();
-            auto v = s.GetInt(L"Logger", L"Verbosity").value_or(2); // default: Warn(2)
-            if (v < 0) v = 0;
-            if (v > 5) v = 5;
+            auto v = s.GetInt(L"Logger", L"Verbosity")
+                .value_or(static_cast<int>(FastCopyLogger::Verbosity::Warn)); // default: Warn(2)
+            if (v < static_cast<int>(FastCopyLogger::Verbosity::MinVerbosity))
+                v = static_cast<int>(FastCopyLogger::Verbosity::MinVerbosity);
+            if (v > static_cast<int>(FastCopyLogger::Verbosity::MaxVerbosity))
+                v = static_cast<int>(FastCopyLogger::Verbosity::MaxVerbosity);
             return static_cast<FastCopyLogger::Verbosity>(v);
         }
         catch (...) {
@@ -40,9 +44,12 @@ namespace
     FastCopyLogger::Verbosity GetDebugBreakVerbosityFromConfig() noexcept {
         try {
             auto& s = FastCopy::Settings::CommonSharedSettings::Instance();
-            auto v = s.GetInt(L"Logger", L"DebugBreakMinVerbosity").value_or(4); // default: Debug(4)
-            if (v < 0) v = 0;
-            if (v > 5) v = 5;
+            auto v = s.GetInt(L"Logger", L"DebugBreakMinVerbosity")
+                    .value_or(static_cast<int>(FastCopyLogger::Verbosity::Debug)); // default: Debug(4)
+            if (v < static_cast<int>(FastCopyLogger::Verbosity::Error))
+                v = static_cast<int>(FastCopyLogger::Verbosity::Error);
+            if (v > static_cast<int>(FastCopyLogger::Verbosity::MaxVerbosity))
+                v = static_cast<int>(FastCopyLogger::Verbosity::MaxVerbosity);
             return static_cast<FastCopyLogger::Verbosity>(v);
         }
         catch (...) {
@@ -73,6 +80,6 @@ FastCopyLogger::FastCopyLogger() noexcept
 
 FastCopyLogger& FastCopyLogger::Instance() noexcept
 {
-    static FastCopyLogger s;
-    return s;
+    STATIC_INIT_ONCE(FastCopyLogger, s);
+    return *s;
 }

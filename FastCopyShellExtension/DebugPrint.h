@@ -23,12 +23,14 @@ class FastCopyLogger
 public:
     enum class Verbosity : int
     {
+        MinVerbosity = 0,
         Off = 0,
         Error = 1,
         Warn = 2,
         Info = 3,
         Debug = 4,
         Trace = 5,
+        MaxVerbosity = 5,
     };
 
     static FastCopyLogger& Instance() noexcept;
@@ -231,18 +233,16 @@ public:
     {
         return m_breakMinLevel.load(std::memory_order_relaxed);
     }
-private:
-    FastCopyLogger() noexcept;
-    ~FastCopyLogger()
-    {
 
-    };
+    FastCopyLogger() noexcept;
+    ~FastCopyLogger() = default;
 
     explicit FastCopyLogger(Verbosity initial) noexcept
         : m_initialVerbosity(initial),
         m_currentVerbosity(initial)
     {
     }
+private:
 
     static std::optional<Verbosity>& GetThreadVerbosityRef() noexcept
     {

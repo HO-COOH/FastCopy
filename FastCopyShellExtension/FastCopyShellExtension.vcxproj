@@ -264,7 +264,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;FASTCOPYSHELLEXTENSION_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>FC_LOG_DISABLE;NDEBUG;FASTCOPYSHELLEXTENSION_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>
@@ -297,7 +297,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\Shared\no_destructor.cpp" />
     <ClCompile Include="CopyOperationNames.cpp" />
     <ClCompile Include="DebugPrint.cpp" />
     <ClCompile Include="DllIconFormatter.cpp" />
@@ -318,7 +317,6 @@
     <ClInclude Include="..\Public\ShellItem.h" />
     <ClInclude Include="..\Public\ShellItemArray.h" />
     <ClInclude Include="..\Shared\CommonSharedSettings.h" />
-    <ClInclude Include="..\Shared\no_destructor.h" />
     <ClInclude Include="CopyOperation.h" />
     <ClInclude Include="CopyOperationNames.h" />
     <ClInclude Include="DebugPrint.h" />

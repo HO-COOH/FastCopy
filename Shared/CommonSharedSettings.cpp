@@ -1,5 +1,4 @@
 ﻿#include "CommonSharedSettings.h"
-#include "no_destructor.h"
 #include "var_init_once.h"
 
 #include <array>
@@ -18,8 +17,8 @@ namespace FastCopy::Settings
 
     CommonSharedSettings& CommonSharedSettings::Instance() noexcept
     {
-        STATIC_INIT_ONCE(NoDestructorIfTerminating<CommonSharedSettings>, s);
-        return **s;
+        STATIC_INIT_ONCE(CommonSharedSettings, s);
+        return *s;
     }
 
     [[nodiscard]]

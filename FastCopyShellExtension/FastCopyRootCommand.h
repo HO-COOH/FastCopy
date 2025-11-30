@@ -26,10 +26,7 @@ class __declspec(uuid("3282E233-C5D3-4533-9B25-44B8AAAFACFA")) FastCopyRootComma
     void init(IShellItemArray* items);
 public:
 
-    FastCopyRootCommand()
-    {
-        //DebugPrint::LogSimple(L"FastCopyRootCommand::ctor called");
-    };/* = default*/;
+    FastCopyRootCommand() = default;
 
     // IObjectWithSite
     IFACEMETHODIMP SetSite(IUnknown* pUnkSite) override;
