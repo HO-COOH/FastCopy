@@ -12,6 +12,7 @@
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
+Tools/CopyFilesByRules.exe
 
 # Mono auto generated files
 mono_crash.*
