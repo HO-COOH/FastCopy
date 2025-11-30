@@ -10,13 +10,48 @@
 
 
 namespace {
-    static std::wstring Win32FormatGuid(REFGUID guid) noexcept
+    std::wstring Win32FormatGuid(REFGUID guid) noexcept
     {
         wchar_t buf[64] = {};
         if(!StringFromGUID2(guid, buf, ARRAYSIZE(buf))) return {};
         return buf;
     }
-}; // namespace
+
+    std::wstring utf8_to_wstring(const char* utf8_str) noexcept {
+        if (!utf8_str) return {};
+
+        // Get required buffer size (including null terminator)  
+        int size_needed = MultiByteToWideChar(
+            CP_UTF8,          // Code page: UTF-8  
+            0,                // Flags: no special handling  
+            utf8_str,         // Input narrow string  
+            -1,               // Length: -1 = auto-detect null terminator  
+            nullptr,          // Output buffer: none (get size)  
+            0                 // Output buffer size: 0 (get size)  
+        );
+
+        if (size_needed == 0) {
+            return {};
+        }
+
+        // Allocate buffer and convert  
+        std::wstring wstr(size_needed - 1, L'\0');  // -1 to exclude null terminator  
+        int converted = MultiByteToWideChar(
+            CP_UTF8,
+            0,
+            utf8_str,
+            -1,
+            &wstr[0],        // Output buffer  
+            size_needed      // Buffer size  
+        );
+
+        if (converted == 0) {
+            return {};
+        }
+
+        return wstr;
+    }
+} // namespace
 
 class FastCopyLogger
 {
@@ -180,7 +215,61 @@ public:
             }
 #endif
         }
-        catch (...) {}
+        catch (...) {
+#ifdef _DEBUG
+            OutputDebugStringW(L"[FastCopy] LogFmt: failed to format log message.\n");
+#endif
+        }
+    }
+
+    template<typename... Args>
+    void LogFmtA(Verbosity lvl,
+        const char* func,
+        int line,
+        std::format_string<Args...> fmt,
+        Args&&... args) noexcept
+    {
+        if (!ShouldLog(lvl))
+            return;
+
+        try
+        {
+            std::string bodyA = std::format(fmt, std::forward<Args>(args)...);
+            std::wstring body = utf8_to_wstring(bodyA.c_str());
+
+            std::wstring funcW = func ? utf8_to_wstring(func) : L"(null)";
+
+            std::wstring msg;
+            msg.reserve(body.size() + 128);
+
+            std::wstring_view levelTag = LevelToTag(lvl);
+            std::format_to(std::back_inserter(msg),
+                L"[FastCopy][{}][PID:{}][TID:{}][{}:{}] {}",
+                levelTag,
+                static_cast<unsigned long>(GetCurrentProcessId()),
+                static_cast<unsigned long>(GetCurrentThreadId()),
+                funcW,
+                line,
+                body);
+
+            msg.push_back(L'\n');
+            OutputDebugStringW(msg.c_str());
+#ifdef _DEBUG
+            if (m_breakOnLog.load(std::memory_order_relaxed) &&
+                static_cast<int>(lvl) <=
+                static_cast<int>(m_breakMinLevel.load(std::memory_order_relaxed)) &&
+                ::IsDebuggerPresent() &&
+                IsDebugBreakKeyHeld())
+            {
+                ::DebugBreak();
+            }
+#endif
+        }
+        catch (...) {
+#ifdef _DEBUG
+            OutputDebugStringW(L"[FastCopy] LogFmt: failed to format log message.\n");
+#endif
+        }
     }
 
     void LogProcessInfo(const wchar_t* tag = L"DllMain") noexcept
@@ -269,11 +358,11 @@ private:
         // Debug break key is Ctrl + Shift + F1
         const SHORT ctrl = ::GetAsyncKeyState(VK_CONTROL);
         const SHORT shift = ::GetAsyncKeyState(VK_SHIFT);
-        const SHORT f12 = ::GetAsyncKeyState(VK_F1);
+        const SHORT f1 = ::GetAsyncKeyState(VK_F1);
 
         return (ctrl & 0x8000) &&
             (shift & 0x8000) &&
-            (f12 & 0x8000);
+            (f1 & 0x8000);
     }
 private:
     std::atomic<bool>      m_enabled{ true };
@@ -310,6 +399,28 @@ private:
 #define FC_LOG_TRACE(...) \
     FC_LOG_AT(FastCopyLogger::Verbosity::Trace, __VA_ARGS__)
 
+#define FC_LOGA_AT(level, ...) \
+    FastCopyLogger::Instance().LogFmtA( \
+        level, \
+        __FUNCTION__, \
+        __LINE__, \
+        __VA_ARGS__)
+
+#define FC_LOGA_ERROR(...) \
+    FC_LOGA_AT(FastCopyLogger::Verbosity::Error, __VA_ARGS__)
+
+#define FC_LOGA_WARN(...) \
+    FC_LOGA_AT(FastCopyLogger::Verbosity::Warn, __VA_ARGS__)
+
+#define FC_LOGA_INFO(...) \
+    FC_LOGA_AT(FastCopyLogger::Verbosity::Info, __VA_ARGS__)
+
+#define FC_LOGA_DEBUG(...) \
+    FC_LOGA_AT(FastCopyLogger::Verbosity::Debug, __VA_ARGS__)
+
+#define FC_LOGA_TRACE(...) \
+    FC_LOGA_AT(FastCopyLogger::Verbosity::Trace, __VA_ARGS__)
+
 #else
 
 #define FC_LOG_AT(level, ...)   ((void)0)
@@ -318,5 +429,12 @@ private:
 #define FC_LOG_INFO(...)        ((void)0)
 #define FC_LOG_DEBUG(...)       ((void)0)
 #define FC_LOG_TRACE(...)       ((void)0)
+
+#define FC_LOGA_AT(level, ...)  ((void)0)
+#define FC_LOGA_ERROR(...)      ((void)0)
+#define FC_LOGA_WARN(...)       ((void)0)
+#define FC_LOGA_INFO(...)       ((void)0)
+#define FC_LOGA_DEBUG(...)      ((void)0)
+#define FC_LOGA_TRACE(...)      ((void)0)
 
 #endif

@@ -1,4 +1,10 @@
-#pragma once
+﻿#pragma once
+
+#include <cstdlib>      // std::atexit
+#include <mutex>        // std::once_flag, std::call_once
+#include <new>          // placement new
+#include <type_traits>  // std::is_trivially_destructible_v
+#include <Windows.h>    // HMODULE, GetProcAddress, GetModuleHandle, LoadLibraryEx, FreeLibrary
 
 // The following macros are used to initialize static variables once in a
 // thread-safe manner while avoiding TLS, which is what MSVC uses for static

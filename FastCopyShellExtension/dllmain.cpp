@@ -23,7 +23,7 @@ STDAPI DllGetActivationFactory(_In_ HSTRING activatableClassId, _COM_Outptr_ IAc
 
 STDAPI DllCanUnloadNow()
 {
-    FC_LOG_WARN(L"DllCanUnloadNow");
+    FC_LOG_DEBUG(L"DllCanUnloadNow");
     auto count = Microsoft::WRL::Module<Microsoft::WRL::InProc>::GetModule().GetObjectCount();
     if (count == 0) {
         FC_LOG_DEBUG(L"DllCanUnloadNow: count=0");

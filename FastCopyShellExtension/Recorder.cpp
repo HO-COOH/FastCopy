@@ -35,6 +35,7 @@ namespace
         case CopyOperation::Move:   return L'M';
         case CopyOperation::Paste:  return L'P';
         case CopyOperation::Delete: return L'D';
+        default: break;
         }
         return L'?';
     }
@@ -49,7 +50,7 @@ Recorder::Recorder(CopyOperation op)
         FC_LOG_ERROR(L"LocalDataFolder unavailable, skip recording.");
         return;
     }
-    FC_LOG_ERROR(L"LocalDataFolder unavailable, skip recording.");
+    
     const auto& folder = *folderOpt;
 
     std::error_code ec;
@@ -72,7 +73,7 @@ Recorder::Recorder(CopyOperation op)
     if (!m_fs)
     {
         FC_LOG_ERROR(L" _wfopen('{}') failed.", filePath.wstring());
-        throw std::runtime_error{ "Cannot open file" };
+        return; // skip recording
     }
 }
 
@@ -161,7 +162,7 @@ bool Recorder::HasRecord()
     }
     catch (const std::exception& e)
     {
-        //FC_LOG_ERROR(L"Recorder::HasRecord: exception: {}", e.what());
+        FC_LOGA_ERROR("Recorder::HasRecord: exception: {}", e.what());
     }
     catch (...)
     {

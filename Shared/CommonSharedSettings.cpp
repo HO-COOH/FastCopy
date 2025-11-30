@@ -21,6 +21,13 @@ namespace FastCopy::Settings
         return *s;
     }
 
+    void CommonSharedSettings::Shutdown()
+    {
+        m_stopMonitor.store(true);
+        if (m_monitorThread.joinable())
+            m_monitorThread.join();
+    }
+
     [[nodiscard]]
     std::optional<std::filesystem::path>
         CommonSharedSettings::BuildPackageSubPath(std::wstring_view subDir)
@@ -95,10 +102,12 @@ namespace FastCopy::Settings
 
         m_monitorStarted.store(true, std::memory_order_relaxed);
 
-        std::thread{ [this]
-        {
-            MonitorLoop();
-        } }.detach();
+        m_monitorThread = std::thread {
+            [this]
+            {
+                MonitorLoop();
+            }
+        };
     }
 
     void CommonSharedSettings::MonitorLoop()

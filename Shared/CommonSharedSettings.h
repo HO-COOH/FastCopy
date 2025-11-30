@@ -15,7 +15,17 @@ namespace FastCopy::Settings
     class CommonSharedSettings
     {
     public:
+        CommonSharedSettings(const CommonSharedSettings&) = delete;
+        CommonSharedSettings& operator=(const CommonSharedSettings&) = delete;
+        CommonSharedSettings(CommonSharedSettings&&) = delete;
+        CommonSharedSettings& operator=(CommonSharedSettings&&) = delete;
+
+        ~CommonSharedSettings() = default;
+
         static CommonSharedSettings& Instance() noexcept;
+
+        // CAYUTION! Manually call in App, don't use this function in dll
+        void Shutdown();
 
         // Local data directory: %LocalAppData%\Packages\<family>\LocalCache\Local
         [[nodiscard]]
@@ -78,14 +88,9 @@ namespace FastCopy::Settings
         void RegisterChangeListener(ChangeCallback cb, void* context);
         void UnregisterChangeListener(ChangeCallback cb, void* context);
 
-        CommonSharedSettings();
-        CommonSharedSettings(const CommonSharedSettings&) = delete;
-        CommonSharedSettings(CommonSharedSettings&&);
-        CommonSharedSettings& operator=(const CommonSharedSettings&) = delete;
-        CommonSharedSettings& operator=(CommonSharedSettings&&) = delete;
-        ~CommonSharedSettings() = default;
-
     private:
+        CommonSharedSettings();
+
         // MakePath: %LocalAppData%\Packages\<family>\ + subDir
         [[nodiscard]]
         static std::optional<std::filesystem::path>
@@ -103,6 +108,8 @@ namespace FastCopy::Settings
         // File Watch Handle
         HANDLE            m_hChange = nullptr;
         std::atomic<bool> m_monitorStarted{ false };
+        std::atomic<bool> m_stopMonitor{ false };
+        std::thread m_monitorThread;
 
         // this is I/O mutex
         mutable std::mutex m_ioMutex;

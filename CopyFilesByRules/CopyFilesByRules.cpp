@@ -133,7 +133,7 @@ int wmain(int argc, wchar_t* argv[])
         if (!fs::exists(sourceDir) || !fs::is_directory(sourceDir))
         {
             std::wcerr << L"[CopyFilesByRules][ERROR] SourceDir is not a directory: "
-                << targetDir << L"\n";
+                << sourceDir << L"\n";
             return 1;
         }
 
