@@ -160,8 +160,7 @@ namespace winrt::FastCopy::implementation
                 if (auto strong = weak.get())
                 {
                     // Back to implementation class
-                    auto& impl = *winrt::get_self<SettingsViewModel>(strong);
-                    impl.OnSharedSettingsChangedNotifyUI();
+                    strong.get()->OnSharedSettingsChangedNotifyUI();
                 }
             });
     }
