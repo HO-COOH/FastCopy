@@ -147,9 +147,22 @@ namespace winrt::FastCopy::implementation
         if (!dispatcher)
             return;
 
-        dispatcher.TryEnqueue([self]()
+        //dispatcher.TryEnqueue([self]()
+        //    {
+        //        self->OnSharedSettingsChangedNotifyUI();
+        //    });
+        
+        // Get a weak reference to the 'projection object'
+        auto weak = self->get_weak();
+
+        dispatcher.TryEnqueue([weak]()
             {
-                self->OnSharedSettingsChangedNotifyUI();
+                if (auto strong = weak.get())
+                {
+                    // Back to implementation class
+                    auto& impl = *winrt::get_self<SettingsViewModel>(strong);
+                    impl.OnSharedSettingsChangedNotifyUI();
+                }
             });
     }
 
