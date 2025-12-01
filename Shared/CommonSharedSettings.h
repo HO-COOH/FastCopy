@@ -30,21 +30,21 @@ namespace FastCopy::Settings
 
         // Local data directory: %LocalAppData%\Packages\<family>\LocalCache\Local
         [[nodiscard]]
-        const std::optional<std::filesystem::path>& GetLocalDataFolder() const noexcept
+        std::optional<std::filesystem::path> const& GetLocalDataFolder() const noexcept
         {
             return m_localDataFolder;
         }
 
         // Settings Directory: %LocalAppData%\Packages\<family>\Settings
         [[nodiscard]]
-        const std::optional<std::filesystem::path>& GetSettingsFolder() const noexcept
+        std::optional<std::filesystem::path> const& GetSettingsFolder() const noexcept
         {
             return m_settingsFolder;
         }
 
         // settings.ini full path：%LocalAppData%\Packages\<family>\Settings\settings.ini
         [[nodiscard]]
-        const std::optional<std::filesystem::path>& GetSettingsIniPath() const noexcept
+        std::optional<std::filesystem::path> const& GetSettingsIniPath() const noexcept
         {
             return m_settingsIniPath;
         }

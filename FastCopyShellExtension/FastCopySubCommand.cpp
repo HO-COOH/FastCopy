@@ -1,4 +1,4 @@
-﻿#include "FastCopySubCommand.h"
+#include "FastCopySubCommand.h"
 #include "CopyOperationNames.h"
 #include <Shlwapi.h>
 #include "DllIconFormatter.h"

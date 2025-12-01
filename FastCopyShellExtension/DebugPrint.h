@@ -17,7 +17,7 @@ namespace {
         return buf;
     }
 
-    std::wstring utf8_to_wstring(const char* utf8_str) noexcept {
+    std::wstring utf8_to_wstring(char const* utf8_str) noexcept {
         if (!utf8_str) return {};
 
         // Get required buffer size (including null terminator)  
@@ -165,7 +165,7 @@ public:
         if (!m_enabled.load(std::memory_order_relaxed))
             return false;
 
-        const auto& tv = GetThreadVerbosityRef();
+        auto const& tv = GetThreadVerbosityRef();
         if (tv)
         {
             return static_cast<int>(*tv) >= static_cast<int>(msgLevel);
@@ -178,7 +178,7 @@ public:
     // L"xxx {}", arg
     template<typename... Args>
     void LogFmt(Verbosity lvl,
-        const wchar_t* func,
+        wchar_t const* func,
         int line,
         std::wformat_string<Args...> fmt,
         Args&&... args) noexcept
@@ -224,7 +224,7 @@ public:
 
     template<typename... Args>
     void LogFmtA(Verbosity lvl,
-        const char* func,
+        char const* func,
         int line,
         std::format_string<Args...> fmt,
         Args&&... args) noexcept
@@ -272,12 +272,12 @@ public:
         }
     }
 
-    void LogProcessInfo(const wchar_t* tag = L"DllMain") noexcept
+    void LogProcessInfo(wchar_t const* tag = L"DllMain") noexcept
     {
         wchar_t exePath[MAX_PATH] = {};
         GetModuleFileNameW(nullptr, exePath, ARRAYSIZE(exePath));
 
-        const wchar_t* exeName = wcsrchr(exePath, L'\\');
+        wchar_t const* exeName = wcsrchr(exePath, L'\\');
         exeName = exeName ? exeName + 1 : exePath;
 
         LogFmt(Verbosity::Info,
@@ -291,7 +291,7 @@ public:
     }
 
     void LogDllPath(HMODULE hModule,
-        const wchar_t* tag = L"DllMain") noexcept
+        wchar_t const* tag = L"DllMain") noexcept
     {
         wchar_t dllPath[MAX_PATH] = {};
         if (hModule)
@@ -302,7 +302,7 @@ public:
             __LINE__,
             L"[{}] DllModule={}, path='{}'",
             tag,
-            static_cast<const void*>(hModule),
+            static_cast<void const*>(hModule),
             dllPath[0] ? dllPath : L"(unknown)");
     }
 
@@ -356,9 +356,9 @@ private:
     static bool IsDebugBreakKeyHeld() noexcept
     {
         // Debug break key is Ctrl + Shift + F1
-        const SHORT ctrl = ::GetAsyncKeyState(VK_CONTROL);
-        const SHORT shift = ::GetAsyncKeyState(VK_SHIFT);
-        const SHORT f1 = ::GetAsyncKeyState(VK_F1);
+        SHORT const ctrl = ::GetAsyncKeyState(VK_CONTROL);
+        SHORT const shift = ::GetAsyncKeyState(VK_SHIFT);
+        SHORT const f1 = ::GetAsyncKeyState(VK_F1);
 
         return (ctrl & 0x8000) &&
             (shift & 0x8000) &&

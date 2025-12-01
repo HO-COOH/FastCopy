@@ -45,14 +45,14 @@ namespace
 Recorder::Recorder(CopyOperation op) 
 {
     auto& s = FastCopy::Settings::CommonSharedSettings::Instance();
-    const auto& folderOpt = s.GetLocalDataFolder();
+    auto const& folderOpt = s.GetLocalDataFolder();
     if (!folderOpt)
     {
         FC_LOG_ERROR(L"LocalDataFolder unavailable, skip recording.");
         return;
     }
     
-    const auto& folder = *folderOpt;
+    auto const& folder = *folderOpt;
 
     std::error_code ec;
     std::filesystem::create_directories(folder, ec);
@@ -62,7 +62,7 @@ Recorder::Recorder(CopyOperation op)
             folder.wstring(), ec.value());
     }
 
-    const auto filePath = Recorder::GetRecordFilePath(op);
+    auto const filePath = Recorder::GetRecordFilePath(op);
     if (filePath.empty())
     {
         FC_LOG_WARN(L" GetRecordFilePath returned empty path, skip.");
@@ -104,14 +104,14 @@ Recorder::~Recorder()
 std::filesystem::path Recorder::GetRecordFilePath(CopyOperation op)
 {
     auto& s = FastCopy::Settings::CommonSharedSettings::Instance();
-    const auto& folderOpt = s.GetLocalDataFolder();
+    auto const& folderOpt = s.GetLocalDataFolder();
     if (!folderOpt)
     {
         FC_LOG_ERROR(L"LocalDataFolder unavailable, skip recording.");
         return {};
     }
 
-    const auto& folder = *folderOpt;
+    auto const& folder = *folderOpt;
     return folder / std::format(L"{}{}.txt", toFlag(op), GetTimeString());
 }
 
@@ -120,13 +120,13 @@ bool Recorder::HasRecord()
     try
     {
         auto& s = FastCopy::Settings::CommonSharedSettings::Instance();
-        const auto& folderOpt = s.GetLocalDataFolder();
+        auto const& folderOpt = s.GetLocalDataFolder();
         if (!folderOpt) {
             FC_LOG_ERROR(L"LocalDataFolder unavailable, skip recording.");
             return false;
         }
 
-        const auto& folder = *folderOpt;
+        auto const& folder = *folderOpt;
 
         if (folder.empty())
         {
@@ -161,7 +161,7 @@ bool Recorder::HasRecord()
 
         return false;
     }
-    catch (const std::exception& e)
+    catch (std::exception const& e)
     {
         FC_LOGA_ERROR("Recorder::HasRecord: exception: {}", e.what());
     }

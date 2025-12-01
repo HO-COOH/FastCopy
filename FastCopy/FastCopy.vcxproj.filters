@@ -159,7 +159,9 @@
     <ClCompile Include="RobocopyInjectDll.cpp">
       <Filter>Utils\Robocopy</Filter>
     </ClCompile>
-    <ClCompile Include="..\Shared\CommonSharedSettings.cpp" />
+    <ClCompile Include="..\Shared\CommonSharedSettings.cpp">
+      <Filter>ViewModel\Settings</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -310,8 +312,10 @@
     <ClInclude Include="RobocopyInjectDll.h">
       <Filter>Utils\Robocopy</Filter>
     </ClInclude>
-    <ClInclude Include="..\Shared\CommonSharedSettings.h" />
     <ClInclude Include="..\Shared\var_init_once.h" />
+    <ClInclude Include="..\Shared\CommonSharedSettings.h">
+      <Filter>ViewModel\Settings</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">

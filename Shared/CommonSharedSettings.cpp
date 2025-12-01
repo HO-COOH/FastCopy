@@ -33,7 +33,7 @@ namespace FastCopy::Settings
         CommonSharedSettings::BuildPackageSubPath(std::wstring_view subDir)
     {
         wil::unique_cotaskmem_string localAppData;
-        const HRESULT hr = SHGetKnownFolderPath(
+        HRESULT const hr = SHGetKnownFolderPath(
             FOLDERID_LocalAppData,
             0,
             nullptr,
@@ -45,13 +45,13 @@ namespace FastCopy::Settings
 
         std::array<wchar_t, PACKAGE_FAMILY_NAME_MAX_LENGTH + 1> familyName{};
         UINT32 len = static_cast<UINT32>(familyName.size());
-        const LONG rc = GetCurrentPackageFamilyName(&len, familyName.data());
+        LONG const rc = GetCurrentPackageFamilyName(&len, familyName.data());
         if (rc != ERROR_SUCCESS)
         {
             return std::nullopt;
         }
 
-        const size_t nameLen =
+        size_t const nameLen =
             wcsnlen_s(familyName.data(), familyName.size());
 
         std::filesystem::path result{ localAppData.get() };
@@ -174,7 +174,7 @@ namespace FastCopy::Settings
             listenersCopy = m_listeners;
         }
 
-        for (const auto& l : listenersCopy)
+        for (auto const& l : listenersCopy)
         {
             if (l.cb)
             {
@@ -206,7 +206,7 @@ namespace FastCopy::Settings
         auto it = std::remove_if(
             m_listeners.begin(),
             m_listeners.end(),
-            [cb, context](const Listener& l)
+            [cb, context](Listener const& l)
             {
                 return l.cb == cb && l.ctx == context;
             });

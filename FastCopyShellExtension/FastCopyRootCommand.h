@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <wrl/implements.h>
 #include <ShObjIdl_core.h>
 #include <boost/container/static_vector.hpp>

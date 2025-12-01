@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "RobocopyInjectDll.h"
 #include <winrt/Windows.ApplicationModel.h>
 #include <filesystem>

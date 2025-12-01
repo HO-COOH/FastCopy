@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "RobocopyProcess.h"
 #include "RobocopyArgs.h"
 #include "RobocopyInjectDll.h"

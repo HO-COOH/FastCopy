@@ -1,4 +1,4 @@
-﻿#include "FastCopyRootCommand.h"
+#include "FastCopyRootCommand.h"
 #include <Shlwapi.h>
 #include "ShellItemArray.h"
 #include "CopyOperation.h"
@@ -26,7 +26,7 @@ void FastCopyRootCommand::init(IShellItemArray* items)
     bool showPasteCommand = hasInvokedCopyOrCut();
 
     FC_LOG_INFO(L"Site: {:p}, items count: {}, showPasteCommand: {}",
-        static_cast<const void*>(m_site.Get()), count, showPasteCommand);
+        static_cast<void const*>(m_site.Get()), count, showPasteCommand);
 
     m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Copy, m_site.Get()));
     m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Move, m_site.Get()));
@@ -41,7 +41,7 @@ void FastCopyRootCommand::init(IShellItemArray* items)
 HRESULT FastCopyRootCommand::SetSite(IUnknown* pUnkSite)
 {
     FC_LOG_INFO(L"FastCopyRootCommand::SetSite: pUnkSite={:p}, oldValue={:p}."
-        , static_cast<const void*>(pUnkSite), static_cast<const void*>(m_site.Get()));
+        , static_cast<void const*>(pUnkSite), static_cast<void const*>(m_site.Get()));
     m_site = pUnkSite;
     return S_OK;
 }
@@ -49,7 +49,7 @@ HRESULT FastCopyRootCommand::SetSite(IUnknown* pUnkSite)
 HRESULT FastCopyRootCommand::GetSite(REFIID riid, void** ppvSite)
 {
     FC_LOG_INFO(L"FastCopyRootCommand::GetSite: riid={:08X}-{:04X}, ppvSite={:p}."
-        , riid.Data1, riid.Data2, static_cast<const void*>(ppvSite));
+        , riid.Data1, riid.Data2, static_cast<void const*>(ppvSite));
     return m_site.CopyTo(riid, ppvSite);
 }
 
