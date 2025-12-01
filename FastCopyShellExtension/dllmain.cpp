@@ -7,6 +7,9 @@
 #include "FastCopySubCommand.h"
 
 #include "DebugPrint.h"
+#include "HostShutdownWatcher.h"
+#include "HostProcessHook.h"
+#include "CommonSharedSettings.h"
 
 #pragma comment(lib,"runtimeobject")
 #pragma comment(lib, "Shlwapi.lib")
@@ -14,6 +17,8 @@
 
 CoCreatableClass(FastCopyRootCommand)
 CoCreatableClassWrlCreatorMapInclude(FastCopyRootCommand)
+
+static HMODULE m_hCurrentModule = nullptr;
 
 STDAPI DllGetActivationFactory(_In_ HSTRING activatableClassId, _COM_Outptr_ IActivationFactory** factory)
 {
@@ -24,6 +29,10 @@ STDAPI DllGetActivationFactory(_In_ HSTRING activatableClassId, _COM_Outptr_ IAc
 STDAPI DllCanUnloadNow()
 {
     FC_LOG_DEBUG(L"DllCanUnloadNow");
+
+    // Tell the state machine: AfterCoUninit -> AfterCanUnload
+    HostShutdownWatcher::OnDllCanUnloadNow();
+
     auto count = Microsoft::WRL::Module<Microsoft::WRL::InProc>::GetModule().GetObjectCount();
     if (count == 0) {
         FC_LOG_DEBUG(L"DllCanUnloadNow: count=0");
@@ -44,6 +53,21 @@ STDAPI DllGetClassObject(_In_ REFCLSID rclsid, _In_ REFIID riid, _COM_Outptr_ vo
     return hr;
 }
 
+static void __stdcall FastCopyCleanupCallback()
+{
+    auto& logger = FastCopyLogger::Instance();
+
+    logger.LogProcessInfo(L"FastCopyCleanupCallback (TerminateProcess path)");
+
+    // We need to turn off any logging operations first before proceeding.
+    logger.SetGlobalVerbosity(FastCopyLogger::Verbosity::Off);
+    logger.SetEnabled(false);
+    logger.SetBreakOnLog(false);
+
+    // Shutdown Shared Settings, release resources
+    ::FastCopy::Settings::CommonSharedSettings::Instance().Shutdown();
+}
+
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved
@@ -54,50 +78,78 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     case DLL_PROCESS_ATTACH:
     {
         DisableThreadLibraryCalls(hModule);
+
+        m_hCurrentModule = hModule;
+
+        // Initialize the state machine
+        HostShutdownWatcher::Initialize(&FastCopyCleanupCallback);
+
+        // Install detours hook
+        HostProcessHook::Install();
+
         auto& logger = FastCopyLogger::Instance();
         logger.LogProcessInfo(L"DLL_PROCESS_ATTACH");
         logger.LogDllPath(hModule, L"DLL_PROCESS_ATTACH");
         logger.SetBreakOnLog(true, /*minLevel=*/ FastCopyLogger::Verbosity::Trace);
 
-        /*while (!IsDebuggerPresent())
-        {
-            Sleep(100);
-        }
-        DebugBreak();*/
+        //while (!IsDebuggerPresent())
+        //{
+        //    Sleep(100);
+        //}
+        //DebugBreak();
     }
     break;
     case DLL_PROCESS_DETACH:
     {
-        // FC_FIXME: 
-        // DllHost.exe may not call CoFreeUnusedLibraries to unload modules
-        // that are no longer in use, which may result in the DllCanUnloadNow
-        // function not being called and ultimately ending the process directly
-        // without going through DllMain.
-        // We are expecting it to be called in the following sequence:
-        // CoUninitialize -> RtlDllShutdownInProgress -> DllCanUnloadNow Arrived
-        // -> Check Com Ref Counts == 0 -> DllCanUnloadNow Return -> FreeLibrary
-        // -> CallRoutine -> DllMain -> DLL_PROCESS_DETACH
-        // But it seems that DllCanUnloadNow is not called in some cases.
-        // WTF???
-        // This is not true.
-        
-        // From the documentation: If the process is terminating (the
-        // lpReserved parameter is non-NULL), all threads in the process
-        // except the current thread either have exited already or have been
-        // explicitly terminated by a call to the ExitProcess function.
+        // NOTE:
+        // Originally we suspected that dllhost.exe might skip CoFreeUnusedLibraries
+        // for unused COM modules, which would mean:
+        //   - DllCanUnloadNow is never called, and
+        //   - the process could end directly without going through DllMain.
+        //
+        // The "expected" graceful sequence was something like:
+        //   CoUninitialize
+        //   -> RtlDllShutdownInProgress
+        //   -> DllCanUnloadNow arrives
+        //   -> check COM ref counts == 0
+        //   -> DllCanUnloadNow returns S_OK
+        //   -> FreeLibrary
+        //   -> CallDllMain(DLL_PROCESS_DETACH)
+        //
+        // In practice this is NOT guaranteed. dllhost.exe can (and does) call
+        // TerminateProcess on itself after CoUninitialize, which bypasses
+        // DllMain(DLL_PROCESS_DETACH) entirely. This is consistent with the
+        // documentation: if the process is terminating (lpReserved != NULL),
+        // all other threads are already gone or have been terminated by
+        // ExitProcess/TerminateProcess, and DLL detach notifications are not
+        // guaranteed to run.
+        //
+        // To handle this reliably we now:
+        //   - hook CoUninitialize and TerminateProcess via HostProcessHook
+        //   - track the host state in HostShutdownWatcher
+        //   - when CoUninitialize has been observed but DllCanUnloadNow has not
+        //     been called afterwards, we invoke FastCopyCleanupCallback() from
+        //     the TerminateProcess detour.
+        //
+        // FastCopyCleanupCallback() is responsible for shutting down our
+        // internal resources (e.g. CommonSharedSettings monitor thread,
+        // logging, etc.) on the "hard" TerminateProcess path.
+        //
+        // Therefore:
+        //   - DLL_PROCESS_DETACH is only relied on for the normal FreeLibrary
+        //     unload path;
+        //   - the dllhost.exe TerminateProcess case is now handled explicitly
+        //     by the hooks and does not depend on DllMain being called.
+        //
+        // For debugging you can still use the following breakpoints:
+        //   > bp FastCopyShellExtension!DllCanUnloadNow
+        //   > bp FastCopyShellExtension!DllMain
+        //   > bp combase!CoUninitialize
+        //   > bp ntdll!RtlDllShutdownInProgress
+        //   > bp kernelbase!TerminateProcess
 
-        // Open IDA and the debugger, you can verify this.
-        // Please note to enable the following breakpoints in the debugger:
-        // > bp FastCopyShellExtension!DllCanUnloadNow
-        // > bp FastCopyShellExtension!DllMain
-        // > bp combase!CoUninitialize
-        // > bp ntdll!RtlDllShutdownInProgress
-        // > bp kernelbase!TerminateProcess
-
-        //auto& logger = FastCopyLogger::Instance();
-        //logger.SetBreakOnLog(false);
-        //logger.LogProcessInfo(L"DLL_PROCESS_DETACH");
-        //logger.LogDllPath(hModule, L"DLL_PROCESS_DETACH");
+        // (No additional cleanup is required here; resource shutdown is handled
+        // either by normal object lifetime or by FastCopyCleanupCallback().)
     }
     break;
     case DLL_THREAD_ATTACH:

@@ -21,20 +21,26 @@ namespace FastCopy::Settings
         CommonSharedSettings(CommonSharedSettings&&) = delete;
         CommonSharedSettings& operator=(CommonSharedSettings&&) = delete;
 
-        ~CommonSharedSettings() = default;
+        ~CommonSharedSettings()
+        {
+            // In non-DLL scenarios (regular EXE), ensure that background
+            // monitoring threads are properly stopped before the process exits.
+            // In DLL scenarios, if Shutdown is not explicitly called,
+            // the destructor might never run 
+            // (for example，Host process may call TerminateProcess),
+            // so it also needs to cooperate with the DLL's cleanup callback.
+            Shutdown();
+        }
 
         static CommonSharedSettings& Instance() noexcept;
 
-        // FC_FIXME：
-        // CAUTION! Manually call in App, don't use this function in dll
-        // Since both Shell extensions and GUI programs are currently using this class,
-        // and Shell extensions managed by dllhost.exe have an unstable uninstall path,
-        // we cannot be certain when the module will be unloaded,
-        // and therefore cannot accurately determine whether the class should
-        // automatically clean up resources in its destructor.
-        // We will consider using API hooking in Shell extensions, hooking CoUninitialize
-        // or the RtlDllShutdownInProgress function,
-        // to ensure that resources are correctly released when the process exits.
+        // Shutdown the background monitor thread and close the change notification handle.
+        //
+        // - EXE: the destructor already calls Shutdown(), so it is normally optional.
+        //        You may still call it explicitly if you want deterministic cleanup.
+        // - DLL (e.g. shell extensions in dllhost.exe): the destructor might never run
+        //        on the TerminateProcess path, so the host must call Shutdown() from an
+        //        explicit cleanup point (e.g. FastCopyCleanupCallback in DllMain).
         void Shutdown();
 
         // Local data directory: %LocalAppData%\Packages\<family>\LocalCache\Local

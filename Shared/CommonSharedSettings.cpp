@@ -24,8 +24,25 @@ namespace FastCopy::Settings
     void CommonSharedSettings::Shutdown()
     {
         m_stopMonitor.store(true, std::memory_order_relaxed);
+
+        HANDLE h = m_hChange;
+        if (h && h != INVALID_HANDLE_VALUE)
+        {
+            // Close the notification handle and
+            // wake up the WaitForSingleObject in the MonitorLoop
+            FindCloseChangeNotification(h);
+            m_hChange = nullptr;
+        }
+
         if (m_monitorThread.joinable())
+        {
             m_monitorThread.join();
+        }
+
+#if defined(DEBUG) || defined(_DEBUG)
+        if(IsDebuggerPresent())
+            DebugBreak();
+#endif
     }
 
     [[nodiscard]]
@@ -161,8 +178,6 @@ namespace FastCopy::Settings
             }
         }
 
-        FindCloseChangeNotification(m_hChange);
-        m_hChange = nullptr;
         m_monitorStarted.store(false, std::memory_order_relaxed);
     }
 

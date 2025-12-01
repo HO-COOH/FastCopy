@@ -309,6 +309,8 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="FastCopyRootCommand.cpp" />
     <ClCompile Include="FastCopySubCommand.cpp" />
+    <ClCompile Include="HostProcessHook.cpp" />
+    <ClCompile Include="HostShutdownWatcher.cpp" />
     <ClCompile Include="IconProvider.cpp" />
     <ClCompile Include="Recorder.cpp" />
     <ClCompile Include="Registry.cpp" />
@@ -329,6 +331,8 @@
     <ClInclude Include="DllIconFormatter.h" />
     <ClInclude Include="FastCopyRootCommand.h" />
     <ClInclude Include="FastCopySubCommand.h" />
+    <ClInclude Include="HostProcessHook.h" />
+    <ClInclude Include="HostShutdownWatcher.h" />
     <ClInclude Include="IconProvider.h" />
     <ClInclude Include="Recorder.h" />
     <ClInclude Include="Registry.h" />
