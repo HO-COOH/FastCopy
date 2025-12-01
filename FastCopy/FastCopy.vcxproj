@@ -554,24 +554,24 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\x64\Package\FastCopy\boost_filesystem-vc143-mt-x64-1_86.dll">
+    <None Include="$(TargetDir)\boost_filesystem-vc143-mt-x64-1_86.dll">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|arm64'">true</DeploymentContent>
       <FileType>Document</FileType>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|x64'">true</DeploymentContent>
     </None>
-    <None Include="..\x64\Package\FastCopy\fmt.dll">
+    <None Include="$(TargetDir)\fmt.dll">
       <FileType>Document</FileType>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|arm64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|x64'">true</DeploymentContent>
     </None>
-    <None Include="..\x64\Package\FastCopy\FastCopyShellExtension.dll">
+    <None Include="$(TargetDir)\FastCopyShellExtension.dll">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|arm64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|x64'">true</DeploymentContent>
     </None>
-    <None Include="..\x64\Package\FastCopy\RobocopyInjection.dll">
+    <None Include="$(TargetDir)\RobocopyInjection.dll">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="FastCopy_TemporaryKey.pfx" />
