@@ -107,6 +107,7 @@ FastCopy
     - boost-algorithm
     - boost-container
     - boost-process
+    - detours
   + SpeedTest:
     - abseil
     - ftxui
@@ -118,6 +119,7 @@ You can install them with one command, and do no more.
 vcpkg install boost-algorithm:x64-windows
 vcpkg install boost-container:x64-windows
 vcpkg install boost-process:x64-windows
+vcpkg install detours:x64-windows
 vcpkg install spdlog:x64-windows
 vcpkg install abseil:x64-windows
 vcpkg install ftxui:x64-windows
