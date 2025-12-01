@@ -44,10 +44,6 @@ void CommandLineHandler::Run()
 				{
 					winrt::make<::winrt::FastCopy::implementation::App>();
 				});
-
-			// exit call SharedSettings::Shutdown()
-			auto &settings = ::FastCopy::Settings::CommonSharedSettings::Instance();
-			settings.Shutdown();
 			return;
 		}
 		case AppLaunchMode::OpenLocation:

@@ -15,6 +15,9 @@ namespace FastCopy::Settings
 {
     using namespace std::literals;
 
+    /* static */
+    std::atomic<bool> CommonSharedSettings::s_manualShutdown{ false };
+
     CommonSharedSettings& CommonSharedSettings::Instance() noexcept
     {
         STATIC_INIT_ONCE(CommonSharedSettings, s);
@@ -23,6 +26,16 @@ namespace FastCopy::Settings
 
     void CommonSharedSettings::Shutdown()
     {
+        bool expected = false;
+        if (!s_manualShutdown.compare_exchange_strong(expected, 
+            true, std::memory_order_relaxed))
+            return;
+
+        {
+            std::lock_guard lock(m_listenersMutex);
+            m_listeners.clear();
+        }
+
         m_stopMonitor.store(true, std::memory_order_relaxed);
 
         HANDLE h = m_hChange;
@@ -183,6 +196,9 @@ namespace FastCopy::Settings
 
     void CommonSharedSettings::NotifyConfigChanged()
     {
+        if (s_manualShutdown.load(std::memory_order_relaxed))
+            return;
+
         std::vector<Listener> listenersCopy;
         {
             std::lock_guard lock(m_listenersMutex);
@@ -207,6 +223,9 @@ namespace FastCopy::Settings
 
     void CommonSharedSettings::RegisterChangeListener(ChangeCallback cb, void* context)
     {
+        if (s_manualShutdown.load(std::memory_order_relaxed))
+            return;
+
         if (!cb)
             return;
 
@@ -216,6 +235,9 @@ namespace FastCopy::Settings
 
     void CommonSharedSettings::UnregisterChangeListener(ChangeCallback cb, void* context)
     {
+        if (s_manualShutdown.load(std::memory_order_relaxed))
+            return;
+
         std::lock_guard lock(m_listenersMutex);
 
         auto it = std::remove_if(

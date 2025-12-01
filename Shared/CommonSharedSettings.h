@@ -125,6 +125,7 @@ namespace FastCopy::Settings
         HANDLE            m_hChange = nullptr;
         std::atomic<bool> m_monitorStarted{ false };
         std::atomic<bool> m_stopMonitor{ false };
+        static std::atomic<bool> s_manualShutdown;
         std::thread m_monitorThread;
 
         // this is I/O mutex
