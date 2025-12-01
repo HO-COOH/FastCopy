@@ -86,6 +86,14 @@ BOOL APIENTRY DllMain( HMODULE hModule,
         // except the current thread either have exited already or have been
         // explicitly terminated by a call to the ExitProcess function.
 
+        // Open IDA and the debugger, you can verify this.
+        // Please note to enable the following breakpoints in the debugger:
+        // > bp FastCopyShellExtension!DllCanUnloadNow
+        // > bp FastCopyShellExtension!DllMain
+        // > bp combase!CoUninitialize
+        // > bp ntdll!RtlDllShutdownInProgress
+        // > bp kernelbase!TerminateProcess
+
         //auto& logger = FastCopyLogger::Instance();
         //logger.SetBreakOnLog(false);
         //logger.LogProcessInfo(L"DLL_PROCESS_DETACH");

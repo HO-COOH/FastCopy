@@ -25,7 +25,16 @@ namespace FastCopy::Settings
 
         static CommonSharedSettings& Instance() noexcept;
 
+        // FC_FIXME：
         // CAUTION! Manually call in App, don't use this function in dll
+        // Since both Shell extensions and GUI programs are currently using this class,
+        // and Shell extensions managed by dllhost.exe have an unstable uninstall path,
+        // we cannot be certain when the module will be unloaded,
+        // and therefore cannot accurately determine whether the class should
+        // automatically clean up resources in its destructor.
+        // We will consider using API hooking in Shell extensions, hooking CoUninitialize
+        // or the RtlDllShutdownInProgress function,
+        // to ensure that resources are correctly released when the process exits.
         void Shutdown();
 
         // Local data directory: %LocalAppData%\Packages\<family>\LocalCache\Local
