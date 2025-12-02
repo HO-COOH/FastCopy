@@ -525,6 +525,7 @@
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="LoggerVerbositySettingItem">
                             <ComboBox
+                                xmlns:backdrops="using:Microsoft.UI.Composition.SystemBackdrops"
                                 Width="220"
                                 essential:ComboBoxHelper.AcrylicWorkaround="True"
                                 SelectedIndex="{x:Bind ViewModel.LoggerVerbosity, Mode=TwoWay}">
@@ -545,6 +546,7 @@
                         <essential:SettingsCard x:Uid="LoggerDebugBreakMinVerbositySettingItem" IsEnabled="{x:Bind ViewModel.LogDBEnabled, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" Spacing="8">
                                 <ComboBox
+                                    xmlns:backdrops="using:Microsoft.UI.Composition.SystemBackdrops"
                                     Width="200"
                                     essential:ComboBoxHelper.AcrylicWorkaround="True"
                                     SelectedIndex="{x:Bind ViewModel.LogDBMinVerbositySelectedIndex, Mode=TwoWay}">
