@@ -275,9 +275,6 @@ namespace FastCopy::Settings
         if (err == ERROR_FILE_NOT_FOUND || err == ERROR_PATH_NOT_FOUND)
             return std::nullopt;
 
-        if (err != ERROR_SUCCESS)
-            return std::nullopt;
-
         if (len == 0)
             return std::nullopt;
 

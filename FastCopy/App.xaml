@@ -11,7 +11,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <ResourceDictionary Source="ms-appx:///WinUI3Package/SettingsCard_Resource.xaml" />
-                <ResourceDictionary Source="ms-appx:///WinUI3Package/SettingsExpander_Resource.xaml"/>
+                <ResourceDictionary Source="ms-appx:///WinUI3Package/SettingsExpander_Resource.xaml" />
                 <ResourceDictionary Source="ms-appx:///WinUI3Package/ProgressBarEx_Resource.xaml" />
                 <ResourceDictionary Source="ms-appx:///WinUI3Package/Segmented_Resource.xaml" />
                 <ResourceDictionary Source="ms-appx:///WinUi3Package/Glyphs.xaml" />
