@@ -524,7 +524,10 @@
                                 Style="{StaticResource ToggleSwitchLeftLabelStyle}" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="LoggerVerbositySettingItem">
-                            <ComboBox Width="220" SelectedIndex="{x:Bind ViewModel.LoggerVerbosity, Mode=TwoWay}">
+                            <ComboBox
+                                Width="220"
+                                essential:ComboBoxHelper.AcrylicWorkaround="True"
+                                SelectedIndex="{x:Bind ViewModel.LoggerVerbosity, Mode=TwoWay}">
                                 <ComboBoxItem Content="Off" />
                                 <ComboBoxItem Content="Error" />
                                 <ComboBoxItem Content="Warn" />
@@ -539,11 +542,12 @@
                                 IsOn="{x:Bind ViewModel.LogDBEnabled, Mode=TwoWay}"
                                 Style="{StaticResource ToggleSwitchLeftLabelStyle}" />
                         </essential:SettingsCard>
-                        <essential:SettingsCard
-                            x:Uid="LoggerDebugBreakMinVerbositySettingItem"
-                            IsEnabled="{x:Bind ViewModel.LogDBEnabled, Mode=OneWay}">
+                        <essential:SettingsCard x:Uid="LoggerDebugBreakMinVerbositySettingItem" IsEnabled="{x:Bind ViewModel.LogDBEnabled, Mode=OneWay}">
                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                <ComboBox Width="150" SelectedIndex="{x:Bind ViewModel.LogDBMinVerbositySelectedIndex, Mode=TwoWay}">
+                                <ComboBox
+                                    Width="200"
+                                    essential:ComboBoxHelper.AcrylicWorkaround="True"
+                                    SelectedIndex="{x:Bind ViewModel.LogDBMinVerbositySelectedIndex, Mode=TwoWay}">
                                     <ComboBoxItem Content="Error" />
                                     <ComboBoxItem Content="Warn" />
                                     <ComboBoxItem Content="Info" />
