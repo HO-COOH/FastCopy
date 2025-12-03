@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastCopy - The Windows 11 Copy Tool</title>
+    <meta name="description" content="A blazing fast, Fluent Design wrapper for Windows Robocopy. Seamless integration.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* --- WINDOWS 11 DARK MODE VARIABLES --- */
+        :root {
+            /* Core Backgrounds */
+            --bg-mica: #202020;         /* Base app background */
+            --bg-layer: rgba(32, 32, 32, 0.7); /* Glassy layer */
+            --surface: #2c2c2c;         /* Cards/Panels */
+            --surface-hover: #353535;
+            
+            /* Accents */
+            --accent: #60CDFF;          /* Windows 11 Cyan/Blue */
+            --accent-glow: rgba(96, 205, 255, 0.3);
+            --danger: #ff5f5f;
+            --success: #6cc070;
+            
+            /* Text */
+            --text-primary: #ffffff;
+            --text-secondary: #d0d0d0;
+            --text-tertiary: #9b9b9b;
+            
+            /* Borders */
+            --border: rgba(255, 255, 255, 0.08);
+            --border-active: rgba(255, 255, 255, 0.15);
+            
+            /* Effects */
+            --radius-lg: 12px;
+            --radius-sm: 6px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            --backdrop: blur(40px);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI Variable', 'Segoe UI', sans-serif;
+            background-color: #1a1a1a; /* Fallback */
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- CANVAS BACKGROUND --- */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #0d0d0d 0%, #1f1f1f 100%);
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(32, 32, 32, 0.95);
+            backdrop-filter: var(--backdrop);
+            -webkit-backdrop-filter: var(--backdrop);
+            border-bottom: 1px solid var(--border);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap; /* Allow wrapping on mobile */
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-primary);
+            letter-spacing: 0.5px;
+        }
+
+        .logo i { color: var(--accent); }
+
+        .nav-items {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-items a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            margin-left: 24px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .nav-items a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-btn {
+            background: var(--accent);
+            color: #000 !important;
+            padding: 6px 16px;
+            border-radius: var(--radius-sm);
+            font-weight: 600 !important;
+        }
+
+        .nav-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* --- HERO SECTION --- */
+        header {
+            padding: 6rem 2rem 4rem;
+            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 4rem;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
+            word-wrap: break-word; /* Prevent overflow */
+        }
+
+        h1 span {
+            background: linear-gradient(90deg, var(--accent), #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-icon-container {
+            margin: 0 auto 2rem;
+            width: 160px;
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .hero-icon-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 40px rgba(96, 205, 255, 0.25));
+        }
+
+        .hero-sub {
+            font-size: 1.35rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            font-weight: 300;
+        }
+
+        .cta-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap; /* Stack buttons on mobile */
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border-radius: var(--radius-lg);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: #1a1a1a;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px var(--accent-glow);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- WARNING BOX --- */
+        .warning-box {
+            background: rgba(255, 95, 95, 0.1);
+            border: 1px solid var(--danger);
+            color: #ffcccc;
+            padding: 1rem;
+            border-radius: var(--radius-lg);
+            max-width: 800px;
+            margin: 2rem auto;
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start; /* Align top on mobile */
+            gap: 15px;
+            text-align: left;
+        }
+
+        .warning-box i { font-size: 1.5rem; color: var(--danger); margin-top: 3px; }
+
+        /* --- SECTIONS --- */
+        .section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+            font-weight: 600;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: -2rem auto 3rem;
+        }
+
+        /* --- GRID CARDS --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Better for mobile */
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: rgba(44, 44, 44, 0.4);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            background: rgba(44, 44, 44, 0.6);
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin-bottom: 1.2rem;
+            background: rgba(96, 205, 255, 0.1);
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .card h3 { margin-bottom: 0.5rem; font-size: 1.25rem; }
+        .card p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; }
+
+        /* --- BENCHMARKS --- */
+        .benchmark-section-group {
+            display: flex;
+            flex-direction: column;
+            gap: 3rem;
+        }
+
+        .benchmark-wrapper {
+            background: rgba(32, 32, 32, 0.6);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid var(--border);
+            /* Important for mobile scrolling */
+            overflow-x: auto; 
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .benchmark-header {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+            color: var(--text-primary);
+            /* Prevent header breaking on mobile */
+            min-width: 600px; 
+        }
+
+        .benchmark-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px; /* Force table width to trigger scroll */
+        }
+
+        .benchmark-table th, .benchmark-table td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95rem;
+        }
+
+        .benchmark-table th {
+            background: rgba(96, 205, 255, 0.05);
+            color: var(--accent);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        .benchmark-table tr:last-child td { border-bottom: none; }
+
+        .bar-container {
+            background: rgba(255,255,255,0.1);
+            height: 8px;
+            border-radius: 4px;
+            width: 120px;
+            position: relative;
+            margin-top: 5px;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: var(--accent);
+        }
+
+        .bar-fill.slow { background: var(--danger); }
+        .bar-fill.medium { background: #ffd700; }
+        .bar-fill.fast { background: var(--success); }
+
+        .specs-list {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            color: var(--text-secondary);
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .specs-list li {
+            background: rgba(255,255,255,0.05);
+            padding: 8px 15px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        /* Check Table Wrapper for Scroll */
+        .table-scroll-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 3rem;
+        }
+
+        .check-table {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            border-collapse: collapse;
+            text-align: center;
+            min-width: 500px; /* Ensure check table scrolls too */
+        }
+        
+        .check-table th, .check-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* --- INSTALLATION & DEV --- */
+        .install-guide {
+            background: rgba(32, 32, 32, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            overflow: hidden; /* Prevent spillover */
+        }
+
+        .install-step {
+            margin-bottom: 2.5rem;
+            padding-left: 20px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .install-step h4 { margin-bottom: 0.5rem; color: var(--text-primary); font-size: 1.1rem; }
+        
+        .install-step img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .code-block {
+            background: #151515;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Consolas', monospace;
+            color: #dcdcdc;
+            margin-top: 10px;
+            display: block;
+            border: 1px solid #333;
+            overflow-x: auto; /* Scroll for code */
+            font-size: 0.85rem;
+            white-space: pre; /* Maintain formatting */
+        }
+
+        /* --- GALLERY --- */
+        .gallery-section { padding-top: 0; }
+        
+        .screenshot-gallery {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+        }
+
+        .screenshot-item {
+            flex: 1;
+            min-width: 350px;
+            max-width: 550px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .screenshot-img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border-active);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+            cursor: zoom-in; /* Indicate clickable */
+        }
+
+        .screenshot-img:hover {
+            transform: scale(1.03);
+            border-color: var(--accent);
+            z-index: 10;
+        }
+        
+        .caption {
+            margin-top: 15px;
+            color: var(--text-tertiary);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* --- MODAL (LIGHTBOX) --- */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 2000; 
+            padding-top: 30px; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.9); 
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 90vh;
+            border-radius: 8px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            object-fit: contain;
+            animation-name: zoom;
+            animation-duration: 0.3s;
+        }
+
+        @keyframes zoom {
+            from {transform:scale(0.8); opacity: 0;} 
+            to {transform:scale(1); opacity: 1;}
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            z-index: 2001;
+            cursor: pointer;
+        }
+
+        .close-modal:hover,
+        .close-modal:focus {
+            color: var(--accent);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            border-top: 1px solid var(--border);
+            background: #111;
+            padding: 4rem 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .footer-logo {
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-links a {
+            color: var(--text-tertiary);
+            font-size: 1.5rem;
+            transition: color 0.2s;
+        }
+
+        .social-links a:hover { color: var(--accent); }
+
+        .legal {
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+        }
+
+        /* --- MOBILE OPTIMIZATION --- */
+        @media (max-width: 768px) {
+            /* Fix Navigation */
+            nav {
+                justify-content: center;
+                padding: 1rem;
+            }
+            
+            .logo {
+                margin-bottom: 10px;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .nav-items {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            .nav-items a {
+                margin: 0;
+                font-size: 0.85rem;
+            }
+
+            /* Fix Hero */
+            header { padding: 4rem 1.5rem 2rem; }
+            h1 { font-size: 2.5rem; }
+            .hero-icon-container { width: 120px; height: 120px; }
+            .btn { width: 100%; margin-bottom: 10px; }
+
+            /* Fix Padding */
+            .section { padding: 3rem 1.5rem; }
+            
+            /* Fix Typography */
+            .section-title { font-size: 2rem; }
+            .section-subtitle { margin-top: -1.5rem; font-size: 0.9rem; }
+            
+            /* Fix Tables & Install Guide */
+            .install-guide { padding: 1.5rem; }
+            .bar-container { width: 80px; }
+            
+            /* Fix Gallery */
+            .screenshot-item { min-width: 100%; }
+            .screenshot-gallery { gap: 40px; }
+            
+            /* Fix footer */
+            footer { padding: 2rem 1rem; }
+
+            .close-modal { top: 10px; right: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ANIMATED BACKGROUND -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <div class="logo">
+            <i class="fa-solid fa-bolt"></i> FastCopy
+        </div>
+        <div class="nav-items">
+            <a href="#features">Features</a>
+            <a href="#usage">Usage</a>
+            <a href="#benchmarks">Benchmarks</a>
+            <a href="#install">Install</a>
+            <a href="#dev">Development</a>
+            <a href="https://github.com/HO-COOH/FastCopy" class="nav-btn">
+                <i class="fab fa-github"></i> GitHub
+            </a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header>
+        <div class="hero-icon-container">
+            <img src="https://user-images.githubusercontent.com/6630660/212826788-9eeab669-783c-472b-98ed-ee049984cc19.png" alt="FastCopy Icon">
+        </div>
+        <h1>Robocopy.<br><span>Reimagined.</span></h1>
+        <p class="hero-sub">
+            A GUI wrapper for Windows' built-in <code>robocopy</code>. 
+            Native integration, Fluent Design, and raw speed.
+        </p>
+
+        <div class="warning-box">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <div style="width: 100%;">
+                <div style="margin-bottom: 8px;">
+                    <strong>Store Notice:</strong> My submission to Microsoft Store is getting rejected for no obvious reason. Blame them for all consequences. Please use the <strong>Portable Zip</strong> installation.
+                </div>
+                <details>
+                    <summary style="cursor: pointer; opacity: 0.8;">View rejection details</summary>
+                    <img src="https://raw.githubusercontent.com/HO-COOH/FastCopy/refs/heads/master/Screenshots/drama-1.png" alt="Rejection details" class="screenshot-img" style="margin-top: 10px;">
+                </details>
+            </div>
+        </div>
+
+        <div class="cta-container">
+            <a href="#install" class="btn btn-primary">
+                <i class="fa-solid fa-download"></i> Download Portable
+            </a>
+            <a href="https://apps.microsoft.com/detail/9pkjk0bhnvfn?referrer=appbadge&mode=direct" class="btn btn-secondary">
+                <i class="fab fa-microsoft"></i> View on Store
+            </a>
+        </div>
+        <div style="margin-top: 2rem;">
+            <span style="background: rgba(255,255,255,0.1); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; color: var(--text-tertiary);">
+                v1.2.0 • Windows 10/11 • Open Source
+            </span>
+        </div>
+    </header>
+
+    <!-- FEATURES -->
+    <section class="section" id="features">
+        <h2 class="section-title">Features</h2>
+        <div class="grid">
+            <div class="card">
+                <div class="card-icon"><i class="fa-solid fa-bolt"></i></div>
+                <h3>Engineered for Speed</h3>
+                <p>Wraps the industrial-strength <code>robocopy</code> engine. Multi-threaded I/O ensures your SSDs are fully utilized.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fa-brands fa-windows"></i></div>
+                <h3>Fluent Design</h3>
+                <p>Built with WinUI 3. Features Mica material, acrylic transparency, and automatic Light/Dark mode switching.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fa-solid fa-chart-line"></i></div>
+                <h3>Speed Graphs</h3>
+                <p>Visual insights into your transfer performance with real-time graphs and taskbar progress integration.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fa-solid fa-bell"></i></div>
+                <h3>Smart Notifications</h3>
+                <p>Get notified via Windows Action Center when your massive transfers are complete.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fa-solid fa-check-double"></i></div>
+                <h3>Confirmation</h3>
+                <p>Includes a clear Confirmation Dialog to prevent accidental moves or deletions.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon"><i class="fa-solid fa-list-check"></i></div>
+                <h3>Context Menu</h3>
+                <p>Seamlessly integrated into the Windows 11 right-click menu. Just "Move to FastCopy".</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- VISUAL INSIGHTS -->
+    <section class="section gallery-section">
+        <h2 class="section-title">Visual Feedback</h2>
+        <p class="section-subtitle">Detailed metrics and system integration.</p>
+        
+        <div class="screenshot-gallery">
+            <div class="screenshot-item">
+                <img src="https://raw.githubusercontent.com/HO-COOH/FastCopy/master/Screenshots/speed-graph.png" alt="Speed Graph" class="screenshot-img">
+                <div class="caption">Real-time Speed Graph</div>
+            </div>
+            <div class="screenshot-item">
+                <img src="https://raw.githubusercontent.com/HO-COOH/FastCopy/master/Screenshots/notification.png" alt="Windows Notification" class="screenshot-img">
+                <div class="caption">Native Notifications</div>
+            </div>
+        </div>
+        
+        <div class="screenshot-gallery" style="margin-top: 3rem;">
+             <div class="screenshot-item">
+                <img src="https://raw.githubusercontent.com/HO-COOH/FastCopy/master/Screenshots/confirmation-dialog.png" alt="Confirmation Dialog" class="screenshot-img">
+                <div class="caption">Safety Confirmation</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NATIVE INTEGRATION -->
+    <section class="section gallery-section" id="integration">
+        <h2 class="section-title">Native Integration</h2>
+        <p class="section-subtitle">Works exactly where you expect it to.</p>
+        
+        <div class="screenshot-gallery">
+            <div class="screenshot-item">
+                <img src="https://raw.githubusercontent.com/HO-COOH/FastCopy/master/Screenshots/NewMenuCopy_Dark.png" alt="FastCopy Copy/Move Context Menu" class="screenshot-img">
+                <div class="caption">1. Select Files & Copy</div>
+            </div>
+            <div class="screenshot-item">
+                <img src="https://raw.githubusercontent.com/HO-COOH/FastCopy/master/Screenshots/NewMenuPaste_Dark.png" alt="FastCopy Paste Context Menu" class="screenshot-img">
+                <div class="caption">2. Right Click Destination & Paste</div>
+            </div>
+            <div class="screenshot-item">
+                <img src="https://raw.githubusercontent.com/HO-COOH/FastCopy/master/Screenshots/OldMenuCopy_Dark.png" alt="Classic Context Menu" class="screenshot-img">
+                <div class="caption">Classic Context Menu Support</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- USAGE SECTION (NEW) -->
+    <section class="section" id="usage">
+        <h2 class="section-title">Usage</h2>
+        <div class="install-guide">
+            <div class="install-step">
+                <h4>1. Copy or Move</h4>
+                <p>Using file explorer, select some files/folders, as many as you want <i class="fa-solid fa-angles-right" style="font-size: 0.8em; opacity: 0.7;"></i> right click <i class="fa-solid fa-angles-right" style="font-size: 0.8em; opacity: 0.7;"></i> move to <strong>FastCopy</strong> <i class="fa-solid fa-angles-right" style="font-size: 0.8em; opacity: 0.7;"></i> select <strong>Copy</strong> or <strong>Move</strong>.</p>
+            </div>
+            <div class="install-step">
+                <h4>2. Paste</h4>
+                <p>Go to destination folder, right click at empty space <i class="fa-solid fa-angles-right" style="font-size: 0.8em; opacity: 0.7;"></i> move to <strong>FastCopy</strong> <i class="fa-solid fa-angles-right" style="font-size: 0.8em; opacity: 0.7;"></i> select <strong>Paste</strong>.</p>
+            </div>
+        </div>
+    </section>
+    <!-- CONFIGURATION -->
+    <section class="section gallery-section">
+        <h2 class="section-title">Configuration</h2>
+        <p class="section-subtitle">Localization and settings.</p>
+        <div class="screenshot-gallery">
+             <div class="screenshot-item">
+                <img src="https://raw.githubusercontent.com/HO-COOH/FastCopy/master/Screenshots/settings.png" alt="Chinese Settings" class="screenshot-img">
+                <div class="caption">Settings (CN)</div>
+            </div>
+             <div class="screenshot-item">
+                <img src="https://raw.githubusercontent.com/HO-COOH/FastCopy/master/Screenshots/settings-en.png" alt="English Settings" class="screenshot-img">
+                <div class="caption">Settings (EN)</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROTOTYPES -->
+    <section class="section gallery-section" id="prototypes">
+        <h2 class="section-title">Design Prototypes</h2>
+        <p class="section-subtitle">Future concepts and Figma design explorations.</p>
+        
+        <div style="text-align: center; margin-bottom: 3rem;">
+            <a href="https://www.figma.com/file/e5hUvDWKO8gZiKXruuNSvL/Xcopy?type=design&node-id=217-31199&t=cKY9TdBJXXi7QdFL-0" target="_blank" class="btn btn-secondary">
+                <i class="fa-brands fa-figma"></i> View Prototype on Figma
+            </a>
+        </div>
+
+        <div class="screenshot-gallery">
+            <div class="screenshot-item">
+                <img src="https://user-images.githubusercontent.com/6630660/212826364-28155c87-c809-4ab8-b203-c8438fa64749.png" alt="Prototype Light" class="screenshot-img">
+                <div class="caption">Concept: Light Mode</div>
+            </div>
+            <div class="screenshot-item">
+                <img src="https://user-images.githubusercontent.com/6630660/212826583-75744773-2f10-45a7-8e5d-281ab1f9eee3.png" alt="Prototype Dark" class="screenshot-img">
+                <div class="caption">Concept: Dark Mode</div>
+            </div>
+            <div class="screenshot-item">
+                <img src="https://raw.githubusercontent.com/HO-COOH/FastCopy/master/Screenshots/figma.png" alt="Figma Design Board" class="screenshot-img">
+                <div class="caption">Figma Design Board</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BENCHMARKS -->
+    <section class="section" id="benchmarks">
+        <h2 class="section-title">Speed Comparison</h2>
+        
+                <!-- Capability Table with Scroll -->
+        <div class="table-scroll-container">
+            <table class="check-table">
+                <thead>
+                    <tr>
+                        <th>Method</th>
+                        <th>Copy</th>
+                        <th>Move</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="text-align:left; color: var(--text-primary);">xcopy</td>
+                        <td style="color:var(--success)">✅</td>
+                        <td style="color:var(--danger)">❌</td>
+                        <td style="color:var(--danger)">❌</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:left; color: var(--text-primary); font-weight:bold; color:var(--accent);">robocopy (FastCopy)</td>
+                        <td style="color:var(--success)">✅</td>
+                        <td style="color:var(--success)">✅</td>
+                        <td style="color:var(--danger)">❌</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:left; color: var(--text-primary);">std::filesystem</td>
+                        <td style="color:var(--success)">✅</td>
+                        <td style="color:var(--success)">✅</td>
+                        <td style="color:var(--success)">✅</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:left; color: var(--text-primary);">Windows (IFileOperation)</td>
+                        <td style="color:var(--success)">✅</td>
+                        <td style="color:var(--success)">✅</td>
+                        <td style="color:var(--success)">✅</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align:left; color: var(--text-primary);">SHFileOperation</td>
+                        <td style="color:var(--success)">✅</td>
+                        <td style="color:var(--success)">✅</td>
+                        <td style="color:var(--success)">✅</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <!-- System Specs -->
+        <ul class="specs-list">
+            <li><i class="fa-solid fa-microchip"></i> AMD Ryzen 9950x</li>
+            <li><i class="fa-solid fa-memory"></i> MSI X870 Tomahawk Wifi</li>
+            <li><i class="fa-solid fa-hard-drive"></i> Same Drive: Samsung 870 QVO 1TB @SATA 6Gbps</li>
+            <li><i class="fa-solid fa-hard-drive"></i> Different Drive:Fanxiang S500 Pro 2TB @PCI-E 3.0 4x -> Samsung 870 QVO 1TB @SATA 6Gbps</li>
+
+        </ul>
+
+        <div class="benchmark-section-group">
+            
+            <!-- 1. Copy same drive -->
+            <div class="benchmark-wrapper">
+                <div class="benchmark-header">1. Copy: Same drive -> Same drive</div>
+                <table class="benchmark-table">
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>1 GB of 4 KB small files</th>
+                            <th>4 GB of 1 GB large files</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>xcopy</td>
+                            <td>2:29</td>
+                            <td><s>0:00</s></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold; color:var(--accent);">robocopy</td>
+                            <td style="font-weight:bold; color:var(--accent);">2:19</td>
+                            <td style="font-weight:bold; color:var(--accent);">0:30</td>
+                        </tr>
+                        <tr>
+                            <td>std::filesystem</td>
+                            <td>2:25</td>
+                            <td>0:54</td>
+                        </tr>
+                        <tr>
+                            <td>IFileOperation</td>
+                            <td>6:19</td>
+                            <td><s>0:00</s></td>
+                        </tr>
+                        <tr>
+                            <td>SHFileOperation</td>
+                            <td>8:59</td>
+                            <td><s>0:00</s></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 2. Copy different drive -->
+            <div class="benchmark-wrapper">
+                <div class="benchmark-header">2. Copy: Different drive -> Different drive</div>
+                <table class="benchmark-table">
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>1 GB of 4 KB small files</th>
+                            <th>4 GB of 1 GB large files</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>xcopy</td>
+                            <td>2:20</td>
+                            <td><s>0:00</s></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold; color:var(--accent);">robocopy</td>
+                            <td style="font-weight:bold; color:var(--accent);">1:58</td>
+                            <td style="font-weight:bold; color:var(--accent);">0:08</td>
+                        </tr>
+                        <tr>
+                            <td>std::filesystem</td>
+                            <td>2:39</td>
+                            <td><s>0:01</s></td>
+                        </tr>
+                        <tr>
+                            <td>IFileOperation</td>
+                            <td>6:12</td>
+                            <td><s>0:00</s></td>
+                        </tr>
+                        <tr>
+                            <td>SHFileOperation</td>
+                            <td>8:50</td>
+                            <td><s>0:00</s></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 3. Move same drive -->
+            <div class="benchmark-wrapper">
+                <div class="benchmark-header">3. Move: Same drive -> Same drive</div>
+                <table class="benchmark-table">
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>1 GB of 4 KB small files</th>
+                            <th>4 GB of 1 GB large files</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>xcopy</td>
+                            <td>N/A</td>
+                            <td>N/A</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold; color:var(--accent);">robocopy</td>
+                            <td>2:52</td>
+                            <td style="font-weight:bold; color:var(--accent);">0:17</td>
+                        </tr>
+                        <tr>
+                            <td>std::filesystem</td>
+                            <td style="font-weight:bold; color:var(--accent);"><s>0:00</s></td>
+                            <td style="font-weight:bold; color:var(--accent);"><s>0:00</s></td>
+                        </tr>
+                        <tr>
+                            <td>IFileOperation</td>
+                            <td>3:44</td>
+                            <td><s>0:01</s></td>
+                        </tr>
+                        <tr>
+                            <td>SHFileOperation</td>
+                            <td>5:31</td>
+                            <td><s>0:00</s></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 4. Move different drive -->
+            <div class="benchmark-wrapper">
+                <div class="benchmark-header">4. Move: Different drive -> Different drive</div>
+                <table class="benchmark-table">
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>1 GB of 4 KB small files</th>
+                            <th>4 GB of 1 GB large files</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>xcopy</td>
+                            <td>N/A</td>
+                            <td>N/A</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold; color:var(--accent);">robocopy</td>
+                            <td style="font-weight:bold; color:var(--accent);">2:25</td>
+                            <td>0:08</td>
+                        </tr>
+                        <tr>
+                            <td>std::filesystem</td>
+                            <td>N/A</td>
+                            <td>N/A</td>
+                        </tr>
+                        <tr>
+                            <td>IFileOperation</td>
+                            <td>12:58</td>
+                            <td>0:08</td>
+                        </tr>
+                        <tr>
+                            <td>SHFileOperation</td>
+                            <td>15:48</td>
+                            <td style="font-weight:bold; color:var(--accent);">0:06</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 5. Delete -->
+            <div class="benchmark-wrapper">
+                <div class="benchmark-header">5. Delete</div>
+                <table class="benchmark-table">
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>1 GB of 4 KB small files</th>
+                            <th>4 GB of 1 GB large files</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>xcopy</td>
+                            <td>N/A</td>
+                            <td>N/A</td>
+                        </tr>
+                        <tr>
+                            <td>robocopy</td>
+                            <td>N/A</td>
+                            <td>N/A</td>
+                        </tr>
+                        <tr>
+                            <td>std::filesystem</td>
+                            <td style="font-weight:bold; color:var(--accent);">0:19</td>
+                            <td>0:01</td>
+                        </tr>
+                        <tr>
+                            <td>IFileOperation</td>
+                            <td>0:42</td>
+                            <td><s>0:00</s></td>
+                        </tr>
+                        <tr>
+                            <td>SHFileOperation</td>
+                            <td>2:28</td>
+                            <td><s>0:00</s></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <p style="text-align:center; font-size: 0.8rem; margin-top: 1rem; color: var(--text-tertiary);">*IFileOperation & SHFileOperation benchmarks may vary as APIs sometimes return early while disk usage remains at 100%.</p>
+    </section>
+
+    <!-- INSTALLATION -->
+    <section class="section" id="install">
+        <h2 class="section-title">Installation Guide</h2>
+        <div class="install-guide">
+            <p style="margin-bottom: 2rem; color: var(--text-secondary);">
+                Follow these steps to install the portable version (before Store publish).
+            </p>
+            
+            <div class="install-step">
+                <h4>1. Download Release</h4>
+                <p>Go to the <a href="https://github.com/HO-COOH/FastCopy/releases" style="color: var(--accent);">GitHub Releases Page</a> and download the latest <code>.zip</code> file from the Assets section.</p>
+            </div>
+
+            <div class="install-step">
+                <h4>2. Install Certificate</h4>
+                <p>Unzip the folder. Double-click the <code>.cert</code> file. click <code>Install Certificate</code>.</p>
+                <span class="code-block">Select "Local Machine" -> "Next"</span>
+                <img src="https://raw.githubusercontent.com/HO-COOH/FastCopy/master/Screenshots/open_cert.png" class="screenshot-img" style="max-width:300px; margin-top:10px;">
+            </div>
+
+            <div class="install-step">
+                <h4>3. Trust the Certificate</h4>
+                <p>Select "Place all certificates in the following store", click "Browse", and select:</p>
+                <span class="code-block" style="color: var(--accent);">Trusted Root Certification Authorities</span>
+                <img src="https://raw.githubusercontent.com/HO-COOH/FastCopy/master/Screenshots/install-cert.png" class="screenshot-img" style="max-width:300px; margin-top:10px;">
+            </div>
+
+            <div class="install-step">
+                <h4>4. Install App</h4>
+                <p>Click "Finish" on the certificate installer. Now double-click the <code>.msix</code> file to install FastCopy.</p>
+            </div>
+
+            <div class="install-step">
+                <h4>Troubleshooting</h4>
+                <p>In rare situations, you might need to restart <code>explorer.exe</code> to see FastCopy in the right-click context menu.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- DEVELOPMENT -->
+    <section class="section" id="dev">
+        <h2 class="section-title">Development</h2>
+        <p class="section-subtitle">Build from source.</p>
+
+        <div class="install-guide">
+            <h3 style="margin-bottom: 1rem;">Prerequisites</h3>
+            <ul style="color: var(--text-secondary); margin-bottom: 2rem; padding-left: 20px;">
+                <li>Visual Studio 2019+ (C++20 support & Universal Windows development workload)</li>
+                <li>Windows App SDK (C++ template)</li>
+                <li>vcpkg (Recommended for dependencies)</li>
+            </ul>
+            <li style="margin-top: 10px;"><strong>Additional dependencies per project:</strong>
+                <ul style="margin-top: 5px; list-style-type: circle;">
+                    <li style="margin-bottom: 5px;">FastCopy: <code>spdlog</code>, <code>boost-algorithm</code></li>
+                    <li>SpeedTest: <code>abseil</code>, <code>ftxui</code>, <code>cereal</code></li>
+                </ul>
+            </li>
+
+            <h3 style="margin-bottom: 1rem;">Dependencies</h3>
+            <p style="color: var(--text-secondary);">Install required packages using vcpkg:</p>
+            <div class="code-block">
+vcpkg install boost-algorithm:x64-windows
+vcpkg install spdlog:x64-windows
+vcpkg install abseil:x64-windows
+vcpkg install ftxui:x64-windows
+vcpkg install cereal:x64-windows
+            </div>
+            
+            <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Project Structure</h3>
+            <div class="code-block">
+FastCopy
+    FastCopy\               --- Main project
+    FastCopyShellExtension\ --- A dll project for registering the new Windows context menu
+    SpeedTest\              --- A speed test project
+    UnitTest\               --- Unit tests
+    FastCopy.sln            --- Solution file
+            </div>
+
+            <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Translation</h3>
+            <p style="color: var(--text-secondary);">Contributions are welcome! Translate files in:</p>
+            <ul style="color: var(--text-secondary); padding-left: 20px; font-family: monospace; font-size: 0.9rem;">
+                <li>FastCopy/Strings/&lt;language&gt;/Resources.resw</li>
+                <li>FastCopyShellExtension/CopyOperationNames.cpp</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-logo"><i class="fa-solid fa-bolt"></i> FASTCOPY</div>
+        <div class="social-links">
+            <a href="https://github.com/HO-COOH/FastCopy"><i class="fab fa-github"></i></a>
+        </div>
+        <p class="legal">
+            Released under MIT License. Copyright © 2025.<br>
+            "Windows", "Robocopy" and "WinUI" are trademarks of Microsoft Corp.<br>
+            Not affiliated with Microsoft.
+        </p>
+    </footer>
+
+    <!-- MODAL (Lightbox) -->
+    <div id="imageModal" class="modal">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="img01">
+    </div>
+
+    <!-- CANVAS SCRIPT -->
+    <script>
+        (function() {
+            /* --- PARTICLE ANIMATION --- */
+            const canvas = document.getElementById('bg-canvas');
+            const ctx = canvas.getContext('2d');
+
+            let w, h;
+            let particles = [];
+            
+            const particleCount = 50;
+            const connectionDistance = 150;
+
+            function resize() {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+            }
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * w;
+                    this.y = Math.random() * h;
+                    this.vx = (Math.random() - 0.5) * 0.3;
+                    this.vy = (Math.random() - 0.5) * 0.3;
+                    this.size = Math.random() * 2;
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    if (this.x < 0 || this.x > w) this.vx *= -1;
+                    if (this.y < 0 || this.y > h) this.vy *= -1;
+                }
+
+                draw() {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            function initParticles() {
+                resize();
+                particles = [];
+                for (let i = 0; i < particleCount; i++) {
+                    particles.push(new Particle());
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, w, h);
+                
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+
+                ctx.strokeStyle = 'rgba(96, 205, 255, 0.1)';
+                ctx.lineWidth = 1;
+
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i; j < particles.length; j++) {
+                        let dx = particles[i].x - particles[j].x;
+                        let dy = particles[i].y - particles[j].y;
+                        let dist = Math.sqrt(dx * dx + dy * dy);
+
+                        if (dist < connectionDistance) {
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            window.addEventListener('resize', () => {
+                resize();
+                initParticles();
+            });
+
+            initParticles();
+            animate();
+
+            /* --- MODAL (Lightbox) LOGIC --- */
+            const modal = document.getElementById("imageModal");
+            const modalImg = document.getElementById("img01");
+            const closeBtn = document.getElementsByClassName("close-modal")[0];
+            const images = document.querySelectorAll(".screenshot-img");
+
+            // Open modal
+            images.forEach(img => {
+                img.addEventListener('click', function() {
+                    modal.style.display = "block";
+                    modalImg.src = this.src;
+                });
+            });
+
+            // Close modal (X button)
+            closeBtn.onclick = function() { 
+                modal.style.display = "none";
+            }
+
+            // Close modal (Click outside)
+            modal.onclick = function(event) {
+                if (event.target === modal) {
+                    modal.style.display = "none";
+                }
+            }
+
+            // Close modal (Esc key)
+            document.addEventListener('keydown', function(event) {
+                if (event.key === "Escape") {
+                    modal.style.display = "none";
+                }
+            });
+
+        })();
+    </script>
+</body>
+</html>
