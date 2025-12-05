@@ -6,6 +6,7 @@
 #include "FastCopyRootCommand.h"
 #include "FastCopySubCommand.h"
 
+#include "DebugHelper.hpp"
 #include "DebugPrint.h"
 #include "HostShutdownWatcher.h"
 #include "HostProcessHook.h"
@@ -90,13 +91,8 @@ BOOL APIENTRY DllMain( HMODULE hModule,
         auto& logger = FastCopyLogger::Instance();
         logger.LogProcessInfo(L"DLL_PROCESS_ATTACH");
         logger.LogDllPath(hModule, L"DLL_PROCESS_ATTACH");
-        logger.SetBreakOnLog(true, /*minLevel=*/ FastCopyLogger::Verbosity::Trace);
 
-        //while (!IsDebuggerPresent())
-        //{
-        //    Sleep(100);
-        //}
-        //DebugBreak();
+        DEBUG_WAIT_FOR_DEBUGGER(/* timeout= ms */60000);
     }
     break;
     case DLL_PROCESS_DETACH:

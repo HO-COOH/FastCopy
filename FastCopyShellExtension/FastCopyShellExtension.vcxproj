@@ -327,6 +327,7 @@
     <ClInclude Include="..\Shared\CommonSharedSettings.h" />
     <ClInclude Include="CopyOperation.h" />
     <ClInclude Include="CopyOperationNames.h" />
+    <ClInclude Include="..\Shared\DebugHelper.hpp" />
     <ClInclude Include="DebugPrint.h" />
     <ClInclude Include="DllIconFormatter.h" />
     <ClInclude Include="FastCopyRootCommand.h" />

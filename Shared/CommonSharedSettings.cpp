@@ -1,5 +1,6 @@
 ﻿#include "CommonSharedSettings.h"
 #include "var_init_once.h"
+#include "DebugHelper.hpp"
 
 #include <array>
 #include <algorithm>
@@ -52,10 +53,8 @@ namespace FastCopy::Settings
             m_monitorThread.join();
         }
 
-#if defined(DEBUG) || defined(_DEBUG)
-        if(IsDebuggerPresent())
-            DebugBreak();
-#endif
+        // only work in debug mode
+        DEBUG_BREAK_HERE();    // make a breakpoint here to check if the destructor is called
     }
 
     [[nodiscard]]

@@ -133,6 +133,9 @@
     <ClInclude Include="HostProcessHook.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Shared\DebugHelper.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="FastCopyShellExtension.rc">

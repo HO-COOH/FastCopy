@@ -179,6 +179,7 @@
   <ItemGroup>
     <ClInclude Include="..\Public\PackageConfig.h" />
     <ClInclude Include="..\Shared\CommonSharedSettings.h" />
+    <ClInclude Include="..\Shared\DebugHelper.hpp" />
     <ClInclude Include="..\Shared\var_init_once.h" />
     <ClInclude Include="AcrylicHelper.h" />
     <ClInclude Include="AnimatedValue.h" />

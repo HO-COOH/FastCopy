@@ -316,6 +316,9 @@
     <ClInclude Include="..\Shared\CommonSharedSettings.h">
       <Filter>ViewModel\Settings</Filter>
     </ClInclude>
+    <ClInclude Include="..\Shared\DebugHelper.hpp">
+      <Filter>Utils\Debug</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -576,11 +579,11 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="FastCopy_TemporaryKey.pfx" />
-    <None Include="..\x64\Package\FastCopy\FastCopyShellExtension.dll" />
     <None Include="Package.StoreAssociation.xml" />
-    <None Include="..\x64\Package\FastCopy\boost_filesystem-vc143-mt-x64-1_86.dll" />
-    <None Include="..\x64\Package\FastCopy\fmt.dll" />
-    <None Include="..\x64\Package\FastCopy\RobocopyInjection.dll" />
+    <None Include="$(TargetDir)\boost_filesystem-vc143-mt-x64-1_86.dll" />
+    <None Include="$(TargetDir)\fmt.dll" />
+    <None Include="$(TargetDir)\FastCopyShellExtension.dll" />
+    <None Include="$(TargetDir)\RobocopyInjection.dll" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\en-US\Resources.resw">
