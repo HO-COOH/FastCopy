@@ -1,4 +1,4 @@
-<!--  Copyright (c) Microsoft Corporation. All rights reserved.  -->
+﻿<!--  Copyright (c) Microsoft Corporation. All rights reserved.  -->
 <!--  Licensed under the MIT License. See LICENSE in the project root for license information.  -->
 
 <Application
@@ -11,6 +11,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <ResourceDictionary Source="ms-appx:///WinUI3Package/SettingsCard_Resource.xaml" />
+                <ResourceDictionary Source="ms-appx:///WinUI3Package/SettingsExpander_Resource.xaml" />
                 <ResourceDictionary Source="ms-appx:///WinUI3Package/ProgressBarEx_Resource.xaml" />
                 <ResourceDictionary Source="ms-appx:///WinUI3Package/Segmented_Resource.xaml" />
                 <ResourceDictionary Source="ms-appx:///WinUi3Package/Glyphs.xaml" />

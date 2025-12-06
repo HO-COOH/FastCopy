@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Ntdll.h"
 
 NtDll::NtSuspendProcessFunction NtDll::s_ntSuspendFunctionPointer()

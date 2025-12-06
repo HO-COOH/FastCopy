@@ -1,0 +1,32 @@
+# AppxDllRules.txt
+#
+# One pattern per line.
+# - Matching is case-insensitive.
+# - Patterns are applied to file names only (no directory path).
+# - Optional "| soft" means:
+#     If the target file already exists and overwriting fails
+#     (for example, the file is in use), treat it as a soft error:
+#     log a warning but do NOT fail the whole build.
+#
+# To enable the same "soft on overwrite failure" behavior globally
+# for all patterns, you can add ONE of the following directive lines:
+#   @SoftOnTargetLocked
+#   @soft_on_target_locked
+#
+# Lines starting with '#' or ';' are comments.
+
+# boost filesystem: must copy successfully (hard error on failure)
+boost_filesystem-vc143-mt*-x64-1_86.dll
+
+# fmt family: fmt.dll / fmtd.dll (still hard error by default)
+fmt*.dll
+
+# FastCopy shell extension:
+#  - "| soft" means: if the target DLL already exists and the overwrite fails,
+#    treat it as a soft error (warning only, build continues).
+# use "| SoftOnTargetLocked", "| soft-on-target-locked" as well.
+FastCopyShellExtension.dll | soft
+
+# Robocopy injection DLL: failure is a hard error (no "| soft"), maybe we need a sign?
+RobocopyInjection.dll
+

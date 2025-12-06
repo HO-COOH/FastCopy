@@ -135,19 +135,6 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)Public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)Public;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
-    <PostBuildEvent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX"
-xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I
-xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'">mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX"
-xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX"
-xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
     <ClCompile>
@@ -164,19 +151,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtensio
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
-    <PostBuildEvent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|arm64'">mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX"
-xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX"
-xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX"
-xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I
-xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Package'">
     <ClCompile>
@@ -193,19 +167,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
-    <PostBuildEvent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Package|arm64'">mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX"
-xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX"
-xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Package|x64'">mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX"
-xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\FastCopyShellExtension.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I
-xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\AppX" /Y /C /I</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup Condition="'$(WindowsPackageType)'!='None' and Exists('Package.appxmanifest')">
     <AppxManifest Include="Package.appxmanifest">
@@ -217,6 +178,9 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\PackageConfig.h" />
+    <ClInclude Include="..\Shared\CommonSharedSettings.h" />
+    <ClInclude Include="..\Shared\DebugHelper.hpp" />
+    <ClInclude Include="..\Shared\var_init_once.h" />
     <ClInclude Include="AcrylicHelper.h" />
     <ClInclude Include="AnimatedValue.h" />
     <ClInclude Include="AnimatedWindowSize.h" />
@@ -351,6 +315,17 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Shared\CommonSharedSettings.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|arm64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Package|arm64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Package|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="AcrylicHelper.cpp" />
     <ClCompile Include="AnimatedValue.cpp" />
     <ClCompile Include="AnimatedWindowSize.cpp" />
@@ -580,24 +555,24 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\PackageDlls\boost_filesystem-vc143-mt-x64-1_82.dll">
+    <None Include="$(TargetDir)\boost_filesystem-vc143-mt-x64-1_86.dll">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|arm64'">true</DeploymentContent>
       <FileType>Document</FileType>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|x64'">true</DeploymentContent>
     </None>
-    <None Include="..\PackageDlls\fmt.dll">
+    <None Include="$(TargetDir)\fmt.dll">
       <FileType>Document</FileType>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|arm64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|x64'">true</DeploymentContent>
     </None>
-    <None Include="..\x64\Package\FastCopy\FastCopyShellExtension.dll">
+    <None Include="$(TargetDir)\FastCopyShellExtension.dll">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|arm64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|x64'">true</DeploymentContent>
     </None>
-    <None Include="..\x64\Package\FastCopy\RobocopyInjection.dll">
+    <None Include="$(TargetDir)\RobocopyInjection.dll">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="FastCopy_TemporaryKey.pfx" />
@@ -618,6 +593,17 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
   <ItemGroup>
     <None Include="Package.StoreAssociation.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- Let VS know that `AppxDllRules.txt` is an input file involved in the build process -->
+    <CustomBuild Include="$(SolutionDir)Tools\AppxDllRules.txt">
+      <FileType>Document</FileType>
+      <Message>Checking AppxDllRules.txt timestamp...</Message>
+      <Command>
+      echo AppxDllRules touched &gt; "$(IntDir)AppxDllRules.stamp"
+    </Command>
+      <Outputs>$(IntDir)AppxDllRules.stamp</Outputs>
+    </CustomBuild>
+  </ItemGroup>
   <!-- 
     Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution 
     Explorer "Package and Publish" context menu entry to be enabled for this project even if 
@@ -628,36 +614,80 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|arm64'">
     <MultiProcMIDL>true</MultiProcMIDL>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Shared</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|arm64'">
     <MultiProcMIDL>true</MultiProcMIDL>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Shared</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Package|arm64'">
     <MultiProcMIDL>true</MultiProcMIDL>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Shared</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <MultiProcMIDL>true</MultiProcMIDL>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Shared</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <MultiProcMIDL>true</MultiProcMIDL>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Shared</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">
     <MultiProcMIDL>true</MultiProcMIDL>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Shared</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <MultiProcMIDL>true</MultiProcMIDL>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Shared</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <MultiProcMIDL>true</MultiProcMIDL>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Shared</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Package|x64'">
     <MultiProcMIDL>true</MultiProcMIDL>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Shared</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
     <VcpkgEnableManifest>false</VcpkgEnableManifest>
-    <VcpkgXUseBuiltInApplocalDeps>true</VcpkgXUseBuiltInApplocalDeps>
+    <VcpkgApplocalDeps>true</VcpkgApplocalDeps>
     <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
   </PropertyGroup>
+  <!--
+    We usually recommend keeping this configuration and not making arbitrary modifications.
+    
+    It is related to the file copy in the post generation stage.
+    Through these toolchain, we can guide the file-copying of vcpkg and copy other components
+    of the project to a specified location, for example: '$(TargetDir)AppX' directory.
+  
+   -->
+  <PropertyGroup>
+    <!--
+      The path of the rule file is usually placed in the Tools directory,
+      a subdirectories of the solution directory
+     -->
+    <CopyFilesRulesFile>$(SolutionDir)Tools\AppxDllRules.txt</CopyFilesRulesFile>
+    <!--
+      Path of tool exe:
+        The generation result of the `CopyFilesByRules` project.
+        
+        `CopyFilesByRules.exe` will accept optional path parameters and scan,
+        it will copy files during the RoboCopyEx project compilation.
+     -->
+    <CopyFilesByRulesExe>$(SolutionDir)Tools\CopyFilesByRules.exe</CopyFilesByRulesExe>
+  </PropertyGroup>
+  <!-- After generation, copy the files in $(targetdir) to the `AppX` directory according to the rules -->
+  <Target Name="CopyRuntimeFilesToAppx" AfterTargets="Build" Condition="'$(Platform)'=='x64'">
+    <Error Condition="!Exists('$(CopyFilesByRulesExe)')" Text="CopyFilesByRules.exe not found. Make sure the 'CopyFilesByRules' project is built and outputs to $(SolutionDir)Tools." />
+    <!-- Make Copying: SourceDir = $(TargetDir), TargetDir = $(AppxDir), RulesFile = $(CopyFilesRulesFile) -->
+    <!--
+      The Windows command line misunderstands a string wrapped in quotation
+      marks with a '\' at the end as an escape symbol and swallows 'swallow',
+      which is terrible. Adding extra spaces at the end of the path
+      solves this decades old bug! 
+     -->
+    <Exec Command="&quot;$(CopyFilesByRulesExe)&quot; &quot;$(TargetDir) &quot; &quot;$(TargetDir)AppX\ &quot; &quot;$(CopyFilesRulesFile)&quot;" />
+  </Target>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\Microsoft.Graphics.Win2D.1.0.4\build\native\Microsoft.Graphics.Win2D.targets" Condition="Exists('..\packages\Microsoft.Graphics.Win2D.1.0.4\build\native\Microsoft.Graphics.Win2D.targets')" />

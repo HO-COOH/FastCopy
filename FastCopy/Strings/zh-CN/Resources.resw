@@ -165,6 +165,12 @@
   <data name="DevModeSettingItem.Header" xml:space="preserve">
     <value>开发模式</value>
   </data>
+  <data name="DevOptionsExpander.Description" xml:space="preserve">
+    <value>设置启用控制台窗口重定向输出，或者控制 Shell 扩展 (dll) 的日志输出细粒度</value>
+  </data>
+  <data name="DevOptionsExpander.Header" xml:space="preserve">
+    <value>开发者选项</value>
+  </data>
   <data name="Duplicates.Text" xml:space="preserve">
     <value>个重名文件</value>
   </data>
@@ -185,6 +191,30 @@
   </data>
   <data name="LightThemeItem.Content" xml:space="preserve">
     <value>亮色</value>
+  </data>
+  <data name="LoggerDebugBreakEnableSettingItem.Description" xml:space="preserve">
+    <value>启用日志行内的内部中断功能，这将允许在关键位置输出日志时触发中断。当以调试器附加模式运行时，这会有一定帮助。</value>
+  </data>
+  <data name="LoggerDebugBreakEnableSettingItem.Header" xml:space="preserve">
+    <value>启用日志内部中断（仅限调试器附加模式）</value>
+  </data>
+  <data name="LoggerDebugBreakMinVerbositySettingItem.Description" xml:space="preserve">
+    <value>设置通过快捷键（Ctrl+Alt+F1）触发日志中断的条件，日志行本身的级别低于过滤级别的日志可以触发中断。（此项设置最小中断级别）</value>
+  </data>
+  <data name="LoggerDebugBreakMinVerbositySettingItem.Header" xml:space="preserve">
+    <value>最小日志中断级别</value>
+  </data>
+  <data name="LoggerEnabledSettingItem.Description" xml:space="preserve">
+    <value>控制 Shell 扩展是否向调试器输出日志</value>
+  </data>
+  <data name="LoggerEnabledSettingItem.Header" xml:space="preserve">
+    <value>启用 Shell 扩展日志输出</value>
+  </data>
+  <data name="LoggerVerbositySettingItem.Description" xml:space="preserve">
+    <value>设置的日志过滤级别越高，输出内容越详细</value>
+  </data>
+  <data name="LoggerVerbositySettingItem.Header" xml:space="preserve">
+    <value>Shell 扩展的日志过滤输出级别</value>
   </data>
   <data name="MicaItem.Content" xml:space="preserve">
     <value>Mica</value>
