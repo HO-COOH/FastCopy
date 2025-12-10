@@ -1,10 +1,8 @@
 ﻿#include "HostProcessHook.h"
 #include "HostShutdownWatcher.h"
-
 #include <Windows.h>
-#include "detours/detours.h"
+#include <detours/detours.h>
 
-#pragma comment(lib, "detours.lib")
 
 namespace
 {
