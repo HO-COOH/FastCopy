@@ -159,6 +159,9 @@
     <ClCompile Include="RobocopyInjectDll.cpp">
       <Filter>Utils\Robocopy</Filter>
     </ClCompile>
+    <ClCompile Include="..\Shared\CommonSharedSettings.cpp">
+      <Filter>ViewModel\Settings</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -308,6 +311,13 @@
     </ClInclude>
     <ClInclude Include="RobocopyInjectDll.h">
       <Filter>Utils\Robocopy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\var_init_once.h" />
+    <ClInclude Include="..\Shared\CommonSharedSettings.h">
+      <Filter>ViewModel\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Shared\DebugHelper.hpp">
+      <Filter>Utils\Debug</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -569,11 +579,11 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="FastCopy_TemporaryKey.pfx" />
-    <None Include="..\PackageDlls\boost_filesystem-vc143-mt-x64-1_82.dll" />
-    <None Include="..\PackageDlls\fmt.dll" />
-    <None Include="..\x64\Package\FastCopy\FastCopyShellExtension.dll" />
     <None Include="Package.StoreAssociation.xml" />
-    <None Include="..\x64\Package\FastCopy\RobocopyInjection.dll" />
+    <None Include="$(TargetDir)\boost_filesystem-vc143-mt-x64-1_86.dll" />
+    <None Include="$(TargetDir)\fmt.dll" />
+    <None Include="$(TargetDir)\FastCopyShellExtension.dll" />
+    <None Include="$(TargetDir)\RobocopyInjection.dll" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\en-US\Resources.resw">
@@ -593,5 +603,8 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="$(SolutionDir)Tools\AppxDllRules.txt" />
   </ItemGroup>
 </Project>

@@ -1,8 +1,9 @@
-namespace FastCopy
+﻿namespace FastCopy
 {
     [bindable]
     [default_interface]
     runtimeclass SettingsViewModel 
+        : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         SettingsViewModel();
 
@@ -11,5 +12,9 @@ namespace FastCopy
         Int32 ThemeSelection;
         Int32 BackgroundSelection;
         Boolean DevMode;
+        Boolean LoggerEnabled;
+        Int32 LoggerVerbosity;
+        Boolean LogDBEnabled;
+        Int32 LogDBMinVerbositySelectedIndex;
     }
 }

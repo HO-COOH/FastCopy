@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "CommandLineHandler.h"
 #include <string_view>
 #include <shellapi.h>
@@ -6,6 +6,7 @@
 #include "Console.h"
 #include "COMInitializeHelper.h"
 #include "CommandLine.h"
+#include "CommonSharedSettings.h"
 
 static std::pair<std::wstring_view, std::wstring_view> parseToastArgument(std::wstring_view argument)
 {

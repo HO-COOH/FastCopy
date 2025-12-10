@@ -165,6 +165,13 @@
   <data name="DevModeSettingItem.Header" xml:space="preserve">
     <value>Diagnostic Mode</value>
   </data>
+  <data name="DevOptionsExpander.Description" xml:space="preserve">
+    <value>Configure whether to enable console window output redirection, or control the log output granularity of the Shell extension (DLL).
+</value>
+  </data>
+  <data name="DevOptionsExpander.Header" xml:space="preserve">
+    <value>Developer Options</value>
+  </data>
   <data name="Duplicates.Text" xml:space="preserve">
     <value>duplicates</value>
   </data>
@@ -185,6 +192,30 @@
   </data>
   <data name="LightThemeItem.Content" xml:space="preserve">
     <value>Light</value>
+  </data>
+  <data name="LoggerDebugBreakEnableSettingItem.Description" xml:space="preserve">
+    <value>Enable the internal breakpoint feature within log lines, which allows a break to be triggered when logs are output at critical points. This can be helpful when running with a debugger attached.</value>
+  </data>
+  <data name="LoggerDebugBreakEnableSettingItem.Header" xml:space="preserve">
+    <value>Enabled Breakpoint at Log Line</value>
+  </data>
+  <data name="LoggerDebugBreakMinVerbositySettingItem.Description" xml:space="preserve">
+    <value>Configure the conditions for triggering a log breakpoint via the shortcut key (Ctrl+Alt+F1). Log lines whose level is lower than the filter level can still trigger a breakpoint. (This setting specifies the minimum breakpoint level.)</value>
+  </data>
+  <data name="LoggerDebugBreakMinVerbositySettingItem.Header" xml:space="preserve">
+    <value>Min Log Level for Breakpoint</value>
+  </data>
+  <data name="LoggerEnabledSettingItem.Description" xml:space="preserve">
+    <value>Control whether the Shell extension outputs logs to the debugger.</value>
+  </data>
+  <data name="LoggerEnabledSettingItem.Header" xml:space="preserve">
+    <value>Enable ShellExt(Dll) Log Outputs</value>
+  </data>
+  <data name="LoggerVerbositySettingItem.Description" xml:space="preserve">
+    <value>The higher the configured log filter level, the more detailed the output.</value>
+  </data>
+  <data name="LoggerVerbositySettingItem.Header" xml:space="preserve">
+    <value>ShellExt Log Filter Level</value>
   </data>
   <data name="MicaItem.Content" xml:space="preserve">
     <value>Mica</value>

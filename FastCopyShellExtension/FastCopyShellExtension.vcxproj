@@ -100,12 +100,24 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\FastCopy</OutDir>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Shared;</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)$(Platform)\Release\FastCopy\</OutDir>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Shared;</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Package|x64'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\</OutDir>
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Shared;</ExternalIncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Shared;</ExternalIncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Shared;</ExternalIncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ExternalIncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Shared;</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
     <VcpkgEnableManifest>false</VcpkgEnableManifest>
@@ -131,6 +143,9 @@
     <ResourceCompile>
       <ResourceOutputFileName>FastCopyShellExtension.res</ResourceOutputFileName>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Command>call "$(SolutionDir)Tools\CopyFilesSimple.bat" "$(OutputPath)$(ProjectName).dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\Appx"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -156,6 +171,9 @@
     <ResourceCompile>
       <ResourceOutputFileName>FastCopyShellExtension.res</ResourceOutputFileName>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Command>call "$(SolutionDir)Tools\CopyFilesSimple.bat" "$(OutputPath)$(ProjectName).dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\Appx"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">
     <ClCompile>
@@ -181,6 +199,9 @@
     <ResourceCompile>
       <ResourceOutputFileName>FastCopyShellExtension.res</ResourceOutputFileName>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Command>call "$(SolutionDir)Tools\CopyFilesSimple.bat" "$(OutputPath)$(ProjectName).dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\Appx"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -202,12 +223,12 @@
       <ModuleDefinitionFile>Source.def</ModuleDefinitionFile>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PostBuildEvent>
-      <Command>xcopy "$(OutputPath)\$(ProjectName).dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\Appx" /Y /I /C</Command>
-    </PostBuildEvent>
     <ResourceCompile>
       <ResourceOutputFileName>FastCopyShellExtension.res</ResourceOutputFileName>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Command>call "$(SolutionDir)Tools\CopyFilesSimple.bat" "$(OutputPath)$(ProjectName).dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\Appx"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -236,6 +257,9 @@
     <ResourceCompile>
       <ResourceOutputFileName>FastCopyShellExtension.res</ResourceOutputFileName>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Command>call "$(SolutionDir)Tools\CopyFilesSimple.bat" "$(OutputPath)$(ProjectName).dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\Appx"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Package|x64'">
     <ClCompile>
@@ -264,15 +288,29 @@
     <ResourceCompile>
       <ResourceOutputFileName>FastCopyShellExtension.res</ResourceOutputFileName>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Command>call "$(SolutionDir)Tools\CopyFilesSimple.bat" "$(OutputPath)$(ProjectName).dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\Appx"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Public\ShellItem.cpp" />
     <ClCompile Include="..\Public\ShellItemArray.cpp" />
+    <ClCompile Include="..\Shared\CommonSharedSettings.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Package|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="CopyOperationNames.cpp" />
+    <ClCompile Include="DebugPrint.cpp" />
     <ClCompile Include="DllIconFormatter.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="FastCopyRootCommand.cpp" />
     <ClCompile Include="FastCopySubCommand.cpp" />
+    <ClCompile Include="HostProcessHook.cpp" />
+    <ClCompile Include="HostShutdownWatcher.cpp" />
     <ClCompile Include="IconProvider.cpp" />
     <ClCompile Include="Recorder.cpp" />
     <ClCompile Include="Registry.cpp" />
@@ -286,11 +324,16 @@
   <ItemGroup>
     <ClInclude Include="..\Public\ShellItem.h" />
     <ClInclude Include="..\Public\ShellItemArray.h" />
+    <ClInclude Include="..\Shared\CommonSharedSettings.h" />
     <ClInclude Include="CopyOperation.h" />
     <ClInclude Include="CopyOperationNames.h" />
+    <ClInclude Include="..\Shared\DebugHelper.hpp" />
+    <ClInclude Include="DebugPrint.h" />
     <ClInclude Include="DllIconFormatter.h" />
     <ClInclude Include="FastCopyRootCommand.h" />
     <ClInclude Include="FastCopySubCommand.h" />
+    <ClInclude Include="HostProcessHook.h" />
+    <ClInclude Include="HostShutdownWatcher.h" />
     <ClInclude Include="IconProvider.h" />
     <ClInclude Include="Recorder.h" />
     <ClInclude Include="Registry.h" />
