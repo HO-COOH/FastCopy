@@ -1,4 +1,4 @@
-#include "Recorder.h"
+﻿#include "Recorder.h"
 #include <format>
 #include <chrono>
 #include <ShlObj_core.h>
@@ -8,13 +8,21 @@
 #include "Registry.h"
 #include <wil/com.h>
 #include <wil/win32_helpers.h>
-static auto GetLocalDataFolder()
+#include <array>
+#include <appmodel.h>
+
+static std::filesystem::path const& GetLocalDataFolder()
 {
 	static std::filesystem::path ret = []
 	{
 		wil::unique_cotaskmem_string localAppData;
 		SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, NULL, localAppData.put());
-		return std::filesystem::path{ localAppData.get() } / LR"(packages\HO-COOH.RoboCopyEx\LocalCache\Local)";
+
+		std::array<wchar_t, PACKAGE_FAMILY_NAME_MAX_LENGTH + 1> familyName;
+		UINT32 bufferSize = familyName.size();
+		GetCurrentPackageFamilyName(&bufferSize, familyName.data());
+
+		return std::filesystem::path{ localAppData.get() } / std::format(LR"(packages\{}\LocalCache\Local)", familyName.data());
 	}();
 	return ret;
 }
