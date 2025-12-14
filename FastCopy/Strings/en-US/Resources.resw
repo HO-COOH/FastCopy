@@ -219,6 +219,12 @@
   <data name="NotificationSettingItem.Header" xml:space="preserve">
     <value>Notify upon finish</value>
   </data>
+  <data name="RobocopyNotWorkingTextBlock.Text" xml:space="preserve">
+    <value>This software will not work properly. Please re-install Windows!</value>
+  </data>
+  <data name="RobocopyNotFoundTextBlock.Text" xml:space="preserve">
+    <value>robocopy.exe is not found in your Windows!</value>
+  </data>
   <data name="SettingWindowTitle.Text" xml:space="preserve">
     <value>RoboCopyEx Settings</value>
   </data>
@@ -263,5 +269,8 @@
   </data>
   <data name="WindowBackgroundSettingItem.Header" xml:space="preserve">
     <value>Window background</value>
+  </data>
+  <data name="RobocopyEnglishResourceNotFoundTextBlock.Text" xml:space="preserve">
+    <value>The English resource for robocopy.exe is not found in your Windows.</value>
   </data>
 </root>

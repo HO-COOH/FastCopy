@@ -1,8 +1,18 @@
-namespace FastCopy
+﻿namespace FastCopy
 {
+    enum RobocopyCheckResult
+    {
+        Checking,
+        NotFound,
+        NoEnglishResource,
+        Normal
+    };
+
     [default_interface]
-    runtimeclass WelcomeWindow : WinUI3Package.WindowEx
+    runtimeclass WelcomeWindow : WinUI3Package.WindowEx, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         WelcomeWindow();
+
+        RobocopyCheckResult CheckResult{ get; };
     }
 }

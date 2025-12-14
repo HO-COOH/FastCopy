@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <essential:WindowEx
     x:Class="FastCopy.WelcomeWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -15,149 +15,205 @@
         <MicaBackdrop />
     </essential:WindowEx.SystemBackdrop>
 
-    <StackPanel
-        HorizontalAlignment="Stretch"
-        VerticalAlignment="Center"
-        Spacing="10">
 
-        <StackPanel.Resources>
-            <essential:WindowCaptionButtonThemeWorkaround x:Name="CaptionButtonsWorkaround" Window="{x:Bind}" />
-            <essential:WindowWorkaround
-                x:Name="NonMaximizableWindowWorkaround"
-                IsMaximizable="False"
-                Window="{x:Bind}" />
-            <Style x:Key="AccentButtonStyleSupportAnimatedIcon" TargetType="Button">
-                <Setter Property="Foreground" Value="{ThemeResource AccentButtonForeground}" />
-                <Setter Property="Background" Value="{ThemeResource AccentButtonBackground}" />
-                <Setter Property="BackgroundSizing" Value="OuterBorderEdge" />
-                <Setter Property="BorderBrush" Value="{ThemeResource AccentButtonBorderBrush}" />
-                <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="Button">
-                            <ContentPresenter
-                                x:Name="ContentPresenter"
-                                Padding="{TemplateBinding Padding}"
-                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                AnimatedIcon.State="Normal"
-                                AutomationProperties.AccessibilityView="Raw"
-                                Background="{TemplateBinding Background}"
-                                BackgroundSizing="{TemplateBinding BackgroundSizing}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                Content="{TemplateBinding Content}"
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                ContentTransitions="{TemplateBinding ContentTransitions}"
-                                CornerRadius="{TemplateBinding CornerRadius}"
-                                Foreground="{TemplateBinding Foreground}">
-                                <ContentPresenter.BackgroundTransition>
-                                    <BrushTransition Duration="0:0:0.083" />
-                                </ContentPresenter.BackgroundTransition>
+    <Grid>
+        <essential:SwitchPresenter Value="{x:Bind CheckResult, Mode=OneWay}">
+            <essential:Case>
+                <essential:Case.Value>
+                    <local:RobocopyCheckResult>NotFound</local:RobocopyCheckResult>
+                </essential:Case.Value>
+                <StackPanel
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="8">
+                    <Viewbox Width="100" Height="100">
+                        <PathIcon Data="F1 M 0 9.375 C 0 8.509115 0.110677 7.677409 0.332031 6.879883 C 0.553385 6.082357 0.867513 5.335287 1.274414 4.638672 C 1.681315 3.942059 2.169596 3.30892 2.739258 2.739258 C 3.308919 2.169598 3.942057 1.681316 4.638672 1.274414 C 5.335286 0.867514 6.082356 0.553387 6.879883 0.332031 C 7.677409 0.110678 8.509114 0 9.375 0 C 10.234375 0 11.062825 0.112305 11.860352 0.336914 C 12.657877 0.561523 13.404947 0.877279 14.101562 1.28418 C 14.798176 1.691082 15.431314 2.179363 16.000977 2.749023 C 16.570637 3.318686 17.058918 3.951824 17.46582 4.648438 C 17.872721 5.345053 18.188477 6.092123 18.413086 6.889648 C 18.637695 7.687175 18.75 8.515625 18.75 9.375 C 18.75 10.240886 18.639322 11.072592 18.417969 11.870117 C 18.196613 12.667644 17.882486 13.414714 17.475586 14.111328 C 17.068684 14.807943 16.580402 15.441081 16.010742 16.010742 C 15.44108 16.580404 14.807942 17.068686 14.111328 17.475586 C 13.414713 17.882486 12.667643 18.196615 11.870117 18.417969 C 11.072591 18.639322 10.240885 18.75 9.375 18.75 C 8.509114 18.75 7.675781 18.639322 6.875 18.417969 C 6.074219 18.196615 5.327148 17.882486 4.633789 17.475586 C 3.94043 17.068686 3.308919 16.580404 2.739258 16.010742 C 2.169596 15.441081 1.681315 14.80957 1.274414 14.116211 C 0.867513 13.422852 0.553385 12.675781 0.332031 11.875 C 0.110677 11.074219 0 10.240886 0 9.375 Z M 17.5 9.375 C 17.5 8.626303 17.403971 7.905273 17.211914 7.211914 C 17.019855 6.518556 16.746418 5.87077 16.391602 5.268555 C 16.036783 4.666342 15.613606 4.119467 15.12207 3.62793 C 14.630533 3.136395 14.083658 2.713217 13.481445 2.358398 C 12.879231 2.003582 12.231445 1.730145 11.538086 1.538086 C 10.844727 1.346029 10.123697 1.25 9.375 1.25 C 8.626302 1.25 7.905273 1.346029 7.211914 1.538086 C 6.518555 1.730145 5.870768 2.001953 5.268555 2.353516 C 4.666341 2.705078 4.117838 3.128256 3.623047 3.623047 C 3.128255 4.117839 2.705078 4.666342 2.353516 5.268555 C 2.001953 5.87077 1.730143 6.518556 1.538086 7.211914 C 1.346029 7.905273 1.25 8.626303 1.25 9.375 C 1.25 10.123698 1.346029 10.844727 1.538086 11.538086 C 1.730143 12.231445 2.001953 12.879232 2.353516 13.481445 C 2.705078 14.083659 3.128255 14.632162 3.623047 15.126953 C 4.117838 15.621745 4.666341 16.044922 5.268555 16.396484 C 5.870768 16.748047 6.518555 17.019857 7.211914 17.211914 C 7.905273 17.403971 8.626302 17.5 9.375 17.5 C 10.123697 17.5 10.844727 17.403971 11.538086 17.211914 C 12.231445 17.019857 12.879231 16.74642 13.481445 16.391602 C 14.083658 16.036783 14.630533 15.613607 15.12207 15.12207 C 15.613606 14.630534 16.036783 14.083659 16.391602 13.481445 C 16.746418 12.879232 17.019855 12.231445 17.211914 11.538086 C 17.403971 10.844727 17.5 10.123698 17.5 9.375 Z M 8.75 10.625 L 8.75 5.625 C 8.75 5.455729 8.811849 5.309245 8.935547 5.185547 C 9.059244 5.06185 9.205729 5.000001 9.375 5 C 9.544271 5.000001 9.690755 5.06185 9.814453 5.185547 C 9.93815 5.309245 10 5.455729 10 5.625 L 10 10.625 C 10 10.794271 9.93815 10.940756 9.814453 11.064453 C 9.690755 11.188151 9.544271 11.25 9.375 11.25 C 9.205729 11.25 9.059244 11.188151 8.935547 11.064453 C 8.811849 10.940756 8.75 10.794271 8.75 10.625 Z M 8.4375 13.125 C 8.4375 12.864584 8.528646 12.643229 8.710938 12.460938 C 8.893229 12.278646 9.114583 12.1875 9.375 12.1875 C 9.635416 12.1875 9.856771 12.278646 10.039062 12.460938 C 10.221354 12.643229 10.3125 12.864584 10.3125 13.125 C 10.3125 13.385417 10.221354 13.606771 10.039062 13.789062 C 9.856771 13.971354 9.635416 14.0625 9.375 14.0625 C 9.114583 14.0625 8.893229 13.971354 8.710938 13.789062 C 8.528646 13.606771 8.4375 13.385417 8.4375 13.125 Z ">
+                            <PathIcon.Foreground>
+                                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                    <GradientStop Offset="0" Color="Red" />
+                                    <GradientStop Offset="1.0" Color="#FFA500" />
+                                </LinearGradientBrush>
+                            </PathIcon.Foreground>
+                        </PathIcon>
+                    </Viewbox>
 
-                                <VisualStateManager.VisualStateGroups>
-                                    <VisualStateGroup x:Name="CommonStates">
-                                        <VisualState x:Name="Normal" />
+                    <TextBlock x:Uid="RobocopyNotFoundTextBlock" HorizontalAlignment="Center" />
+                    <TextBlock x:Uid="RobocopyNotWorkingTextBlock" HorizontalAlignment="Center" />
+                </StackPanel>
+            </essential:Case>
 
-                                        <VisualState x:Name="PointerOver">
-                                            <Storyboard>
-                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
-                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBackgroundPointerOver}" />
-                                                </ObjectAnimationUsingKeyFrames>
-                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
-                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBorderBrushPointerOver}" />
-                                                </ObjectAnimationUsingKeyFrames>
-                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonForegroundPointerOver}" />
-                                                </ObjectAnimationUsingKeyFrames>
-                                            </Storyboard>
-                                            <VisualState.Setters>
-                                                <Setter Target="ContentPresenter.(AnimatedIcon.State)" Value="PointerOver" />
-                                            </VisualState.Setters>
-                                        </VisualState>
+            <essential:Case>
+                <essential:Case.Value>
+                    <local:RobocopyCheckResult>NoEnglishResource</local:RobocopyCheckResult>
+                </essential:Case.Value>
+                <StackPanel
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="8">
+                    <Viewbox Width="100" Height="100">
+                        <PathIcon Data="F1 M 0 9.375 C 0 8.509115 0.110677 7.677409 0.332031 6.879883 C 0.553385 6.082357 0.867513 5.335287 1.274414 4.638672 C 1.681315 3.942059 2.169596 3.30892 2.739258 2.739258 C 3.308919 2.169598 3.942057 1.681316 4.638672 1.274414 C 5.335286 0.867514 6.082356 0.553387 6.879883 0.332031 C 7.677409 0.110678 8.509114 0 9.375 0 C 10.234375 0 11.062825 0.112305 11.860352 0.336914 C 12.657877 0.561523 13.404947 0.877279 14.101562 1.28418 C 14.798176 1.691082 15.431314 2.179363 16.000977 2.749023 C 16.570637 3.318686 17.058918 3.951824 17.46582 4.648438 C 17.872721 5.345053 18.188477 6.092123 18.413086 6.889648 C 18.637695 7.687175 18.75 8.515625 18.75 9.375 C 18.75 10.240886 18.639322 11.072592 18.417969 11.870117 C 18.196613 12.667644 17.882486 13.414714 17.475586 14.111328 C 17.068684 14.807943 16.580402 15.441081 16.010742 16.010742 C 15.44108 16.580404 14.807942 17.068686 14.111328 17.475586 C 13.414713 17.882486 12.667643 18.196615 11.870117 18.417969 C 11.072591 18.639322 10.240885 18.75 9.375 18.75 C 8.509114 18.75 7.675781 18.639322 6.875 18.417969 C 6.074219 18.196615 5.327148 17.882486 4.633789 17.475586 C 3.94043 17.068686 3.308919 16.580404 2.739258 16.010742 C 2.169596 15.441081 1.681315 14.80957 1.274414 14.116211 C 0.867513 13.422852 0.553385 12.675781 0.332031 11.875 C 0.110677 11.074219 0 10.240886 0 9.375 Z M 17.5 9.375 C 17.5 8.626303 17.403971 7.905273 17.211914 7.211914 C 17.019855 6.518556 16.746418 5.87077 16.391602 5.268555 C 16.036783 4.666342 15.613606 4.119467 15.12207 3.62793 C 14.630533 3.136395 14.083658 2.713217 13.481445 2.358398 C 12.879231 2.003582 12.231445 1.730145 11.538086 1.538086 C 10.844727 1.346029 10.123697 1.25 9.375 1.25 C 8.626302 1.25 7.905273 1.346029 7.211914 1.538086 C 6.518555 1.730145 5.870768 2.001953 5.268555 2.353516 C 4.666341 2.705078 4.117838 3.128256 3.623047 3.623047 C 3.128255 4.117839 2.705078 4.666342 2.353516 5.268555 C 2.001953 5.87077 1.730143 6.518556 1.538086 7.211914 C 1.346029 7.905273 1.25 8.626303 1.25 9.375 C 1.25 10.123698 1.346029 10.844727 1.538086 11.538086 C 1.730143 12.231445 2.001953 12.879232 2.353516 13.481445 C 2.705078 14.083659 3.128255 14.632162 3.623047 15.126953 C 4.117838 15.621745 4.666341 16.044922 5.268555 16.396484 C 5.870768 16.748047 6.518555 17.019857 7.211914 17.211914 C 7.905273 17.403971 8.626302 17.5 9.375 17.5 C 10.123697 17.5 10.844727 17.403971 11.538086 17.211914 C 12.231445 17.019857 12.879231 16.74642 13.481445 16.391602 C 14.083658 16.036783 14.630533 15.613607 15.12207 15.12207 C 15.613606 14.630534 16.036783 14.083659 16.391602 13.481445 C 16.746418 12.879232 17.019855 12.231445 17.211914 11.538086 C 17.403971 10.844727 17.5 10.123698 17.5 9.375 Z M 8.75 10.625 L 8.75 5.625 C 8.75 5.455729 8.811849 5.309245 8.935547 5.185547 C 9.059244 5.06185 9.205729 5.000001 9.375 5 C 9.544271 5.000001 9.690755 5.06185 9.814453 5.185547 C 9.93815 5.309245 10 5.455729 10 5.625 L 10 10.625 C 10 10.794271 9.93815 10.940756 9.814453 11.064453 C 9.690755 11.188151 9.544271 11.25 9.375 11.25 C 9.205729 11.25 9.059244 11.188151 8.935547 11.064453 C 8.811849 10.940756 8.75 10.794271 8.75 10.625 Z M 8.4375 13.125 C 8.4375 12.864584 8.528646 12.643229 8.710938 12.460938 C 8.893229 12.278646 9.114583 12.1875 9.375 12.1875 C 9.635416 12.1875 9.856771 12.278646 10.039062 12.460938 C 10.221354 12.643229 10.3125 12.864584 10.3125 13.125 C 10.3125 13.385417 10.221354 13.606771 10.039062 13.789062 C 9.856771 13.971354 9.635416 14.0625 9.375 14.0625 C 9.114583 14.0625 8.893229 13.971354 8.710938 13.789062 C 8.528646 13.606771 8.4375 13.385417 8.4375 13.125 Z ">
+                            <PathIcon.Foreground>
+                                <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                    <GradientStop Offset="0" Color="Red" />
+                                    <GradientStop Offset="1.0" Color="#FFA500" />
+                                </LinearGradientBrush>
+                            </PathIcon.Foreground>
+                        </PathIcon>
+                    </Viewbox>
 
-                                        <VisualState x:Name="Pressed">
-                                            <Storyboard>
-                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
-                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBackgroundPressed}" />
-                                                </ObjectAnimationUsingKeyFrames>
-                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
-                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBorderBrushPressed}" />
-                                                </ObjectAnimationUsingKeyFrames>
-                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonForegroundPressed}" />
-                                                </ObjectAnimationUsingKeyFrames>
-                                            </Storyboard>
-                                            <VisualState.Setters>
-                                                <Setter Target="ContentPresenter.(AnimatedIcon.State)" Value="Pressed" />
-                                            </VisualState.Setters>
-                                        </VisualState>
+                    <TextBlock x:Uid="RobocopyEnglishResourceNotFoundTextBlock" HorizontalAlignment="Center" />
+                    <TextBlock x:Uid="RobocopyNotWorkingTextBlock" HorizontalAlignment="Center" />
+                </StackPanel>
+            </essential:Case>
 
-                                        <VisualState x:Name="Disabled">
-                                            <Storyboard>
-                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
-                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBackgroundDisabled}" />
-                                                </ObjectAnimationUsingKeyFrames>
-                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
-                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBorderBrushDisabled}" />
-                                                </ObjectAnimationUsingKeyFrames>
-                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
-                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonForegroundDisabled}" />
-                                                </ObjectAnimationUsingKeyFrames>
-                                            </Storyboard>
-                                        </VisualState>
-                                    </VisualStateGroup>
-                                </VisualStateManager.VisualStateGroups>
-                            </ContentPresenter>
+            <essential:Case IsDefault="True">
+                <StackPanel
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    Spacing="10">
 
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-        </StackPanel.Resources>
+                    <StackPanel.Resources>
+                        <essential:WindowCaptionButtonThemeWorkaround x:Name="CaptionButtonsWorkaround" Window="{x:Bind}" />
+                        <essential:WindowWorkaround
+                            x:Name="NonMaximizableWindowWorkaround"
+                            IsMaximizable="False"
+                            Window="{x:Bind}" />
+                        <Style x:Key="AccentButtonStyleSupportAnimatedIcon" TargetType="Button">
+                            <Setter Property="Foreground" Value="{ThemeResource AccentButtonForeground}" />
+                            <Setter Property="Background" Value="{ThemeResource AccentButtonBackground}" />
+                            <Setter Property="BackgroundSizing" Value="OuterBorderEdge" />
+                            <Setter Property="BorderBrush" Value="{ThemeResource AccentButtonBorderBrush}" />
+                            <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <ContentPresenter
+                                            x:Name="ContentPresenter"
+                                            Padding="{TemplateBinding Padding}"
+                                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                            AnimatedIcon.State="Normal"
+                                            AutomationProperties.AccessibilityView="Raw"
+                                            Background="{TemplateBinding Background}"
+                                            BackgroundSizing="{TemplateBinding BackgroundSizing}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            Content="{TemplateBinding Content}"
+                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                                            CornerRadius="{TemplateBinding CornerRadius}"
+                                            Foreground="{TemplateBinding Foreground}">
+                                            <ContentPresenter.BackgroundTransition>
+                                                <BrushTransition Duration="0:0:0.083" />
+                                            </ContentPresenter.BackgroundTransition>
 
-        <TextBlock
-            x:Uid="WelcomeScreenTitle"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            FontSize="30"
-            Opacity="0.8" />
+                                            <VisualStateManager.VisualStateGroups>
+                                                <VisualStateGroup x:Name="CommonStates">
+                                                    <VisualState x:Name="Normal" />
 
-        <TextBlock
-            x:Uid="WelcomeScreenInstruction"
-            HorizontalAlignment="Center"
-            Opacity="0.6" />
-        <CheckBox
-            x:Name="WelcomeScreenConfirmation"
-            x:Uid="WelcomeScreenConfirmation"
-            HorizontalAlignment="Center" />
+                                                    <VisualState x:Name="PointerOver">
+                                                        <Storyboard>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBackgroundPointerOver}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBorderBrushPointerOver}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonForegroundPointerOver}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                        </Storyboard>
+                                                        <VisualState.Setters>
+                                                            <Setter Target="ContentPresenter.(AnimatedIcon.State)" Value="PointerOver" />
+                                                        </VisualState.Setters>
+                                                    </VisualState>
 
-        <StackPanel
-            HorizontalAlignment="Center"
-            Orientation="Horizontal"
-            Spacing="5">
-            <Button
-                x:Uid="KillExplorerButton"
-                VerticalAlignment="Stretch"
-                Click="KillExplorerButton_Click" />
+                                                    <VisualState x:Name="Pressed">
+                                                        <Storyboard>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBackgroundPressed}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBorderBrushPressed}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonForegroundPressed}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                        </Storyboard>
+                                                        <VisualState.Setters>
+                                                            <Setter Target="ContentPresenter.(AnimatedIcon.State)" Value="Pressed" />
+                                                        </VisualState.Setters>
+                                                    </VisualState>
 
-            <Button
-                xmlns:animatedVisual="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
-                Width="75"
-                Click="Button_Click"
-                IsEnabled="{x:Bind WelcomeScreenConfirmation.IsChecked.Value, Mode=OneWay}"
-                Style="{StaticResource AccentButtonStyleSupportAnimatedIcon}">
-                <!--  Can't directly apply a Rotation on AnimatedIcon, see https://github.com/microsoft/microsoft-ui-xaml/issues/10866  -->
-                <AnimatedIcon>
-                    <animatedVisual:AnimatedBackVisualSource />
-                    <AnimatedIcon.RenderTransform>
-                        <RotateTransform Angle="180" />
-                    </AnimatedIcon.RenderTransform>
-                </AnimatedIcon>
-            </Button>
-        </StackPanel>
+                                                    <VisualState x:Name="Disabled">
+                                                        <Storyboard>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBackgroundDisabled}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonBorderBrushDisabled}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AccentButtonForegroundDisabled}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                </VisualStateGroup>
+                                            </VisualStateManager.VisualStateGroups>
+                                        </ContentPresenter>
+
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </StackPanel.Resources>
+                    <TextBlock
+                        x:Uid="WelcomeScreenTitle"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="30"
+                        Opacity="0.8" />
+
+                    <TextBlock
+                        x:Uid="WelcomeScreenInstruction"
+                        HorizontalAlignment="Center"
+                        Opacity="0.6" />
+                    <CheckBox
+                        x:Name="WelcomeScreenConfirmation"
+                        x:Uid="WelcomeScreenConfirmation"
+                        HorizontalAlignment="Center" />
+
+                    <StackPanel
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="5">
+                        <Button
+                            x:Uid="KillExplorerButton"
+                            VerticalAlignment="Stretch"
+                            Click="KillExplorerButton_Click" />
+
+                        <Button
+                            xmlns:animatedVisual="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
+                            Width="75"
+                            Click="Button_Click"
+                            IsEnabled="{x:Bind WelcomeScreenConfirmation.IsChecked.Value, Mode=OneWay}"
+                            Style="{StaticResource AccentButtonStyleSupportAnimatedIcon}">
+                            <!--  Can't directly apply a Rotation on AnimatedIcon, see https://github.com/microsoft/microsoft-ui-xaml/issues/10866  -->
+                            <AnimatedIcon>
+                                <animatedVisual:AnimatedBackVisualSource />
+                                <AnimatedIcon.RenderTransform>
+                                    <RotateTransform Angle="180" />
+                                </AnimatedIcon.RenderTransform>
+                            </AnimatedIcon>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </essential:Case>
+        </essential:SwitchPresenter>
+
+
 
 
         <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind}" />
-    </StackPanel>
+    </Grid>
 </essential:WindowEx>

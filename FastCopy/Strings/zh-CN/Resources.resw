@@ -219,6 +219,12 @@
   <data name="NotificationSettingItem.Header" xml:space="preserve">
     <value>复制完成后通知</value>
   </data>
+  <data name="RobocopyNotWorkingTextBlock.Text" xml:space="preserve">
+    <value>软件无法正常工作，请重新安装Windows！</value>
+  </data>
+  <data name="RobocopyNotFoundTextBlock.Text" xml:space="preserve">
+    <value>你的系统缺失robocopy.exe</value>
+  </data>
   <data name="SettingWindowTitle.Text" xml:space="preserve">
     <value>FastCopy设置</value>
   </data>
@@ -263,5 +269,8 @@
   </data>
   <data name="WindowBackgroundSettingItem.Header" xml:space="preserve">
     <value>窗口背景</value>
+  </data>
+  <data name="RobocopyEnglishResourceNotFoundTextBlock.Text" xml:space="preserve">
+    <value>你的系统缺失robocopy.exe的英文资源</value>
   </data>
 </root>
