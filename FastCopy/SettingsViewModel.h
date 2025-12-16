@@ -12,6 +12,12 @@ namespace winrt::FastCopy::implementation
         bool Notify();
         void Notify(bool value);
 
+        int RenameBehavior();
+        void RenameBehavior(int value);
+
+        winrt::hstring RenameSuffix();
+        void RenameSuffix(winrt::hstring const& value);
+
         int MultipleWindowBehavior();
         void MultipleWindowBehavior(int value);
 
@@ -23,6 +29,8 @@ namespace winrt::FastCopy::implementation
 
         bool DevMode();
         void DevMode(bool value);
+
+        static winrt::Microsoft::UI::Xaml::Visibility IsRenameTextBoxVisible(int renameBehavior);
     private:
         Settings m_model;
     };

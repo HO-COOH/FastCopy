@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "SettingsWindow.xaml.h"
 #if __has_include("SettingsWindow.g.cpp")
 #include "SettingsWindow.g.cpp"
@@ -12,7 +12,7 @@ namespace winrt::FastCopy::implementation
     SettingsWindow::SettingsWindow()
     {
         ExtendsContentIntoTitleBar(true);
-        Height(PackageConfig::GetDefaultLanguage() == L"zh-cn" ? 420 : 450);
+        Height(PackageConfig::GetDefaultLanguage() == L"zh-cn" ? 470 : 500);
     }
 
     winrt::FastCopy::SettingsViewModel SettingsWindow::ViewModel()

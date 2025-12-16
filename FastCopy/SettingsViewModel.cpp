@@ -5,6 +5,7 @@
 #endif
 #include "Global.h"
 #include "SettingsChangeListener.h"
+#include "RenameUtils.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -15,6 +16,25 @@ namespace winrt::FastCopy::implementation
 	void SettingsViewModel::Notify(bool value)
 	{
 		m_model.Set(Settings::Notify, value);
+	}
+	int SettingsViewModel::RenameBehavior()
+	{
+		return m_model.Get<int>(Settings::RenameBehavior, 1);
+	}
+	void SettingsViewModel::RenameBehavior(int value)
+	{
+		m_model.Set(Settings::RenameBehavior, value);
+	}
+	winrt::hstring SettingsViewModel::RenameSuffix()
+	{
+		auto value = m_model.Get<winrt::hstring>(Settings::RenameSuffix, L"");
+		if (value == L"")
+			return winrt::hstring{ Utils::GetDefaultRenameSuffix() };
+		return value;
+	}
+	void SettingsViewModel::RenameSuffix(winrt::hstring const& value)
+	{
+		m_model.Set(Settings::RenameSuffix, value);
 	}
 	int SettingsViewModel::MultipleWindowBehavior()
 	{
@@ -51,5 +71,9 @@ namespace winrt::FastCopy::implementation
 	void SettingsViewModel::DevMode(bool value)
 	{
 		m_model.Set(Settings::DevMode, value);
+	}
+	winrt::Microsoft::UI::Xaml::Visibility SettingsViewModel::IsRenameTextBoxVisible(int renameBehavior)
+	{
+		return renameBehavior == 1 ? winrt::Microsoft::UI::Xaml::Visibility::Visible : winrt::Microsoft::UI::Xaml::Visibility::Collapsed;
 	}
 }

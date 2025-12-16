@@ -20,6 +20,7 @@
 #include "FileInfoViewModel.h"
 #include "Ntdll.h"
 #include "ViewModelLocator.h"
+#include "RenameUtils.h"
 
 
 namespace winrt::FastCopy::implementation
@@ -402,14 +403,18 @@ namespace winrt::FastCopy::implementation
 	RobocopyArgsBuilder RobocopyViewModel::getRobocopyArg()
 	{
 		RobocopyArgsBuilder args;
-		auto const isDirectory = std::filesystem::is_directory(**m_iter);
 		std::filesystem::path source{ **m_iter };
-		args.Source(isDirectory ? **m_iter : source.parent_path().wstring())
-			.Destination(
-				isDirectory ?
-				(std::filesystem::path{ m_destination.data() } / std::filesystem::path{ **m_iter }.filename().wstring()).wstring() :
-				std::wstring{ m_destination }
-			)
+		auto const isDirectory = std::filesystem::is_directory(source);
+		
+		auto finalSourcePath = isDirectory ? source : source.parent_path();
+		auto finalDestinationPath = isDirectory ?
+			std::filesystem::path{ m_destination.data() } / source.filename() :
+			std::filesystem::path{ m_destination.data() };
+
+		Utils::AddDestinationSuffixIfNeeded(isDirectory, isDirectory? finalSourcePath : source, finalDestinationPath);
+
+		args.Source(finalSourcePath.wstring())
+			.Destination(finalDestinationPath.wstring())
 			.E(isDirectory)
 			.V(true)
 			.NJS(true)

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Storage.h>
 #include <type_traits>
@@ -12,6 +12,8 @@ struct Settings
 	constexpr static auto BackgroundSelection = L"BackSelection";
 	constexpr static auto IsFirstLaunch = L"IsFirstLaunch";
 	constexpr static auto DevMode = L"DevMode";
+	constexpr static auto RenameBehavior = L"RenameBehavior";
+	constexpr static auto RenameSuffix = L"RenameSuffix";
 
 	/**
 	 * @brief Get settings value of a specific type, will throw if the key is not found

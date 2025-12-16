@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <essential:WindowEx
     x:Class="FastCopy.SettingsWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -66,6 +66,7 @@
                     <x:String x:Key="ThemeGlyph">&#xE790;</x:String>
                     <x:String x:Key="WindowBackgroundGlyph">&#xE81E;</x:String>
                     <x:String x:Key="DevModeGlyph">&#xEC7A;</x:String>
+                    <x:String x:Key="RenameGlyph">&#xE8AC;</x:String>
 
                     <Style x:Key="ToggleSwitchLeftLabelStyle" TargetType="ToggleSwitch">
                         <Setter Property="Foreground" Value="{ThemeResource ToggleSwitchContentForeground}" />
@@ -440,6 +441,30 @@
                     Margin="0,0,-80,0"
                     IsOn="{x:Bind ViewModel.Notify, Mode=TwoWay}"
                     Style="{StaticResource ToggleSwitchLeftLabelStyle}" />
+            </essential:SettingsCard>
+
+            <essential:SettingsCard x:Uid="UniqueNameSettingItem">
+                <essential:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="{StaticResource RenameGlyph}" />
+                </essential:SettingsCard.HeaderIcon>
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <StackPanel.ChildrenTransitions>
+                        <RepositionThemeTransition />
+                    </StackPanel.ChildrenTransitions>
+                    <ComboBox
+                        x:Name="RenameBehavior"
+                        MinWidth="140"
+                        HorizontalAlignment="Right"
+                        essential:ComboBoxHelper.AcrylicWorkaround="True"
+                        SelectedIndex="{x:Bind ViewModel.RenameBehavior, Mode=TwoWay}">
+                        <ComboBoxItem x:Uid="AskForRenameComboBoxItem" />
+                        <ComboBoxItem x:Uid="SpecifiedRenameComboBoxItem" />
+                    </ComboBox>
+                    <TextBox
+                        Width="270"
+                        Text="{x:Bind ViewModel.RenameSuffix, Mode=TwoWay}"
+                        Visibility="{x:Bind local:SettingsViewModel.IsRenameTextBoxVisible(RenameBehavior.SelectedIndex), Mode=OneWay}" />
+                </StackPanel>
             </essential:SettingsCard>
 
             <essential:SettingsCard x:Uid="MultipleInstanceBehaviorSettingItem" IsEnabled="False">

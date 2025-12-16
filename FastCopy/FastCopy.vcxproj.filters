@@ -159,6 +159,9 @@
     <ClCompile Include="RobocopyInjectDll.cpp">
       <Filter>Utils\Robocopy</Filter>
     </ClCompile>
+    <ClCompile Include="RenameUtils.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -308,6 +311,9 @@
     </ClInclude>
     <ClInclude Include="RobocopyInjectDll.h">
       <Filter>Utils\Robocopy</Filter>
+    </ClInclude>
+    <ClInclude Include="RenameUtils.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

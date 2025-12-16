@@ -273,4 +273,16 @@
   <data name="RobocopyEnglishResourceNotFoundTextBlock.Text" xml:space="preserve">
     <value>你的系统缺失robocopy.exe的英文资源</value>
   </data>
+  <data name="UniqueNameSettingItem.Header" xml:space="preserve">
+    <value>重命名规则</value>
+  </data>
+  <data name="UniqueNameSettingItem.Description" xml:space="preserve">
+    <value>如何重命名已存在的文件</value>
+  </data>
+  <data name="AskForRenameComboBoxItem.Content" xml:space="preserve">
+    <value>总是询问</value>
+  </data>
+  <data name="SpecifiedRenameComboBoxItem.Content" xml:space="preserve">
+    <value>固定后缀</value>
+  </data>
 </root>

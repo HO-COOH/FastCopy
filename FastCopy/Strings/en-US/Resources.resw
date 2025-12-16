@@ -273,4 +273,16 @@
   <data name="RobocopyEnglishResourceNotFoundTextBlock.Text" xml:space="preserve">
     <value>The English resource for robocopy.exe is not found in your Windows.</value>
   </data>
+  <data name="UniqueNameSettingItem.Header" xml:space="preserve">
+    <value>Rename rule</value>
+  </data>
+  <data name="UniqueNameSettingItem.Description" xml:space="preserve">
+    <value>How to rename a file when already exists</value>
+  </data>
+  <data name="AskForRenameComboBoxItem.Content" xml:space="preserve">
+    <value>Always ask</value>
+  </data>
+  <data name="SpecifiedRenameComboBoxItem.Content" xml:space="preserve">
+    <value>Fixed suffix</value>
+  </data>
 </root>

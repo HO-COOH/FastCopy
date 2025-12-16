@@ -1,4 +1,4 @@
-namespace FastCopy
+﻿namespace FastCopy
 {
     [bindable]
     [default_interface]
@@ -7,9 +7,13 @@ namespace FastCopy
         SettingsViewModel();
 
         Boolean Notify;
+        Int32 RenameBehavior;
+        String RenameSuffix;
         Int32 MultipleWindowBehavior;
         Int32 ThemeSelection;
         Int32 BackgroundSelection;
         Boolean DevMode;
+
+        static Microsoft.UI.Xaml.Visibility IsRenameTextBoxVisible(Int32 renameBehavior);
     }
 }
