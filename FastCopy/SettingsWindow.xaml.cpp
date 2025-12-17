@@ -6,6 +6,7 @@
 
 #include "ViewModelLocator.h"
 #include <PackageConfig.h>
+#include "RenameUtils.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -32,9 +33,26 @@ namespace winrt::FastCopy::implementation
         }
     }
 
-    void SettingsWindow::WindowEx_Activated(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::WindowActivatedEventArgs const& args)
+    void SettingsWindow::WindowEx_Activated(
+        winrt::Windows::Foundation::IInspectable const&, 
+        winrt::Microsoft::UI::Xaml::WindowActivatedEventArgs const& args)
     {
         TitleBarTextBlock().Opacity(args.WindowActivationState() == winrt::Microsoft::UI::Xaml::WindowActivationState::Deactivated ? 0.5f : 1.0f);
     }
 
+
+    void SettingsWindow::isRenameSuffixInvalid(bool value)
+    {
+        winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(/*RootPage()*/RenameSuffixTextBox(), value ? L"Invalid" : L"Valid", false);
+        winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(RootPage(), value ? L"InvalidRenameSuffixState" : L"Normal", false);
+    }
+
+
+    void SettingsWindow::RenameSuffixTextBox_TextChanged(
+        winrt::Windows::Foundation::IInspectable const&, 
+        winrt::Microsoft::UI::Xaml::Controls::TextChangedEventArgs const&)
+    {
+        isRenameSuffixInvalid(!Utils::IsRenameSuffixValid(RenameSuffixTextBox().Text()));
+    }
 }
+

@@ -2,7 +2,7 @@
 {
     [bindable]
     [default_interface]
-    runtimeclass SettingsViewModel 
+    runtimeclass SettingsViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         SettingsViewModel();
 

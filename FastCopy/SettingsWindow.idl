@@ -1,4 +1,4 @@
-import "SettingsViewModel.idl";
+﻿import "SettingsViewModel.idl";
 
 namespace FastCopy
 {

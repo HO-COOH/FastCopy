@@ -2,10 +2,11 @@
 
 #include "SettingsViewModel.g.h"
 #include "Settings.h"
+#include <include/PropertyChangeHelper.hpp>
 
 namespace winrt::FastCopy::implementation
 {
-    struct SettingsViewModel : SettingsViewModelT<SettingsViewModel>
+    struct SettingsViewModel : SettingsViewModelT<SettingsViewModel>, MvvmHelper::PropertyChangeHelper<SettingsViewModel>
     {
         SettingsViewModel() = default;
 

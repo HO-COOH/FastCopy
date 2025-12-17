@@ -34,7 +34,9 @@ namespace winrt::FastCopy::implementation
 	}
 	void SettingsViewModel::RenameSuffix(winrt::hstring const& value)
 	{
-		m_model.Set(Settings::RenameSuffix, value);
+		Utils::IsRenameSuffixValid(value) ?
+			m_model.Set(Settings::RenameSuffix, value) :
+			raisePropertyChange(L"RenameSuffix");
 	}
 	int SettingsViewModel::MultipleWindowBehavior()
 	{

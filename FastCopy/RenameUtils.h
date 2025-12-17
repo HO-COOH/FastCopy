@@ -16,4 +16,6 @@ namespace Utils
 		std::filesystem::path const& source,
 		std::filesystem::path& destination
 	);
+
+	bool IsRenameSuffixValid(winrt::hstring const& suffix);
 }

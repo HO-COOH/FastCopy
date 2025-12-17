@@ -5,6 +5,7 @@
 #include <shellapi.h>
 #include <filesystem>
 #include "Settings.h"
+#include <boost/algorithm/string.hpp>
 
 class TempFileAutoDeleter
 {
@@ -126,5 +127,24 @@ namespace Utils
 		static std::wstring const suffix{ Settings{}.Get<winrt::hstring>(Settings::RenameSuffix) };
 		assert(isDirectory);
 		addDestinationSuffixIfNeededForDirectory(source, destination, suffix);
+	}
+
+	bool IsRenameSuffixValid(winrt::hstring const& suffix)
+	{
+		if (suffix.empty())
+			return false;
+
+		std::wstring stdText{suffix};
+		//only contains empty char
+		boost::trim(stdText);
+		if (stdText.empty())
+			return false;
+
+		//contains invalid char
+		constexpr static std::wstring_view illegal_chars{ L"<>:\"/\\|?*" };
+		if (std::ranges::any_of(stdText, [](wchar_t c) {return illegal_chars.find(c) != std::wstring_view::npos; }))
+			return false;
+
+		return true;
 	}
 }

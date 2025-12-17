@@ -285,4 +285,7 @@
   <data name="SpecifiedRenameComboBoxItem.Content" xml:space="preserve">
     <value>固定后缀</value>
   </data>
+  <data name="InvalidSuffixTip.Text" xml:space="preserve">
+    <value>不能为空或包含这些字符 &lt;&gt;:"/\|?*</value>
+  </data>
 </root>
