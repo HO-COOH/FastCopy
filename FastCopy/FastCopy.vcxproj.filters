@@ -37,9 +37,6 @@
     <Midl Include="SettingsViewModel.idl">
       <Filter>ViewModel\Settings</Filter>
     </Midl>
-    <Midl Include="DependentValue.idl">
-      <Filter>Utils</Filter>
-    </Midl>
     <Midl Include="TilesControl.idl">
       <Filter>Views\Controls</Filter>
     </Midl>
@@ -160,7 +157,10 @@
       <Filter>Utils\Robocopy</Filter>
     </ClCompile>
     <ClCompile Include="RenameUtils.cpp">
-      <Filter>Utils</Filter>
+      <Filter>Utils\RenameUtils</Filter>
+    </ClCompile>
+    <ClCompile Include="RenameUtils.TempFileAutoDeleter.cpp">
+      <Filter>Utils\RenameUtils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -313,7 +313,10 @@
       <Filter>Utils\Robocopy</Filter>
     </ClInclude>
     <ClInclude Include="RenameUtils.h">
-      <Filter>Utils</Filter>
+      <Filter>Utils\RenameUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="RenameUtils.TempFileAutoDeleter.h">
+      <Filter>Utils\RenameUtils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -564,6 +567,9 @@
     </Filter>
     <Filter Include="Utils\ImageUtils">
       <UniqueIdentifier>{857576f0-998d-43af-9b51-be9318494a6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\RenameUtils">
+      <UniqueIdentifier>{fad6993a-296a-40b5-92f6-c34db0634bb5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

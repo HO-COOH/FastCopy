@@ -28,9 +28,12 @@ namespace winrt::FastCopy::implementation
 	winrt::hstring SettingsViewModel::RenameSuffix()
 	{
 		auto value = m_model.Get<winrt::hstring>(Settings::RenameSuffix, L"");
-		if (value == L"")
-			return winrt::hstring{ Utils::GetDefaultRenameSuffix() };
-		return value;
+		if(value != L"")
+			return value;
+
+		auto defaultValue = Utils::GetDefaultRenameSuffix();
+		m_model.Set(Settings::RenameSuffix, defaultValue.data());
+		return winrt::hstring{ std::move(defaultValue) };
 	}
 	void SettingsViewModel::RenameSuffix(winrt::hstring const& value)
 	{

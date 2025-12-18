@@ -236,10 +236,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <ClInclude Include="CreateSuspend.h" />
     <ClInclude Include="DebugFileSize.h" />
     <ClInclude Include="DebugLogger.h" />
-    <ClInclude Include="DependentValue.h">
-      <DependentUpon>DependentValue.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
     <ClInclude Include="ExistingDir.h" />
     <ClInclude Include="Fallback.h" />
     <ClInclude Include="FastcopySettingsSingleInstanceLock.h" />
@@ -283,6 +279,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="RenameUtils.h" />
+    <ClInclude Include="RenameUtils.TempFileAutoDeleter.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="resource1.h" />
     <ClInclude Include="ResourceHelper.h" />
@@ -368,10 +365,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     </ClCompile>
     <ClCompile Include="DebugFileSize.cpp" />
     <ClCompile Include="DebugLogger.cpp" />
-    <ClCompile Include="DependentValue.cpp">
-      <DependentUpon>DependentValue.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
     <ClCompile Include="Fallback.cpp" />
     <ClCompile Include="FastcopySettingsSingleInstanceLock.cpp" />
     <ClCompile Include="FileCompareViewModel.cpp">
@@ -412,6 +405,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="RenameUtils.cpp" />
+    <ClCompile Include="RenameUtils.TempFileAutoDeleter.cpp" />
     <ClCompile Include="ResourceHelper.cpp" />
     <ClCompile Include="RobocopyArgs.cpp" />
     <ClCompile Include="RobocopyInjectDll.cpp" />
@@ -468,9 +462,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <Midl Include="CopyDialogWindow.idl">
       <DependentUpon>CopyDialogWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
-    </Midl>
-    <Midl Include="DependentValue.idl">
-      <SubType>Designer</SubType>
     </Midl>
     <Midl Include="FileCompareViewModel.idl">
       <SubType>Designer</SubType>

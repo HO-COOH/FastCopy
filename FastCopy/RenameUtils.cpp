@@ -6,34 +6,7 @@
 #include <filesystem>
 #include "Settings.h"
 #include <boost/algorithm/string.hpp>
-
-class TempFileAutoDeleter
-{
-	std::wstring_view m_tempFile;
-public:
-	TempFileAutoDeleter(std::wstring_view tempFile, bool create) : m_tempFile{tempFile}
-	{
-		if (create)
-		{
-			wil::unique_handle
-			{ CreateFileW(
-				tempFile.data(),
-				GENERIC_WRITE,
-				0,
-				nullptr,
-				CREATE_ALWAYS,
-				FILE_ATTRIBUTE_NORMAL,
-				nullptr
-			) };
-		}
-	}
-	
-	~TempFileAutoDeleter()
-	{
-		DeleteFile(m_tempFile.data());
-	}
-};
-
+#include "RenameUtils.TempFileAutoDeleter.h"
 
 /**
  * @param original Test.txt
@@ -46,46 +19,18 @@ static std::wstring extractCopyString(const std::wstring& original, std::wstring
 	return std::wstring(generated.substr(dotPos, suffixLength));
 }
 
-static void addDestinationSuffixIfNeededForDirectory(std::filesystem::path const& source, std::filesystem::path& destination, std::wstring const& suffix)
-{
-	//destination is already the final place, ie. has the folder name added to path
-	if (!std::filesystem::exists(destination))
-		return;
-
-	//we have duplicate folders, add suffix
-	//try: destination folder - Copy
-	auto folderName = source.filename();
-	auto destinationParent = destination.parent_path();
-
-	if (auto firstCopyName = destinationParent / (folderName.wstring() + suffix).data(); !std::filesystem::exists(firstCopyName))
-	{
-		destination = std::move(firstCopyName);
-		return;
-	}
-
-	//try: destination folder - Copy (N)
-	for (int numberSuffix = 2;;++numberSuffix)
-	{
-		if (auto numberedCopyName = destinationParent / std::format(L"{}{} ({})", folderName.wstring(), suffix, numberSuffix);
-			!std::filesystem::exists(numberedCopyName))
-		{
-			destination = std::move(numberedCopyName);
-			return;
-		}
-	}
-}
 
 namespace Utils
 {
 	std::wstring GetDefaultRenameSuffix()
 	{
 		//create a test.txt file
-		wchar_t temp[MAX_PATH]{};
-		GetTempPath(MAX_PATH, temp);
+		wchar_t tempDir[MAX_PATH]{};
+		GetTempPath(MAX_PATH, tempDir);
 
 		auto baseName = std::to_wstring(std::chrono::system_clock::now().time_since_epoch().count());
 		auto fileName = std::format(L"{}.txt", baseName);
-		auto path = std::format(L"{}{}", temp, fileName);
+		auto path = std::format(L"{}{}", tempDir, fileName);
 
 		TempFileAutoDeleter tempFile{ path, true };
 
@@ -103,7 +48,7 @@ namespace Utils
 		}
 
 		//Find the resulting file
-		path = std::format(L"{}{}*.txt", temp, baseName);
+		path = std::format(L"{}{}*.txt", tempDir, baseName);
 		WIN32_FIND_DATA findData;
 		if (wil::unique_hfind findHandle{ FindFirstFileW(path.data(), &findData) })
 		{
@@ -111,7 +56,7 @@ namespace Utils
 			{
 				if (std::wstring_view foundName{ findData.cFileName }; foundName != fileName)
 				{
-					//TempFileAutoDeleter{findData.pa}
+					TempFileAutoDeleter{ std::format(L"{}{}", tempDir, foundName), false };
 					return extractCopyString(fileName, foundName);
 				}
 			} while (FindNextFile(findHandle.get(), &findData));
@@ -120,14 +65,6 @@ namespace Utils
 		return L"";
 	}
 
-	void AddDestinationSuffixIfNeeded(bool isDirectory, 
-		std::filesystem::path const& source, 
-		std::filesystem::path& destination)
-	{
-		static std::wstring const suffix{ Settings{}.Get<winrt::hstring>(Settings::RenameSuffix) };
-		assert(isDirectory);
-		addDestinationSuffixIfNeededForDirectory(source, destination, suffix);
-	}
 
 	bool IsRenameSuffixValid(winrt::hstring const& suffix)
 	{
@@ -147,4 +84,65 @@ namespace Utils
 
 		return true;
 	}
+
+	void AddDestinationSuffixIfNeededForDirectory(std::filesystem::path const& source, std::filesystem::path& destination, std::wstring const& suffix)
+	{
+		//destination is already the final place, ie. has the folder name added to path
+		if (!std::filesystem::exists(destination))
+			return;
+
+		//we have duplicate folders, add suffix
+		//try: destination folder - Copy
+		auto folderName = source.filename();
+		auto destinationParent = destination.parent_path();
+
+		if (auto firstCopyName = destinationParent / (folderName.wstring() + suffix).data(); !std::filesystem::exists(firstCopyName))
+		{
+			destination = std::move(firstCopyName);
+			return;
+		}
+
+		//try: destination folder - Copy (N)
+		for (int numberSuffix = 2;; ++numberSuffix)
+		{
+			if (auto numberedCopyName = destinationParent / std::format(L"{}{} ({})", folderName.wstring(), suffix, numberSuffix);
+				!std::filesystem::exists(numberedCopyName))
+			{
+				destination = std::move(numberedCopyName);
+				return;
+			}
+		}
+	}
+
+	void AddDestinationSuffixIfNeededForFile(std::filesystem::path const& source, std::filesystem::path& destination, std::wstring const& suffix)
+	{
+		if (!std::filesystem::exists(destination))
+			return;
+
+		//we have duplicate file, add suffix
+		//try: destination - Copy.txt
+		auto fileNameWithoutExtension = source.stem().wstring();
+		auto const hasExtension = source.has_extension();
+		auto destinationParent = destination.parent_path();
+		auto const extension = source.extension().wstring();
+
+		if (auto firstCopyName = destinationParent / (hasExtension ? std::format(L"{}{}{}", fileNameWithoutExtension, suffix, extension) : (fileNameWithoutExtension + suffix).data());
+			!std::filesystem::exists(firstCopyName))
+		{
+			destination = std::move(firstCopyName);
+			return;
+		}
+
+		//try: destination folder - Copy (N).txt
+		for (int numberSuffix = 2;; ++numberSuffix)
+		{
+			if (auto numberedCopyName = destinationParent / (hasExtension ? std::format(L"{}{} ({}){}", fileNameWithoutExtension, suffix, numberSuffix, extension) : std::format(L"{}{} ({})", fileNameWithoutExtension, suffix, numberSuffix));
+				!std::filesystem::exists(numberedCopyName))
+			{
+				destination = std::move(numberedCopyName);
+				return;
+			}
+		}
+	}
+
 }

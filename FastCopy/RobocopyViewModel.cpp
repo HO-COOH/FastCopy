@@ -21,7 +21,7 @@
 #include "Ntdll.h"
 #include "ViewModelLocator.h"
 #include "RenameUtils.h"
-
+#include "Settings.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -347,11 +347,13 @@ namespace winrt::FastCopy::implementation
 
 			if (file1Selected && file2Selected)
 			{
+				static std::wstring const suffix{ Settings{}.Get<winrt::hstring>(Settings::RenameSuffix, L" - Copy") };
 				//rename
-				std::filesystem::path destinationPath{ file2->Path().data() };
+				;
 				Fallback::CopyAddSuffix(
 					file1->Path().data(),
-					destinationPath.parent_path(),
+					std::filesystem::path{ file2->Path().data() },
+					suffix,
 					m_recordFile->GetOperation() == CopyOperation::Move
 				);
 			}
@@ -411,7 +413,16 @@ namespace winrt::FastCopy::implementation
 			std::filesystem::path{ m_destination.data() } / source.filename() :
 			std::filesystem::path{ m_destination.data() };
 
-		Utils::AddDestinationSuffixIfNeeded(isDirectory, isDirectory? finalSourcePath : source, finalDestinationPath);
+
+		static std::wstring const suffix{ Settings{}.Get<winrt::hstring>(Settings::RenameSuffix, L" - Copy")};
+
+		if (isDirectory)
+			Utils::AddDestinationSuffixIfNeededForDirectory(finalSourcePath, finalDestinationPath, suffix);
+	
+		// robocopy.exe cannot be used to rename files
+		//isDirectory ?
+		//	Utils::AddDestinationSuffixIfNeededForDirectory(finalSourcePath, finalDestinationPath, suffix) :
+		//	Utils::AddDestinationSuffixIfNeededForFile(source, finalDestinationPath, suffix);
 
 		args.Source(finalSourcePath.wstring())
 			.Destination(finalDestinationPath.wstring())
@@ -441,6 +452,8 @@ namespace winrt::FastCopy::implementation
 		std::filesystem::path sourcePath{ **m_iter };
 		std::filesystem::path destinationPath{ m_destination.data() };
 		auto const fileName = sourcePath.filename().wstring();
+
+		//If source is dirctory, robocopy can be used even with duplicated names
 		if (std::filesystem::is_directory(sourcePath))
 			return true;
 

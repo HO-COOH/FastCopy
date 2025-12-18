@@ -24,7 +24,7 @@ namespace winrt::FastCopy::implementation
         static winrt::Microsoft::UI::Xaml::Style MenuFlyoutItemHasSubItemStyle;
         static winrt::Microsoft::UI::Xaml::Style MenuFlyoutSubItemStyle;
     private:
-        winrt::FastCopy::DependentValue m_height;
+        winrt::WinUI3Package::DependentValue m_height;
         winrt::Windows::Graphics::SizeInt32 m_originalWindowSize;
         bool m_showSpeedGraph = false;
 		bool m_speedGraphLoaded = false;

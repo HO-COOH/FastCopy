@@ -1,14 +1,13 @@
-#pragma once
+﻿#pragma once
 #include <winrt/Microsoft.UI.Xaml.Media.Animation.h>
 #include <winrt/Microsoft.UI.Xaml.h>
-#include <DependentValue.g.h>
 
 /**
  * @brief Wrapper for animated `DependencyValue`
  */
 class AnimatedValue
 {
-	winrt::FastCopy::DependentValue m_value{nullptr};
+	winrt::WinUI3Package::DependentValue m_value{nullptr};
 	winrt::Microsoft::UI::Xaml::Media::Animation::DoubleAnimation m_animation{nullptr};
 
 	void create();
