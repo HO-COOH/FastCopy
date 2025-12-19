@@ -2,7 +2,7 @@
 
 #include "CopyDialog.g.h"
 #include "RobocopyViewModel.g.h"
-#include "DependentValue.g.h"
+
 namespace winrt::FastCopy::implementation
 {
     struct CopyDialog : CopyDialogT<CopyDialog>

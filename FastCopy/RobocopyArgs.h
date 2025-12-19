@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <string>
 #include <vector>
 #include <span>
@@ -44,6 +44,9 @@ class RobocopyArgsBuilder
 
 public:
 	using StringView = std::wstring_view;
+
+	constexpr static int MT_Min = 1;
+	constexpr static int MT_Max = 128;
 
 	constexpr RobocopyArgsBuilder& addOrRemoveFlag(StringView name, bool value)
 	{

@@ -404,7 +404,6 @@ namespace winrt::FastCopy::implementation
 	}
 	RobocopyArgsBuilder RobocopyViewModel::getRobocopyArg()
 	{
-		RobocopyArgsBuilder args;
 		std::filesystem::path source{ **m_iter };
 		auto const isDirectory = std::filesystem::is_directory(source);
 		
@@ -424,6 +423,7 @@ namespace winrt::FastCopy::implementation
 		//	Utils::AddDestinationSuffixIfNeededForDirectory(finalSourcePath, finalDestinationPath, suffix) :
 		//	Utils::AddDestinationSuffixIfNeededForFile(source, finalDestinationPath, suffix);
 
+		RobocopyArgsBuilder args;
 		args.Source(finalSourcePath.wstring())
 			.Destination(finalDestinationPath.wstring())
 			.E(isDirectory)
@@ -434,7 +434,8 @@ namespace winrt::FastCopy::implementation
 			.XC(true)  //exclude size different
 			.XN(true)  //exclude newer
 			.XO(true)	//exclude older
-			.Unicode(true);
+			.Unicode(true)
+			.MT(std::clamp<int>(std::thread::hardware_concurrency(), RobocopyArgsBuilder::MT_Min, RobocopyArgsBuilder::MT_Max));
 		if (!isDirectory)
 		{
 			auto sourceFileName = source.filename().wstring();

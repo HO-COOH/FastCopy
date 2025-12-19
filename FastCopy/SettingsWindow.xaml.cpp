@@ -27,9 +27,9 @@ namespace winrt::FastCopy::implementation
     {
         switch (ThemeSelectionComboBox().SelectedIndex())
         {
-            case 0: return RootPanel().RequestedTheme(winrt::Microsoft::UI::Xaml::ElementTheme::Default);
-            case 1: return RootPanel().RequestedTheme(winrt::Microsoft::UI::Xaml::ElementTheme::Light);
-            case 2: return RootPanel().RequestedTheme(winrt::Microsoft::UI::Xaml::ElementTheme::Dark);
+            case 0: return RootPage().RequestedTheme(winrt::Microsoft::UI::Xaml::ElementTheme::Default);
+            case 1: return RootPage().RequestedTheme(winrt::Microsoft::UI::Xaml::ElementTheme::Light);
+            case 2: return RootPage().RequestedTheme(winrt::Microsoft::UI::Xaml::ElementTheme::Dark);
         }
     }
 
@@ -54,5 +54,25 @@ namespace winrt::FastCopy::implementation
     {
         isRenameSuffixInvalid(!Utils::IsRenameSuffixValid(RenameSuffixTextBox().Text()));
     }
+
+    void SettingsWindow::RootPanel_ActualThemeChanged(winrt::Microsoft::UI::Xaml::FrameworkElement const& element, winrt::Windows::Foundation::IInspectable const&)
+    {
+        auto const actualTheme = element.ActualTheme();
+        if (WindowBackgroundComboBox().SelectedIndex() != 2)
+        {
+            RootPanel().Background(nullptr);
+            return;
+        }
+
+        RootPanel().Background(winrt::Microsoft::UI::Xaml::Media::SolidColorBrush{ actualTheme == winrt::Microsoft::UI::Xaml::ElementTheme::Dark ? winrt::Windows::UI::Colors::Black() : winrt::Windows::UI::Colors::White() });
+    }
+
+    void SettingsWindow::WindowBackgroundComboBox_SelectionChanged(
+        winrt::Windows::Foundation::IInspectable const&, 
+        winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const&)
+    {
+        RootPanel_ActualThemeChanged(RootPanel(), nullptr);
+    }
+
 }
 

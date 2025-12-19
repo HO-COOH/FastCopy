@@ -16,7 +16,16 @@
     mc:Ignorable="d">
 
     <Page x:Name="RootPage">
-        <Grid x:Name="RootPanel">
+        <Grid x:Name="RootPanel" ActualThemeChanged="RootPanel_ActualThemeChanged">
+            <Grid.BackgroundTransition>
+                <BrushTransition />
+            </Grid.BackgroundTransition>
+
+            <Grid.Background>
+                <SolidColorBrush x:Name="RootPageBackgroundBrush" />
+            </Grid.Background>
+
+
             <Grid.Resources>
                 <essential:WindowWorkaround
                     x:Name="NonMaximizableWindowWorkaround"
@@ -850,8 +859,10 @@
                     </essential:SettingsCard.HeaderIcon>
                     <ComboBox
                         xmlns:backdrops="using:Microsoft.UI.Composition.SystemBackdrops"
+                        x:Name="WindowBackgroundComboBox"
                         essential:ComboBoxHelper.AcrylicWorkaround="True"
-                        SelectedIndex="{x:Bind ViewModel.BackgroundSelection, Mode=TwoWay}">
+                        SelectedIndex="{x:Bind ViewModel.BackgroundSelection, Mode=TwoWay}"
+                        SelectionChanged="WindowBackgroundComboBox_SelectionChanged">
                         <ComboBoxItem x:Uid="MicaItem" IsEnabled="{x:Bind backdrops:MicaController.IsSupported()}" />
                         <ComboBoxItem x:Uid="AcrylicItem" />
                         <ComboBoxItem x:Uid="CustomItem" />

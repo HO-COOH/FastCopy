@@ -12,6 +12,16 @@ namespace winrt::FastCopy::implementation
         void ThemeSelectionComboBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
         void WindowEx_Activated(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::WindowActivatedEventArgs const& args);
         void RenameSuffixTextBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::TextChangedEventArgs const& e);
+
+        void RootPanel_ActualThemeChanged(
+            winrt::Microsoft::UI::Xaml::FrameworkElement const& element,
+            winrt::Windows::Foundation::IInspectable const&
+        );
+
+        void WindowBackgroundComboBox_SelectionChanged(
+            winrt::Windows::Foundation::IInspectable const& sender,
+            winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& args
+        );
     private:
         void isRenameSuffixInvalid(bool value);
     };
