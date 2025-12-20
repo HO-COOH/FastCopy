@@ -236,7 +236,10 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <ClInclude Include="CreateSuspend.h" />
     <ClInclude Include="DebugFileSize.h" />
     <ClInclude Include="DebugLogger.h" />
+    <ClInclude Include="EmptyFolder.h" />
     <ClInclude Include="ExistingDir.h" />
+    <ClInclude Include="ExtraDir.h" />
+    <ClInclude Include="ExtraFile.h" />
     <ClInclude Include="Fallback.h" />
     <ClInclude Include="FastcopySettingsSingleInstanceLock.h" />
     <ClInclude Include="FileCompareViewModel.h">
@@ -365,6 +368,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     </ClCompile>
     <ClCompile Include="DebugFileSize.cpp" />
     <ClCompile Include="DebugLogger.cpp" />
+    <ClCompile Include="EmptyFolder.cpp" />
     <ClCompile Include="Fallback.cpp" />
     <ClCompile Include="FastcopySettingsSingleInstanceLock.cpp" />
     <ClCompile Include="FileCompareViewModel.cpp">

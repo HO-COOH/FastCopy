@@ -162,6 +162,9 @@
     <ClCompile Include="RenameUtils.TempFileAutoDeleter.cpp">
       <Filter>Utils\RenameUtils</Filter>
     </ClCompile>
+    <ClCompile Include="EmptyFolder.cpp">
+      <Filter>Utils\Robocopy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -317,6 +320,15 @@
     </ClInclude>
     <ClInclude Include="RenameUtils.TempFileAutoDeleter.h">
       <Filter>Utils\RenameUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="ExtraDir.h">
+      <Filter>Utils\Robocopy\Output</Filter>
+    </ClInclude>
+    <ClInclude Include="ExtraFile.h">
+      <Filter>Utils\Robocopy\Output</Filter>
+    </ClInclude>
+    <ClInclude Include="EmptyFolder.h">
+      <Filter>Utils\Robocopy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

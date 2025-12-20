@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 #include "pch.h"
@@ -66,9 +66,7 @@ namespace winrt::FastCopy::implementation
     void App::normalLaunch()
     {
         auto const destination = Command::Get().GetDestination();
-        if (destination.empty())
-            return;
-
+        //destination could be empty if delete is invoked
         auto const recordFile = Command::Get().RecordFile();
         auto viewModelRef = ViewModelLocator::GetInstance().RobocopyViewModel();
         auto viewModel = winrt::get_self<winrt::FastCopy::implementation::RobocopyViewModel>(viewModelRef);

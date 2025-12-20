@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <wil/com.h>
 #include <string_view>
 
@@ -11,9 +11,9 @@ public:
 	ShellItem(IShellItem* ptr = nullptr) :m_ptr{ ptr } {}
 	ShellItem(std::wstring_view path);
 
-	wchar_t* GetDisplayName();
+	wchar_t* GetDisplayName() const;
 	ShellItem GetParent();
 
-	IShellItem* GetPtr() const { return m_ptr.get(); }
+	IShellItem* Get() const { return m_ptr.get(); }
 };
 

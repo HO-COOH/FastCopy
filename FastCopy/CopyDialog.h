@@ -19,6 +19,10 @@ namespace winrt::FastCopy::implementation
         }
 
         static winrt::hstring GetTextFromKeyboardAccelerators(winrt::Windows::Foundation::Collections::IVector<winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator> const& keys);
+        constexpr static winrt::Microsoft::UI::Xaml::Visibility StringToVisibility(winrt::hstring const& value)
+        {
+            return value.empty() ? winrt::Microsoft::UI::Xaml::Visibility::Collapsed : winrt::Microsoft::UI::Xaml::Visibility::Visible;
+        }
 
         static winrt::Microsoft::UI::Xaml::Style MenuFlyoutItemNoSubItemStyle;
         static winrt::Microsoft::UI::Xaml::Style MenuFlyoutItemHasSubItemStyle;

@@ -1,4 +1,4 @@
-import "RobocopyViewModel.idl";
+﻿import "RobocopyViewModel.idl";
 
 //Do not combine CopyDialog into CopyDialogWindow, this causes compilation error
 namespace FastCopy
@@ -11,5 +11,6 @@ namespace FastCopy
 
         static Double PercentConvert(Double value);
         static String GetTextFromKeyboardAccelerators(Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.Input.KeyboardAccelerator> keys);
+        static Microsoft.UI.Xaml.Visibility StringToVisibility(String value);
     }
 }

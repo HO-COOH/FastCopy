@@ -1124,7 +1124,11 @@
                 Foreground="{ThemeResource DestinationTextBrush}"
                 Style="{StaticResource StatusTextStyle}"
                 Text="{x:Bind ViewModel.Source, Mode=OneWay}" />
-            <TextBlock x:Uid="ToText" Style="{StaticResource StatusTextStyle}" />
+
+            <TextBlock
+                x:Uid="ToText"
+                Style="{StaticResource StatusTextStyle}"
+                Visibility="{x:Bind local:CopyDialog.StringToVisibility(ViewModel.Destination), Mode=OneWay}" />
             <Button
                 Margin="2,-3,0,0"
                 Padding="2"
@@ -1133,7 +1137,8 @@
                 Click="HyperlinkButton_Click"
                 Content="{x:Bind ViewModel.Destination, Mode=OneWay}"
                 FontSize="11"
-                Foreground="{ThemeResource DestinationTextBrush}" />
+                Foreground="{ThemeResource DestinationTextBrush}"
+                Visibility="{x:Bind local:CopyDialog.StringToVisibility(ViewModel.Destination), Mode=OneWay}" />
 
             <!--  file:// scheme is specifically blocked. See https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.hyperlinkbutton.navigateuri?view=windows-app-sdk-1.8  -->
             <!--<HyperlinkButton

@@ -1,4 +1,6 @@
 #pragma once
+#include <iterator>
+#include <cstddef>
 
 class ShellItem;
 struct IShellItemArray;
@@ -13,11 +15,16 @@ public:
 		IShellItemArray* m_ptr{};
 		size_t m_index{};
 	public:
+		using difference_type = std::ptrdiff_t;
+		using value_type = ShellItem;
+		using iterator_concept = std::input_iterator_tag;
+
 		Iterator() = default;
 		Iterator(IShellItemArray* ptr, size_t index = 0) : m_ptr{ ptr }, m_index{ index } {}
 
-		ShellItem operator*();
+		ShellItem operator*() const;
 		Iterator& operator++();
+		Iterator operator++(int);
 		bool operator==(Iterator const& rhs) const;
 
 		friend class ShellItemArray;

@@ -1,4 +1,4 @@
-#include "COMApiTest.h"
+﻿#include "COMApiTest.h"
 #include "COMInitializeHelper.h"
 
 #include <ShlObj_core.h>
@@ -42,7 +42,7 @@ bool COMApiTest::Run(std::vector<TestOperation> const& paths)
 			ShellItem psiFrom{ test.source };
             ShellItem psiDest{ destinationPath.parent_path().wstring() };
 
-            performOpImpl(psiFrom.GetPtr(), psiDest.GetPtr(), destinationPath.filename().wstring().data(), test.operation);
+            performOpImpl(psiFrom.Get(), psiDest.Get(), destinationPath.filename().wstring().data(), test.operation);
             return true;
         }
     );

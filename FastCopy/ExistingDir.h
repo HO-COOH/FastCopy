@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "OutputRegexParseBase.hpp"
 
 /*eg:
@@ -9,10 +9,10 @@ struct ExistingDir : OutputRegexParseBase<ExistingDir>
 	constexpr static auto regex = R"(\s*(\d+)\s+(.*)$)";
 
 	int count;
-	std::string name;
+	std::string path;
 
 	template<typename MatchResultType>
-	ExistingDir(std::match_results<MatchResultType>&& match) : count{ std::stoi(match[1].str()) }, name{ match[2].str() }
+	ExistingDir(std::match_results<MatchResultType>&& match) : count{ std::stoi(match[1].str()) }, path{ match[2].str() }
 	{
 	}
 };

@@ -39,9 +39,16 @@ size_t ShellItemArray::size()
     return count;
 }
 
-ShellItem ShellItemArray::Iterator::operator*()
+ShellItem ShellItemArray::Iterator::operator*() const
 {
     return ShellItemArray{ m_ptr } [m_index] ;
+}
+
+ShellItemArray::Iterator ShellItemArray::Iterator::operator++(int)
+{
+    Iterator tmp = *this;
+    ++m_index;
+    return tmp;
 }
 
 ShellItemArray::Iterator& ShellItemArray::Iterator::operator++()
