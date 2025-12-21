@@ -10,7 +10,8 @@ std::filesystem::path EmptyFolder::getPath()
 std::filesystem::path const& EmptyFolder::GetOrCreate()
 {
 	static auto path = getPath();
-	if (!std::filesystem::exists(path))
+	static auto created = std::filesystem::exists(path);
+	if (!created)
 		std::filesystem::create_directories(path);
 
 	return path;

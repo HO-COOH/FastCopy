@@ -27,6 +27,12 @@
 template<class... Ts>
 struct overloaded : Ts... { using Ts::operator()...; };
 
+static int clampRobocopyMT()
+{
+	static auto value = std::clamp<int>(std::thread::hardware_concurrency(), RobocopyArgsBuilder::MT_Min, RobocopyArgsBuilder::MT_Max);
+	return value;
+}
+
 namespace winrt::FastCopy::implementation
 {
 	void RobocopyViewModel::RecordFile(winrt::hstring value)
@@ -421,55 +427,100 @@ namespace winrt::FastCopy::implementation
 
 		switch (m_recordFile->GetOperation())
 		{
-			case CopyOperation::Move:
-				args.MOVE(true);
-				[[fallthrough]];
+			case CopyOperation::Move: [[fallthrough]];
 			case CopyOperation::Copy:
 			{
-				std::filesystem::path source{ **m_iter };
-				auto const isDirectory = std::filesystem::is_directory(source);
+				std::filesystem::path sourcePath{ **m_iter };
+				std::filesystem::path destinationBase{ m_destination.data() };
+				auto const isDirectory = std::filesystem::is_directory(sourcePath);
+				auto const isMove = m_recordFile->GetOperation() == CopyOperation::Move;
 
-				auto finalSourcePath = isDirectory ? source : source.parent_path();
-				auto finalDestinationPath = isDirectory ?
-					std::filesystem::path{ m_destination.data() } / source.filename() :
-					std::filesystem::path{ m_destination.data() };
-
-
-				static std::wstring const suffix{ Settings{}.Get<winrt::hstring>(Settings::RenameSuffix, L" - Copy") };
+				// Determine source and destination paths based on whether we're copying a file or directory
+				std::filesystem::path finalSourcePath;
+				std::filesystem::path finalDestinationPath;
 
 				if (isDirectory)
+				{
+					// For directories: source is the directory itself, destination includes the directory name
+					finalSourcePath = std::move(sourcePath);
+					finalDestinationPath = std::move(destinationBase) / sourcePath.filename();
+
+					// Handle duplicate directory names by adding suffix if needed
+					static std::wstring const suffix{ Settings{}.Get<winrt::hstring>(Settings::RenameSuffix, L" - Copy") };
 					Utils::AddDestinationSuffixIfNeededForDirectory(finalSourcePath, finalDestinationPath, suffix);
+				}
+				else
+				{
+					// For files: source is the parent directory, destination is the target directory
+					finalSourcePath = sourcePath.parent_path();
+					finalDestinationPath = std::move(destinationBase);
+				}
 
-
-
+				// Configure common robocopy arguments
 				args.Source(finalSourcePath.wstring())
 					.Destination(finalDestinationPath.wstring())
-					.E(isDirectory)
-					.V(true)
-					.NJS(true)	//no job summary
-					.NJH(true)  //no job header
-					.BYTES(true)
-					.XC(true)  //exclude size different
-					.XN(true)  //exclude newer
-					.XO(true)	//exclude older
-					.Unicode(true)
-					.MT(std::clamp<int>(std::thread::hardware_concurrency(), RobocopyArgsBuilder::MT_Min, RobocopyArgsBuilder::MT_Max));
-				if (!isDirectory)
+					.V(true)           // Verbose output
+					.NJS(true)         // No job summary
+					.NJH(true)         // No job header
+					.BYTES(true)       // Print sizes as bytes
+					.Unicode(true)     // Output as Unicode
+					.XC(true)          // Exclude changed files
+					.XN(true)          // Exclude newer files
+					.XO(true)          // Exclude older files
+					.MT(clampRobocopyMT());
+
+				// Configure operation-specific arguments
+				if (isMove)
+					args.MOVE(true);
+
+				if (isDirectory)
+					args.E(true);
+				else
 				{
-					auto sourceFileName = source.filename().wstring();
-					std::array<std::wstring_view, 1> fileArg{ sourceFileName };
+					// Specify the single file to copy
+					auto fileName = sourcePath.filename().wstring();
+					std::array<std::wstring_view, 1> fileArg{ fileName };
 					args.File(fileArg);
 				}
 
+				break;
 			}
 			case CopyOperation::Delete:
-				args.Source(EmptyFolder::GetOrCreate().c_str())
-					.Destination(**m_iter)
-					.NJS(true)
-					.NJH(true)
-					.BYTES(true)
-					.Unicode(true)
-					.MIR(true);
+			{
+				std::filesystem::path targetPath{ **m_iter };
+				auto const isDirectory = std::filesystem::is_directory(targetPath);
+
+				if (isDirectory)
+				{
+					// For folders, use /MIR with empty source to delete the directory contents
+					args.Source(EmptyFolder::GetOrCreate().c_str())
+						.Destination(**m_iter)
+						.NJS(true)
+						.NJH(true)
+						.BYTES(true)
+						.Unicode(true)
+						.MIR(true)
+						.MT(clampRobocopyMT());
+				}
+				else
+				{
+					// For files, use /PURGE with the parent directory and specific file pattern
+					auto parentPath = targetPath.parent_path();
+					auto fileName = targetPath.filename().wstring();
+					std::array<std::wstring_view, 1> fileArg{ fileName };
+
+					args.Source(EmptyFolder::GetOrCreate().c_str())
+						.Destination(parentPath.wstring())
+						.File(fileArg)
+						.NJS(true)
+						.NJH(true)
+						.BYTES(true)
+						.Unicode(true)
+						.PURGE(true)
+						.MT(clampRobocopyMT());
+				}
+				break;
+			}
 		}
 		
 

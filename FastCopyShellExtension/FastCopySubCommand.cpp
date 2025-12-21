@@ -79,7 +79,7 @@ HRESULT FastCopySubCommand::GetState(IShellItemArray* selection, BOOL, EXPCMDSTA
     switch (m_op)
     {
         case CopyOperation::Copy: [[fallthrough]];
-
+        case CopyOperation::Delete: [[fallthrough]];
         case CopyOperation::Move:
             *cmdState = ShellItemArray{ selection }.size() == 0 ? ECS_DISABLED : ECS_ENABLED;
             break;
@@ -88,22 +88,22 @@ HRESULT FastCopySubCommand::GetState(IShellItemArray* selection, BOOL, EXPCMDSTA
                 ECS_ENABLED : 
                 ECS_HIDDEN;
             break;
-        case CopyOperation::Delete:
-        {
-            //if no selection, disable
-            ShellItemArray items{ selection };
-            if (items.size() == 0)
-            {
-                *cmdState = ECS_DISABLED;
-                break;
-            }
+        //case CopyOperation::Delete:
+        //{
+        //    //if no selection, disable
+        //    ShellItemArray items{ selection };
+        //    if (items.size() == 0)
+        //    {
+        //        *cmdState = ECS_DISABLED;
+        //        break;
+        //    }
 
-            //only enable when all items are folders
-            bool allFolders = std::ranges::all_of(items, [](ShellItem const& item) {
-                return std::filesystem::is_directory(item.GetDisplayName());
-            });
-            *cmdState = allFolders ? ECS_ENABLED : ECS_DISABLED;
-        }
+        //    //only enable when all items are folders
+        //    bool allFolders = std::ranges::all_of(items, [](ShellItem const& item) {
+        //        return std::filesystem::is_directory(item.GetDisplayName());
+        //    });
+        //    *cmdState = allFolders ? ECS_ENABLED : ECS_DISABLED;
+        //}
     }
     return S_OK;
 }

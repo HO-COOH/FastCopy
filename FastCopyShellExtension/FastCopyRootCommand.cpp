@@ -25,7 +25,8 @@ void FastCopyRootCommand::init(IShellItemArray* items)
 	m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Move, m_site.Get()));
 	if (showPasteCommand)
 		m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Paste, m_site.Get()));
-	m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Delete, m_site.Get()));
+	if (ShellItemArray{ items }.size() != 0)
+		m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Delete, m_site.Get()));
 	m_hasInit = true;
 }
 
