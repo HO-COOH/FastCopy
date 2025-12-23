@@ -56,6 +56,7 @@ namespace winrt::FastCopy::implementation
             m_mainWindow = make<SettingsWindow>();
             Global::windowEffectHelper.SetTarget(m_mainWindow);
         }
+        winrt::FastCopy::ConfirmDeleteFileWindow{}.Activate();
     }
 
     bool winrt::FastCopy::implementation::App::HasAnotherInstance()

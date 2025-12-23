@@ -77,6 +77,14 @@ namespace winrt::FastCopy::implementation
 	{
 		m_model.Set(Settings::DevMode, value);
 	}
+	bool SettingsViewModel::ConfirmDelete()
+	{
+		return m_model.Get(Settings::ConfirmDelete, true);
+	}
+	void SettingsViewModel::ConfirmDelete(bool value)
+	{
+		m_model.Set(Settings::ConfirmDelete, value);
+	}
 	winrt::Microsoft::UI::Xaml::Visibility SettingsViewModel::IsRenameTextBoxVisible(int renameBehavior)
 	{
 		return renameBehavior == 1 ? winrt::Microsoft::UI::Xaml::Visibility::Visible : winrt::Microsoft::UI::Xaml::Visibility::Collapsed;

@@ -223,6 +223,18 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <ClInclude Include="AppLaunchMode.h" />
     <ClInclude Include="CommandLine.h" />
     <ClInclude Include="CommandLineHandler.h" />
+    <ClInclude Include="ConfirmDeleteFileWindow.xaml.h">
+      <DependentUpon>ConfirmDeleteFileWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="ConfirmDeleteFolderWindow.xaml.h">
+      <DependentUpon>ConfirmDeleteFolderWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="ConfirmDeleteMultipleItemsWindow.xaml.h">
+      <DependentUpon>ConfirmDeleteMultipleItemsWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Conflict.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="CopyDialog.h">
@@ -335,6 +347,15 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
+    <Page Include="ConfirmDeleteFileWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ConfirmDeleteFolderWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ConfirmDeleteMultipleItemsWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="CopyDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -357,6 +378,18 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <ClCompile Include="AnimatedWindowSize.cpp" />
     <ClCompile Include="CommandLine.cpp" />
     <ClCompile Include="CommandLineHandler.cpp" />
+    <ClCompile Include="ConfirmDeleteFileWindow.xaml.cpp">
+      <DependentUpon>ConfirmDeleteFileWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="ConfirmDeleteFolderWindow.xaml.cpp">
+      <DependentUpon>ConfirmDeleteFolderWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="ConfirmDeleteMultipleItemsWindow.xaml.cpp">
+      <DependentUpon>ConfirmDeleteMultipleItemsWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="CopyDialog.cpp">
       <DependentUpon>CopyDialog.xaml</DependentUpon>
@@ -458,6 +491,18 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <Midl Include="App.idl">
       <SubType>Code</SubType>
       <DependentUpon>App.xaml</DependentUpon>
+    </Midl>
+    <Midl Include="ConfirmDeleteFileWindow.idl">
+      <DependentUpon>ConfirmDeleteFileWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ConfirmDeleteFolderWindow.idl">
+      <DependentUpon>ConfirmDeleteFolderWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ConfirmDeleteMultipleItemsWindow.idl">
+      <DependentUpon>ConfirmDeleteMultipleItemsWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Midl>
     <Midl Include="CopyDialog.idl">
       <DependentUpon>CopyDialog.xaml</DependentUpon>

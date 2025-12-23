@@ -391,6 +391,7 @@
                         <x:String x:Key="WindowBackgroundGlyph">&#xE81E;</x:String>
                         <x:String x:Key="DevModeGlyph">&#xEC7A;</x:String>
                         <x:String x:Key="RenameGlyph">&#xE8AC;</x:String>
+                        <x:String x:Key="DeleteGlyph">&#xE74D;</x:String>
 
                         <Style x:Key="ToggleSwitchLeftLabelStyle" TargetType="ToggleSwitch">
                             <Setter Property="Foreground" Value="{ThemeResource ToggleSwitchContentForeground}" />
@@ -867,6 +868,16 @@
                         <ComboBoxItem x:Uid="AcrylicItem" />
                         <ComboBoxItem x:Uid="CustomItem" />
                     </ComboBox>
+                </essential:SettingsCard>
+
+                <essential:SettingsCard x:Uid="DeleteSettingItem">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="{StaticResource DeleteGlyph}" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        Margin="0,0,-80,0"
+                        IsOn="{x:Bind ViewModel.ConfirmDelete, Mode=TwoWay}"
+                        Style="{StaticResource ToggleSwitchLeftLabelStyle}" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="DevModeSettingItem">

@@ -14,6 +14,7 @@ struct Settings
 	constexpr static auto DevMode = L"DevMode";
 	constexpr static auto RenameBehavior = L"RenameBehavior";
 	constexpr static auto RenameSuffix = L"RenameSuffix";
+	constexpr static auto ConfirmDelete = L"ConfirmDelete";
 
 	/**
 	 * @brief Get settings value of a specific type, will throw if the key is not found

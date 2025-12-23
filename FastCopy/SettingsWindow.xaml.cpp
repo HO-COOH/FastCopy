@@ -13,7 +13,7 @@ namespace winrt::FastCopy::implementation
     SettingsWindow::SettingsWindow()
     {
         ExtendsContentIntoTitleBar(true);
-        Height(PackageConfig::GetDefaultLanguage() == L"zh-cn" ? 470 : 500);
+        Height(PackageConfig::GetDefaultLanguage() == L"zh-cn" ? 550 : 580);
     }
 
     winrt::FastCopy::SettingsViewModel SettingsWindow::ViewModel()

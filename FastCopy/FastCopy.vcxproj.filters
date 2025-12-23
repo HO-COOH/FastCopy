@@ -16,6 +16,15 @@
     <Page Include="WelcomeWindow.xaml">
       <Filter>Views</Filter>
     </Page>
+    <Page Include="ConfirmDeleteFolderWindow.xaml">
+      <Filter>Views\ConfirmDeleteWindows</Filter>
+    </Page>
+    <Page Include="ConfirmDeleteFileWindow.xaml">
+      <Filter>Views\ConfirmDeleteWindows</Filter>
+    </Page>
+    <Page Include="ConfirmDeleteMultipleItemsWindow.xaml">
+      <Filter>Views\ConfirmDeleteWindows</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
@@ -582,6 +591,9 @@
     </Filter>
     <Filter Include="Utils\RenameUtils">
       <UniqueIdentifier>{fad6993a-296a-40b5-92f6-c34db0634bb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Views\ConfirmDeleteWindows">
+      <UniqueIdentifier>{4b17f77e-f06e-4068-908d-aa14845530b9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

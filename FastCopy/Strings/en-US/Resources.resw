@@ -288,4 +288,19 @@
   <data name="InvalidSuffixTip.Text" xml:space="preserve">
     <value>Cannot be empty or contain &lt;&gt;:"/\|?*</value>
   </data>
+  <data name="YesButton.Content" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="NoButton.Content" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="DeleteSettingItem.Header" xml:space="preserve">
+    <value>Delete confirmation</value>
+  </data>
+  <data name="DeleteSettingItem.Description" xml:space="preserve">
+    <value>Show a confirmation dialog before deleting files</value>
+  </data>
+  <data name="ConfirmDeleteFileWindowTitle" xml:space="preserve">
+    <value>Delete File</value>
+  </data>
 </root>

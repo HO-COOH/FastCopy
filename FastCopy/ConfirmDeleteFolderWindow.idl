@@ -1,0 +1,8 @@
+namespace FastCopy
+{
+    [default_interface]
+    runtimeclass ConfirmDeleteFolderWindow : Microsoft.UI.Xaml.Window
+    {
+        ConfirmDeleteFolderWindow();
+    }
+}

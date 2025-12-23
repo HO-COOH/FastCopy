@@ -288,4 +288,19 @@
   <data name="InvalidSuffixTip.Text" xml:space="preserve">
     <value>不能为空或包含这些字符 &lt;&gt;:"/\|?*</value>
   </data>
+  <data name="YesButton.Content" xml:space="preserve">
+    <value>确定</value>
+  </data>
+  <data name="NoButton.Content" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="DeleteSettingItem.Header" xml:space="preserve">
+    <value>删除确认</value>
+  </data>
+  <data name="DeleteSettingItem.Description" xml:space="preserve">
+    <value>在删除文件前显示确认对话框</value>
+  </data>
+  <data name="ConfirmDeleteFileWindowTitle" xml:space="preserve">
+    <value>删除文件</value>
+  </data>
 </root>

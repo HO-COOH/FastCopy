@@ -31,6 +31,9 @@ namespace winrt::FastCopy::implementation
         bool DevMode();
         void DevMode(bool value);
 
+        bool ConfirmDelete();
+        void ConfirmDelete(bool value);
+
         static winrt::Microsoft::UI::Xaml::Visibility IsRenameTextBoxVisible(int renameBehavior);
     private:
         Settings m_model;

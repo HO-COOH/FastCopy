@@ -13,6 +13,7 @@
         Int32 ThemeSelection;
         Int32 BackgroundSelection;
         Boolean DevMode;
+        Boolean ConfirmDelete;
 
         static Microsoft.UI.Xaml.Visibility IsRenameTextBoxVisible(Int32 renameBehavior);
     }
