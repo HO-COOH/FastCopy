@@ -4,5 +4,7 @@ namespace FastCopy
     runtimeclass ConfirmDeleteFolderWindow : Microsoft.UI.Xaml.Window
     {
         ConfirmDeleteFolderWindow();
+        
+        String FolderName{ get; };
     }
 }

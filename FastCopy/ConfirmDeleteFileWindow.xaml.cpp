@@ -4,12 +4,25 @@
 #include "ConfirmDeleteFileWindow.g.cpp"
 #endif
 
-using namespace winrt;
-using namespace Microsoft::UI::Xaml;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+#include "ResourceHelper.h"
+#include "ViewModelLocator.h"
+#include "RobocopyViewModel.h"
+#include <filesystem>
 
 namespace winrt::FastCopy::implementation
 {
+    ConfirmDeleteFileWindow::ConfirmDeleteFileWindow()
+    {
+        Title(GetStringResource(L"ConfirmDeleteFileWindowTitle"));
+        
+        auto viewModel = winrt::get_self<RobocopyViewModel>(ViewModelLocator::GetInstance().RobocopyViewModel());
+        auto& taskFile = *viewModel->m_recordFile;
+        std::filesystem::path filePath{ *taskFile.begin() };
+        m_fileName = winrt::hstring{ filePath.filename().wstring() };
+    }
+
+    winrt::hstring const& ConfirmDeleteFileWindow::FileName() const
+    {
+        return m_fileName;
+    }
 }

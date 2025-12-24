@@ -235,6 +235,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
       <DependentUpon>ConfirmDeleteMultipleItemsWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="ConfirmWindowBase.h" />
     <ClInclude Include="Conflict.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="CopyDialog.h">

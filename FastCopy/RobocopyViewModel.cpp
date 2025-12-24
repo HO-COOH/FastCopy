@@ -432,18 +432,18 @@ namespace winrt::FastCopy::implementation
 			{
 				std::filesystem::path sourcePath{ **m_iter };
 				std::filesystem::path destinationBase{ m_destination.data() };
-				auto const isDirectory = std::filesystem::is_directory(sourcePath);
+				auto const isFolder = std::filesystem::is_directory(sourcePath);
 				auto const isMove = m_recordFile->GetOperation() == CopyOperation::Move;
 
 				// Determine source and destination paths based on whether we're copying a file or directory
 				std::filesystem::path finalSourcePath;
 				std::filesystem::path finalDestinationPath;
 
-				if (isDirectory)
+				if (isFolder)
 				{
 					// For directories: source is the directory itself, destination includes the directory name
 					finalSourcePath = std::move(sourcePath);
-					finalDestinationPath = std::move(destinationBase) / sourcePath.filename();
+					finalDestinationPath = std::move(destinationBase) / finalSourcePath.filename();
 
 					// Handle duplicate directory names by adding suffix if needed
 					static std::wstring const suffix{ Settings{}.Get<winrt::hstring>(Settings::RenameSuffix, L" - Copy") };
@@ -473,7 +473,7 @@ namespace winrt::FastCopy::implementation
 				if (isMove)
 					args.MOVE(true);
 
-				if (isDirectory)
+				if (isFolder)
 					args.E(true);
 				else
 				{

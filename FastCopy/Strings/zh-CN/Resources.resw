@@ -303,4 +303,7 @@
   <data name="ConfirmDeleteFileWindowTitle" xml:space="preserve">
     <value>删除文件</value>
   </data>
+  <data name="ConfirmDeleteFileTitleTextBlock.Text" xml:space="preserve">
+    <value>确认要删除这个文件吗？</value>
+  </data>
 </root>

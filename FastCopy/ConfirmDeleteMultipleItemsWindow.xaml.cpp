@@ -4,21 +4,24 @@
 #include "ConfirmDeleteMultipleItemsWindow.g.cpp"
 #endif
 
-using namespace winrt;
-using namespace Microsoft::UI::Xaml;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+#include "ResourceHelper.h"
+#include "ViewModelLocator.h"
+#include "RobocopyViewModel.h"
 
 namespace winrt::FastCopy::implementation
 {
-    int32_t ConfirmDeleteMultipleItemsWindow::MyProperty()
+    ConfirmDeleteMultipleItemsWindow::ConfirmDeleteMultipleItemsWindow()
     {
-        throw hresult_not_implemented();
+        Title(GetStringResource(L"ConfirmDeleteMultipleItemsWindowTitle"));
+        
+        auto viewModel = winrt::get_self<RobocopyViewModel>(ViewModelLocator::GetInstance().RobocopyViewModel());
+        auto& taskFile = *viewModel->m_recordFile;
+        auto const itemCount = std::distance(taskFile.begin(), taskFile.end());
+        m_itemCountText = winrt::hstring{ std::to_wstring(itemCount) + L" items" };
     }
 
-    void ConfirmDeleteMultipleItemsWindow::MyProperty(int32_t /* value */)
+    winrt::hstring const& ConfirmDeleteMultipleItemsWindow::ItemCountText() const
     {
-        throw hresult_not_implemented();
+        return m_itemCountText;
     }
 }

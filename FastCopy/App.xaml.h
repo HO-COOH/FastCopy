@@ -8,6 +8,7 @@
 #include <winrt/Microsoft.Windows.AppLifecycle.h>
 #include "AppLaunchMode.h"
 #include "FastcopySettingsSingleInstanceLock.h"
+#include "RobocopyViewModel.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -23,8 +24,6 @@ namespace winrt::FastCopy::implementation
          */
         static bool HasAnotherInstance();
     private:
-        winrt::Microsoft::UI::Xaml::Window m_mainWindow{ nullptr };
-
         std::optional<FastcopySettingsSingleInstanceLock> m_settingsLock;
 
         /**
@@ -36,5 +35,11 @@ namespace winrt::FastCopy::implementation
          * @brief This should be the last function to call in `App::OnLaunched()`, it runs all the copy logic.
          */
         void normalLaunch();
+
+        /*
+        * @brief Shows the appropriate confirm delete window based on item count and type.
+        * @param viewModel Pointer to the RobocopyViewModel implementation
+        */
+        winrt::fire_and_forget showConfirmDeleteWindowIfNeeded(RobocopyViewModel* viewModel);
     };
 }

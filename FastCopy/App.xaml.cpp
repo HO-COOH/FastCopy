@@ -7,6 +7,9 @@
 #include "CopyDialogWindow.xaml.h"
 #include "SettingsWindow.xaml.h"
 #include "WelcomeWindow.xaml.h"
+#include "ConfirmDeleteFileWindow.xaml.h"
+#include "ConfirmDeleteFolderWindow.xaml.h"
+#include "ConfirmDeleteMultipleItemsWindow.xaml.h"
 #include "ViewModelLocator.h"
 #include <winrt/Windows.ApplicationModel.DataTransfer.h>
 #include "CommandLine.h"
@@ -21,6 +24,21 @@
 
 namespace winrt::FastCopy::implementation
 {
+    namespace
+    {
+        template<typename ImplementationType>
+        winrt::Windows::Foundation::IAsyncOperation<bool> ShowConfirmWindowAsync(ImplementationType* impl)
+        {
+            winrt::handle completionEvent{ CreateEvent(nullptr, TRUE, FALSE, nullptr) };
+            
+            impl->Closed([event = completionEvent.get()](auto&&, auto&&) { SetEvent(event); });
+            impl->Activate();
+            
+            co_await winrt::resume_on_signal(completionEvent.get());
+            co_return impl->Result;
+        }
+    }
+
     App::App()
     {
         InitializeComponent();
@@ -40,23 +58,24 @@ namespace winrt::FastCopy::implementation
     void App::OnLaunched(winrt::Microsoft::UI::Xaml::LaunchActivatedEventArgs const&)
     {
         CommandLineHandler::AppLaunchMode == AppLaunchMode::LaunchSettings ? launchSettings() : normalLaunch();
-        m_mainWindow.Activate();
     }
 
     void App::launchSettings()
     {
         m_settingsLock.emplace();
-        if (Settings settings; settings.Get(Settings::IsFirstLaunch, true)/*true*/)
+        Settings settings;
+        if (settings.Get(Settings::IsFirstLaunch, true))
         {
-            m_mainWindow = make<WelcomeWindow>();
+            winrt::FastCopy::WelcomeWindow window;
+            window.Activate();
             settings.Set(Settings::IsFirstLaunch, false);
         }
         else
         {
-            m_mainWindow = make<SettingsWindow>();
-            Global::windowEffectHelper.SetTarget(m_mainWindow);
+            winrt::FastCopy::SettingsWindow window;
+            Global::windowEffectHelper.SetTarget(window);
+            window.Activate();
         }
-        winrt::FastCopy::ConfirmDeleteFileWindow{}.Activate();
     }
 
     bool winrt::FastCopy::implementation::App::HasAnotherInstance()
@@ -80,12 +99,51 @@ namespace winrt::FastCopy::implementation
         viewModel->Destination(destination);
         viewModel->RecordFile(winrt::hstring{ recordFile });
 
+        if (viewModel->m_recordFile->GetOperation() == CopyOperation::Delete && Settings{}.Get(Settings::ConfirmDelete, true))
+        {
+            showConfirmDeleteWindowIfNeeded(viewModel);
+            return;
+        }
+
         LOGI(L"App started, record file: {}", recordFile.data());
 
-        m_mainWindow = make<CopyDialogWindow>();
-        Global::windowEffectHelper.SetTarget(m_mainWindow);
+        winrt::FastCopy::CopyDialogWindow window;
+        Global::windowEffectHelper.SetTarget(window);
         Global::windowEffectHelper.SetListenThemeChange();
+        window.Activate();
         viewModel->Start();
     }
 
+    winrt::fire_and_forget App::showConfirmDeleteWindowIfNeeded(RobocopyViewModel* viewModel)
+    {
+        auto& taskFile = *viewModel->m_recordFile;
+        auto const itemCount = std::distance(taskFile.begin(), taskFile.end());
+        
+        if (itemCount == 0)
+            co_return;
+
+        if (itemCount > 1)
+        {
+            if (!co_await ShowConfirmWindowAsync(winrt::make_self<ConfirmDeleteMultipleItemsWindow>().get()))
+                co_return;
+        }
+        else if (std::filesystem::is_directory(*taskFile.begin()))
+        {
+            if (!co_await ShowConfirmWindowAsync(winrt::make_self<ConfirmDeleteFolderWindow>().get()))
+                co_return;
+        }
+        else
+        {
+            if (!co_await ShowConfirmWindowAsync(winrt::make_self<ConfirmDeleteFileWindow>().get()))
+                co_return;
+        }
+
+        LOGI(L"App started (after delete confirmation), record file: {}", taskFile.GetPath().data());
+        
+        winrt::FastCopy::CopyDialogWindow window;
+        Global::windowEffectHelper.SetTarget(window);
+        Global::windowEffectHelper.SetListenThemeChange();
+        window.Activate();
+        viewModel->Start();
+    }
 }

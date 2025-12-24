@@ -1,19 +1,18 @@
 #pragma once
 
 #include "ConfirmDeleteMultipleItemsWindow.g.h"
+#include "ConfirmWindowBase.h"
 
 namespace winrt::FastCopy::implementation
 {
-    struct ConfirmDeleteMultipleItemsWindow : ConfirmDeleteMultipleItemsWindowT<ConfirmDeleteMultipleItemsWindow>
+    struct ConfirmDeleteMultipleItemsWindow : ConfirmDeleteMultipleItemsWindowT<ConfirmDeleteMultipleItemsWindow>, ConfirmWindowBase<ConfirmDeleteMultipleItemsWindow>
     {
-        ConfirmDeleteMultipleItemsWindow()
-        {
-            // Xaml objects should not call InitializeComponent during construction.
-            // See https://github.com/microsoft/cppwinrt/tree/master/nuget#initializecomponent
-        }
+        ConfirmDeleteMultipleItemsWindow();
 
-        int32_t MyProperty();
-        void MyProperty(int32_t value);
+        winrt::hstring const& ItemCountText() const;
+        
+    private:
+        winrt::hstring m_itemCountText;
     };
 }
 

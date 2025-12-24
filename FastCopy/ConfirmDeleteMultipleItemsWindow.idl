@@ -4,5 +4,7 @@ namespace FastCopy
     runtimeclass ConfirmDeleteMultipleItemsWindow : Microsoft.UI.Xaml.Window
     {
         ConfirmDeleteMultipleItemsWindow();
+        
+        String ItemCountText{ get; };
     }
 }

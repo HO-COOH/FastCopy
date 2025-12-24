@@ -55,6 +55,8 @@ namespace winrt::FastCopy::implementation
         winrt::Windows::Foundation::IAsyncOperation<uint64_t> GetTotalSize();
 
 		FastCopy::TaskbarState State();
+
+        std::optional<TaskFile> m_recordFile;
     private:
         double m_bytesPerSec{};
 
@@ -70,7 +72,6 @@ namespace winrt::FastCopy::implementation
         winrt::hstring m_destination;
         std::atomic_uint64_t m_copiedBytes{};
         uint64_t m_size{};
-        std::optional<TaskFile> m_recordFile;
         uint64_t m_totalSize{};
         mutable std::optional<TaskFile::TaskFileIterator<typename std::vector<std::wstring>::iterator>> m_iter;
         TaskFile::TaskFileIterator<typename std::vector<std::wstring>::iterator> m_recordFileBegin;
