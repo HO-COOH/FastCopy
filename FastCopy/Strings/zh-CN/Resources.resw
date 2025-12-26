@@ -306,4 +306,19 @@
   <data name="ConfirmDeleteFileTitleTextBlock.Text" xml:space="preserve">
     <value>确认要删除这个文件吗？</value>
   </data>
+  <data name="ConfirmDeleteMultipleItemsRun1.Text" xml:space="preserve">
+    <value>确认要删除</value>
+  </data>
+  <data name="ConfirmDeleteMultipleItemsRun2.Text" xml:space="preserve">
+    <value>个文件吗？</value>
+  </data>
+  <data name="ConfirmDeleteFolderTitleTextBlock.Text" xml:space="preserve">
+    <value>确认要删除这个文件夹吗？</value>
+  </data>
+  <data name="ConfirmDeleteFolderWindowTitle" xml:space="preserve">
+    <value>删除文件夹</value>
+  </data>
+  <data name="ConfirmDeleteMultipleItemsWindowTitle" xml:space="preserve">
+    <value>删除多个文件/文件夹</value>
+  </data>
 </root>

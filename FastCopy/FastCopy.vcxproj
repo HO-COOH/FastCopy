@@ -217,6 +217,8 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\PackageConfig.h" />
+    <ClInclude Include="..\Public\PropertyDescription.h" />
+    <ClInclude Include="..\Public\ShellItem2.h" />
     <ClInclude Include="AcrylicHelper.h" />
     <ClInclude Include="AnimatedValue.h" />
     <ClInclude Include="AnimatedWindowSize.h" />
@@ -259,6 +261,10 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
       <DependentUpon>FileCompareViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="FileIcon.xaml.h">
+      <DependentUpon>FileIcon.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="FileInfoViewModel.h">
       <DependentUpon>FileInfoViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -294,6 +300,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
       <DependentUpon>ReadableUnitConverterWinRT.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="RecycleBinIcon.h" />
     <ClInclude Include="RenameUtils.h" />
     <ClInclude Include="RenameUtils.TempFileAutoDeleter.h" />
     <ClInclude Include="resource.h" />
@@ -363,6 +370,9 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <Page Include="CopyDialogWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="FileIcon.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="SettingsWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -374,6 +384,8 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Public\PropertyDescription.cpp" />
+    <ClCompile Include="..\Public\ShellItem2.cpp" />
     <ClCompile Include="AcrylicHelper.cpp" />
     <ClCompile Include="AnimatedValue.cpp" />
     <ClCompile Include="AnimatedWindowSize.cpp" />
@@ -409,6 +421,10 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
       <DependentUpon>FileCompareViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="FileIcon.xaml.cpp">
+      <DependentUpon>FileIcon.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="FileInfoViewModel.cpp">
       <DependentUpon>FileInfoViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -442,6 +458,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
       <DependentUpon>ReadableUnitConverterWinRT.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="RecycleBinIcon.cpp" />
     <ClCompile Include="RenameUtils.cpp" />
     <ClCompile Include="RenameUtils.TempFileAutoDeleter.cpp" />
     <ClCompile Include="ResourceHelper.cpp" />
@@ -515,6 +532,10 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     </Midl>
     <Midl Include="FileCompareViewModel.idl">
       <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="FileIcon.idl">
+      <DependentUpon>FileIcon.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Midl>
     <Midl Include="FileInfoViewModel.idl">
       <SubType>Designer</SubType>
@@ -720,7 +741,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <Import Project="..\packages\Microsoft.WindowsAppSDK.Widgets.1.8.250904007\build\native\Microsoft.WindowsAppSDK.Widgets.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.Widgets.1.8.250904007\build\native\Microsoft.WindowsAppSDK.Widgets.targets')" />
     <Import Project="..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.250906003\build\native\Microsoft.WindowsAppSDK.WinUI.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.250906003\build\native\Microsoft.WindowsAppSDK.WinUI.targets')" />
     <Import Project="..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.targets')" />
-    <Import Project="..\packages\WinUIEssential.WinUI3.1.3.22\build\native\WinUIEssential.WinUI3.targets" Condition="Exists('..\packages\WinUIEssential.WinUI3.1.3.22\build\native\WinUIEssential.WinUI3.targets')" />
+    <Import Project="..\packages\WinUIEssential.WinUI3.1.3.29\build\native\WinUIEssential.WinUI3.targets" Condition="Exists('..\packages\WinUIEssential.WinUI3.1.3.29\build\native\WinUIEssential.WinUI3.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -756,6 +777,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.250906003\build\native\Microsoft.WindowsAppSDK.WinUI.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.250906003\build\native\Microsoft.WindowsAppSDK.WinUI.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.targets'))" />
-    <Error Condition="!Exists('..\packages\WinUIEssential.WinUI3.1.3.22\build\native\WinUIEssential.WinUI3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinUIEssential.WinUI3.1.3.22\build\native\WinUIEssential.WinUI3.targets'))" />
+    <Error Condition="!Exists('..\packages\WinUIEssential.WinUI3.1.3.29\build\native\WinUIEssential.WinUI3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinUIEssential.WinUI3.1.3.29\build\native\WinUIEssential.WinUI3.targets'))" />
   </Target>
 </Project>

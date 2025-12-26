@@ -14,14 +14,16 @@ inline std::wstring ToBackslash(std::wstring_view source)
 }
 
 /**
- * @brief Returns a `IShellItem`(default) or `IShellItem2` from `path`
+ * @brief Returns a smart pointer to `IShellItem` or `IShellItem2` from `path`
+ * @tparam SmartPtr A smart pointer template (e.g., winrt::com_ptr, wil::com_ptr)
+ * @tparam ShellItemInterface The shell item interface type (IShellItem or IShellItem2)
  * @warning Throws if operation failed
  */
-template<typename ShellItemInterface = IShellItem>
+template<template<typename> class SmartPtr = winrt::com_ptr, typename ShellItemInterface = IShellItem>
     requires std::is_same_v<ShellItemInterface, IShellItem> || std::is_same_v<ShellItemInterface, IShellItem2>
-auto CreateItemFromParsingName(wchar_t const* path)
+SmartPtr<ShellItemInterface> CreateItemFromParsingName(wchar_t const* path)
 {
-    winrt::com_ptr<ShellItemInterface> item;
+    SmartPtr<ShellItemInterface> item;
     winrt::check_hresult(SHCreateItemFromParsingName(path, NULL, IID_PPV_ARGS(item.put())));
     return item;
 }

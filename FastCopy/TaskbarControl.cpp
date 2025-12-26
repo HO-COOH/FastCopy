@@ -5,6 +5,7 @@
 #endif
 #include "Taskbar.h"
 #include "WindowHelper.h"
+#include <include/HwndHelper.hpp>
 
 constexpr static auto toWin32TaskbarState(winrt::FastCopy::TaskbarState state)
 {

@@ -1,9 +1,9 @@
 #include "ShellItem.h"
 #include <ShObjIdl_core.h>
 
-ShellItem::ShellItem(std::wstring_view path)
+ShellItem::ShellItem(wchar_t const* path)
 {
-    THROW_IF_FAILED(SHCreateItemFromParsingName(path.data(), nullptr, IID_PPV_ARGS(m_ptr.put())));
+    THROW_IF_FAILED(SHCreateItemFromParsingName(path, nullptr, IID_PPV_ARGS(m_ptr.put())));
 }
 
 wchar_t* ShellItem::GetDisplayName() const

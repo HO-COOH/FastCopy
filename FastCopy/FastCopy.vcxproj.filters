@@ -25,6 +25,9 @@
     <Page Include="ConfirmDeleteMultipleItemsWindow.xaml">
       <Filter>Views\ConfirmDeleteWindows</Filter>
     </Page>
+    <Page Include="FileIcon.xaml">
+      <Filter>Views\Controls</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
@@ -173,6 +176,15 @@
     </ClCompile>
     <ClCompile Include="EmptyFolder.cpp">
       <Filter>Utils\Robocopy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Public\ShellItem2.cpp">
+      <Filter>Utils\COM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Public\PropertyDescription.cpp">
+      <Filter>Utils\COM</Filter>
+    </ClCompile>
+    <ClCompile Include="RecycleBinIcon.cpp">
+      <Filter>Views\Controls</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -341,6 +353,15 @@
     </ClInclude>
     <ClInclude Include="ConfirmWindowBase.h">
       <Filter>Views\ConfirmDeleteWindows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ShellItem2.h">
+      <Filter>Utils\COM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PropertyDescription.h">
+      <Filter>Utils\COM</Filter>
+    </ClInclude>
+    <ClInclude Include="RecycleBinIcon.h">
+      <Filter>Views\Controls</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -597,6 +618,9 @@
     </Filter>
     <Filter Include="Views\ConfirmDeleteWindows">
       <UniqueIdentifier>{4b17f77e-f06e-4068-908d-aa14845530b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\COM">
+      <UniqueIdentifier>{894d8f22-f303-4786-95da-f8e14e76b627}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

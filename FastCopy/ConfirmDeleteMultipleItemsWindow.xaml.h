@@ -9,8 +9,9 @@ namespace winrt::FastCopy::implementation
     {
         ConfirmDeleteMultipleItemsWindow();
 
-        winrt::hstring const& ItemCountText() const;
+        winrt::hstring ItemCountText();
         
+        constexpr static winrt::Windows::Graphics::SizeInt32 Size{ 545, 152 };
     private:
         winrt::hstring m_itemCountText;
     };

@@ -3,18 +3,11 @@
 #include <microsoft.ui.xaml.window.h>
 #include <winrt/Microsoft.UI.Interop.h>
 #include "Global.h"
+#include <include/HwndHelper.hpp>
 
 LONG ScaleForDpi(UINT value, UINT dpi)
 {
     return static_cast<LONG>(value * (dpi / 96.0));
-}
-
-HWND GetHwnd(winrt::Microsoft::UI::Xaml::Window window)
-{
-    HWND hwnd{};
-    window.as<IWindowNative>()->get_WindowHandle(&hwnd);
-    Global::MainHwnd = hwnd;
-    return hwnd;
 }
 
 winrt::Microsoft::UI::Windowing::AppWindow GetAppWindow(winrt::Microsoft::UI::Xaml::Window window)
@@ -58,6 +51,22 @@ void CenterWindow(winrt::Microsoft::UI::Xaml::Window window)
         (monitorInfo.rcWork.bottom - monitorInfo.rcWork.top - windowHeight) / 2,
         0, 0,
         SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOZORDER
+    );
+}
+
+void CenterWindow(HWND window, winrt::Windows::Graphics::SizeInt32 size)
+{
+    auto const monitorInfo = MonitorInfo::GetFromWindow(window);
+    auto const dpi = GetDpiForWindow(window);
+    auto const scaledWidth = ScaleForDpi(size.Width, dpi);
+    auto const scaledHeight = ScaleForDpi(size.Height, dpi);
+    SetWindowPos(
+        window,
+        nullptr,
+        (monitorInfo.rcWork.right - monitorInfo.rcWork.left - scaledWidth) / 2,
+        (monitorInfo.rcWork.bottom - monitorInfo.rcWork.top - scaledHeight) / 2,
+        scaledWidth, scaledHeight,
+        SWP_NOACTIVATE | SWP_NOZORDER
     );
 }
 

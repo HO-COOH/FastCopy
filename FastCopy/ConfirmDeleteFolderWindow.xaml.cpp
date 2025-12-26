@@ -21,7 +21,7 @@ namespace winrt::FastCopy::implementation
         m_folderName = winrt::hstring{ folderPath.filename().wstring() };
     }
 
-    winrt::hstring const& ConfirmDeleteFolderWindow::FolderName() const
+    winrt::hstring ConfirmDeleteFolderWindow::FolderName()
     {
         return m_folderName;
     }

@@ -9,7 +9,9 @@ namespace winrt::FastCopy::implementation
     {
         ConfirmDeleteFolderWindow();
 
-        winrt::hstring const& FolderName() const;
+        winrt::hstring FolderName();
+
+        constexpr static winrt::Windows::Graphics::SizeInt32 Size{ 545, 200 };
     private:
         winrt::hstring m_folderName;
     };

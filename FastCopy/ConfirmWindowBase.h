@@ -1,4 +1,8 @@
 #pragma once
+#include "RecycleBinIcon.h"
+#include <include/HwndHelper.hpp>
+#include "WindowHelper.h"
+
 namespace winrt
 {
 	namespace Windows::Foundation
@@ -16,6 +20,17 @@ template<typename Derived>
 struct ConfirmWindowBase
 {
 	bool Result{};
+
+	ConfirmWindowBase()
+	{
+		auto self = static_cast<Derived*>(this);
+		self->InitializeComponent();
+		self->RecycleBinIcon().Source(::RecycleBinIcon{});
+		auto const hwnd = GetHwnd(*self);
+		SetWindowLongPtr(hwnd, GWL_STYLE, GetWindowLongPtr(hwnd, GWL_STYLE) /*& ~WS_THICKFRAME*/ & ~WS_MAXIMIZEBOX & ~WS_MINIMIZEBOX);
+		SetWindowLongPtr(hwnd, GWL_EXSTYLE, GetWindowLongPtr(hwnd, GWL_EXSTYLE) | WS_EX_DLGMODALFRAME);
+		CenterWindow(hwnd, Derived::Size);
+	}
 
 	void YesButton_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{

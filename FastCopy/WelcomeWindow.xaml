@@ -74,7 +74,7 @@
 
                     <StackPanel.Resources>
                         <essential:WindowCaptionButtonThemeWorkaround x:Name="CaptionButtonsWorkaround" Window="{x:Bind}" />
-                        <essential:WindowWorkaround
+                        <essential:NonMaximizableWindowWorkaround
                             x:Name="NonMaximizableWindowWorkaround"
                             IsMaximizable="False"
                             Window="{x:Bind}" />

@@ -4,33 +4,96 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
     xmlns:local="using:FastCopy"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Uid="ConfirmDeleteFileWindow"
     mc:Ignorable="d">
 
-    <Grid Padding="24" RowSpacing="16">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <Window.SystemBackdrop>
+        <essential:MicaBackdropWithFallback>
+            <essential:MicaBackdropWithFallback.Fallback>
+                <DesktopAcrylicBackdrop />
+            </essential:MicaBackdropWithFallback.Fallback>
+        </essential:MicaBackdropWithFallback>
+    </Window.SystemBackdrop>
 
-        <TextBlock x:Uid="ConfirmDeleteFileTitleTextBlock" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap" />
-        
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+    <Grid>
+        <Grid.Resources>
+            <essential:NonMaximizableWindowWorkaround
+                x:Name="NonMaximizableWorkaround"
+                IsMaximizable="False"
+                Window="{x:Bind}" />
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-            <Image x:Name="FileIcon" Width="48" Height="48" Margin="0,0,12,0" />
-            <TextBlock Grid.Column="1" Text="{x:Bind FileName}" VerticalAlignment="Center" TextWrapping="Wrap" />
+        <Image x:Name="RecycleBinIcon" Style="{StaticResource RecycleBinIconStyle}" />
+
+        <Grid Grid.Column="1" Style="{StaticResource ConfirmDeleteWindowContentGridStyle}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock
+                x:Uid="ConfirmDeleteFileTitleTextBlock"
+                FontSize="16"
+                FontWeight="SemiBold"
+                TextWrapping="Wrap" />
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <local:FileIcon
+                    x:Name="FileIcon"
+                    Width="48"
+                    Height="48"
+                    Margin="0,0,12,0"
+                    Path="{x:Bind FilePath}" />
+
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="{x:Bind FileInfo.Filename}" TextWrapping="Wrap" />
+                    <TextBlock>
+                        <Run Text="{x:Bind local:ConfirmDeleteFileWindow.TypeDescription}" />
+                        :<Run Text="{x:Bind FileInfo.Description}" />
+                    </TextBlock>
+                    <TextBlock>
+                        <Run Text="{x:Bind local:ConfirmDeleteFileWindow.SizeDescription}" />
+                        :<Run Text="{x:Bind local:ReadableUnitConverterWinRT.ConvertSize(FileInfo.Bytes)}" />
+                    </TextBlock>
+                    <TextBlock>
+                        <Run Text="{x:Bind local:ConfirmDeleteFileWindow.DateDescription}" />
+                        :<Run Text="{x:Bind local:ReadableUnitConverterWinRT.ConvertDateTime(FileInfo.CreateTime)}" />
+                    </TextBlock>
+                </StackPanel>
+
+            </Grid>
+
+            <StackPanel
+                Grid.Row="2"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal"
+                Spacing="8">
+                <Button
+                    x:Name="YesButton"
+                    x:Uid="YesButton"
+                    MinWidth="80"
+                    Click="YesButton_Click"
+                    Style="{StaticResource AccentButtonStyle}" />
+                <Button
+                    x:Name="NoButton"
+                    x:Uid="NoButton"
+                    MinWidth="80"
+                    Click="NoButton_Click" />
+            </StackPanel>
         </Grid>
-
-        <StackPanel Grid.Row="2" HorizontalAlignment="Right" Orientation="Horizontal" Spacing="8">
-            <Button x:Name="YesButton" x:Uid="YesButton" Click="YesButton_Click" Style="{StaticResource AccentButtonStyle}" MinWidth="80" />
-            <Button x:Name="NoButton" x:Uid="NoButton" Click="NoButton_Click" MinWidth="80" />
-        </StackPanel>
     </Grid>
+
 </Window>

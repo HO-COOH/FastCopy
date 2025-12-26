@@ -14,6 +14,8 @@
 #include "ViewModelLocator.h"
 #include "RobocopyViewModel.h"
 #include "PathUtils.h"
+#include "ShellItem2.h"
+#include "PropertyDescription.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -25,6 +27,14 @@ namespace winrt::FastCopy::implementation
     {
 		return std::filesystem::path{ m_path.data()}.filename().wstring().data();
     }
+
+	winrt::hstring FileInfoViewModel::Description()
+	{
+		if (!m_shellItem)
+			m_shellItem = ShellItem2{ m_path.data() };
+
+		return m_shellItem.GetString(PKEY_ItemType).get();
+	}
 
     uint64_t FileInfoViewModel::Bytes()
     {
@@ -72,33 +82,32 @@ namespace winrt::FastCopy::implementation
 		return image;
 	}
 
-	static auto GetShellPropStringFromPath(LPCWSTR pPath, PROPERTYKEY const& key)
-	{
-		winrt::com_ptr<IShellItem2> pItem = CreateItemFromParsingName<IShellItem2>(pPath);
-
-		wil::unique_cotaskmem_string pValue;
-		pItem->GetString(key, &pValue);
-		return pValue;
-	}
-
 	winrt::Windows::Foundation::Collections::IVector<winrt::Windows::Foundation::IInspectable> FileInfoViewModel::tooltipInfo()
 	{
 		std::vector<winrt::Windows::Foundation::IInspectable> m_tooltipInfo;
 		m_tooltipInfo.reserve(4);
-		for (auto&& [name, key] : 
+
+		if (!m_shellItem)
+			m_shellItem = ShellItem2{ m_path.data() };
+		for (auto key: 
 			{
-				std::pair{L"FileDescription", PKEY_FileDescription},
-				std::pair{L"ProductName", PKEY_Software_ProductName},
-				std::pair{L"FileVersion", PKEY_FileVersion},
-				std::pair{L"Copyright", PKEY_Copyright } 
+				PKEY_FileDescription,
+				PKEY_Software_ProductName,
+				PKEY_FileVersion,
+				PKEY_Copyright 
 			})
 		{
 			try 
 			{
-				auto value = GetShellPropStringFromPath(m_path.data(), key);
+				auto value = m_shellItem.GetString(key);
 				if (!value)
 					continue;
-				m_tooltipInfo.push_back(winrt::box_value(winrt::FastCopy::ExtendedFileInfo{ .name = name, .value = value.get() }));
+				m_tooltipInfo.push_back(winrt::box_value(winrt::FastCopy::ExtendedFileInfo
+					{ 
+						.name = PropertyDescription{key}.GetDisplayName().get(),
+						.value = value.get() 
+					}
+				));
 			}
 			catch(...){}
 		}

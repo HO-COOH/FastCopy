@@ -15,9 +15,23 @@
                 <ResourceDictionary Source="ms-appx:///WinUI3Package/Segmented_Resource.xaml" />
                 <ResourceDictionary Source="ms-appx:///WinUi3Package/Glyphs.xaml" />
                 <ResourceDictionary Source="ms-appx:///WinUI3Package/ModernStandardWindowContextMenu_Resource.xaml" />
+                <ResourceDictionary Source="ms-appx:///WinUI3Package/Shimmer_Resource.xaml" />
                 <!--  Other merged dictionaries here  -->
             </ResourceDictionary.MergedDictionaries>
+            <Style BasedOn="{StaticResource DefaultShimmerStyle}" TargetType="local:FileIcon" />
             <!--  Other app resources here  -->
+
+            <Style x:Key="RecycleBinIconStyle" TargetType="Image">
+                <Setter Property="Width" Value="48" />
+                <Setter Property="Height" Value="48" />
+                <Setter Property="Margin" Value="12,32,0,0" />
+                <Setter Property="VerticalAlignment" Value="Top" />
+            </Style>
+
+            <Style x:Key="ConfirmDeleteWindowContentGridStyle" TargetType="Grid">
+                <Setter Property="Margin" Value="12" />
+                <Setter Property="RowSpacing" Value="12" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

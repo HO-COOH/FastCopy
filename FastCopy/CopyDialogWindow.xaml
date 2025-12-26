@@ -14,7 +14,7 @@
     <Grid>
         <Grid.Resources>
             <essential:ModernStandardWindowContextMenu x:Name="WindowContextMenu" Window="{x:Bind}" />
-            <essential:WindowWorkaround
+            <essential:NonMaximizableWindowWorkaround
                 x:Name="NonMaximizableWindowWorkaround"
                 IsMaximizable="False"
                 Window="{x:Bind}" />

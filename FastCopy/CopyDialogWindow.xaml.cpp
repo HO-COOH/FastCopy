@@ -11,7 +11,7 @@
 #include "Global.h"
 #include "Taskbar.h"
 #include "ViewModelLocator.h"
-
+#include <include/HwndHelper.hpp>
 
 namespace winrt::FastCopy::implementation
 {

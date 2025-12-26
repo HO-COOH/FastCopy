@@ -27,7 +27,7 @@
 
 
             <Grid.Resources>
-                <essential:WindowWorkaround
+                <essential:NonMaximizableWindowWorkaround
                     x:Name="NonMaximizableWindowWorkaround"
                     IsMaximizable="False"
                     Window="{x:Bind}" />

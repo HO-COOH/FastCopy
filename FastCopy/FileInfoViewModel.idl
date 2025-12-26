@@ -14,6 +14,8 @@ namespace FastCopy
         
         String Path{ get; };
         String Filename{ get; };
+
+        String Description{ get; };
         
         /*file times */
         Windows.Foundation.DateTime CreateTime{ get; };

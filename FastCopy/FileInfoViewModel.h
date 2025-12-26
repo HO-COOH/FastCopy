@@ -2,6 +2,7 @@
 #include "FileInfoViewModel.g.h"
 #include "WinRTFileTime.h"
 #include <include/PropertyChangeHelper.hpp>
+#include "ShellItem2.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -11,6 +12,8 @@ namespace winrt::FastCopy::implementation
 
         winrt::hstring Path() { return m_path; }
         winrt::hstring Filename();
+
+        winrt::hstring Description();
         
         uint64_t Bytes();
         bool Selected() { return m_selected; }
@@ -20,6 +23,7 @@ namespace winrt::FastCopy::implementation
 
         winrt::Windows::Foundation::Collections::IVector<winrt::Windows::Foundation::IInspectable> tooltipInfo();
     private:
+        ShellItem2 m_shellItem;
         winrt::hstring m_path;
         bool const m_isSource;
         bool m_selected = false;

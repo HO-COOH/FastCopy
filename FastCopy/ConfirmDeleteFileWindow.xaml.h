@@ -2,6 +2,7 @@
 
 #include "ConfirmDeleteFileWindow.g.h"
 #include "ConfirmWindowBase.h"
+#include <filesystem>
 
 namespace winrt::FastCopy::implementation
 {
@@ -9,9 +10,18 @@ namespace winrt::FastCopy::implementation
     {
         ConfirmDeleteFileWindow();
 
-        winrt::hstring const& FileName() const;
+        winrt::hstring FilePath();
+        
+        winrt::FastCopy::FileInfoViewModel FileInfo();
+
+        static winrt::hstring TypeDescription();
+        static winrt::hstring SizeDescription();
+        static winrt::hstring DateDescription();
+
+        constexpr static winrt::Windows::Graphics::SizeInt32 Size{ 545, 222 };
     private:
-        winrt::hstring m_fileName;
+        std::filesystem::path m_path;
+        winrt::FastCopy::FileInfoViewModel m_fileInfo{ nullptr };
     };
 }
 
