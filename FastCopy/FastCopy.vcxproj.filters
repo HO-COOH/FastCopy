@@ -28,6 +28,9 @@
     <Page Include="FileIcon.xaml">
       <Filter>Views\Controls</Filter>
     </Page>
+    <Page Include="FolderIcon.xaml">
+      <Filter>Views\Controls</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />

@@ -321,4 +321,7 @@
   <data name="ConfirmDeleteMultipleItemsWindowTitle" xml:space="preserve">
     <value>Delete Multiple Items</value>
   </data>
+  <data name="ConfirmDeleteWarningText.Text" xml:space="preserve">
+    <value>You will still get a confirmation dialog for the first time</value>
+  </data>
 </root>

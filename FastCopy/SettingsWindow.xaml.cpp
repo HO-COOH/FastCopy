@@ -7,6 +7,8 @@
 #include "ViewModelLocator.h"
 #include <PackageConfig.h>
 #include "RenameUtils.h"
+#include <winrt/Microsoft.UI.Composition.h>
+#include <winrt/Microsoft.UI.Xaml.Hosting.h>
 
 namespace winrt::FastCopy::implementation
 {
@@ -72,6 +74,54 @@ namespace winrt::FastCopy::implementation
         winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const&)
     {
         RootPanel_ActualThemeChanged(RootPanel(), nullptr);
+    }
+
+
+    winrt::Microsoft::UI::Xaml::Visibility SettingsWindow::NotToVisibility(bool value)
+    {
+        return value ? winrt::Microsoft::UI::Xaml::Visibility::Collapsed 
+                     : winrt::Microsoft::UI::Xaml::Visibility::Visible;
+    }
+
+    void SettingsWindow::playTextRevealAnimation(winrt::Microsoft::UI::Xaml::Controls::TextBlock const& textBlock)
+    {
+        auto visual = winrt::Microsoft::UI::Xaml::Hosting::ElementCompositionPreview::GetElementVisual(textBlock);
+        auto compositor = visual.Compositor();
+        
+        auto clip = compositor.CreateInsetClip();
+        auto const textWidth = static_cast<float>(textBlock.ActualWidth());
+        clip.RightInset(textWidth);
+        
+        visual.Clip(clip);
+        
+        auto animation = compositor.CreateScalarKeyFrameAnimation();
+        animation.InsertKeyFrame(0.0f, textWidth);
+        animation.InsertKeyFrame(1.0f, 0.0f);
+        animation.Duration(std::chrono::milliseconds{ 500 });
+        
+        clip.StartAnimation(L"RightInset", animation);
+    }
+
+    void SettingsWindow::TextBlock_Loaded(
+        winrt::Windows::Foundation::IInspectable const& sender, 
+        winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+    {
+        auto textBlock = sender.as<winrt::Microsoft::UI::Xaml::Controls::TextBlock>();
+        
+        // Play animation on initial load if visible
+        if (textBlock.Visibility() == winrt::Microsoft::UI::Xaml::Visibility::Visible)
+            playTextRevealAnimation(textBlock);
+        
+        // Register callback for visibility changes to replay animation
+        textBlock.RegisterPropertyChangedCallback(
+            winrt::Microsoft::UI::Xaml::UIElement::VisibilityProperty(),
+            [this](winrt::Microsoft::UI::Xaml::DependencyObject const& sender, winrt::Microsoft::UI::Xaml::DependencyProperty const&)
+            {
+                auto tb = sender.as<winrt::Microsoft::UI::Xaml::Controls::TextBlock>();
+                if (tb.Visibility() == winrt::Microsoft::UI::Xaml::Visibility::Visible)
+                    playTextRevealAnimation(tb);
+            }
+        );
     }
 
 }

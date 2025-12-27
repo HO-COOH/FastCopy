@@ -275,6 +275,10 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     </ClInclude>
     <ClInclude Include="FileTime.h" />
     <ClInclude Include="FileWrapper.h" />
+    <ClInclude Include="FolderIcon.xaml.h">
+      <DependentUpon>FolderIcon.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="GdiplusInitializer.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="ImageUtils.h" />
@@ -373,6 +377,9 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <Page Include="FileIcon.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="FolderIcon.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="SettingsWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -435,6 +442,10 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     </ClCompile>
     <ClCompile Include="FileTime.cpp" />
     <ClCompile Include="FileWrapper.cpp" />
+    <ClCompile Include="FolderIcon.xaml.cpp">
+      <DependentUpon>FolderIcon.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="ImageUtils.cpp" />
     <ClCompile Include="main.cpp" />
@@ -542,6 +553,10 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     </Midl>
     <Midl Include="FileMenu.idl">
       <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="FolderIcon.idl">
+      <DependentUpon>FolderIcon.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </Midl>
     <Midl Include="ICopyBase.idl" />
     <Midl Include="NumberToStringConverter.idl">

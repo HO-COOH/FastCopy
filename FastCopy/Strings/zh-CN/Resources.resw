@@ -321,4 +321,7 @@
   <data name="ConfirmDeleteMultipleItemsWindowTitle" xml:space="preserve">
     <value>删除多个文件/文件夹</value>
   </data>
+  <data name="ConfirmDeleteWarningText.Text" xml:space="preserve">
+    <value>第一次删除文件的时候仍会显示对话框</value>
+  </data>
 </root>

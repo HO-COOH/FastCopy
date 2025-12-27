@@ -57,7 +57,31 @@ namespace winrt::FastCopy::implementation
 
     void App::OnLaunched(winrt::Microsoft::UI::Xaml::LaunchActivatedEventArgs const&)
     {
-        CommandLineHandler::AppLaunchMode == AppLaunchMode::LaunchSettings ? launchSettings() : normalLaunch();
+        try
+        {
+            CommandLineHandler::AppLaunchMode == AppLaunchMode::LaunchSettings ? launchSettings() : normalLaunch();
+        }
+        catch (winrt::hresult_error const& e)
+        {
+            MessageBox(
+                nullptr,
+                e.message().data(),
+                L"RoboCopyEx Error",
+                MB_ICONEXCLAMATION
+            );
+        }
+        catch (std::exception const& e)
+        {
+            MessageBoxA(
+                nullptr,
+                e.what(),
+                "RoboCopyEx Error",
+                MB_ICONEXCLAMATION
+            );
+        }
+        catch (...)
+        {
+        }
     }
 
     void App::launchSettings()
@@ -99,7 +123,9 @@ namespace winrt::FastCopy::implementation
         viewModel->Destination(destination);
         viewModel->RecordFile(winrt::hstring{ recordFile });
 
-        if (viewModel->m_recordFile->GetOperation() == CopyOperation::Delete && Settings{}.Get(Settings::ConfirmDelete, true))
+        Settings settings;
+        bool const shouldConfirm = settings.Get(Settings::ConfirmDelete, true) || settings.Get(Settings::IsFirstConfirm, true);
+        if (viewModel->m_recordFile->GetOperation() == CopyOperation::Delete && shouldConfirm)
         {
             showConfirmDeleteWindowIfNeeded(viewModel);
             return;

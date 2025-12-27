@@ -8,5 +8,7 @@ namespace FastCopy
         SettingsWindow();
 
         FastCopy.SettingsViewModel ViewModel{ get; };
+        
+        static Microsoft.UI.Xaml.Visibility NotToVisibility(Boolean value);
     }
 }

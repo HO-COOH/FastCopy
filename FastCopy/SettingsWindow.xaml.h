@@ -24,6 +24,11 @@ namespace winrt::FastCopy::implementation
         );
     private:
         void isRenameSuffixInvalid(bool value);
+        void playTextRevealAnimation(winrt::Microsoft::UI::Xaml::Controls::TextBlock const& textBlock);
+    public:
+        void TextBlock_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        
+        static winrt::Microsoft::UI::Xaml::Visibility NotToVisibility(bool value);
     };
 }
 

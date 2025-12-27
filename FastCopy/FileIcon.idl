@@ -1,7 +1,7 @@
 namespace FastCopy
 {
     [default_interface]
-    runtimeclass FileIcon :/* Microsoft.UI.Xaml.Controls.UserControl*/ WinUI3Package.Shimmer
+    runtimeclass FileIcon : WinUI3Package.Shimmer
     {
         FileIcon();
     

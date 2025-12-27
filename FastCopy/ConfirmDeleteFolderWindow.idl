@@ -6,5 +6,7 @@ namespace FastCopy
         ConfirmDeleteFolderWindow();
         
         String FolderName{ get; };
+        String FolderPath{ get; };
+        Windows.Foundation.DateTime DateCreated{ get; };
     }
 }

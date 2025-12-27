@@ -1,0 +1,10 @@
+namespace FastCopy
+{
+    [default_interface]
+    runtimeclass FolderIcon : WinUI3Package.Shimmer
+    {
+        FolderIcon();
+        
+        String Path;
+    }
+}

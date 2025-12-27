@@ -164,6 +164,14 @@ namespace winrt::FastCopy::implementation
 						std::lock_guard lock{ m_processStatusMutex };
 						m_perProcessStatus.emplace_back();
 					}
+
+					// Capture whether this is a folder delete operation and the target path
+					std::filesystem::path currentPath{ **m_iter };
+					bool const isDeleteFolderOperation = 
+						m_recordFile->GetOperation() == CopyOperation::Delete && 
+						std::filesystem::is_directory(currentPath);
+					std::wstring folderToDeleteAfterRobocopy = isDeleteFolderOperation ? currentPath.wstring() : L"";
+
 					m_process.emplace_back(std::make_unique<RobocopyProcess>(getRobocopyArg(),
 						overloaded
 						{
@@ -186,9 +194,9 @@ namespace winrt::FastCopy::implementation
 
 								m_perProcessStatus[currentIndex].m_currentFile = std::move(newFile);
 
-	#if (defined DEBUG) || (defined _DEBUG)
+#if (defined DEBUG) || (defined _DEBUG)
 								m_perProcessStatus[currentIndex].DebugSize();
-	#endif
+#endif
 
 								if (!hasPreviousFile)
 									return;
@@ -245,11 +253,19 @@ namespace winrt::FastCopy::implementation
 								m_perProcessStatus[currentIndex].m_currentDir.fullPath = destinationSubfolderPath.string();
 							},
 							/*onProcessExit*/
-							[this, currentIndex](RobocopyProcess::Exit)
+							[this, currentIndex, folderToDeleteAfterRobocopy](RobocopyProcess::Exit)
 							{
 								if (m_perProcessStatus[currentIndex].m_currentFile)
 									++m_finishedFiles;
 								m_copiedBytes += std::exchange(m_perProcessStatus[currentIndex].m_copiedBytes, 0);
+								
+								// After robocopy /MIR finishes, the folder is empty but still exists - delete it
+								if (!folderToDeleteAfterRobocopy.empty())
+								{
+									std::error_code ec;
+									std::filesystem::remove(folderToDeleteAfterRobocopy, ec);
+								}
+
 								if (m_finishedFiles == ItemCount())
 									onNormalRobocopyFinished();
 							},

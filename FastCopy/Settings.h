@@ -15,6 +15,7 @@ struct Settings
 	constexpr static auto RenameBehavior = L"RenameBehavior";
 	constexpr static auto RenameSuffix = L"RenameSuffix";
 	constexpr static auto ConfirmDelete = L"ConfirmDelete";
+	constexpr static auto IsFirstConfirm = L"IsFirstConfirm";
 
 	/**
 	 * @brief Get settings value of a specific type, will throw if the key is not found

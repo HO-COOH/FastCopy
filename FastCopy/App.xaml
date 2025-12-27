@@ -19,6 +19,7 @@
                 <!--  Other merged dictionaries here  -->
             </ResourceDictionary.MergedDictionaries>
             <Style BasedOn="{StaticResource DefaultShimmerStyle}" TargetType="local:FileIcon" />
+            <Style BasedOn="{StaticResource DefaultShimmerStyle}" TargetType="local:FolderIcon" />
             <!--  Other app resources here  -->
 
             <Style x:Key="RecycleBinIconStyle" TargetType="Image">
