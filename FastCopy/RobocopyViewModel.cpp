@@ -166,11 +166,14 @@ namespace winrt::FastCopy::implementation
 					}
 
 					// Capture whether this is a folder delete operation and the target path
-					std::filesystem::path currentPath{ **m_iter };
-					bool const isDeleteFolderOperation = 
-						m_recordFile->GetOperation() == CopyOperation::Delete && 
-						std::filesystem::is_directory(currentPath);
-					std::wstring folderToDeleteAfterRobocopy = isDeleteFolderOperation ? currentPath.wstring() : L"";
+					std::filesystem::path folderToDeleteAfterRobocopy;
+					if (m_recordFile->GetOperation() == CopyOperation::Delete)
+					{
+						std::filesystem::path currentPath{ **m_iter };
+						std::error_code ec;
+						if (std::filesystem::is_directory(currentPath, ec) && !ec)
+							folderToDeleteAfterRobocopy = std::move(currentPath);
+					}
 
 					m_process.emplace_back(std::make_unique<RobocopyProcess>(getRobocopyArg(),
 						overloaded
@@ -253,7 +256,7 @@ namespace winrt::FastCopy::implementation
 								m_perProcessStatus[currentIndex].m_currentDir.fullPath = destinationSubfolderPath.string();
 							},
 							/*onProcessExit*/
-							[this, currentIndex, folderToDeleteAfterRobocopy](RobocopyProcess::Exit)
+							[this, currentIndex, folderToDeleteAfterRobocopy = std::move(folderToDeleteAfterRobocopy)](RobocopyProcess::Exit)
 							{
 								if (m_perProcessStatus[currentIndex].m_currentFile)
 									++m_finishedFiles;
@@ -263,7 +266,7 @@ namespace winrt::FastCopy::implementation
 								if (!folderToDeleteAfterRobocopy.empty())
 								{
 									std::error_code ec;
-									std::filesystem::remove(folderToDeleteAfterRobocopy, ec);
+									std::filesystem::remove_all(folderToDeleteAfterRobocopy, ec);
 								}
 
 								if (m_finishedFiles == ItemCount())

@@ -15,8 +15,9 @@
     IsResizable="False"
     mc:Ignorable="d">
 
+    <!--  Page is required for VisualStateManager to work, because Grid is not a Control  -->
     <Page x:Name="RootPage">
-        <Grid x:Name="RootPanel" ActualThemeChanged="RootPanel_ActualThemeChanged">
+        <Grid x:Name="RootPanel">
             <Grid.BackgroundTransition>
                 <BrushTransition />
             </Grid.BackgroundTransition>
@@ -862,8 +863,7 @@
                         xmlns:backdrops="using:Microsoft.UI.Composition.SystemBackdrops"
                         x:Name="WindowBackgroundComboBox"
                         essential:ComboBoxHelper.AcrylicWorkaround="True"
-                        SelectedIndex="{x:Bind ViewModel.BackgroundSelection, Mode=TwoWay}"
-                        SelectionChanged="WindowBackgroundComboBox_SelectionChanged">
+                        SelectedIndex="{x:Bind ViewModel.BackgroundSelection, Mode=TwoWay}">
                         <ComboBoxItem x:Uid="MicaItem" IsEnabled="{x:Bind backdrops:MicaController.IsSupported()}" />
                         <ComboBoxItem x:Uid="AcrylicItem" />
                         <ComboBoxItem x:Uid="CustomItem" />

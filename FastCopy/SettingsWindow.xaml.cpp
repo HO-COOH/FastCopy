@@ -45,7 +45,7 @@ namespace winrt::FastCopy::implementation
 
     void SettingsWindow::isRenameSuffixInvalid(bool value)
     {
-        winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(/*RootPage()*/RenameSuffixTextBox(), value ? L"Invalid" : L"Valid", false);
+        winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(RenameSuffixTextBox(), value ? L"Invalid" : L"Valid", false);
         winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(RootPage(), value ? L"InvalidRenameSuffixState" : L"Normal", false);
     }
 
@@ -55,25 +55,6 @@ namespace winrt::FastCopy::implementation
         winrt::Microsoft::UI::Xaml::Controls::TextChangedEventArgs const&)
     {
         isRenameSuffixInvalid(!Utils::IsRenameSuffixValid(RenameSuffixTextBox().Text()));
-    }
-
-    void SettingsWindow::RootPanel_ActualThemeChanged(winrt::Microsoft::UI::Xaml::FrameworkElement const& element, winrt::Windows::Foundation::IInspectable const&)
-    {
-        auto const actualTheme = element.ActualTheme();
-        if (WindowBackgroundComboBox().SelectedIndex() != 2)
-        {
-            RootPanel().Background(nullptr);
-            return;
-        }
-
-        RootPanel().Background(winrt::Microsoft::UI::Xaml::Media::SolidColorBrush{ actualTheme == winrt::Microsoft::UI::Xaml::ElementTheme::Dark ? winrt::Windows::UI::Colors::Black() : winrt::Windows::UI::Colors::White() });
-    }
-
-    void SettingsWindow::WindowBackgroundComboBox_SelectionChanged(
-        winrt::Windows::Foundation::IInspectable const&, 
-        winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const&)
-    {
-        RootPanel_ActualThemeChanged(RootPanel(), nullptr);
     }
 
 
@@ -115,11 +96,15 @@ namespace winrt::FastCopy::implementation
         // Register callback for visibility changes to replay animation
         textBlock.RegisterPropertyChangedCallback(
             winrt::Microsoft::UI::Xaml::UIElement::VisibilityProperty(),
-            [this](winrt::Microsoft::UI::Xaml::DependencyObject const& sender, winrt::Microsoft::UI::Xaml::DependencyProperty const&)
+            [](winrt::Microsoft::UI::Xaml::DependencyObject const& sender, winrt::Microsoft::UI::Xaml::DependencyProperty const&)
             {
-                auto tb = sender.as<winrt::Microsoft::UI::Xaml::Controls::TextBlock>();
-                if (tb.Visibility() == winrt::Microsoft::UI::Xaml::Visibility::Visible)
-                    playTextRevealAnimation(tb);
+                auto textBlock = sender.as<winrt::Microsoft::UI::Xaml::Controls::TextBlock>();
+                if (textBlock.Visibility() == winrt::Microsoft::UI::Xaml::Visibility::Visible)
+                {
+                    // Force layout update so ActualWidth is valid
+                    textBlock.UpdateLayout();
+                    playTextRevealAnimation(textBlock);
+                }
             }
         );
     }
