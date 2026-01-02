@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Window
     x:Class="FastCopy.ConfirmDeleteFolderWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -64,8 +64,8 @@
                         TextWrapping="Wrap" />
 
                     <TextBlock>
-                        <Run Text="{x:Bind local:ConfirmDeleteFileWindow.DateDescription}" />:
-                        <Run Text="{x:Bind local:ReadableUnitConverterWinRT.ConvertDateTime(DateCreated)}" />
+                        <Run Text="{x:Bind local:ConfirmDeleteFileWindow.DateDescription}" />
+                        :<Run Text="{x:Bind local:ReadableUnitConverterWinRT.ConvertDateTime(DateCreated)}" />
                     </TextBlock>
                 </StackPanel>
 

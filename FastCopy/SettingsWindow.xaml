@@ -880,16 +880,16 @@
                             Margin="0,0,-80,0"
                             HorizontalAlignment="Right"
                             IsOn="{x:Bind ViewModel.ConfirmDelete, Mode=TwoWay}"
-                            Style="{StaticResource ToggleSwitchLeftLabelStyle}" />
+                            Style="{StaticResource ToggleSwitchLeftLabelStyle}"
+                            Toggled="ConfirmDeleteToggle_Toggled" />
                         <TextBlock
                             x:Name="ConfirmDeleteWarningText"
                             x:Uid="ConfirmDeleteWarningText"
                             Margin="0,0,0,-4"
                             VerticalAlignment="Bottom"
                             FontSize="10"
-                            Loaded="TextBlock_Loaded"
                             Opacity="0.8"
-                            Visibility="{x:Bind local:SettingsWindow.NotToVisibility(ConfirmDeleteToggle.IsOn), Mode=OneWay}" />
+                            Visibility="{x:Bind local:SettingsWindow.NotToVisibility(ViewModel.ConfirmDelete)}" />
                     </Grid>
 
                 </essential:SettingsCard>

@@ -223,6 +223,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <ClInclude Include="AnimatedValue.h" />
     <ClInclude Include="AnimatedWindowSize.h" />
     <ClInclude Include="AppLaunchMode.h" />
+    <ClInclude Include="CaptureThreadHandle.h" />
     <ClInclude Include="CommandLine.h" />
     <ClInclude Include="CommandLineHandler.h" />
     <ClInclude Include="ConfirmDeleteFileWindow.xaml.h">

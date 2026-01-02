@@ -7,8 +7,7 @@
 #include "ViewModelLocator.h"
 #include <PackageConfig.h>
 #include "RenameUtils.h"
-#include <winrt/Microsoft.UI.Composition.h>
-#include <winrt/Microsoft.UI.Xaml.Hosting.h>
+
 
 namespace winrt::FastCopy::implementation
 {
@@ -58,55 +57,17 @@ namespace winrt::FastCopy::implementation
     }
 
 
-    winrt::Microsoft::UI::Xaml::Visibility SettingsWindow::NotToVisibility(bool value)
-    {
-        return value ? winrt::Microsoft::UI::Xaml::Visibility::Collapsed 
-                     : winrt::Microsoft::UI::Xaml::Visibility::Visible;
-    }
-
-    void SettingsWindow::playTextRevealAnimation(winrt::Microsoft::UI::Xaml::Controls::TextBlock const& textBlock)
-    {
-        auto visual = winrt::Microsoft::UI::Xaml::Hosting::ElementCompositionPreview::GetElementVisual(textBlock);
-        auto compositor = visual.Compositor();
-        
-        auto clip = compositor.CreateInsetClip();
-        auto const textWidth = static_cast<float>(textBlock.ActualWidth());
-        clip.RightInset(textWidth);
-        
-        visual.Clip(clip);
-        
-        auto animation = compositor.CreateScalarKeyFrameAnimation();
-        animation.InsertKeyFrame(0.0f, textWidth);
-        animation.InsertKeyFrame(1.0f, 0.0f);
-        animation.Duration(std::chrono::milliseconds{ 500 });
-        
-        clip.StartAnimation(L"RightInset", animation);
-    }
-
-    void SettingsWindow::TextBlock_Loaded(
+    void SettingsWindow::ConfirmDeleteToggle_Toggled(
         winrt::Windows::Foundation::IInspectable const& sender, 
         winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
     {
-        auto textBlock = sender.as<winrt::Microsoft::UI::Xaml::Controls::TextBlock>();
-        
-        // Play animation on initial load if visible
-        if (textBlock.Visibility() == winrt::Microsoft::UI::Xaml::Visibility::Visible)
-            playTextRevealAnimation(textBlock);
-        
-        // Register callback for visibility changes to replay animation
-        textBlock.RegisterPropertyChangedCallback(
-            winrt::Microsoft::UI::Xaml::UIElement::VisibilityProperty(),
-            [](winrt::Microsoft::UI::Xaml::DependencyObject const& sender, winrt::Microsoft::UI::Xaml::DependencyProperty const&)
-            {
-                auto textBlock = sender.as<winrt::Microsoft::UI::Xaml::Controls::TextBlock>();
-                if (textBlock.Visibility() == winrt::Microsoft::UI::Xaml::Visibility::Visible)
-                {
-                    // Force layout update so ActualWidth is valid
-                    textBlock.UpdateLayout();
-                    playTextRevealAnimation(textBlock);
-                }
-            }
-        );
+        if (!ConfirmDeleteWarningText().IsLoaded())
+            return;
+
+        auto confirmDeleteToggle = sender.as<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>();
+        auto const isOn = confirmDeleteToggle.IsOn();
+        ConfirmDeleteWarningText().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
+        isOn ? playTextRevealAnimation<false>(ConfirmDeleteWarningText()) : playTextRevealAnimation<true>(ConfirmDeleteWarningText());
     }
 
 }

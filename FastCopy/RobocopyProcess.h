@@ -15,7 +15,9 @@
 #include <iostream>
 #include "RobocopyProcessStatus.h"
 #include <boost/process/windows.hpp>
+#include <wil/resource.h>
 #include "CreateSuspend.h"
+#include "CaptureThreadHandle.h"
 
 //Forward declaration
 struct RobocopyArgs;
@@ -33,6 +35,7 @@ class RobocopyProcess
 
 	boost::process::async_pipe pipeOut{ ios };
 	boost::process::child m_child;
+	wil::unique_handle m_hThread;
 
 	static void runContext();
 	static std::regex& progressRegex();
@@ -47,7 +50,8 @@ public:
 			boost::process::cmd(boost::process::search_path("robocopy.exe").wstring() + L" " + builder.Build()),
 			boost::process::std_out > pipeOut,
 			boost::process::windows::create_no_window,
-			create_suspend
+			create_suspend,
+			CaptureThreadHandle{m_hThread}
 		}
 	{
 		injectProcess();
@@ -142,10 +146,10 @@ public:
 	void WaitForExit();
 
 	//RobocopyProcess(RobocopyProcess&&) noexcept = default;
-	//~RobocopyProcess()
-	//{
-	//	OutputDebugString(L"Exited\n");
-	//}
+	~RobocopyProcess()
+	{
+		//OutputDebugString(L"Exited\n");
+	}
 };
 
 /**
