@@ -1,18 +1,10 @@
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
   "dependencies": [
-    {
-        "name": "spdlog",
-        "platform": "x64"
-    },
-    {
-      "name": "abseil",
-      "platform": "x64"
-    },
-    {
-      "name": "boost-process",
-      "platform": "x64"
-    }
+    "spdlog",
+    "abseil",
+    "boost-container",
+    "boost-process"
   ],
-  "builtin-baseline": "3426db05b996481ca31e95fff3734cf23e0f51bc"
+  "builtin-baseline": "af752f21c9d79ba3df9cb0250ce2233933f58486"
 }

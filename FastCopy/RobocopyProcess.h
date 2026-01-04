@@ -1,6 +1,12 @@
 ﻿#pragma once
 #include "../SpeedTest/Process.h"
+#if __has_include("boost/process/v1/child.hpp")
+#include <boost/process/v1.hpp>
+#include <boost/process/v1/windows.hpp>
+#else
 #include <boost/process.hpp>
+#include <boost/process/windows.hpp>
+#endif
 #include <boost/asio.hpp>
 #include <boost/regex.hpp>
 #include <regex>
@@ -14,7 +20,6 @@
 #include "ExtraFile.h"
 #include <iostream>
 #include "RobocopyProcessStatus.h"
-#include <boost/process/windows.hpp>
 #include <wil/resource.h>
 #include "CreateSuspend.h"
 #include "CaptureThreadHandle.h"
@@ -23,20 +28,23 @@
 struct RobocopyArgs;
 
 class RobocopyArgsBuilder;
-
 /**
  * @brief Represents a robocopy process
  */
 class RobocopyProcess
 {
-	static inline boost::asio::io_service ios;
+	static inline boost::asio::io_context ios;
 	static inline auto work = boost::asio::make_work_guard(ios);
 	constexpr static auto k_OutBufferSize = MAX_PATH + 20;
 
+	wil::unique_handle m_hThread;
+#if __has_include("boost/process/v1/child.hpp")
+	boost::process::v1::async_pipe pipeOut{ ios };
+	boost::process::v1::child m_child;
+#else
 	boost::process::async_pipe pipeOut{ ios };
 	boost::process::child m_child;
-	wil::unique_handle m_hThread;
-
+#endif
 	static void runContext();
 	static std::regex& progressRegex();
 
@@ -47,14 +55,32 @@ public:
 	RobocopyProcess(RobocopyArgsBuilder const& builder, auto callbacks) :
 		m_child
 		{
+#if __has_include("boost/process/v1/child.hpp")
+			boost::process::v1::cmd(boost::process::v1::search_path("robocopy.exe").wstring() + L" " + builder.Build()),
+			boost::process::v1::std_out > pipeOut,
+			boost::process::v1::windows::create_no_window,
+#else	
 			boost::process::cmd(boost::process::search_path("robocopy.exe").wstring() + L" " + builder.Build()),
 			boost::process::std_out > pipeOut,
 			boost::process::windows::create_no_window,
+#endif
 			create_suspend,
 			CaptureThreadHandle{m_hThread}
 		}
 	{
-		injectProcess();
+		try
+		{
+			injectProcess();
+		}
+		catch (...)
+		{
+			MessageBox(
+				NULL,
+				L"Robocopy injection failed! The software will not work correctly and please report an issue to the Github page of this repo.",
+				L"RoboCopyEx",
+				0
+			);
+		}
 		SetConsoleCP(65001);
 		SetConsoleOutputCP(65001);
 		runContext();

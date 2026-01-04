@@ -638,8 +638,6 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="FastCopy_TemporaryKey.pfx" />
-    <None Include="..\PackageDlls\boost_filesystem-vc143-mt-x64-1_82.dll" />
-    <None Include="..\PackageDlls\fmt.dll" />
     <None Include="..\x64\Package\FastCopy\FastCopyShellExtension.dll" />
     <None Include="Package.StoreAssociation.xml" />
     <None Include="..\x64\Package\FastCopy\RobocopyInjection.dll" />
@@ -653,14 +651,14 @@
     </PRIResource>
   </ItemGroup>
   <ItemGroup>
-    <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
-  </ItemGroup>
-  <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Filter>App</Filter>
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
   </ItemGroup>
 </Project>

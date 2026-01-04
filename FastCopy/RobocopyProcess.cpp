@@ -35,20 +35,16 @@ void RobocopyProcess::injectProcess()
 
 	auto pathSize = (path.size() + 1) * sizeof(wchar_t);
 
-	LPVOID remoteMem = VirtualAllocEx(
+	LPVOID remoteMem = winrt::check_pointer(VirtualAllocEx(
 		hProcess,
 		NULL,
 		pathSize,
 		MEM_COMMIT,
 		PAGE_READWRITE
-	);
-
-	if (!remoteMem)
-		return;
+	));
 
 	// WRITE DLL PATH
-	if (!WriteProcessMemory(hProcess, remoteMem, path.c_str(), pathSize, NULL))
-		return;
+	winrt::check_bool(WriteProcessMemory(hProcess, remoteMem, path.c_str(), pathSize, NULL));
 
 	// INJECT THE DLL (QueueUserAPC)
 	// We use QueueUserAPC instead of CreateRemoteThread because the process is suspended.
@@ -57,19 +53,13 @@ void RobocopyProcess::injectProcess()
 	auto loadLibraryAddr = RobocopyInjectDll::LoadLibraryAddr();
 	if (loadLibraryAddr)
 	{
-		QueueUserAPC(
+		winrt::check_bool(QueueUserAPC(
 			reinterpret_cast<PAPCFUNC>(loadLibraryAddr),
 			hThread,
 			reinterpret_cast<ULONG_PTR>(remoteMem)
-		);
+		));
 	}
-
-	// RESUME THE TARGET
-	// Now that the APC is queued, we let the actual application run.
-	// The APC will fire early in the initialization of the process.
-	std::cout << "Resuming application..." << std::endl;
 	ResumeThread(hThread);
-
 }
 
 void RobocopyProcess::WaitForExit()
