@@ -37,40 +37,40 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Package|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Package|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -108,7 +108,7 @@
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\</OutDir>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
-    <VcpkgEnableManifest>false</VcpkgEnableManifest>
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
     <VcpkgXUseBuiltInApplocalDeps>true</VcpkgXUseBuiltInApplocalDeps>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -131,6 +131,10 @@
     <ResourceCompile>
       <ResourceOutputFileName>FastCopyShellExtension.res</ResourceOutputFileName>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Command>mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\Appx"
+xcopy "$(OutputPath)$(ProjectName).dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\Appx" /Y /I /C</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -156,6 +160,10 @@
     <ResourceCompile>
       <ResourceOutputFileName>FastCopyShellExtension.res</ResourceOutputFileName>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Command>mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\Appx"
+xcopy "$(OutputPath)$(ProjectName).dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\Appx" /Y /I /C</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">
     <ClCompile>
@@ -181,6 +189,10 @@
     <ResourceCompile>
       <ResourceOutputFileName>FastCopyShellExtension.res</ResourceOutputFileName>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Command>mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\Appx"
+xcopy "$(OutputPath)$(ProjectName).dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\Appx" /Y /I /C</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -203,7 +215,8 @@
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(OutputPath)\$(ProjectName).dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\Appx" /Y /I /C</Command>
+      <Command>mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\Appx"
+xcopy "$(OutputPath)$(ProjectName).dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\Appx" /Y /I /C</Command>
     </PostBuildEvent>
     <ResourceCompile>
       <ResourceOutputFileName>FastCopyShellExtension.res</ResourceOutputFileName>
@@ -236,6 +249,10 @@
     <ResourceCompile>
       <ResourceOutputFileName>FastCopyShellExtension.res</ResourceOutputFileName>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Command>mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\Appx"
+xcopy "$(OutputPath)$(ProjectName).dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\Appx" /Y /I /C</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Package|x64'">
     <ClCompile>
@@ -264,6 +281,10 @@
     <ResourceCompile>
       <ResourceOutputFileName>FastCopyShellExtension.res</ResourceOutputFileName>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Command>mkdir "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\Appx"
+xcopy "$(OutputPath)$(ProjectName).dll" "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\Appx" /Y /I /C</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Public\ShellItem.cpp" />
