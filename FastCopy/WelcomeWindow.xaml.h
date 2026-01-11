@@ -2,6 +2,7 @@
 
 #include "WelcomeWindow.g.h"
 #include <include/PropertyChangeHelper.hpp>
+#include "TextBlockClipAnimation.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -13,6 +14,8 @@ namespace winrt::FastCopy::implementation
 
         winrt::FastCopy::RobocopyCheckResult CheckResult();
     private:
+        void revealSubmitIssues();
+		TextBlockClipAnimation m_submitIssuesTextAnimation;
         winrt::FastCopy::RobocopyCheckResult m_checkResult = winrt::FastCopy::RobocopyCheckResult::Checking;
         void checkResult(winrt::FastCopy::RobocopyCheckResult value);
         void checkRobocopy();

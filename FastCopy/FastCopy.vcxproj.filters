@@ -10,9 +10,6 @@
     <Page Include="SpeedGraph.xaml">
       <Filter>Views\Controls</Filter>
     </Page>
-    <Page Include="SettingsWindow.xaml">
-      <Filter>Views</Filter>
-    </Page>
     <Page Include="WelcomeWindow.xaml">
       <Filter>Views</Filter>
     </Page>
@@ -30,6 +27,9 @@
     </Page>
     <Page Include="FolderIcon.xaml">
       <Filter>Views\Controls</Filter>
+    </Page>
+    <Page Include="SettingsWindow.xaml">
+      <Filter>Views\SettingsWindow</Filter>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -369,6 +369,9 @@
     <ClInclude Include="CaptureThreadHandle.h">
       <Filter>Utils\Robocopy</Filter>
     </ClInclude>
+    <ClInclude Include="TextBlockClipAnimation.h">
+      <Filter>Views\SettingsWindow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -627,6 +630,9 @@
     </Filter>
     <Filter Include="Utils\COM">
       <UniqueIdentifier>{894d8f22-f303-4786-95da-f8e14e76b627}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Views\SettingsWindow">
+      <UniqueIdentifier>{682594bf-6a05-483c-873c-27bb1e13279f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

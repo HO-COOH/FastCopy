@@ -324,4 +324,10 @@
   <data name="ConfirmDeleteWarningText.Text" xml:space="preserve">
     <value>第一次删除文件的时候仍会显示对话框</value>
   </data>
+  <data name="StillNoMenu.Text" xml:space="preserve">
+    <value>仍然看不到RoboCopyEx右键菜单?</value>
+  </data>
+  <data name="SubmitIssueButton.Content" xml:space="preserve">
+    <value>提交一个issue</value>
+  </data>
 </root>

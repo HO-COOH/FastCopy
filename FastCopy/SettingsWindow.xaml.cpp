@@ -44,8 +44,15 @@ namespace winrt::FastCopy::implementation
 
     void SettingsWindow::isRenameSuffixInvalid(bool value)
     {
+        if (value == m_isRenameSuffixInvalid)
+            return;
+
+		m_isRenameSuffixInvalid = value;
+
         winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(RenameSuffixTextBox(), value ? L"Invalid" : L"Valid", false);
-        winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(RootPage(), value ? L"InvalidRenameSuffixState" : L"Normal", false);
+        value ? 
+            m_invalidSuffixTipTextAnimation.PlayTextRevealAnimation<true>(InvalidSuffixTip()) : 
+            m_invalidSuffixTipTextAnimation.PlayTextRevealAnimation<false>(InvalidSuffixTip());
     }
 
 
@@ -66,8 +73,10 @@ namespace winrt::FastCopy::implementation
 
         auto confirmDeleteToggle = sender.as<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>();
         auto const isOn = confirmDeleteToggle.IsOn();
-        ConfirmDeleteWarningText().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
-        isOn ? playTextRevealAnimation<false>(ConfirmDeleteWarningText()) : playTextRevealAnimation<true>(ConfirmDeleteWarningText());
+        ConfirmDeleteWarningText().Opacity(0.8);
+        isOn ? 
+            m_confirmDeleteTextAnimation.PlayTextRevealAnimation<false>(ConfirmDeleteWarningText()) : 
+            m_confirmDeleteTextAnimation.PlayTextRevealAnimation<true>(ConfirmDeleteWarningText());
     }
 
 }

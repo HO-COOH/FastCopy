@@ -38,10 +38,18 @@ namespace winrt::FastCopy::implementation
 		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		system("taskkill /F /IM explorer.exe & start explorer");
+		revealSubmitIssues();
+
 	}
 	winrt::FastCopy::RobocopyCheckResult WelcomeWindow::CheckResult()
 	{
 		return m_checkResult;
+	}
+
+	void WelcomeWindow::revealSubmitIssues()
+	{
+		//SubmitIssuesContent().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
+		m_submitIssuesTextAnimation.PlayTextRevealAnimation<true>(SubmitIssuesContent());
 	}
 
 	void WelcomeWindow::checkResult(winrt::FastCopy::RobocopyCheckResult value)

@@ -324,4 +324,10 @@
   <data name="ConfirmDeleteWarningText.Text" xml:space="preserve">
     <value>You will still get a confirmation dialog for the first time</value>
   </data>
+  <data name="StillNoMenu.Text" xml:space="preserve">
+    <value>Still does not see RoboCopyEx context menu?</value>
+  </data>
+  <data name="SubmitIssueButton.Content" xml:space="preserve">
+    <value>Submit an issue.</value>
+  </data>
 </root>

@@ -207,6 +207,18 @@
                             </AnimatedIcon>
                         </Button>
                     </StackPanel>
+
+                    <StackPanel
+                        x:Name="SubmitIssuesContent"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal"
+                        Visibility="Collapsed">
+                        <TextBlock x:Uid="StillNoMenu" VerticalAlignment="Center" />
+                        <HyperlinkButton
+                            x:Uid="SubmitIssueButton"
+                            VerticalAlignment="Center"
+                            NavigateUri="https://github.com/HO-COOH/FastCopy/issues/new" />
+                    </StackPanel>
                 </StackPanel>
             </essential:Case>
         </essential:SwitchPresenter>

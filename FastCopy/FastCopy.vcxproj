@@ -345,6 +345,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="TaskFile.h" />
+    <ClInclude Include="TextBlockClipAnimation.h" />
     <ClInclude Include="TilesControl.h">
       <DependentUpon>TilesControl.idl</DependentUpon>
       <SubType>Code</SubType>
