@@ -7,7 +7,7 @@
 #include "ViewModelLocator.h"
 #include <PackageConfig.h>
 #include "RenameUtils.h"
-
+#include "TextBlockClipAnimation.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -15,6 +15,12 @@ namespace winrt::FastCopy::implementation
     {
         ExtendsContentIntoTitleBar(true);
         Height(PackageConfig::GetDefaultLanguage() == L"zh-cn" ? 550 : 580);
+
+        InitializeComponent();
+
+        TextBlockClipAnimation{}
+            .SetImplicitAnimations(ConfirmDeleteWarningText())
+            .SetImplicitAnimations(InvalidSuffixTip());
     }
 
     winrt::FastCopy::SettingsViewModel SettingsWindow::ViewModel()
@@ -50,9 +56,7 @@ namespace winrt::FastCopy::implementation
 		m_isRenameSuffixInvalid = value;
 
         winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(RenameSuffixTextBox(), value ? L"Invalid" : L"Valid", false);
-        value ? 
-            m_invalidSuffixTipTextAnimation.PlayTextRevealAnimation<true>(InvalidSuffixTip()) : 
-            m_invalidSuffixTipTextAnimation.PlayTextRevealAnimation<false>(InvalidSuffixTip());
+        InvalidSuffixTip().Visibility(value ? winrt::Microsoft::UI::Xaml::Visibility::Visible : winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
     }
 
 
@@ -61,22 +65,6 @@ namespace winrt::FastCopy::implementation
         winrt::Microsoft::UI::Xaml::Controls::TextChangedEventArgs const&)
     {
         isRenameSuffixInvalid(!Utils::IsRenameSuffixValid(RenameSuffixTextBox().Text()));
-    }
-
-
-    void SettingsWindow::ConfirmDeleteToggle_Toggled(
-        winrt::Windows::Foundation::IInspectable const& sender, 
-        winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
-    {
-        if (!ConfirmDeleteWarningText().IsLoaded())
-            return;
-
-        auto confirmDeleteToggle = sender.as<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>();
-        auto const isOn = confirmDeleteToggle.IsOn();
-        ConfirmDeleteWarningText().Opacity(0.8);
-        isOn ? 
-            m_confirmDeleteTextAnimation.PlayTextRevealAnimation<false>(ConfirmDeleteWarningText()) : 
-            m_confirmDeleteTextAnimation.PlayTextRevealAnimation<true>(ConfirmDeleteWarningText());
     }
 
 }

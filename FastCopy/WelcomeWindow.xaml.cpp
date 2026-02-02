@@ -9,6 +9,7 @@
 #include <PackageConfig.h>
 #include <wil/win32_helpers.h>
 #include <filesystem>
+#include "TextBlockClipAnimation.h"
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -23,6 +24,9 @@ namespace winrt::FastCopy::implementation
 			.Height = 280
 		});
 		checkRobocopy();
+
+		InitializeComponent();
+		TextBlockClipAnimation{}.SetImplicitAnimations(SubmitIssuesContent());
 	}
 
 	void WelcomeWindow::Button_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
@@ -48,8 +52,7 @@ namespace winrt::FastCopy::implementation
 
 	void WelcomeWindow::revealSubmitIssues()
 	{
-		//SubmitIssuesContent().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
-		m_submitIssuesTextAnimation.PlayTextRevealAnimation<true>(SubmitIssuesContent());
+		SubmitIssuesContent().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
 	}
 
 	void WelcomeWindow::checkResult(winrt::FastCopy::RobocopyCheckResult value)
