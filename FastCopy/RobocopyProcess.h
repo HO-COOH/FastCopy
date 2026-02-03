@@ -23,6 +23,7 @@
 #include <wil/resource.h>
 #include "CreateSuspend.h"
 #include "CaptureThreadHandle.h"
+#include "JobObject.h"
 
 //Forward declaration
 struct RobocopyArgs;
@@ -47,6 +48,7 @@ class RobocopyProcess
 #endif
 	static void runContext();
 	static std::regex& progressRegex();
+	static JobObject& jobObjectInstance();
 
 	void injectProcess();
 public:
@@ -70,6 +72,7 @@ public:
 	{
 		try
 		{
+			jobObjectInstance() << Handle();
 			injectProcess();
 		}
 		catch (...)
@@ -170,12 +173,6 @@ public:
 	HANDLE Handle() const { return m_child.native_handle(); }
 
 	void WaitForExit();
-
-	//RobocopyProcess(RobocopyProcess&&) noexcept = default;
-	~RobocopyProcess()
-	{
-		//OutputDebugString(L"Exited\n");
-	}
 };
 
 /**

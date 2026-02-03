@@ -25,6 +25,12 @@ std::regex& RobocopyProcess::progressRegex()
 	return Progress;
 }
 
+JobObject& RobocopyProcess::jobObjectInstance()
+{
+	static JobObject s_instance;
+	return s_instance;
+}
+
 void RobocopyProcess::injectProcess()
 {
 	auto& path = RobocopyInjectDll::Path();

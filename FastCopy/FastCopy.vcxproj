@@ -283,6 +283,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <ClInclude Include="GdiplusInitializer.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="ImageUtils.h" />
+    <ClInclude Include="JobObject.h" />
     <ClInclude Include="MutexWrapper.h" />
     <ClInclude Include="NewFile.h" />
     <ClInclude Include="Notification.h" />
@@ -450,6 +451,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     </ClCompile>
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="ImageUtils.cpp" />
+    <ClCompile Include="JobObject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MutexWrapper.cpp" />
     <ClCompile Include="NewFile.cpp" />
@@ -662,6 +664,26 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
+    <CopyFileToFolders Include="..\vcpkg_installed\x64-windows\x64-windows\bin\abseil_dll.dll">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Package|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\vcpkg_installed\x64-windows\x64-windows\bin\boost_filesystem-vc145-mt-x64-1_90.dll">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Package|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\vcpkg_installed\x64-windows\x64-windows\bin\fmt.dll">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Package|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\vcpkg_installed\x64-windows\x64-windows\bin\spdlog.dll">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Package|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
     <None Include="..\x64\Package\FastCopy\FastCopyShellExtension.dll">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|arm64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">true</DeploymentContent>

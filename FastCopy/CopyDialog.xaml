@@ -1119,11 +1119,12 @@
             </TextBlock>
 
             <TextBlock
-                MaxWidth="380"
+                MaxWidth="280"
                 Margin="3,0,0,0"
                 Foreground="{ThemeResource DestinationTextBrush}"
                 Style="{StaticResource StatusTextStyle}"
-                Text="{x:Bind ViewModel.Source, Mode=OneWay}" />
+                Text="{x:Bind ViewModel.Source, Mode=OneWay}"
+                TextTrimming="CharacterEllipsis" />
 
             <TextBlock
                 x:Uid="ToText"

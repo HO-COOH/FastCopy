@@ -192,6 +192,7 @@
     <ClCompile Include="TextBlockClipAnimation.cpp">
       <Filter>Views\SettingsWindow</Filter>
     </ClCompile>
+    <ClCompile Include="JobObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -374,6 +375,9 @@
     </ClInclude>
     <ClInclude Include="TextBlockClipAnimation.h">
       <Filter>Views\SettingsWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="JobObject.h">
+      <Filter>Utils\Robocopy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -637,6 +641,9 @@
     <Filter Include="Views\SettingsWindow">
       <UniqueIdentifier>{682594bf-6a05-483c-873c-27bb1e13279f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="dlls">
+      <UniqueIdentifier>{05a0df20-63ec-4e2b-8248-7cf62bb666e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="app.manifest" />
@@ -669,5 +676,19 @@
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="..\vcpkg_installed\x64-windows\x64-windows\bin\spdlog.dll">
+      <Filter>dlls</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\vcpkg_installed\x64-windows\x64-windows\bin\fmt.dll">
+      <Filter>dlls</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\vcpkg_installed\x64-windows\x64-windows\bin\boost_filesystem-vc145-mt-x64-1_90.dll">
+      <Filter>dlls</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="..\vcpkg_installed\x64-windows\x64-windows\bin\abseil_dll.dll">
+      <Filter>dlls</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>
