@@ -10,7 +10,7 @@ RobocopyArgsBuilder::RobocopyArgsBuilder(StringView source, StringView destinati
 
 std::wstring const& RobocopyArgsBuilder::Build() const
 {
-	std::wcout << L"Running robocopy: " << m_arg << '\n';
+	std::cout << "robocopy " << winrt::to_string(m_arg) << '\n';
 	return m_arg;
 }
 

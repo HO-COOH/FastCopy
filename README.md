@@ -70,11 +70,11 @@ A GUI wrapper for Windows' built-in `robocopy` ~~and `xcopy`~~.
 ![](Screenshots/install-cert.png)
 4. Then click `Next` and finally `Finish` to install the certificate.
 5. Now you can double-click the `msix` to install the app.
-6*. **In rare situations, you might need to restart `explorer.exe` to see `FastCopy` in the right-click context menu**
+6. **In rare situations, you might need to restart `explorer.exe` to see `RobocopyEx` in the right-click context menu**
 
 ## Usage
-1. Using file explorer, select some files/folders, as many as you want >> right click >> move to **FastCopy** >> select **Copy** or **Move**
-2. Go to destination folder, right click at empty space >> move to **FastCopy** >> select **Paste**
+1. Using file explorer, select some files/folders, as many as you want >> right click >> move to **RobocopyEx** >> select **Copy** or **Move**
+2. Go to destination folder, right click at empty space >> move to **RobocopyEx** >> select **Paste**
 
 
 
@@ -100,15 +100,7 @@ FastCopy
     - ftxui
     - cereal
 
-[vcpkg](https://vcpkg.io/en/) is the recommended package manager to handle these dependencies. 
-You can install them with one command, and do no more.
-```
-vcpkg install boost-algorithm:x64-windows
-vcpkg install spdlog:x64-windows
-vcpkg install abseil:x64-windows
-vcpkg install ftxui:x64-windows
-vcpkg install cereal:x64-windows
-``` 
+[vcpkg](https://vcpkg.io/en/) is the recommended package manager to handle these dependencies. They are installed automatically when building within Visual Studio.
 
 Other component comes from my very own [WinUIEssentials](https://github.com/HO-COOH/WinUIEssentials), which will be installed automatically by Visual Studio nuget.
 

@@ -500,6 +500,11 @@ namespace winrt::FastCopy::implementation
 					auto fileName = sourcePath.filename().wstring();
 					std::array<std::wstring_view, 1> fileArg{ fileName };
 					args.File(fileArg);
+
+					//robocopy for a single-file default to /DCOPY:DA
+					//which copies the source folder atrribute to the destination folder
+					//so copying a file under drive root makes the destination disappear
+					args.DCOPY(L"DT");
 				}
 
 				break;
