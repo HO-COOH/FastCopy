@@ -9,30 +9,18 @@
 #include "Recorder.h"
 #include "PackageConfig.h"
 
-bool FastCopyRootCommand::hasInvokedCopyOrCut()
-{
-	return Recorder::HasRecord();
-}
-
-void FastCopyRootCommand::init(IShellItemArray* items)
-{
-	if (m_hasInit)
-		return;
-
-	bool const showPasteCommand = hasInvokedCopyOrCut();
-
-	m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Copy, m_site.Get()));
-	m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Move, m_site.Get()));
-	if (showPasteCommand)
-		m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Paste, m_site.Get()));
-	if (ShellItemArray{ items }.size() != 0)
-		m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Delete, m_site.Get()));
-	m_hasInit = true;
-}
 
 HRESULT FastCopyRootCommand::SetSite(IUnknown* pUnkSite)
 {
     m_site = pUnkSite;
+
+	if (m_site && m_subCommands.empty())
+	{
+		m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Copy, m_site.Get()));
+		m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Move, m_site.Get()));
+		m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Paste, m_site.Get()));
+		m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Delete, m_site.Get()));
+	}
     return S_OK;
 }
 
@@ -65,11 +53,7 @@ HRESULT FastCopyRootCommand::GetCanonicalName(GUID* guidCommandName)
 
 HRESULT FastCopyRootCommand::GetState(IShellItemArray* selection, BOOL okToBeSlow, EXPCMDSTATE* cmdState)
 {
-	init(selection);
-	if (m_hasInit && !m_subCommands.empty())
-		*cmdState = ECS_ENABLED;
-	else
-		*cmdState = ECS_DISABLED;
+	*cmdState = m_subCommands.empty() ? ECS_DISABLED : ECS_ENABLED;
 	return S_OK;
 }
 

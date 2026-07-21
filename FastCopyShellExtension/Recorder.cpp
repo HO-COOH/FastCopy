@@ -85,7 +85,12 @@ std::filesystem::path Recorder::GetRecordFilePath(CopyOperation op)
 
 bool Recorder::HasRecord()
 {
-	return std::find_if(std::filesystem::directory_iterator{ GetLocalDataFolder() }, std::filesystem::directory_iterator{}, [](std::filesystem::directory_entry const& fileEntry) {
+	std::error_code ec;
+	auto const& dir = GetLocalDataFolder();
+	if (!std::filesystem::exists(dir, ec) || ec)
+		return false;
+
+	return std::find_if(std::filesystem::directory_iterator{ dir }, std::filesystem::directory_iterator{}, [](std::filesystem::directory_entry const& fileEntry) {
 		auto str = fileEntry.path().filename().wstring();
 		return str.starts_with(L'C') || str.starts_with(L"M2") || str.starts_with(L'P');
 	}) != std::filesystem::directory_iterator{};
