@@ -6,24 +6,12 @@
 #include <filesystem>
 #include "ShellItem.h"
 #include "Registry.h"
-#include <wil/com.h>
-#include <wil/win32_helpers.h>
-#include <array>
-#include <appmodel.h>
+#include <winrt/Windows.Storage.h>
 
 static std::filesystem::path const& GetLocalDataFolder()
 {
-	static std::filesystem::path ret = []
-	{
-		wil::unique_cotaskmem_string localAppData;
-		SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, NULL, localAppData.put());
-
-		std::array<wchar_t, PACKAGE_FAMILY_NAME_MAX_LENGTH + 1> familyName;
-		UINT32 bufferSize = familyName.size();
-		GetCurrentPackageFamilyName(&bufferSize, familyName.data());
-
-		return std::filesystem::path{ localAppData.get() } / std::format(LR"(packages\{}\LocalCache\Local)", familyName.data());
-	}();
+	static std::filesystem::path ret =
+		std::filesystem::path{ winrt::Windows::Storage::ApplicationData::Current().LocalCacheFolder().Path().c_str() } / L"Local" / L"Records";
 	return ret;
 }
 
@@ -92,6 +80,7 @@ bool Recorder::HasRecord()
 
 	return std::find_if(std::filesystem::directory_iterator{ dir }, std::filesystem::directory_iterator{}, [](std::filesystem::directory_entry const& fileEntry) {
 		auto str = fileEntry.path().filename().wstring();
+		OutputDebugString(std::format(L"{}\n", fileEntry.path().wstring()).data());
 		return str.starts_with(L'C') || str.starts_with(L"M2") || str.starts_with(L'P');
 	}) != std::filesystem::directory_iterator{};
 }

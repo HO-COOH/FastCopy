@@ -10,17 +10,20 @@
 #include "PackageConfig.h"
 
 
+void FastCopyRootCommand::ensureSubCommands()
+{
+	if (!m_subCommands.empty())
+		return;
+
+	m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Copy, m_site.Get()));
+	m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Move, m_site.Get()));
+	m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Paste, m_site.Get()));
+	m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Delete, m_site.Get()));
+}
+
 HRESULT FastCopyRootCommand::SetSite(IUnknown* pUnkSite)
 {
     m_site = pUnkSite;
-
-	if (m_site && m_subCommands.empty())
-	{
-		m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Copy, m_site.Get()));
-		m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Move, m_site.Get()));
-		m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Paste, m_site.Get()));
-		m_subCommands.emplace_back(Microsoft::WRL::Make<FastCopySubCommand>(CopyOperation::Delete, m_site.Get()));
-	}
     return S_OK;
 }
 
@@ -53,7 +56,8 @@ HRESULT FastCopyRootCommand::GetCanonicalName(GUID* guidCommandName)
 
 HRESULT FastCopyRootCommand::GetState(IShellItemArray* selection, BOOL okToBeSlow, EXPCMDSTATE* cmdState)
 {
-	*cmdState = m_subCommands.empty() ? ECS_DISABLED : ECS_ENABLED;
+	ensureSubCommands();
+	*cmdState = ECS_ENABLED;
 	return S_OK;
 }
 
@@ -70,6 +74,7 @@ HRESULT FastCopyRootCommand::Invoke(IShellItemArray* selection, IBindCtx*)
 
 HRESULT FastCopyRootCommand::EnumSubCommands(IEnumExplorerCommand** enumCommands)
 {
+	ensureSubCommands();
 	m_subCommandIter = m_subCommands.begin();
 	AddRef();
 	return QueryInterface(IID_PPV_ARGS(enumCommands));

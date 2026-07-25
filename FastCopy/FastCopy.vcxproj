@@ -313,6 +313,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <ClInclude Include="resource1.h" />
     <ClInclude Include="ResourceHelper.h" />
     <ClInclude Include="RobocopyArgs.h" />
+    <ClInclude Include="RobocopyExitCodes.h" />
     <ClInclude Include="RobocopyInjectDll.h" />
     <ClInclude Include="RobocopyJobFile.h" />
     <ClInclude Include="NewDir.h" />

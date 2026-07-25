@@ -126,11 +126,12 @@ namespace winrt::FastCopy::implementation
 				})
 			) / m_totalSize;
 		}
-		else
+		else if (auto const count = ItemCount())
 		{
 			//Sometimes all files are 0 bytes, we use file count as percent
-			percent = static_cast<double>(m_finishedFiles) / ItemCount();
+			percent = static_cast<double>(m_finishedFiles) / count;
 		}
+		//else: nothing to count (e.g. a truly empty folder) - leave percent at 0 to avoid 0/0 = -nan
 		return percent;
 	}
 
@@ -267,10 +268,17 @@ namespace winrt::FastCopy::implementation
 								{
 									std::error_code ec;
 									std::filesystem::remove_all(folderToDeleteAfterRobocopy, ec);
+									++m_finishedFiles;
 								}
 
 								if (m_finishedFiles == ItemCount())
 									onNormalRobocopyFinished();
+							},
+							[this](ExtraDir&&)
+							{
+								//A sub-folder removed by robocopy /MIR, include it in finished files
+								++m_finishedFiles;
+								raiseProgressChange();
 							},
 							[this](ExtraFile&& deletedFile)
 							{
@@ -583,10 +591,12 @@ namespace winrt::FastCopy::implementation
 			onAllFinished();
 		}
 	}
+
 	void RobocopyViewModel::onFallbackFinished()
 	{
 		onAllFinished();
 	}
+
 	void RobocopyViewModel::onAllFinished()
 	{
 		auto formatString = GetStringResource(L"CopyFinishNotificationFormatString");
@@ -599,6 +609,13 @@ namespace winrt::FastCopy::implementation
 		std::filesystem::remove(m_recordFile->GetPath().data());
 		m_finishEvent(*this, FinishState::Success);
 		Stop();
+
+		if (!Settings{}.Get(Settings::DevMode, false))
+		{
+			Global::UIThread.TryEnqueue([] {
+				winrt::Microsoft::UI::Xaml::Application::Current().Exit();
+			});
+		}
 	}
 
 	winrt::hstring RobocopyViewModel::finishedOperationString()

@@ -8,12 +8,45 @@
 #include "DebugFileSize.h"
 #include <iostream>
 
+static int32_t countInFolder(std::wstring_view path, auto predicate)
+{
+	std::error_code ec;
+	std::filesystem::recursive_directory_iterator it
+	{
+		path, 
+		std::filesystem::directory_options::skip_permission_denied, 
+		ec
+	};
+
+	std::filesystem::recursive_directory_iterator const end;
+
+	int32_t count{};
+	for (; !ec && it != end; it.increment(ec))
+	{
+		if (predicate(*it))
+			++count;
+	}
+	return count;
+}
+
 static int32_t getNumFilesInFolder(std::wstring_view path)
 {
-	return std::ranges::count_if(
-		std::filesystem::recursive_directory_iterator{ path },
-		[](std::filesystem::directory_entry path) { return path.is_regular_file(); }
-	);
+	return countInFolder(path, [](std::filesystem::directory_entry const& entry)
+	{
+		std::error_code ec;
+		return entry.is_regular_file(ec);
+	});
+}
+
+//Counts both regular files and sub-directories. Used for delete, where robocopy /MIR
+//reports every file (*EXTRA File) and every sub-folder (*EXTRA Dir) it removes.
+static int32_t getNumItemsInFolder(std::wstring_view path)
+{
+	return countInFolder(path, [](std::filesystem::directory_entry const& entry)
+	{
+		std::error_code ec;
+		return entry.is_regular_file(ec) || entry.is_directory(ec);
+	});
 }
 
 static uint64_t getFileSizeInFolder(std::wstring_view path)
@@ -54,6 +87,8 @@ int32_t TaskFile::GetNumFiles()
 		if (!fs)
 			return 0;
 
+		auto const isDelete = GetOperation() == CopyOperation::Delete;
+
 		while (true)
 		{
 			size_t length{};
@@ -66,7 +101,16 @@ int32_t TaskFile::GetNumFiles()
 				break;
 
 			if (std::filesystem::is_directory(line))
-				numFiles.push_back(getNumFilesInFolder(line));
+			{
+				//For delete, robocopy reports every sub-folder (*EXTRA Dir) alongside every
+				//file, and we delete the folder itself afterwards. Count them all (files +
+				//sub-folders + the folder itself) so the progress denominator matches what is
+				//actually processed - and so an empty / folder-only directory is not 0 items.
+				if (isDelete)
+					numFiles.push_back(getNumItemsInFolder(line) + 1);
+				else
+					numFiles.push_back(getNumFilesInFolder(line));
+			}
 			else
 				numFiles.push_back(1);
 			count += numFiles.back();
