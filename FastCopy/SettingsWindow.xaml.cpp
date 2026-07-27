@@ -8,6 +8,7 @@
 #include <PackageConfig.h>
 #include "RenameUtils.h"
 #include "TextBlockClipAnimation.h"
+#include <winrt/Windows.ApplicationModel.h>
 
 namespace winrt::FastCopy::implementation
 {
@@ -67,5 +68,10 @@ namespace winrt::FastCopy::implementation
         isRenameSuffixInvalid(!Utils::IsRenameSuffixValid(RenameSuffixTextBox().Text()));
     }
 
+    winrt::hstring SettingsWindow::VersionString()
+    {
+        auto version = winrt::Windows::ApplicationModel::Package::Current().Id().Version();
+        return winrt::hstring{ std::format(L"{}.{}.{}", version.Major, version.Minor, version.Build) };
+    }
 }
 

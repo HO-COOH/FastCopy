@@ -10,5 +10,6 @@ namespace FastCopy
         FastCopy.SettingsViewModel ViewModel{ get; };
         
         static Microsoft.UI.Xaml.Visibility NotToVisibility(Boolean value);
+        static String VersionString{ get; };
     }
 }

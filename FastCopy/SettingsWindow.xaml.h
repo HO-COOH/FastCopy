@@ -18,6 +18,7 @@ namespace winrt::FastCopy::implementation
                 : winrt::Microsoft::UI::Xaml::Visibility::Visible;
         }
 
+		static winrt::hstring VersionString();
     private:
         void isRenameSuffixInvalid(bool value);
 		bool m_isRenameSuffixInvalid{ false };
