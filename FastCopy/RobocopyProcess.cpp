@@ -5,6 +5,13 @@
 #include <wil/resource.h>
 #include "Ntdll.h"
 
+static bool hasEnglishResource()
+{
+	auto path = boost::process::v1::search_path("robocopy.exe").parent_path() / L"en-US" / "robocopy.exe.mui";
+	boost::system::error_code ec;
+	return boost::filesystem::exists(path, ec) && !ec;
+}
+
 void RobocopyProcess::runContext()
 {
 	static bool v = [] {
@@ -33,6 +40,18 @@ JobObject& RobocopyProcess::jobObjectInstance()
 
 void RobocopyProcess::injectProcess()
 {
+	static bool hasEnglishResourceCached = hasEnglishResource();
+	if (!hasEnglishResourceCached)
+	{
+		MessageBox(
+			NULL,
+			L"robocopy.exe does not have English resources. RobocopyEx will not work properly. Please check your Windows installation.",
+			L"RoboCopyEx",
+			MB_ICONERROR
+		);
+		throw InjectionFailed{};
+	}
+
 	auto& path = RobocopyInjectDll::Path();
 	std::wcout << L"Injecting dll: " << path << L'\n';
 	

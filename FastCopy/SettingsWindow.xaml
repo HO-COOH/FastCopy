@@ -369,16 +369,28 @@
                     Height="16"
                     Margin="8,0,16,0"
                     Source="/Assets/StoreLogo.png" />
-                <TextBlock
-                    x:Name="TitleBarTextBlock"
-                    x:Uid="SettingWindowTitle"
+                <StackPanel
                     Grid.Column="2"
                     VerticalAlignment="Center"
-                    Style="{StaticResource CaptionTextBlockStyle}">
-                    <TextBlock.OpacityTransition>
-                        <ScalarTransition />
-                    </TextBlock.OpacityTransition>
-                </TextBlock>
+                    Orientation="Horizontal"
+                    Spacing="12">
+                    <TextBlock
+                        x:Name="TitleBarTextBlock"
+                        x:Uid="SettingWindowTitle"
+                        VerticalAlignment="Center"
+                        Style="{StaticResource CaptionTextBlockStyle}">
+                        <TextBlock.OpacityTransition>
+                            <ScalarTransition />
+                        </TextBlock.OpacityTransition>
+                    </TextBlock>
+
+                    <TextBlock
+                        VerticalAlignment="Bottom"
+                        FontSize="10"
+                        Opacity="0.7"
+                        Text="{x:Bind local:SettingsWindow.VersionString}" />
+                </StackPanel>
+
             </Grid>
 
             <StackPanel Grid.Row="1" Margin="20,12,20,0">

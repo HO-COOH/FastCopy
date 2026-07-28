@@ -54,6 +54,7 @@ class RobocopyProcess
 	void injectProcess();
 public:
 	struct Exit {};
+	struct InjectionFailed {};
 
 	RobocopyProcess(RobocopyArgsBuilder const& builder, auto callbacks) :
 		m_child
@@ -75,6 +76,10 @@ public:
 		{
 			jobObjectInstance() << Handle();
 			injectProcess();
+		}
+		catch (InjectionFailed const&)
+		{
+
 		}
 		catch (...)
 		{
