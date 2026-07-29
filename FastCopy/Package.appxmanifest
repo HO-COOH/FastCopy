@@ -77,10 +77,6 @@
 					</com:SurrogateServer>
 				</com:ComServer>
 			</com:Extension>
-
-            <!--<desktop:Extension Category="windows.toastNotificationActivation">
-                <desktop:ToastNotificationActivation ToastActivatorCLSID="3282E233-C5D3-4533-9B25-44B8AAAFACFA"/>
-            </desktop:Extension>-->
 		</Extensions>
     </Application>
   </Applications>

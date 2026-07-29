@@ -193,6 +193,7 @@
       <Filter>Views\SettingsWindow</Filter>
     </ClCompile>
     <ClCompile Include="JobObject.cpp" />
+    <ClCompile Include="KnownFolderPath.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -381,6 +382,10 @@
     </ClInclude>
     <ClInclude Include="RobocopyExitCodes.h">
       <Filter>ViewModel\Robocopy</Filter>
+    </ClInclude>
+    <ClInclude Include="KnownFolderPath.h" />
+    <ClInclude Include="Error.h">
+      <Filter>Utils\Robocopy\Output</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

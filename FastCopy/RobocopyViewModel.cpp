@@ -161,6 +161,7 @@ namespace winrt::FastCopy::implementation
 				else if (canUseRobocopy())
 				{
 					auto currentIndex = m_process.size();
+					auto const currentItemFileCount = m_recordFile->GetNumFiles(m_recordFile->IndexOf(*m_iter));
 					{
 						std::lock_guard lock{ m_processStatusMutex };
 						m_perProcessStatus.emplace_back();
@@ -179,6 +180,18 @@ namespace winrt::FastCopy::implementation
 					m_process.emplace_back(std::make_unique<RobocopyProcess>(getRobocopyArg(),
 						overloaded
 						{
+							/*onError*/
+							[this, currentIndex](Error&& error)
+							{
+								//A robocopy ERROR (e.g. access denied). Mark this process failed, collect the message
+								//and turn the progress bar red. All errors are reported when the operation finishes.
+								m_perProcessStatus[currentIndex].m_hasError = true;
+								m_errors.push_back(std::move(error.error));
+								Global::UIThread.TryEnqueue([this] {
+									m_state = TaskbarState::Error;
+									raisePropertyChange(L"State");
+								});
+							},
 							/*onProgress*/
 							[this, currentIndex](float progress)
 							{
@@ -207,7 +220,7 @@ namespace winrt::FastCopy::implementation
 
 								++m_finishedFiles;
 								m_copiedBytes += previousFileSize;
-								if (m_finishedFiles == ItemCount())
+								if (m_finishedFiles >= ItemCount())
 									onNormalRobocopyFinished();
 								raiseProgressChange();
 							},
@@ -222,7 +235,7 @@ namespace winrt::FastCopy::implementation
 								++m_finishedFiles;
 								m_copiedBytes += sameFile.bytes;
 								m_perProcessStatus[currentIndex].m_copiedBytes = 0;
-								if (m_finishedFiles == ItemCount())
+								if (m_finishedFiles >= ItemCount())
 									onNormalRobocopyFinished();
 								raiseProgressChange();
 							},
@@ -257,9 +270,9 @@ namespace winrt::FastCopy::implementation
 								m_perProcessStatus[currentIndex].m_currentDir.fullPath = destinationSubfolderPath.string();
 							},
 							/*onProcessExit*/
-							[this, currentIndex, folderToDeleteAfterRobocopy = std::move(folderToDeleteAfterRobocopy)](RobocopyProcess::Exit)
+							[this, currentIndex, currentItemFileCount, folderToDeleteAfterRobocopy = std::move(folderToDeleteAfterRobocopy)](RobocopyProcess::Exit)
 							{
-								if (m_perProcessStatus[currentIndex].m_currentFile)
+								if (m_perProcessStatus[currentIndex].m_hasError) m_finishedFiles += currentItemFileCount; /*item failed; count all its files so progress can complete*/ else if (m_perProcessStatus[currentIndex].m_currentFile)
 									++m_finishedFiles;
 								m_copiedBytes += std::exchange(m_perProcessStatus[currentIndex].m_copiedBytes, 0);
 								
@@ -271,7 +284,7 @@ namespace winrt::FastCopy::implementation
 									++m_finishedFiles;
 								}
 
-								if (m_finishedFiles == ItemCount())
+								if (m_finishedFiles >= ItemCount())
 									onNormalRobocopyFinished();
 							},
 							[this](ExtraDir&&)
@@ -494,6 +507,8 @@ namespace winrt::FastCopy::implementation
 					.XC(true)          // Exclude changed files
 					.XN(true)          // Exclude newer files
 					.XO(true)          // Exclude older files
+					.R(0)              // Do not retry on failed copies
+					.W(0)              // No wait time between (non-existent) retries
 					.MT(clampRobocopyMT());
 
 				// Configure operation-specific arguments
@@ -532,6 +547,8 @@ namespace winrt::FastCopy::implementation
 						.BYTES(true)
 						.Unicode(true)
 						.MIR(true)
+						.R(0)              // Do not retry on failed deletes
+						.W(0)
 						.MT(clampRobocopyMT());
 				}
 				else
@@ -549,6 +566,8 @@ namespace winrt::FastCopy::implementation
 						.BYTES(true)
 						.Unicode(true)
 						.PURGE(true)
+						.R(0)              // Do not retry on failed deletes
+						.W(0)
 						.MT(clampRobocopyMT());
 				}
 				break;
@@ -599,6 +618,34 @@ namespace winrt::FastCopy::implementation
 
 	void RobocopyViewModel::onAllFinished()
 	{
+		if (m_allFinished.exchange(true))
+			return; //already finished; m_finishedFiles can cross ItemCount() from more than one callback
+
+		if (!m_errors.empty())
+		{
+			//The operation finished but some items failed. Publish the joined error text (shown by CopyDialogWindow's ErrorText) and mark the operation failed.
+			std::wstring message = L"The operation finished with the following errors:\n\n";
+			for (auto const& error : m_errors)
+			{
+				message += winrt::to_hstring(error).c_str();
+				message += L"\n";
+			}
+			Global::UIThread.TryEnqueue([this] {
+				m_state = TaskbarState::Error;
+				raisePropertyChange(L"State");
+			});
+			m_errorText = winrt::hstring{ message }; Global::UIThread.TryEnqueue([this] { raisePropertyChange(L"ErrorText"); });
+			std::filesystem::remove(m_recordFile->GetPath().data());
+			m_finishEvent(*this, FinishState::Failed);
+			Stop();
+			auto formatString = GetStringResource(L"CopyFailedNotificationFormatString");
+			Notification::SendFailed(
+				std::vformat(std::wstring_view{ formatString }, std::make_wformat_args(m_destination)).data(),
+				m_destination
+			);
+			return; //keep the window open (do not auto-exit) so the user can see the red progress bar and the errors
+		}
+
 		auto formatString = GetStringResource(L"CopyFinishNotificationFormatString");
 		auto operationString = OperationString();
 		auto operationStringData = operationString.data();
@@ -640,5 +687,10 @@ namespace winrt::FastCopy::implementation
 	FastCopy::TaskbarState RobocopyViewModel::State()
 	{
 		return m_state;
+	}
+
+	winrt::hstring RobocopyViewModel::ErrorText()
+	{
+		return m_errorText;
 	}
 }

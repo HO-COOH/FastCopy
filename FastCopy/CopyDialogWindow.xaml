@@ -26,6 +26,17 @@
         </Grid.Resources>
         <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind}" />
         <local:CopyDialog x:Name="CopyDialog" />
+
+        <ScrollViewer x:Name="ErrorScrollViewer" Visibility="Collapsed">
+            <ContentPresenter>
+                <TextBlock
+                    x:Name="ErrorText"
+                    Margin="16"
+                    IsTextSelectionEnabled="True"
+                    Text="{x:Bind ViewModel.ErrorText, Mode=OneWay}"
+                    TextWrapping="Wrap" />
+            </ContentPresenter>
+        </ScrollViewer>
     </Grid>
 
 </essential:WindowEx>

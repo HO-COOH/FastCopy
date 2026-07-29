@@ -253,6 +253,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <ClInclude Include="DebugFileSize.h" />
     <ClInclude Include="DebugLogger.h" />
     <ClInclude Include="EmptyFolder.h" />
+    <ClInclude Include="Error.h" />
     <ClInclude Include="ExistingDir.h" />
     <ClInclude Include="ExtraDir.h" />
     <ClInclude Include="ExtraFile.h" />
@@ -284,6 +285,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <ClInclude Include="Global.h" />
     <ClInclude Include="ImageUtils.h" />
     <ClInclude Include="JobObject.h" />
+    <ClInclude Include="KnownFolderPath.h" />
     <ClInclude Include="MutexWrapper.h" />
     <ClInclude Include="NewFile.h" />
     <ClInclude Include="Notification.h" />
@@ -453,6 +455,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="ImageUtils.cpp" />
     <ClCompile Include="JobObject.cpp" />
+    <ClCompile Include="KnownFolderPath.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MutexWrapper.cpp" />
     <ClCompile Include="NewFile.cpp" />

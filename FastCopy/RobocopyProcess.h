@@ -18,6 +18,7 @@
 #include "ExistingDir.h"
 #include "ExtraDir.h"
 #include "ExtraFile.h"
+#include "Error.h"
 #include "RobocopyExitCodes.h"
 #include <iostream>
 #include "RobocopyProcessStatus.h"
@@ -47,9 +48,13 @@ class RobocopyProcess
 	boost::process::async_pipe pipeOut{ ios };
 	boost::process::child m_child;
 #endif
+	std::optional<Error> m_error;
+
 	static void runContext();
 	static std::regex& progressRegex();
 	static JobObject& jobObjectInstance();
+
+	static std::wstring const& robocopyPath();
 
 	void injectProcess();
 public:
@@ -60,11 +65,11 @@ public:
 		m_child
 		{
 #if __has_include("boost/process/v1/child.hpp")
-			boost::process::v1::cmd(boost::process::v1::search_path("robocopy.exe").wstring() + L" " + builder.Build()),
+			boost::process::v1::cmd(robocopyPath() + L" " + builder.Build()),
 			boost::process::v1::std_out > pipeOut,
 			boost::process::v1::windows::create_no_window,
-#else	
-			boost::process::cmd(boost::process::search_path("robocopy.exe").wstring() + L" " + builder.Build()),
+#else
+			boost::process::cmd(robocopyPath() + L" " + builder.Build()),
 			boost::process::std_out > pipeOut,
 			boost::process::windows::create_no_window,
 #endif
@@ -112,7 +117,20 @@ public:
 					data.remove_suffix((std::min)(data.size() - 1 - data.find_last_not_of(" \r\n\t"), data.size()));
 					if (!data.empty())
 					{
-						if (data.starts_with(NewFile::Prefix))
+						if (auto error = Error::TryParse(data))
+						{
+							//e.g. "2026/07/28 23:15:29 ERROR 5 (0x00000005) Accessing Destination Directory E:\"
+							if (thisCopy->m_error) //flush a previous error that never got its description line
+								callbacksCopy(std::move(*thisCopy->m_error));
+							thisCopy->m_error = std::move(error);
+						}
+						else if (thisCopy->m_error)
+						{
+							thisCopy->m_error->error.append(data); //append the description line (e.g. "Access is denied.")
+							callbacksCopy(std::move(*thisCopy->m_error));
+							thisCopy->m_error.reset();
+						}
+						else if (data.starts_with(NewFile::Prefix))
 						{
 							if (auto newFile = NewFile::TryParse(data))
 								callbacksCopy(std::move(*newFile));
@@ -168,6 +186,11 @@ public:
 					std::wcout << L"[robocopy] exit code " << rawExitCode << L": "
 						<< GetRobocopyExitCodeDescription(exitCode) << L'\n';
 
+					if (thisCopy->m_error) //flush a trailing error whose description line never arrived
+					{
+						callbacksCopy(std::move(*thisCopy->m_error));
+						thisCopy->m_error.reset();
+					}
 					callbacksCopy(Exit{});
 				}
 			}

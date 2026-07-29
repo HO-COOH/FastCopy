@@ -7,6 +7,7 @@ struct RobocopyProcessStatus
 	uint64_t m_copiedBytes;
 	NewFile m_currentFile;
 	NewDir m_currentDir;
+	bool m_hasError = false;
 
 	void DebugSize() const;
 };

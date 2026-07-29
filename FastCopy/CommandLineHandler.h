@@ -1,5 +1,6 @@
 #pragma once
 #include <Windows.h>
+#include <string_view>
 #include "AppLaunchMode.h"
 
 //We are extracting some App.OnLaunched() logic to this class
@@ -13,4 +14,6 @@ public:
 	
 	CommandLineHandler(PWSTR cmd);
 	void Run();
+
+	static void handleToastActivation(std::wstring_view arguments);
 };

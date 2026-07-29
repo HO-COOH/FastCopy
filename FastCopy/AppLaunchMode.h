@@ -8,9 +8,7 @@ enum class AppLaunchMode
 	//Launch using protocol by shell extension, run copy
 	LaunchCopy,
 
-	//Launch by notification popup, open a folder
-	OpenLocation,
-
-	//Launch by notification popup, do nothing and exit
-	Dismiss
+	//Launch by clicking a notification's "Open" action. Windows re-launches us through the
+	//"fastcopy" protocol with "fastcopy://open?<url-encoded path>" on the command line
+	OpenLocation
 };

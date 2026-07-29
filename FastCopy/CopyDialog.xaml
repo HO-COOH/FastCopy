@@ -1458,6 +1458,19 @@
 
             <VisualStateGroup x:Name="ProgressBarStates">
                 <VisualState x:Name="NormalState" />
+                <VisualState x:Name="ErrorState">
+                    <VisualState.StateTriggers>
+                        <essential:IsEqualStateTrigger Value="{x:Bind ViewModel.State, Mode=OneWay}">
+                            <essential:IsEqualStateTrigger.To>
+                                <local:TaskbarState>Error</local:TaskbarState>
+                            </essential:IsEqualStateTrigger.To>
+                        </essential:IsEqualStateTrigger>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ProgressBar.HighColor" Value="#FFFF5F5F" />
+                        <Setter Target="ProgressBar.BaseColor" Value="#FFBF0000" />
+                    </VisualState.Setters>
+                </VisualState>
                 <VisualState x:Name="PausedState">
                     <VisualState.StateTriggers>
                         <essential:IsEqualStateTrigger Value="{x:Bind ViewModel.State, Mode=OneWay}">

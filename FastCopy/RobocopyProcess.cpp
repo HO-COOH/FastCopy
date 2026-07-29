@@ -4,12 +4,19 @@
 #include "RobocopyInjectDll.h"
 #include <wil/resource.h>
 #include "Ntdll.h"
+#include "KnownFolderPath.h"
 
 static bool hasEnglishResource()
 {
 	auto path = boost::process::v1::search_path("robocopy.exe").parent_path() / L"en-US" / "robocopy.exe.mui";
 	boost::system::error_code ec;
 	return boost::filesystem::exists(path, ec) && !ec;
+}
+
+std::wstring const& RobocopyProcess::robocopyPath()
+{
+	static std::wstring const path = std::wstring{ KnwonFolderPath{ FOLDERID_System }.Get() } + L"\\robocopy.exe";
+	return path;
 }
 
 void RobocopyProcess::runContext()

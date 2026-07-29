@@ -330,4 +330,7 @@
   <data name="SubmitIssueButton.Content" xml:space="preserve">
     <value>Submit an issue.</value>
   </data>
+  <data name="CopyFailedNotificationFormatString" xml:space="preserve">
+    <value>Some files failed to copy to {}</value>
+  </data>
 </root>

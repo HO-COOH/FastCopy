@@ -56,6 +56,8 @@ namespace winrt::FastCopy::implementation
 
 		FastCopy::TaskbarState State();
 
+        winrt::hstring ErrorText();
+
         std::optional<TaskFile> m_recordFile;
     private:
         double m_bytesPerSec{};
@@ -84,6 +86,9 @@ namespace winrt::FastCopy::implementation
 
         Concurrency::task<void> m_countItemTask;
         int m_finishedFiles{};
+        std::vector<std::string> m_errors; //robocopy ERROR lines collected across all processes, reported when the operation finishes
+        winrt::hstring m_errorText; //m_errors joined for display; bound to CopyDialogWindow's ErrorText TextBlock
+        std::atomic_bool m_allFinished{ false }; //guards onAllFinished() so it runs exactly once (m_finishedFiles can reach ItemCount() from multiple callbacks)
         RobocopyArgsBuilder getRobocopyArg();
         Status m_status{ Status::Running };
 

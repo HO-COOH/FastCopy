@@ -23,5 +23,7 @@ namespace FastCopy
 
         Windows.Foundation.IAsyncOperation<UInt64> GetTotalSize();
         TaskbarState State{ get; };
+
+        String ErrorText{ get; };
     }
 }

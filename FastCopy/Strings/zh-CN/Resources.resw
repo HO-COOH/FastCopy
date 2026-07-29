@@ -330,4 +330,7 @@
   <data name="SubmitIssueButton.Content" xml:space="preserve">
     <value>提交一个issue</value>
   </data>
+  <data name="CopyFailedNotificationFormatString" xml:space="preserve">
+    <value>复制到{}部分失败</value>
+  </data>
 </root>

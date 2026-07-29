@@ -34,6 +34,22 @@ namespace winrt::FastCopy::implementation
                 playWindowAnimation(m_currentSize = Sizes[clamped]);
             }
         );
+        ViewModel().Finished(
+            [this](winrt::Windows::Foundation::IInspectable const&, winrt::FastCopy::FinishState state)
+            {
+                if (state != winrt::FastCopy::FinishState::Failed)
+                    return;
+
+                //Some items failed: hide the progress dialog and show the (bound) error text instead
+                Global::UIThread.TryEnqueue([this]
+                {
+                    CopyDialog().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
+                    ErrorScrollViewer().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
+                    playWindowAnimation(Sizes[std::size(Sizes) - 1]);
+                });
+            }
+        );
+
         Global::copyWindow = *this;
     }
 
