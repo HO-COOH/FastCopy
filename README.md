@@ -6,6 +6,11 @@ A GUI wrapper for Windows' built-in `robocopy` ~~and `xcopy`~~.
 	<img src="https://get.microsoft.com/images/en-us%20light.svg" width="200"/>
 </a>
 
+Or install it using `winget`:
+```
+winget install robocopyex
+```
+
 
 ## Features
 - Easy to use copy/paste/move/delete dialog, just like your good old explorer, but much faster🚀

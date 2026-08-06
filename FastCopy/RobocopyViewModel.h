@@ -76,8 +76,6 @@ namespace winrt::FastCopy::implementation
         uint64_t m_size{};
         uint64_t m_totalSize{};
         mutable std::optional<TaskFile::TaskFileIterator<typename std::vector<std::wstring>::iterator>> m_iter;
-        TaskFile::TaskFileIterator<typename std::vector<std::wstring>::iterator> m_recordFileBegin;
-        TaskFile::TaskFileIterator<typename std::vector<std::wstring>::iterator> m_recordFileEnd;
         std::optional<std::filesystem::path> m_sourceForUI;
 
         std::optional<std::vector<winrt::FastCopy::FileCompareViewModel>> m_duplicateFileTask;
@@ -108,11 +106,6 @@ namespace winrt::FastCopy::implementation
          * @brief Called after normal robocopy stages finished 
          */
         void onNormalRobocopyFinished();
-
-        /**
-         * @brief Called after fallback copy stages finished
-         */
-        void onFallbackFinished();
 
         void onAllFinished();
 

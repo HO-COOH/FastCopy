@@ -51,7 +51,7 @@ void CommandLineHandler::Run()
 	}
 }
 
-void CommandLineHandler::HandleToastActivation(std::wstring_view arguments)
+void CommandLineHandler::handleToastActivation(std::wstring_view arguments)
 {
 	//arguments is the full protocol command line, eg "fastcopy://open/?E%3A%2Fdest"
 	auto const queryStart = arguments.find(L'?');

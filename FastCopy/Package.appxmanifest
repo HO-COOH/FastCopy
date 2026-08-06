@@ -57,15 +57,15 @@
 				<desktop4:FileExplorerContextMenus>
 					
 					<desktop5:ItemType Type="Directory">
-						<desktop5:Verb Id="Command1" Clsid="3282E233-C5D3-4533-9B25-44B8AAAFACFA" />
+						<desktop5:Verb Id="CRobocopyExCommand" Clsid="3282E233-C5D3-4533-9B25-44B8AAAFACFA" />
 					</desktop5:ItemType>
 					
 					<desktop5:ItemType Type="*">
-						<desktop5:Verb Id="Command1" Clsid="3282E233-C5D3-4533-9B25-44B8AAAFACFA" />
+						<desktop5:Verb Id="CRobocopyExCommand" Clsid="3282E233-C5D3-4533-9B25-44B8AAAFACFA" />
 					</desktop5:ItemType>
 
                     <desktop5:ItemType Type="Directory\Background">
-                        <desktop5:Verb Id="Command1" Clsid="3282E233-C5D3-4533-9B25-44B8AAAFACFA" />
+                        <desktop5:Verb Id="CRobocopyExCommand" Clsid="3282E233-C5D3-4533-9B25-44B8AAAFACFA" />
                     </desktop5:ItemType>
 				</desktop4:FileExplorerContextMenus>
 			</desktop4:Extension>

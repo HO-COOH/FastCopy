@@ -101,16 +101,13 @@ public:
 
 		boost::asio::co_spawn(ios, [this, callbacks = std::move(callbacks)]()->boost::asio::awaitable<void>
 		{
-			auto callbacksCopy = std::move(callbacks);
-			auto thisCopy = this;
-
 			std::vector<char> outBuf(k_OutBufferSize);           // that worked well for my decoding app.
 			try
 			{
 				auto buf = boost::asio::dynamic_buffer(outBuf);
 				while (true)
 				{
-					auto n = co_await boost::asio::async_read_until(thisCopy->pipeOut, buf, boost::regex{ "\r|\n" }, boost::asio::use_awaitable);
+					auto n = co_await boost::asio::async_read_until(pipeOut, buf, boost::regex{ "\r|\n" }, boost::asio::use_awaitable);
 					std::string_view data{ outBuf.begin(), outBuf.begin() + n };
 					std::cout << data << '\n';
 					data.remove_prefix((std::min)(data.find_first_not_of(" \r\t"), data.size()));
@@ -120,53 +117,53 @@ public:
 						if (auto error = Error::TryParse(data))
 						{
 							//e.g. "2026/07/28 23:15:29 ERROR 5 (0x00000005) Accessing Destination Directory E:\"
-							if (thisCopy->m_error) //flush a previous error that never got its description line
-								callbacksCopy(std::move(*thisCopy->m_error));
-							thisCopy->m_error = std::move(error);
+							if (m_error) //flush a previous error that never got its description line
+								callbacks(std::move(*m_error));
+							m_error = std::move(error);
 						}
-						else if (thisCopy->m_error)
+						else if (m_error)
 						{
-							thisCopy->m_error->error.append(data); //append the description line (e.g. "Access is denied.")
-							callbacksCopy(std::move(*thisCopy->m_error));
-							thisCopy->m_error.reset();
+							m_error->error.append(data); //append the description line (e.g. "Access is denied.")
+							callbacks(std::move(*m_error));
+							m_error.reset();
 						}
 						else if (data.starts_with(NewFile::Prefix))
 						{
 							if (auto newFile = NewFile::TryParse(data))
-								callbacksCopy(std::move(*newFile));
+								callbacks(std::move(*newFile));
 						}
 						else if (data.starts_with(NewDir::Prefix))
 						{
 							if (auto newDir = NewDir::TryParse(data))
-								callbacksCopy(std::move(*newDir));
+								callbacks(std::move(*newDir));
 						}
 						else if (data.starts_with(Same::Prefix))
 						{
 							if (auto same = Same::TryParse(data))
-								callbacksCopy(std::move(*same));
+								callbacks(std::move(*same));
 						}
 						else if (std::ranges::any_of(Conflict::Prefix, [&data](auto prefix) {return data.starts_with(prefix); }))
 						{
 							if(auto conflict = Conflict::TryParse(data))
-								callbacksCopy(std::move(*conflict));
+								callbacks(std::move(*conflict));
 						}
 						else if (auto existingDir = ExistingDir::TryParse(data))
 						{
-							callbacksCopy(std::move(*existingDir));
+							callbacks(std::move(*existingDir));
 						}
 						else if (data.starts_with(ExtraDir::Prefix))
 						{
 							if (auto extraDir = ExtraDir::TryParse(data))
-								callbacksCopy(std::move(*extraDir));
+								callbacks(std::move(*extraDir));
 						}
 						else if (data.starts_with(ExtraFile::Prefix))
 						{
 							if (auto extraFile = ExtraFile::TryParse(data))
-								callbacksCopy(std::move(*extraFile));
+								callbacks(std::move(*extraFile));
 						}
 						else if (std::regex_match(data.data(), data.data() + data.size(), progressRegex()))
 						{
-							callbacksCopy(std::strtof(data.data(), nullptr));
+							callbacks(std::strtof(data.data(), nullptr));
 						}
 						//else
 						//{
@@ -178,21 +175,35 @@ public:
 			}
 			catch (boost::system::system_error const& e)
 			{
-				if (auto code = e.code(); code == boost::asio::error::eof || code == boost::asio::error::broken_pipe)
+				auto const code = e.code();
+				auto const childClosedPipe = code == boost::asio::error::eof || code == boost::asio::error::broken_pipe;
+				if (!childClosedPipe)
 				{
-					thisCopy->m_child.wait();
-					auto const rawExitCode = thisCopy->m_child.native_exit_code();
-					auto const exitCode = static_cast<RoboCopyExitCodes>(rawExitCode);
-					std::wcout << L"[robocopy] exit code " << rawExitCode << L": "
-						<< GetRobocopyExitCodeDescription(exitCode) << L'\n';
-
-					if (thisCopy->m_error) //flush a trailing error whose description line never arrived
-					{
-						callbacksCopy(std::move(*thisCopy->m_error));
-						thisCopy->m_error.reset();
-					}
-					callbacksCopy(Exit{});
+					//The read failed for a reason other than robocopy closing its stdout - typically the
+					//overlapped read was aborted when the machine slept and woke (ERROR_OPERATION_ABORTED),
+					//or the volume dropped out. We can no longer drain robocopy's output, so it would block
+					//forever writing to a now-full pipe. Kill it so it does not hang, and report a synthetic
+					//error so this item counts as failed - otherwise m_finishedFiles never reaches ItemCount()
+					//and the whole operation stalls with the UI still responsive.
+					std::error_code termEc;
+					m_child.terminate(termEc);
+					callbacks(Error{ "ERROR: copy interrupted (the system may have slept). Re-run to copy any remaining files." });
 				}
+
+				std::error_code waitEc;
+				m_child.wait(waitEc);
+				auto const rawExitCode = m_child.native_exit_code();
+				auto const exitCode = static_cast<RoboCopyExitCodes>(rawExitCode);
+				std::wcout << L"[robocopy] exit code " << rawExitCode << L": "
+					<< GetRobocopyExitCodeDescription(exitCode) << L'\n';
+
+				if (m_error) //flush a trailing error whose description line never arrived
+				{
+					callbacks(std::move(*m_error));
+					m_error.reset();
+				}
+				//Always signal Exit so the view-model's finished-file accounting completes.
+				callbacks(Exit{});
 			}
 			catch (std::exception const& e)
 			{

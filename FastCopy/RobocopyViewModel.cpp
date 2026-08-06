@@ -41,13 +41,10 @@ namespace winrt::FastCopy::implementation
 			return;
 
 		m_recordFile.emplace(value);
-		m_recordFile->GetNumFiles();
 		m_iter = m_recordFile->begin();
-		m_recordFileBegin = m_recordFile->begin();
-		m_recordFileEnd = m_recordFile->end();
-
 		m_countItemTask = concurrency::create_task([this]
 		{
+			m_recordFile->ComputeCountAndSize();
 			m_totalSize = m_recordFile->GetTotalSize();
 			Global::UIThread.TryEnqueue([this] {
 				raisePropertyChange(L"ItemCount");
@@ -139,12 +136,19 @@ namespace winrt::FastCopy::implementation
 	{
 		if (!m_recordFile)
 			co_return;
-		//co_await m_countItemTask;
 		ProcessIOUpdater::Start(std::chrono::milliseconds{ 100 }, Global::UIThread.m_queue);
-		m_status = Status::Running; 
+		m_status = Status::Running;
+		//Keep the machine awake for the whole operation. If the PC idle-sleeps mid-copy, on wake the
+		//overlapped pipe read from robocopy can be aborted, which stalls robocopy (its stdout stops
+		//being drained) while the UI stays responsive. ES_SYSTEM_REQUIRED only suppresses the idle
+		//timeout - a deliberate sleep by the user still works.
+		SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
 		concurrency::create_task([this]
 		{
-			//m_countItemTask.get();
+			//Wait for counting+sizing to finish before iterating: this guarantees ItemCount() is the
+			//real total by the time any file is marked finished, so m_finishedFiles >= ItemCount()
+			//cannot trigger a premature "all finished" while counting is still in flight.
+			m_countItemTask.get();
 			while (*m_iter != m_recordFile->end() && m_status == Status::Running)
 			{
 				Global::UIThread.TryEnqueue([this, value = **m_iter] {
@@ -348,6 +352,7 @@ namespace winrt::FastCopy::implementation
 	void RobocopyViewModel::Cancel()
 	{
 		m_status = Status::Cancel;
+		SetThreadExecutionState(ES_CONTINUOUS); //cancelled - stop keeping the machine awake
 	}
 	void RobocopyViewModel::OnUpdateCopySpeed(ProcessIoCounter::IOCounterDiff diff)
 	{
@@ -442,7 +447,7 @@ namespace winrt::FastCopy::implementation
 			raiseProgressChange();
 		}
 		if (*m_duplicateFileTaskIter == m_duplicateFileTask->end())
-			onFallbackFinished();
+			onAllFinished();
 	}
 
 	winrt::Windows::Foundation::IAsyncOperation<uint64_t> RobocopyViewModel::GetTotalSize()
@@ -611,15 +616,15 @@ namespace winrt::FastCopy::implementation
 		}
 	}
 
-	void RobocopyViewModel::onFallbackFinished()
-	{
-		onAllFinished();
-	}
-
 	void RobocopyViewModel::onAllFinished()
 	{
 		if (m_allFinished.exchange(true))
 			return; //already finished; m_finishedFiles can cross ItemCount() from more than one callback
+
+		//Clear the keep-awake requirement so the machine can idle-sleep again. It was set on the UI
+		//thread in Start(), and an ES_CONTINUOUS requirement is tied to the setting thread, so clear it
+		//on the UI thread too (onAllFinished often runs on the io-callback thread).
+		Global::UIThread.TryEnqueue([] { SetThreadExecutionState(ES_CONTINUOUS); });
 
 		if (!m_errors.empty())
 		{
@@ -630,11 +635,14 @@ namespace winrt::FastCopy::implementation
 				message += winrt::to_hstring(error).c_str();
 				message += L"\n";
 			}
+			m_errorText = winrt::hstring{ message };
+			m_state = TaskbarState::Error;
+
 			Global::UIThread.TryEnqueue([this] {
-				m_state = TaskbarState::Error;
 				raisePropertyChange(L"State");
+				raisePropertyChange(L"ErrorText");
 			});
-			m_errorText = winrt::hstring{ message }; Global::UIThread.TryEnqueue([this] { raisePropertyChange(L"ErrorText"); });
+
 			std::filesystem::remove(m_recordFile->GetPath().data());
 			m_finishEvent(*this, FinishState::Failed);
 			Stop();

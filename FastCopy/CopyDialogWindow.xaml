@@ -6,6 +6,7 @@
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:FastCopy"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Closed="WindowEx_Closed"
     IsMaximizable="False"
     IsMinimizable="True"
     IsResizable="False"

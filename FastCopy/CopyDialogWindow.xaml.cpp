@@ -22,7 +22,7 @@ namespace winrt::FastCopy::implementation
         Global::UIThread = DispatcherQueue();
 
         ViewModel().DuplicateFiles().VectorChanged(
-            [this](winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::FileCompareViewModel> original, auto)
+            [this](winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::FileCompareViewModel> original, auto&&)
             {
                 auto const numElements = original.Size();
                 auto const clamped = std::clamp<uint32_t>(numElements, 0, std::size(Sizes) - 1);
@@ -57,5 +57,10 @@ namespace winrt::FastCopy::implementation
     {
         return ViewModelLocator::GetInstance().RobocopyViewModel();
     }
-}
 
+
+    void CopyDialogWindow::WindowEx_Closed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::WindowEventArgs const& args)
+    {
+        ViewModelLocator::GetInstance().RobocopyViewModel().Cancel();
+    }
+}

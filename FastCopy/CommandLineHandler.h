@@ -9,11 +9,11 @@
 class CommandLineHandler
 {
 	PWSTR m_cmd;
+
+	static void handleToastActivation(std::wstring_view arguments);
 public:
 	static inline AppLaunchMode AppLaunchMode{ AppLaunchMode::LaunchSettings };
 	
 	CommandLineHandler(PWSTR cmd);
 	void Run();
-
-	static void handleToastActivation(std::wstring_view arguments);
 };

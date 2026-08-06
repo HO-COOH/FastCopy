@@ -13,6 +13,7 @@ namespace winrt::FastCopy::implementation
         CopyDialogWindow();
 
         winrt::FastCopy::RobocopyViewModel ViewModel();
+        void WindowEx_Closed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::WindowEventArgs const& args);
     };
 }
 

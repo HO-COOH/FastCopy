@@ -76,9 +76,14 @@ public:
 		}
 	};
 
-	TaskFile(winrt::hstring const& path) : m_path{ path } {}
+	TaskFile(winrt::hstring const& path);
 
 	wchar_t const* data() const { return m_path.data(); }
+
+	//Walks every loaded entry once, computing the item count and the total byte size together.
+	//Expensive (recurses into folders); intended to run on a background thread.
+	void ComputeCountAndSize();
+
 	[[maybe_unused]]int32_t GetNumFiles();
 	int32_t GetNumFiles(int index);
 
@@ -99,5 +104,6 @@ private:
 	std::vector<std::wstring> lines;
 	std::vector<int> numFiles;
 	int totalFiles{};
+	uint64_t totalSize{};
 };
 
