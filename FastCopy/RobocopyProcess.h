@@ -52,12 +52,12 @@ class RobocopyProcess
 
 	static void runContext();
 	static std::regex& progressRegex();
-	static JobObject& jobObjectInstance();
 
 	static std::wstring const& robocopyPath();
 
 	void injectProcess();
 public:
+	static JobObject& JobObjectInstance();
 	struct Exit {};
 	struct InjectionFailed {};
 
@@ -79,7 +79,7 @@ public:
 	{
 		try
 		{
-			jobObjectInstance() << Handle();
+			JobObjectInstance() << Handle();
 			injectProcess();
 		}
 		catch (InjectionFailed const&)

@@ -192,8 +192,10 @@
     <ClCompile Include="TextBlockClipAnimation.cpp">
       <Filter>Views\SettingsWindow</Filter>
     </ClCompile>
-    <ClCompile Include="JobObject.cpp" />
     <ClCompile Include="KnownFolderPath.cpp" />
+    <ClCompile Include="JobObject.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -377,15 +379,15 @@
     <ClInclude Include="TextBlockClipAnimation.h">
       <Filter>Views\SettingsWindow</Filter>
     </ClInclude>
-    <ClInclude Include="JobObject.h">
-      <Filter>Utils\Robocopy</Filter>
-    </ClInclude>
     <ClInclude Include="RobocopyExitCodes.h">
       <Filter>ViewModel\Robocopy</Filter>
     </ClInclude>
     <ClInclude Include="KnownFolderPath.h" />
     <ClInclude Include="Error.h">
       <Filter>Utils\Robocopy\Output</Filter>
+    </ClInclude>
+    <ClInclude Include="JobObject.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

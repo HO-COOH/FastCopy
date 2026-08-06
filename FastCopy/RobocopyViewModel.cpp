@@ -306,7 +306,6 @@ namespace winrt::FastCopy::implementation
 						}
 					));
 					
-					SetHandle(m_process.back()->Handle());
 				}
 				else
 				{
@@ -352,6 +351,8 @@ namespace winrt::FastCopy::implementation
 	void RobocopyViewModel::Cancel()
 	{
 		m_status = Status::Cancel;
+		for (auto& process : m_process)
+			NtDll::NtSuspendProcess(process->Handle());
 		SetThreadExecutionState(ES_CONTINUOUS); //cancelled - stop keeping the machine awake
 	}
 	void RobocopyViewModel::OnUpdateCopySpeed(ProcessIoCounter::IOCounterDiff diff)

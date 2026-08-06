@@ -24,4 +24,15 @@ JobObject& JobObject::operator<<(HANDLE processHandle)
 	return *this;
 }
 
-
+JOBOBJECT_BASIC_AND_IO_ACCOUNTING_INFORMATION JobObject::GetAccountingInfo() const noexcept
+{
+	JOBOBJECT_BASIC_AND_IO_ACCOUNTING_INFORMATION info{};
+	winrt::check_bool(QueryInformationJobObject(
+		m_jobObject.get(),
+		JobObjectBasicAndIoAccountingInformation,
+		&info,
+		sizeof(info),
+		nullptr
+	));
+	return info;
+}

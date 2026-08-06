@@ -39,7 +39,7 @@ std::regex& RobocopyProcess::progressRegex()
 	return Progress;
 }
 
-JobObject& RobocopyProcess::jobObjectInstance()
+JobObject& RobocopyProcess::JobObjectInstance()
 {
 	static JobObject s_instance;
 	return s_instance;

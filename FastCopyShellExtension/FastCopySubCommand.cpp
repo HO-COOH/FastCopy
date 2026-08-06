@@ -31,6 +31,7 @@ void FastCopySubCommand::callMainProgramImpl(std::wstring_view arg)
 #if (defined _DEBUG) || (defined DEBUG)
     OutputDebugString(cmd.data());
 #endif
+    AllowSetForegroundWindow(ASFW_ANY);
     ShellExecute(
         NULL,
         L"open",

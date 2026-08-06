@@ -139,6 +139,14 @@ namespace winrt::FastCopy::implementation
         Global::windowEffectHelper.SetTarget(window);
         Global::windowEffectHelper.SetListenThemeChange();
         window.Activate();
+        auto const hwnd = GetHwnd(window);
+        if (!SetForegroundWindow(hwnd))
+        {
+            //Denied - the ASFW grant was consumed by an intervening input event, or explorer was not the
+            //foreground process. Force z-order above explorer without requiring foreground rights.
+            SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+            SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+        }
         viewModel->Start();
     }
 

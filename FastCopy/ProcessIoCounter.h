@@ -8,21 +8,9 @@
  */
 class ProcessIoCounter
 {
-	std::vector<std::pair<IO_COUNTERS, IO_COUNTERS>> m_counter{};
+	IO_COUNTERS m_prev{};
 	std::chrono::steady_clock::time_point m_lastUpdate{};
-	std::vector<HANDLE> m_handle;
-	bool firstCounterAsCurrent = true;
-
-	IO_COUNTERS& getCounterPrev(size_t i);
-	IO_COUNTERS& getCounterCur(size_t i);
 public:
-	/**
-	 * @brief Set a new process handle to the counter
-	 * 
-	 * @param handle a new process handle
-	 */
-	void SetHandle(HANDLE handle);
-
 	struct IOCounter
 	{
 		ULONGLONG read;
