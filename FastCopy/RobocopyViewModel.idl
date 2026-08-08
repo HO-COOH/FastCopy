@@ -4,8 +4,7 @@ import "TaskbarControl.idl";
 
 namespace FastCopy
 {
-    /*[bindable]*/
-    [Microsoft.UI.Xaml.Data.Bindable]
+    [bindable]
     [default_interface]
     runtimeclass RobocopyViewModel : ICopyBase
     {

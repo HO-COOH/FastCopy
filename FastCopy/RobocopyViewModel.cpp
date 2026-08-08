@@ -18,7 +18,6 @@
 #include <pplawait.h>
 #include <numeric>
 #include "FileInfoViewModel.h"
-#include "Ntdll.h"
 #include "ViewModelLocator.h"
 #include "RenameUtils.h"
 #include "Settings.h"
@@ -330,29 +329,36 @@ namespace winrt::FastCopy::implementation
 		co_await wil::resume_foreground(Global::UIThread.m_queue);
 		raisePropertyChange(L"State");
 	}
+	void RobocopyViewModel::suspendAllProcesses()
+	{
+		for (auto& process : m_process)
+			process->Suspend();
+	}
+	void RobocopyViewModel::resumeAllProcesses()
+	{
+		for (auto& process : m_process)
+			process->Resume();
+	}
 	void RobocopyViewModel::TogglePause()
 	{
 		if (m_status == Status::Running)
 		{
 			m_status = Status::Pause;
 			m_state = TaskbarState::Paused;
-			for (auto& process : m_process)
-				NtDll::NtSuspendProcess(process->Handle());
+			suspendAllProcesses();
 		}
 		else
 		{
 			m_status = Status::Running;
 			m_state = TaskbarState::Normal;
-			for (auto& process : m_process)
-				NtDll::NtResumeProcess(process->Handle());
+			resumeAllProcesses();
 		}
 		raisePropertyChange(L"State");
 	}
 	void RobocopyViewModel::Cancel()
 	{
 		m_status = Status::Cancel;
-		for (auto& process : m_process)
-			NtDll::NtSuspendProcess(process->Handle());
+		suspendAllProcesses();
 		SetThreadExecutionState(ES_CONTINUOUS); //cancelled - stop keeping the machine awake
 	}
 	void RobocopyViewModel::OnUpdateCopySpeed(ProcessIoCounter::IOCounterDiff diff)
@@ -666,6 +672,14 @@ namespace winrt::FastCopy::implementation
 		m_finishEvent(*this, FinishState::Success);
 		Stop();
 
+		//Force one final progress update: raiseProgressChange() is throttled, so the last per-file
+		//notification may have been dropped and the bar would stay short of 100%. Enqueued before the
+		//exit below, so it is dispatched first.
+		Global::UIThread.TryEnqueue([this] {
+			raisePropertyChange(L"Percent");
+			raisePropertyChange(L"FinishedItemCount");
+		});
+
 		if (!Settings{}.Get(Settings::DevMode, false))
 		{
 			Global::UIThread.TryEnqueue([] {
@@ -686,6 +700,12 @@ namespace winrt::FastCopy::implementation
 
 	void RobocopyViewModel::raiseProgressChange()
 	{
+		constexpr auto k_ProgressUpdateInterval = std::chrono::milliseconds{ 100 };
+		auto const now = std::chrono::steady_clock::now();
+		if (now - m_lastProgressUpdate.load(std::memory_order_relaxed) < k_ProgressUpdateInterval)
+			return;
+		m_lastProgressUpdate.store(now, std::memory_order_relaxed);
+
 		Global::UIThread.TryEnqueue([this] 
 		{ 
 			raisePropertyChange(L"Percent");

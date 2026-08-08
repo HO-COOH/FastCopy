@@ -94,6 +94,20 @@ void RobocopyProcess::injectProcess()
 	ResumeThread(hThread);
 }
 
+void RobocopyProcess::Suspend() const
+{
+	//boost::process sets handle to INVALID_HANDLE_VALUE after wait()
+	//before passing to NtSuspendProcess, it must be checked, otherwise main process freeze
+	if (m_child.valid())
+		NtDll::NtSuspendProcess(Handle());
+}
+
+void RobocopyProcess::Resume() const
+{
+	if (m_child.valid())
+		NtDll::NtResumeProcess(Handle());
+}
+
 void RobocopyProcess::WaitForExit()
 {
 	ios.run();
