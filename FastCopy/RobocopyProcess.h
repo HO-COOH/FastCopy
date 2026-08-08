@@ -217,6 +217,16 @@ public:
 
 	HANDLE Handle() const { return m_child.native_handle(); }
 
+	/**
+	 * @brief Suspends the process. Does nothing if it has already exited.
+	 */
+	void Suspend() const;
+
+	/**
+	 * @brief Resumes the process. Does nothing if it has already exited.
+	 */
+	void Resume() const;
+
 	void WaitForExit();
 };
 

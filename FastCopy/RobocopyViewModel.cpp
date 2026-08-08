@@ -18,7 +18,6 @@
 #include <pplawait.h>
 #include <numeric>
 #include "FileInfoViewModel.h"
-#include "Ntdll.h"
 #include "ViewModelLocator.h"
 #include "RenameUtils.h"
 #include "Settings.h"
@@ -330,42 +329,36 @@ namespace winrt::FastCopy::implementation
 		co_await wil::resume_foreground(Global::UIThread.m_queue);
 		raisePropertyChange(L"State");
 	}
+	void RobocopyViewModel::suspendAllProcesses()
+	{
+		for (auto& process : m_process)
+			process->Suspend();
+	}
+	void RobocopyViewModel::resumeAllProcesses()
+	{
+		for (auto& process : m_process)
+			process->Resume();
+	}
 	void RobocopyViewModel::TogglePause()
 	{
 		if (m_status == Status::Running)
 		{
 			m_status = Status::Pause;
 			m_state = TaskbarState::Paused;
-			for (auto& process : m_process)
-			{
-				//After robocopy exits, boost::process reaps it and sets the native handle to
-				//INVALID_HANDLE_VALUE (-1). Passing -1 to NtSuspendProcess makes the kernel treat
-				//it as a pseudo-handle for the CURRENT process, suspending FastCopy itself and
-				//freezing the UI (the call never returns). Skip handles that are no longer valid.
-				if (auto const hProcess = process->Handle(); hProcess != INVALID_HANDLE_VALUE)
-					NtDll::NtSuspendProcess(hProcess);
-			}
+			suspendAllProcesses();
 		}
 		else
 		{
 			m_status = Status::Running;
 			m_state = TaskbarState::Normal;
-			for (auto& process : m_process)
-			{
-				if (auto const hProcess = process->Handle(); hProcess != INVALID_HANDLE_VALUE)
-					NtDll::NtResumeProcess(hProcess);
-			}
+			resumeAllProcesses();
 		}
 		raisePropertyChange(L"State");
 	}
 	void RobocopyViewModel::Cancel()
 	{
 		m_status = Status::Cancel;
-		for (auto& process : m_process)
-		{
-			if (auto const hProcess = process->Handle(); hProcess != INVALID_HANDLE_VALUE)
-				NtDll::NtSuspendProcess(hProcess);
-		}
+		suspendAllProcesses();
 		SetThreadExecutionState(ES_CONTINUOUS); //cancelled - stop keeping the machine awake
 	}
 	void RobocopyViewModel::OnUpdateCopySpeed(ProcessIoCounter::IOCounterDiff diff)
@@ -679,22 +672,20 @@ namespace winrt::FastCopy::implementation
 		m_finishEvent(*this, FinishState::Success);
 		Stop();
 
-		// Force one final UI refresh so the progress bar/counter show 100% before exit;
-		// the throttled raiseProgressChange() may have skipped the last per-file update.
+		//Force one final progress update: raiseProgressChange() is throttled, so the last per-file
+		//notification may have been dropped and the bar would stay short of 100%. Enqueued before the
+		//exit below, so it is dispatched first.
 		Global::UIThread.TryEnqueue([this] {
 			raisePropertyChange(L"Percent");
 			raisePropertyChange(L"FinishedItemCount");
 		});
 
-		// Auto-exit disabled for testing: Application::Current().Exit() after a large copy
-		// hangs during teardown (background IO/process teardown race). Keep the window open;
-		// the user closes it manually.
-		//if (!Settings{}.Get(Settings::DevMode, false))
-		//{
-		//	Global::UIThread.TryEnqueue([] {
-		//		winrt::Microsoft::UI::Xaml::Application::Current().Exit();
-		//	});
-		//}
+		if (!Settings{}.Get(Settings::DevMode, false))
+		{
+			Global::UIThread.TryEnqueue([] {
+				winrt::Microsoft::UI::Xaml::Application::Current().Exit();
+			});
+		}
 	}
 
 	winrt::hstring RobocopyViewModel::finishedOperationString()

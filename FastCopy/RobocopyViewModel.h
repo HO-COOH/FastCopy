@@ -112,6 +112,9 @@ namespace winrt::FastCopy::implementation
 
         winrt::hstring finishedOperationString();
 
+        void suspendAllProcesses();
+        void resumeAllProcesses();
+
         void raiseProgressChange();
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::FileCompareViewModel> m_duplicateFiles = winrt::single_threaded_observable_vector<winrt::FastCopy::FileCompareViewModel>();
     };
