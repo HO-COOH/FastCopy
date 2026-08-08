@@ -700,17 +700,11 @@ namespace winrt::FastCopy::implementation
 
 	void RobocopyViewModel::raiseProgressChange()
 	{
-		// Throttle UI updates: per-file notifications with tens of thousands of small files
-		// drown the DispatcherQueue, so after the operation finishes the success toast (fired
-		// from the IO thread) appears while the UI thread is still draining the backlog and
-		// the window looks frozen. At most one update per 80ms keeps the UI responsive
-		// without noticeably lagging the progress bar.
-		auto const nowMs = std::chrono::duration_cast<std::chrono::milliseconds>(
-			std::chrono::steady_clock::now().time_since_epoch()).count();
-		auto const lastMs = m_lastProgressMs.load(std::memory_order_relaxed);
-		if (nowMs - lastMs < 80)
+		constexpr auto k_ProgressUpdateInterval = std::chrono::milliseconds{ 100 };
+		auto const now = std::chrono::steady_clock::now();
+		if (now - m_lastProgressUpdate.load(std::memory_order_relaxed) < k_ProgressUpdateInterval)
 			return;
-		m_lastProgressMs.store(nowMs, std::memory_order_relaxed);
+		m_lastProgressUpdate.store(now, std::memory_order_relaxed);
 
 		Global::UIThread.TryEnqueue([this] 
 		{ 

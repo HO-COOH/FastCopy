@@ -4,6 +4,7 @@
 #include "PropertyChangeHelper.hpp"
 #include "ProcessIOUpdater.hpp"
 #include <optional>
+#include <chrono>
 #include "RobocopyProcess.h"
 #include "TaskFile.h"
 #include <ppltasks.h>
@@ -87,7 +88,7 @@ namespace winrt::FastCopy::implementation
         std::vector<std::string> m_errors; //robocopy ERROR lines collected across all processes, reported when the operation finishes
         winrt::hstring m_errorText; //m_errors joined for display; bound to CopyDialogWindow's ErrorText TextBlock
         std::atomic_bool m_allFinished{ false }; //guards onAllFinished() so it runs exactly once (m_finishedFiles can reach ItemCount() from multiple callbacks)
-        std::atomic<uint64_t> m_lastProgressMs{}; //throttle: last time a progress UI update was enqueued (steady_clock ms)
+        std::atomic<std::chrono::steady_clock::time_point> m_lastProgressUpdate{}; //throttle: when the last progress UI update was enqueued
         RobocopyArgsBuilder getRobocopyArg();
         Status m_status{ Status::Running };
 
