@@ -87,6 +87,7 @@ namespace winrt::FastCopy::implementation
         std::vector<std::string> m_errors; //robocopy ERROR lines collected across all processes, reported when the operation finishes
         winrt::hstring m_errorText; //m_errors joined for display; bound to CopyDialogWindow's ErrorText TextBlock
         std::atomic_bool m_allFinished{ false }; //guards onAllFinished() so it runs exactly once (m_finishedFiles can reach ItemCount() from multiple callbacks)
+        std::atomic<uint64_t> m_lastProgressMs{}; //throttle: last time a progress UI update was enqueued (steady_clock ms)
         RobocopyArgsBuilder getRobocopyArg();
         Status m_status{ Status::Running };
 

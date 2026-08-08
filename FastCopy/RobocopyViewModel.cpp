@@ -337,14 +337,24 @@ namespace winrt::FastCopy::implementation
 			m_status = Status::Pause;
 			m_state = TaskbarState::Paused;
 			for (auto& process : m_process)
-				NtDll::NtSuspendProcess(process->Handle());
+			{
+				//After robocopy exits, boost::process reaps it and sets the native handle to
+				//INVALID_HANDLE_VALUE (-1). Passing -1 to NtSuspendProcess makes the kernel treat
+				//it as a pseudo-handle for the CURRENT process, suspending FastCopy itself and
+				//freezing the UI (the call never returns). Skip handles that are no longer valid.
+				if (auto const hProcess = process->Handle(); hProcess != INVALID_HANDLE_VALUE)
+					NtDll::NtSuspendProcess(hProcess);
+			}
 		}
 		else
 		{
 			m_status = Status::Running;
 			m_state = TaskbarState::Normal;
 			for (auto& process : m_process)
-				NtDll::NtResumeProcess(process->Handle());
+			{
+				if (auto const hProcess = process->Handle(); hProcess != INVALID_HANDLE_VALUE)
+					NtDll::NtResumeProcess(hProcess);
+			}
 		}
 		raisePropertyChange(L"State");
 	}
@@ -352,7 +362,10 @@ namespace winrt::FastCopy::implementation
 	{
 		m_status = Status::Cancel;
 		for (auto& process : m_process)
-			NtDll::NtSuspendProcess(process->Handle());
+		{
+			if (auto const hProcess = process->Handle(); hProcess != INVALID_HANDLE_VALUE)
+				NtDll::NtSuspendProcess(hProcess);
+		}
 		SetThreadExecutionState(ES_CONTINUOUS); //cancelled - stop keeping the machine awake
 	}
 	void RobocopyViewModel::OnUpdateCopySpeed(ProcessIoCounter::IOCounterDiff diff)
@@ -666,12 +679,22 @@ namespace winrt::FastCopy::implementation
 		m_finishEvent(*this, FinishState::Success);
 		Stop();
 
-		if (!Settings{}.Get(Settings::DevMode, false))
-		{
-			Global::UIThread.TryEnqueue([] {
-				winrt::Microsoft::UI::Xaml::Application::Current().Exit();
-			});
-		}
+		// Force one final UI refresh so the progress bar/counter show 100% before exit;
+		// the throttled raiseProgressChange() may have skipped the last per-file update.
+		Global::UIThread.TryEnqueue([this] {
+			raisePropertyChange(L"Percent");
+			raisePropertyChange(L"FinishedItemCount");
+		});
+
+		// Auto-exit disabled for testing: Application::Current().Exit() after a large copy
+		// hangs during teardown (background IO/process teardown race). Keep the window open;
+		// the user closes it manually.
+		//if (!Settings{}.Get(Settings::DevMode, false))
+		//{
+		//	Global::UIThread.TryEnqueue([] {
+		//		winrt::Microsoft::UI::Xaml::Application::Current().Exit();
+		//	});
+		//}
 	}
 
 	winrt::hstring RobocopyViewModel::finishedOperationString()
@@ -686,6 +709,18 @@ namespace winrt::FastCopy::implementation
 
 	void RobocopyViewModel::raiseProgressChange()
 	{
+		// Throttle UI updates: per-file notifications with tens of thousands of small files
+		// drown the DispatcherQueue, so after the operation finishes the success toast (fired
+		// from the IO thread) appears while the UI thread is still draining the backlog and
+		// the window looks frozen. At most one update per 80ms keeps the UI responsive
+		// without noticeably lagging the progress bar.
+		auto const nowMs = std::chrono::duration_cast<std::chrono::milliseconds>(
+			std::chrono::steady_clock::now().time_since_epoch()).count();
+		auto const lastMs = m_lastProgressMs.load(std::memory_order_relaxed);
+		if (nowMs - lastMs < 80)
+			return;
+		m_lastProgressMs.store(nowMs, std::memory_order_relaxed);
+
 		Global::UIThread.TryEnqueue([this] 
 		{ 
 			raisePropertyChange(L"Percent");
