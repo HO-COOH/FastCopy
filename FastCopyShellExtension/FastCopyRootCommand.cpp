@@ -29,6 +29,11 @@ HRESULT FastCopyRootCommand::SetSite(IUnknown* pUnkSite)
 
 HRESULT FastCopyRootCommand::GetSite(REFIID riid, void** ppvSite)
 {
+    // CopyTo would dereference the null pointer, so the no-site case is answered here.
+    *ppvSite = nullptr;
+    if (!m_site)
+        return E_FAIL;
+
     return m_site.CopyTo(riid, ppvSite);
 }
 
@@ -76,7 +81,8 @@ HRESULT FastCopyRootCommand::EnumSubCommands(IEnumExplorerCommand** enumCommands
 {
 	ensureSubCommands();
 	m_subCommandIter = m_subCommands.begin();
-	AddRef();
+
+	// QueryInterface already adds the reference the caller will release.
 	return QueryInterface(IID_PPV_ARGS(enumCommands));
 }
 

@@ -1,21 +1,11 @@
 ﻿#include "Recorder.h"
 #include <format>
-#include <chrono>
 #include <ShlObj_core.h>
 #include <Windows.h>
 #include <filesystem>
 #include "ShellItem.h"
 #include "Registry.h"
 #include "AppFolders.h"
-
-static auto GetTimeString()
-{
-	//std::chrono::current_zone() gives exceptions on Windows 10, 17763 with MSVC cl.exe version 19.36.32535
-	//auto ret = std::format(L"{}", std::chrono::zoned_time{ std::chrono::current_zone(), std::chrono::system_clock::now() }.get_local_time());
-	auto ret = std::format(L"{}", std::chrono::system_clock::now());
-	std::ranges::replace_if(ret, [](auto c) {return c == L'.' || c == L':'; }, L'-');
-	return ret;
-}
 
 Recorder::Recorder(CopyOperation op) : m_path{ GetRecordFilePath(op) }
 {
@@ -50,7 +40,7 @@ static wchar_t toFlag(CopyOperation op)
 
 std::filesystem::path Recorder::GetRecordFilePath(CopyOperation op)
 {
-	return AppFolders::RecordsFolder(true) / std::format(L"{}{}.txt", toFlag(op), GetTimeString());
+	return AppFolders::RecordsFolder(true) / MakeRecordFileName(toFlag(op), L".txt");
 }
 
 bool Recorder::HasRecord()

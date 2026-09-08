@@ -1,41 +1,51 @@
-#include "RecordFile.h"
+﻿#include "RecordFile.h"
+
+#include <Windows.h>
 
 #include <algorithm>
+#include <atomic>
+#include <chrono>
+#include <format>
 #include <string>
 
-RecordFile::RecordFile(std::filesystem::path const& path)
+RecordFile::RecordFile(std::filesystem::path const& path) : m_file{ path, std::ios::binary }
 {
-    m_good = _wfopen_s(&m_file, path.c_str(), L"wb") == 0 && m_file != nullptr;
-}
-
-RecordFile::~RecordFile()
-{
-    Close();
 }
 
 bool RecordFile::Close()
 {
-    if (m_file)
+    // close() on a stream that was never opened sets failbit on its own.
+    if (m_file.is_open())
     {
-        m_good = fclose(m_file) == 0 && m_good;
-        m_file = nullptr;
+        m_file.close();
     }
-    return m_good;
+    return !m_file.fail();
 }
 
 RecordFile& RecordFile::operator<<(std::wstring_view path)
 {
-    if (!m_good)
-    {
-        return *this;
-    }
-
     // The reader wants forward slashes, and the caller's string is not ours to rewrite.
     std::wstring normalized{ path };
     std::ranges::replace(normalized, L'\\', L'/');
 
+    // A stream that has already failed ignores these, so no guard is needed.
     auto const length = normalized.size();
-    m_good = fwrite(&length, sizeof(length), 1, m_file) == 1 &&
-        fwrite(normalized.data(), sizeof(wchar_t), length, m_file) == length;
+    m_file.write(reinterpret_cast<char const*>(&length), sizeof(length));
+    m_file.write(reinterpret_cast<char const*>(normalized.data()), length * sizeof(wchar_t));
     return *this;
+}
+
+std::wstring MakeRecordFileName(wchar_t operationFlag, std::wstring_view extension)
+{
+    static std::atomic_uint sequence{};
+    auto const now = std::chrono::system_clock::now();
+    auto const second = std::chrono::floor<std::chrono::seconds>(now);
+
+    return std::format(L"{}{:%F_%H-%M-%S}-{:07}-{}-{}{}",
+        operationFlag,
+        second,
+        (now - second).count(),
+        GetCurrentProcessId(),
+        sequence.fetch_add(1),
+        extension);
 }

@@ -1,4 +1,4 @@
-#include "ClipboardFileTransfer.h"
+﻿#include "ClipboardFileTransfer.h"
 #include "ClipboardFormat.h"
 #include "AppFolders.h"
 #include "FastCopyLauncher.h"
@@ -6,9 +6,7 @@
 #include <wil/resource.h>
 #include <ShlObj_core.h>
 #include <algorithm>
-#include <atomic>
 #include <cstddef>
-#include <format>
 
 static std::optional<DWORD> GetPreferredDropEffect()
 {
@@ -103,23 +101,10 @@ std::optional<ClipboardFileTransfer> ClipboardFileTransfer::Read()
 
 static std::optional<std::filesystem::path> WriteRecordFile(ClipboardFileTransfer const& transfer)
 {
-    FILETIME timestamp{};
-    GetSystemTimePreciseAsFileTime(&timestamp);
-    ULARGE_INTEGER const timestampValue
-    {
-        .LowPart = timestamp.dwLowDateTime,
-        .HighPart = timestamp.dwHighDateTime
-    };
-    static std::atomic_uint sequence{};
-
     // The hook writes into its own folder: Recorder::HasRecord scans the shell
     // extension's, and a record left behind there would keep the Paste entry showing.
-    auto const path = AppFolders::ClipboardRecordsFolder(true) / std::format(
-        L"{}{}-{}-{}.bin",
-        transfer.move ? L'M' : L'C',
-        timestampValue.QuadPart,
-        GetCurrentProcessId(),
-        sequence.fetch_add(1));
+    auto const path = AppFolders::ClipboardRecordsFolder(true) /
+        MakeRecordFileName(transfer.move ? L'M' : L'C', L".bin");
 
     RecordFile record{ path };
     for (auto const& source : transfer.paths)
