@@ -195,6 +195,12 @@
   <data name="NotificationSettingItem.Title" xml:space="preserve">
     <value>Notificar al acabar</value>
   </data>
+  <data name="KeyboardIntegrationSettingItem.Header" xml:space="preserve">
+    <value>Integración de teclado del Explorador</value>
+  </data>
+  <data name="KeyboardIntegrationSettingItem.Description" xml:space="preserve">
+    <value>Usar RoboCopyEx al pegar archivos con Ctrl+V en el Explorador de archivos</value>
+  </data>
   <data name="SettingWindowTitle.Text" xml:space="preserve">
     <value>Ajustes de FastCopy</value>
   </data>

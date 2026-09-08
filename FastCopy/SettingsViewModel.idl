@@ -7,6 +7,7 @@
         SettingsViewModel();
 
         Boolean Notify;
+        Boolean KeyboardIntegration;
         Int32 RenameBehavior;
         String RenameSuffix;
         Int32 MultipleWindowBehavior;

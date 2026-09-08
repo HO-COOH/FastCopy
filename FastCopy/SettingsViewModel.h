@@ -13,6 +13,9 @@ namespace winrt::FastCopy::implementation
         bool Notify();
         void Notify(bool value);
 
+        bool KeyboardIntegration();
+        void KeyboardIntegration(bool value);
+
         int RenameBehavior();
         void RenameBehavior(int value);
 

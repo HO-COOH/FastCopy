@@ -10,6 +10,7 @@ class ShellWindows
 public:
 	[[nodiscard]] long Count();
 	[[nodiscard]] WebBrowser2 Item(VARIANT index);
+	[[nodiscard]] WebBrowser2 Item(long index);
 
 	// Get information about all currently open explorer windows.
 	[[nodiscard]] static std::optional<WebBrowser2> GetForegroundExplorer();

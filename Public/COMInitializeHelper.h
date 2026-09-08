@@ -1,18 +1,12 @@
-#pragma once
+﻿#pragma once
 #include <combaseapi.h>
-#include <stdexcept>
-struct COMInitializeHelper
-{
-	COMInitializeHelper()
-	{
-		if (!SUCCEEDED(CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE)))
-			throw std::exception{ "COM initialize failed" };
-	}
+#include <wil/resource.h>
 
-	~COMInitializeHelper()
-	{
-		CoUninitialize();
-	}
+class COMInitializeHelper
+{
+	wil::unique_couninitialize_call m_uninitialize{ wil::CoInitializeEx(COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE) };
+public:
+	COMInitializeHelper() = default;
 
 	COMInitializeHelper(COMInitializeHelper const&) = delete;
 	COMInitializeHelper(COMInitializeHelper&&) = delete;

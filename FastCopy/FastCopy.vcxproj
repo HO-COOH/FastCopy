@@ -217,6 +217,8 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\PackageConfig.h" />
+    <ClInclude Include="..\Public\KeyboardHookSettings.h" />
+    <ClInclude Include="..\Public\ModulePath.h" />
     <ClInclude Include="..\Public\PropertyDescription.h" />
     <ClInclude Include="..\Public\ShellItem2.h" />
     <ClInclude Include="AcrylicHelper.h" />
@@ -285,6 +287,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <ClInclude Include="Global.h" />
     <ClInclude Include="ImageUtils.h" />
     <ClInclude Include="JobObject.h" />
+    <ClInclude Include="KeyboardHookController.h" />
     <ClInclude Include="KnownFolderPath.h" />
     <ClInclude Include="MutexWrapper.h" />
     <ClInclude Include="NewFile.h" />
@@ -397,6 +400,9 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Public\ModulePath.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\Public\PropertyDescription.cpp" />
     <ClCompile Include="..\Public\ShellItem2.cpp" />
     <ClCompile Include="AcrylicHelper.cpp" />
@@ -430,6 +436,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <ClCompile Include="EmptyFolder.cpp" />
     <ClCompile Include="Fallback.cpp" />
     <ClCompile Include="FastcopySettingsSingleInstanceLock.cpp" />
+    <ClCompile Include="KeyboardHookController.cpp" />
     <ClCompile Include="FileCompareViewModel.cpp">
       <DependentUpon>FileCompareViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -693,6 +700,9 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Package|x64'">true</DeploymentContent>
     </None>
+    <None Include="..\x64\$(Configuration)\FastCopy\FastCopyKeyboardHook.exe">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="..\x64\Package\FastCopy\RobocopyInjection.dll">
       <DeploymentContent>true</DeploymentContent>
     </None>
@@ -702,6 +712,9 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
   <ItemGroup>
     <ProjectReference Include="..\FastCopyShellExtension\FastCopyShellExtension.vcxproj">
       <Project>{17f52e4d-1e98-4288-9aa1-20a384171876}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\FastCopyKeyboardHook\FastCopyKeyboardHook.vcxproj">
+      <Project>{83e7518d-7ba4-4a13-b2c9-4ab98da778de}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

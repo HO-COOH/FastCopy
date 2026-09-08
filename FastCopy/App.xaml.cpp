@@ -20,6 +20,7 @@
 #include "RobocopyViewModel.h"
 #include "CommandLineHandler.h"
 #include "Settings.h"
+#include "KeyboardHookController.h"
 
 
 namespace winrt::FastCopy::implementation
@@ -61,6 +62,7 @@ namespace winrt::FastCopy::implementation
     {
         try
         {
+            KeyboardHookController::Start();
             CommandLineHandler::AppLaunchMode == AppLaunchMode::LaunchSettings ? launchSettings() : normalLaunch();
         }
         catch (winrt::hresult_error const& e)

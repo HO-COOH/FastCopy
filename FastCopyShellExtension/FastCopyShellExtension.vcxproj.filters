@@ -40,10 +40,10 @@
     <ClCompile Include="..\Public\ShellItem.cpp">
       <Filter>COM</Filter>
     </ClCompile>
-    <ClCompile Include="ShellWindows.cpp">
+    <ClCompile Include="..\Public\ShellWindows.cpp">
       <Filter>COM</Filter>
     </ClCompile>
-    <ClCompile Include="WebBrowser2.cpp">
+    <ClCompile Include="..\Public\WebBrowser2.cpp">
       <Filter>COM</Filter>
     </ClCompile>
     <ClCompile Include="FastCopyRootCommand.cpp">
@@ -57,6 +57,21 @@
     </ClCompile>
     <ClCompile Include="DllIconFormatter.cpp">
       <Filter>Icons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Public\ModulePath.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Public\AppFolders.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Public\ExplorerFolder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Public\FastCopyLauncher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Public\RecordFile.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -87,10 +102,10 @@
     <ClInclude Include="..\Public\ShellItemArray.h">
       <Filter>COM</Filter>
     </ClInclude>
-    <ClInclude Include="ShellWindows.h">
+    <ClInclude Include="..\Public\ShellWindows.h">
       <Filter>COM</Filter>
     </ClInclude>
-    <ClInclude Include="WebBrowser2.h">
+    <ClInclude Include="..\Public\WebBrowser2.h">
       <Filter>COM</Filter>
     </ClInclude>
     <ClInclude Include="FastCopyRootCommand.h">
@@ -104,6 +119,21 @@
     </ClInclude>
     <ClInclude Include="DllIconFormatter.h">
       <Filter>Icons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ModulePath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AppFolders.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ExplorerFolder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FastCopyLauncher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\RecordFile.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,7 @@
 #pragma once
-#include <fstream>
 #include <filesystem>
 #include "CopyOperation.h"
+#include "RecordFile.h"
 class ShellItem;
 
 class Recorder
@@ -9,10 +9,13 @@ class Recorder
 public:
 	Recorder(CopyOperation op);
 	Recorder& operator<<(ShellItem& item);
-	~Recorder();
 	static bool HasRecord();
 private:
-	FILE* m_fs;
+	std::filesystem::path m_path;
+
+	// Opened during construction, so the folder has to exist by the time GetRecordFilePath
+	// returns - which is where it is created.
+	RecordFile m_file{ m_path };
 
 	/**
 	 * Return the file name of the record file

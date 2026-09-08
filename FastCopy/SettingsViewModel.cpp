@@ -6,6 +6,8 @@
 #include "Global.h"
 #include "SettingsChangeListener.h"
 #include "RenameUtils.h"
+#include "KeyboardHookController.h"
+#include <wil/result_macros.h>
 
 namespace winrt::FastCopy::implementation
 {
@@ -16,6 +18,25 @@ namespace winrt::FastCopy::implementation
 	void SettingsViewModel::Notify(bool value)
 	{
 		m_model.Set(Settings::Notify, value);
+	}
+	bool SettingsViewModel::KeyboardIntegration()
+	{
+		return KeyboardHookController::IsEnabled();
+	}
+	void SettingsViewModel::KeyboardIntegration(bool value)
+	{
+		try
+		{
+			KeyboardHookController::SetEnabled(value);
+		}
+		catch (wil::ResultException const& e)
+		{
+			MessageBoxW(nullptr, winrt::to_hstring(e.what()).c_str(), L"RoboCopyEx", MB_OK | MB_ICONERROR);
+		}
+		catch (std::exception const& e)
+		{
+			MessageBoxW(nullptr, winrt::to_hstring(e.what()).c_str(), L"RoboCopyEx", MB_OK | MB_ICONERROR);
+		}
 	}
 	int SettingsViewModel::RenameBehavior()
 	{

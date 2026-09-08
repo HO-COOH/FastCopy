@@ -6,14 +6,7 @@
 #include <filesystem>
 #include "ShellItem.h"
 #include "Registry.h"
-#include <winrt/Windows.Storage.h>
-
-static std::filesystem::path const& GetLocalDataFolder()
-{
-	static std::filesystem::path ret =
-		std::filesystem::path{ winrt::Windows::Storage::ApplicationData::Current().LocalCacheFolder().Path().c_str() } / L"Local" / L"Records";
-	return ret;
-}
+#include "AppFolders.h"
 
 static auto GetTimeString()
 {
@@ -24,31 +17,20 @@ static auto GetTimeString()
 	return ret;
 }
 
-Recorder::Recorder(CopyOperation op) 
+Recorder::Recorder(CopyOperation op) : m_path{ GetRecordFilePath(op) }
 {
-	std::filesystem::create_directories(GetLocalDataFolder());
-	auto const filename = GetRecordFilePath(op).wstring();
-	Registry::Record(filename);
-	m_fs = _wfopen(filename.data(), L"wb");
-	if (!m_fs)
+	if (!m_file.Good())
 		throw std::runtime_error{ "Cannot open file" };
+
+	// Pointed at only once the file is known to be open, so a record that could not be
+	// created leaves the previous one in place instead of a name nothing can read back.
+	Registry::Record(m_path.wstring());
 }
 
 Recorder& Recorder::operator<<(ShellItem& item)
 {
-	std::wstring buf {item.GetDisplayName()};
-	std::transform(buf.begin(), buf.end(), buf.begin(), [](wchar_t c) { return c == L'\\' ? L'/' : c; });
-	size_t const length = buf.size();
-	fwrite(&length, sizeof(length), 1, m_fs);
-	fwrite(buf.data(), 2, length, m_fs);
-
+	m_file << item.GetDisplayName();
 	return *this;
-}
-
-Recorder::~Recorder()
-{
-	if (m_fs)
-		fclose(m_fs);
 }
 
 static wchar_t toFlag(CopyOperation op)
@@ -68,13 +50,13 @@ static wchar_t toFlag(CopyOperation op)
 
 std::filesystem::path Recorder::GetRecordFilePath(CopyOperation op)
 {
-	return 	GetLocalDataFolder() / std::format(L"{}{}.txt", toFlag(op), GetTimeString());
+	return AppFolders::RecordsFolder(true) / std::format(L"{}{}.txt", toFlag(op), GetTimeString());
 }
 
 bool Recorder::HasRecord()
 {
 	std::error_code ec;
-	auto const& dir = GetLocalDataFolder();
+	auto const& dir = AppFolders::RecordsFolder();
 	if (!std::filesystem::exists(dir, ec) || ec)
 		return false;
 

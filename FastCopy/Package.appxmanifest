@@ -52,7 +52,17 @@
 					<uap:DisplayName>FastCopy</uap:DisplayName>
 				</uap:Protocol>	
 			</uap:Extension>
-			
+
+			<desktop:Extension
+					Category="windows.startupTask"
+					Executable="FastCopyKeyboardHook.exe"
+					EntryPoint="Windows.FullTrustApplication">
+					<desktop:StartupTask
+						TaskId="RoboCopyExKeyboardHook"
+						Enabled="true"
+						DisplayName="RoboCopyEx keyboard integration" />
+			</desktop:Extension>
+
 			<desktop4:Extension Category="windows.fileExplorerContextMenus">
 				<desktop4:FileExplorerContextMenus>
 					

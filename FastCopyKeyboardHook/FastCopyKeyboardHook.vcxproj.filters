@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
+    <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natstepfilter" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ExplorerWindow.cpp" />
+    <ClCompile Include="KeyboardHook.cpp" />
+    <ClCompile Include="KeyboardHookApp.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="..\Public\WebBrowser2.cpp">
+      <Filter>COM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Public\ShellWindows.cpp">
+      <Filter>COM</Filter>
+    </ClCompile>
+    <ClCompile Include="ClipboardFormat.cpp">
+      <Filter>Clipboard</Filter>
+    </ClCompile>
+    <ClCompile Include="ClipboardFileTransfer.cpp">
+      <Filter>Clipboard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Public\AppFolders.cpp" />
+    <ClCompile Include="..\Public\ExplorerFolder.cpp" />
+    <ClCompile Include="..\Public\FastCopyLauncher.cpp" />
+    <ClCompile Include="..\Public\RecordFile.cpp" />
+    <ClCompile Include="PasteWindow.cpp">
+      <Filter>Hotkey</Filter>
+    </ClCompile>
+    <ClCompile Include="PasteHotKey.cpp">
+      <Filter>Hotkey</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Public\KeyboardHookSettings.h" />
+    <ClInclude Include="ExplorerWindow.h" />
+    <ClInclude Include="KeyboardHook.h" />
+    <ClInclude Include="KeyboardHookApp.h" />
+    <ClInclude Include="..\Public\WebBrowser2.h">
+      <Filter>COM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ShellWindows.h">
+      <Filter>COM</Filter>
+    </ClInclude>
+    <ClInclude Include="ClipboardFileTransfer.h">
+      <Filter>Clipboard</Filter>
+    </ClInclude>
+    <ClInclude Include="ClipboardFormat.h">
+      <Filter>Clipboard</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\COMInitializeHelper.h">
+      <Filter>COM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AppFolders.h" />
+    <ClInclude Include="..\Public\ExplorerFolder.h" />
+    <ClInclude Include="..\Public\FastCopyLauncher.h" />
+    <ClInclude Include="..\Public\RecordFile.h" />
+    <ClInclude Include="PasteWindow.h">
+      <Filter>Hotkey</Filter>
+    </ClInclude>
+    <ClInclude Include="PasteHotKey.h">
+      <Filter>Hotkey</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="COM">
+      <UniqueIdentifier>{ae9aa2af-ca54-4f5a-9afd-0a572a4d47c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Clipboard">
+      <UniqueIdentifier>{2bfedd1b-1e77-4475-926b-27f60cc0cf8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Hotkey">
+      <UniqueIdentifier>{967da0fc-d770-4393-ba1c-1da763afeff7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

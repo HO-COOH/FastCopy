@@ -775,6 +775,16 @@
                         Style="{StaticResource ToggleSwitchLeftLabelStyle}" />
                 </essential:SettingsCard>
 
+                <essential:SettingsCard x:Uid="KeyboardIntegrationSettingItem">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE765;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        Margin="0,0,-80,0"
+                        IsOn="{x:Bind ViewModel.KeyboardIntegration, Mode=TwoWay}"
+                        Style="{StaticResource ToggleSwitchLeftLabelStyle}" />
+                </essential:SettingsCard>
+
                 <essential:SettingsCard x:Uid="UniqueNameSettingItem">
                     <essential:SettingsCard.HeaderIcon>
                         <PathIcon
@@ -820,7 +830,7 @@
                     </StackPanel>
                 </essential:SettingsCard>
 
-                <essential:SettingsCard x:Uid="MultipleInstanceBehaviorSettingItem" IsEnabled="False">
+                <!--<essential:SettingsCard x:Uid="MultipleInstanceBehaviorSettingItem" IsEnabled="False">
                     <ToolTipService.ToolTip>
                         <ToolTip x:Uid="UnderDevelopmentTooltip" />
                     </ToolTipService.ToolTip>
@@ -849,7 +859,7 @@
                             </ToolTipService.ToolTip>
                         </essential:SegmentedItem>
                     </essential:Segmented>
-                </essential:SettingsCard>
+                </essential:SettingsCard>-->
 
                 <essential:SettingsCard x:Uid="ThemeSettingItem">
                     <essential:SettingsCard.HeaderIcon>

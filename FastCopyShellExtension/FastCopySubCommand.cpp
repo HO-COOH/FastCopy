@@ -8,6 +8,8 @@
 #include <cassert>
 #include "ShellWindows.h"
 #include "ShellItem.h"
+#include "ExplorerFolder.h"
+#include "FastCopyLauncher.h"
 #include <algorithm>
 #include "Registry.h"
 #include <wil/resource.h>
@@ -23,23 +25,11 @@ void FastCopySubCommand::recordFilesImpl(IShellItemArray* selection)
     }
 }
 
-void FastCopySubCommand::callMainProgramImpl(std::wstring_view arg)
+void FastCopySubCommand::callMainProgramImpl(std::wstring_view destination)
 {
-    std::wstring argTransform{ arg };
-    std::transform(argTransform.begin(), argTransform.end(), argTransform.begin(), [](wchar_t c) { return c == L'\\' ? L'/' : c; });
-    auto cmd = std::format(LR"(fastcopy://"{}"|"{}")", argTransform, Registry::Record());
-#if (defined _DEBUG) || (defined DEBUG)
-    OutputDebugString(cmd.data());
-#endif
-    AllowSetForegroundWindow(ASFW_ANY);
-    ShellExecute(
-        NULL,
-        L"open",
-        cmd.data(),
-        nullptr,
-        nullptr,
-        SW_SHOW
-	);
+    // The launch result is dropped: the record is already written, and Invoke has no
+    // channel to tell the user that a protocol activation failed.
+    static_cast<void>(LaunchFastCopy(destination, Registry::Record()));
 }
 
 FastCopySubCommand::FastCopySubCommand(CopyOperation op, IUnknown* site) : m_op{ op }, m_site{ site }
@@ -119,63 +109,21 @@ HRESULT FastCopySubCommand::Invoke(IShellItemArray* selection, IBindCtx* ctx)
                 return S_OK;
             }
 
-            //On Windows 10, selection will be nullptr, so we find the active shell window
-            if (m_site)
+            //On Windows 10, selection will be nullptr, so we ask the browser hosting the menu
+            if (auto const folder = ExplorerFolder::FromSite(m_site.Get()))
             {
-                wil::com_ptr<IShellBrowser> spSB;
-                if (SUCCEEDED(IUnknown_QueryService(m_site.Get(), SID_STopLevelBrowser, IID_PPV_ARGS(&spSB))))
-                {
-                     wil::com_ptr<IShellView> spSV;
-                     if (SUCCEEDED(spSB->QueryActiveShellView(&spSV)))
-                     {
-                         if (auto spFV = spSV.try_query<IFolderView>())
-                         {
-                             wil::com_ptr<IPersistFolder2> spPF2;
-                             if (SUCCEEDED(spFV->GetFolder(IID_PPV_ARGS(&spPF2))))
-                             {
-                                 wil::unique_cotaskmem_ptr<ITEMIDLIST> pidl;
-                                 if (SUCCEEDED(spPF2->GetCurFolder(wil::out_param(pidl))))
-                                 {
-                                     wchar_t path[MAX_PATH];
-                                     if (SHGetPathFromIDListW(pidl.get(), path))
-                                     {
-                                         callMainProgramImpl(path);
-                                         return S_OK;
-                                     }
-                                 }
-                             }
-                         }
-                     }
-                }
+                callMainProgramImpl(folder->native());
+                return S_OK;
             }
 
             //Windows 10 fallback
-            if (auto currentForegroundExplorer = ShellWindows::GetForegroundExplorer())
+            if (auto foregroundExplorer = ShellWindows::GetForegroundExplorer())
             {
-                constexpr static std::wstring_view protocolPrefix{ L"file:///" };
-                auto path = currentForegroundExplorer->LocationURL();
-
-                std::wstring pathUnescaped(wcslen(path.get()), L'\0');
-                DWORD bufferSize = pathUnescaped.size();
-                if (UrlUnescape(
-                    path.get(),
-                    pathUnescaped.data(),
-                    &bufferSize,
-                    URL_DONT_UNESCAPE_EXTRA_INFO
-                ) == E_POINTER)
+                if (auto const folder = ExplorerFolder::FromWebBrowser(foregroundExplorer->Get()))
                 {
-                    pathUnescaped.resize(bufferSize + 1);
-                    UrlUnescape(
-                        path.get(),
-                        pathUnescaped.data(),
-                        &bufferSize,
-                        URL_DONT_UNESCAPE_EXTRA_INFO
-                    );
+                    callMainProgramImpl(folder->native());
+                    return S_OK;
                 }
-
-                assert(pathUnescaped.starts_with(protocolPrefix));
-                callMainProgramImpl(std::wstring{ pathUnescaped.substr(protocolPrefix.size()).data()});
-                return S_OK;
             }
             break;
         }

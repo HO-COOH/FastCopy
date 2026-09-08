@@ -1,4 +1,3 @@
-#pragma once
 #include "WebBrowser2.h"
 #include <ShlObj.h>
 
@@ -54,4 +53,9 @@ bool WebBrowser2::IsParentOrSelf(::HWND hwnd)
 		return true;
 
 	return IsChild(shellBrowserWindow, hwnd);
+}
+
+IWebBrowser2* WebBrowser2::Get() const
+{
+	return m_ptr.get();
 }

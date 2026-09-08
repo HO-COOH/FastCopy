@@ -219,6 +219,12 @@
   <data name="NotificationSettingItem.Header" xml:space="preserve">
     <value>复制完成后通知</value>
   </data>
+  <data name="KeyboardIntegrationSettingItem.Header" xml:space="preserve">
+    <value>资源管理器快捷键集成</value>
+  </data>
+  <data name="KeyboardIntegrationSettingItem.Description" xml:space="preserve">
+    <value>在文件资源管理器中按 Ctrl+V 时使用 RoboCopyEx</value>
+  </data>
   <data name="RobocopyNotWorkingTextBlock.Text" xml:space="preserve">
     <value>软件无法正常工作，请重新安装Windows！</value>
   </data>

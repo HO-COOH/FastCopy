@@ -195,6 +195,12 @@
   <data name="NotificationSettingItem.Title" xml:space="preserve">
     <value>Bei Fertigstellung benachrichtigen</value>
   </data>
+  <data name="KeyboardIntegrationSettingItem.Header" xml:space="preserve">
+    <value>Explorer-Tastaturintegration</value>
+  </data>
+  <data name="KeyboardIntegrationSettingItem.Description" xml:space="preserve">
+    <value>RoboCopyEx beim Einfügen von Dateien mit Strg+V im Datei-Explorer verwenden</value>
+  </data>
   <data name="SettingWindowTitle.Text" xml:space="preserve">
     <value>FastCopy-Einstellungen</value>
   </data>
