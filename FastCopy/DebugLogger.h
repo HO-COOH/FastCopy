@@ -1,11 +1,12 @@
 #pragma once
+#include <memory>
 #include <string_view>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/rotating_file_sink.h>
 struct Logger
 {
 public:
-	decltype(spdlog::rotating_logger_st("", "", 1, 1)) m_logger;
+	std::shared_ptr<spdlog::logger> m_logger;
 
 	static Logger& GetInstance();
 private:

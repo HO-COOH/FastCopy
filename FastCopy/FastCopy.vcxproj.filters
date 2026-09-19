@@ -196,6 +196,8 @@
     <ClCompile Include="JobObject.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\Public\ModulePath.cpp" />
+    <ClCompile Include="KeyboardHookController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -389,6 +391,9 @@
     <ClInclude Include="JobObject.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\KeyboardHookSettings.h" />
+    <ClInclude Include="..\Public\ModulePath.h" />
+    <ClInclude Include="KeyboardHookController.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -667,6 +672,7 @@
     <None Include="..\x64\Package\FastCopy\FastCopyShellExtension.dll" />
     <None Include="Package.StoreAssociation.xml" />
     <None Include="..\x64\Package\FastCopy\RobocopyInjection.dll" />
+    <None Include="..\x64\$(Configuration)\FastCopy\FastCopyKeyboardHook.exe" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\en-US\Resources.resw">

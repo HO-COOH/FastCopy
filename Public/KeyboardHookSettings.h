@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <Windows.h>
 #include <wil/registry.h>
@@ -12,9 +12,8 @@ namespace KeyboardHookSettings
 
     inline bool IsEnabled()
     {
-        auto const value = wil::reg::try_get_value_dword(HKEY_CURRENT_USER, RegistryPath, EnabledValueName);
         // A missing value (first run) means enabled.
-        return !value || *value != 0;
+        return wil::reg::try_get_value_dword(HKEY_CURRENT_USER, RegistryPath, EnabledValueName).value_or(1);
     }
 
     inline bool SetEnabled(bool enabled)
