@@ -18,6 +18,15 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
     {
         DisableThreadLibraryCalls(hModule);
         ForceEnglish();
+
+        /*
+            With /UNICODE robocopy writes Unicode only to a real console(WriteConsoleW)
+            To a pipe it converts its output to its console's output code page.
+            Because we run it with CREATE_NO_WINDOW so it gets its own console, which starts with the system OEM code page (eg. 437, 936)
+            characters missing from it become '?' and the rest are not UTF-8. 
+            Switch that console to UTF-8, which is what FastCopy parses.
+        */
+        SetConsoleOutputCP(CP_UTF8);
     }
     return TRUE;
 }

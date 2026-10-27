@@ -22,6 +22,7 @@
 #include "RenameUtils.h"
 #include "Settings.h"
 #include "EmptyFolder.h"
+#include "PathUtils.h"
 
 template<class... Ts>
 struct overloaded : Ts... { using Ts::operator()...; };
@@ -248,8 +249,8 @@ namespace winrt::FastCopy::implementation
 								auto const currentItemSize = conflict.bytes;
 								Global::UIThread.TryEnqueue([this, conflict = std::move(conflict), currentDestinationFolder = m_perProcessStatus[currentIndex].m_currentDir.fullPath, currentSource = std::move(currentSource)] {
 									m_duplicateFiles.Append({
-										(std::filesystem::path{currentSource} / conflict.name).wstring(),
-										(std::filesystem::path{currentDestinationFolder} / conflict.name).wstring()
+										(std::filesystem::path{currentSource} / Utf8ToPath(conflict.name)).wstring(),
+										(Utf8ToPath(currentDestinationFolder) / Utf8ToPath(conflict.name)).wstring()
 									});
 								});
 								m_hasDuplicates = true;
@@ -261,7 +262,7 @@ namespace winrt::FastCopy::implementation
 								m_perProcessStatus[currentIndex].m_currentDir.count = existingDir.count;
 
 								// Calculate the correct destination subfolder path using recorded source path
-								std::filesystem::path currentSubfolderPath{ existingDir.path };
+								std::filesystem::path currentSubfolderPath = Utf8ToPath(existingDir.path);
 								std::filesystem::path destinationBasePath{ m_destination.data() };
 
 								// Get the relative path from recorded source to current subfolder
@@ -270,7 +271,7 @@ namespace winrt::FastCopy::implementation
 								// Calculate destination subfolder path: destination/relative_path
 								std::filesystem::path destinationSubfolderPath = destinationBasePath / relativePath;
 
-								m_perProcessStatus[currentIndex].m_currentDir.fullPath = destinationSubfolderPath.string();
+								m_perProcessStatus[currentIndex].m_currentDir.fullPath = winrt::to_string(destinationSubfolderPath.wstring());
 							},
 							/*onProcessExit*/
 							[this, currentIndex, currentItemFileCount, folderToDeleteAfterRobocopy = std::move(folderToDeleteAfterRobocopy)](RobocopyProcess::Exit)
@@ -324,6 +325,11 @@ namespace winrt::FastCopy::implementation
 			}
 			if (m_hasConfirmed)
 				ConfirmDuplicates();
+			else if (m_status == Status::Running && !m_hasDuplicates && m_finishedFiles >= ItemCount())
+			{
+				//for shell copy to report finished
+				onAllFinished();
+			}
 		});
 		m_state = TaskbarState::Normal;
 		co_await wil::resume_foreground(Global::UIThread.m_queue);
@@ -459,9 +465,6 @@ namespace winrt::FastCopy::implementation
 
 	winrt::Windows::Foundation::IAsyncOperation<uint64_t> RobocopyViewModel::GetTotalSize()
 	{
-		//auto result = co_await concurrency::create_task([this]()->winrt::Windows::Foundation::IAsyncA
-		//if(m_countItemTask)
-
 		co_return m_recordFile ? m_recordFile->GetTotalSize() : 0;
 	}
 
