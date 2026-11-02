@@ -28,11 +28,6 @@
 
 
             <Grid.Resources>
-                <essential:NonMaximizableWindowWorkaround
-                    x:Name="NonMaximizableWindowWorkaround"
-                    IsMaximizable="False"
-                    Window="{x:Bind}" />
-
                 <Style x:Key="RenameSuffixTextBoxStyle" TargetType="TextBox">
                     <Setter Property="Foreground" Value="{ThemeResource TextControlForeground}" />
                     <Setter Property="Background" Value="{ThemeResource TextControlBackground}" />
@@ -351,7 +346,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind}" />
+            <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind Window}" />
             <Grid x:Name="AppTitleBar" Height="32">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition x:Name="LeftPaddingColumn" Width="10" />
@@ -396,7 +391,7 @@
             <StackPanel Grid.Row="1" Margin="20,12,20,0">
                 <StackPanel.Resources>
                     <ResourceDictionary>
-                        <essential:ModernStandardWindowContextMenu x:Name="WindowContextMenu" Window="{x:Bind}" />
+                        <essential:ModernStandardWindowContextMenu x:Name="WindowContextMenu" Window="{x:Bind Window}" />
                         <Style x:Key="ToggleSwitchLeftLabelStyle" TargetType="ToggleSwitch">
                             <Setter Property="Foreground" Value="{ThemeResource ToggleSwitchContentForeground}" />
                             <Setter Property="HorizontalAlignment" Value="Left" />

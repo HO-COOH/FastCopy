@@ -1,11 +1,10 @@
 ﻿#pragma once
 
 #include "WelcomeWindow.g.h"
-#include <include/PropertyChangeHelper.hpp>
 
 namespace winrt::FastCopy::implementation
 {
-    struct WelcomeWindow : WelcomeWindowT<WelcomeWindow>, MvvmHelper::PropertyChangeHelper<WelcomeWindow>
+    struct WelcomeWindow : WelcomeWindowT<WelcomeWindow>
     {
         WelcomeWindow();
         void Button_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);

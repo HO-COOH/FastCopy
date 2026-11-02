@@ -9,7 +9,7 @@
     };
 
     [default_interface]
-    runtimeclass WelcomeWindow : WinUI3Package.WindowEx, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    runtimeclass WelcomeWindow : WinUI3Package.WindowEx
     {
         WelcomeWindow();
 

@@ -101,7 +101,7 @@ namespace winrt::FastCopy::implementation
         else
         {
             winrt::FastCopy::SettingsWindow window;
-            Global::windowEffectHelper.SetTarget(window);
+            Global::windowEffectHelper.SetTarget(window.Window());
             window.Activate();
         }
     }
@@ -138,10 +138,10 @@ namespace winrt::FastCopy::implementation
         LOGI(L"App started, record file: {}", recordFile.data());
 
         winrt::FastCopy::CopyDialogWindow window;
-        Global::windowEffectHelper.SetTarget(window);
+        Global::windowEffectHelper.SetTarget(window.Window());
         Global::windowEffectHelper.SetListenThemeChange();
         window.Activate();
-        auto const hwnd = GetHwnd(window);
+        auto const hwnd = reinterpret_cast<HWND>(window.Hwnd());
         if (!SetForegroundWindow(hwnd))
         {
             //Denied - the ASFW grant was consumed by an intervening input event, or explorer was not the
@@ -179,7 +179,7 @@ namespace winrt::FastCopy::implementation
         LOGI(L"App started (after delete confirmation), record file: {}", taskFile.GetPath().data());
         
         winrt::FastCopy::CopyDialogWindow window;
-        Global::windowEffectHelper.SetTarget(window);
+        Global::windowEffectHelper.SetTarget(window.Window());
         Global::windowEffectHelper.SetListenThemeChange();
         window.Activate();
         viewModel->Start();

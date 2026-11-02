@@ -150,9 +150,6 @@
     <ClCompile Include="DebugLogger.cpp">
       <Filter>Utils\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="DebugFileSize.cpp">
-      <Filter>Utils\Debug</Filter>
-    </ClCompile>
     <ClCompile Include="RobocopyProcessStatus.cpp">
       <Filter>ViewModel\Robocopy</Filter>
     </ClCompile>

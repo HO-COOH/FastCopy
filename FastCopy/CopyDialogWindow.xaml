@@ -14,18 +14,14 @@
 
     <Grid>
         <Grid.Resources>
-            <essential:ModernStandardWindowContextMenu x:Name="WindowContextMenu" Window="{x:Bind}" />
-            <essential:NonMaximizableWindowWorkaround
-                x:Name="NonMaximizableWindowWorkaround"
-                IsMaximizable="False"
-                Window="{x:Bind}" />
+            <essential:ModernStandardWindowContextMenu x:Name="WindowContextMenu" Window="{x:Bind Window}" />
             <local:TaskbarControl
                 x:Name="TaskbarControl"
                 State="{x:Bind ViewModel.State, Mode=OneWay}"
-                Window="{x:Bind}"
+                Window="{x:Bind Window}"
                 Value="{x:Bind ViewModel.Percent, Mode=OneWay}" />
         </Grid.Resources>
-        <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind}" />
+        <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind Window}" />
         <local:CopyDialog x:Name="CopyDialog" />
 
         <ScrollViewer x:Name="ErrorScrollViewer" Visibility="Collapsed">

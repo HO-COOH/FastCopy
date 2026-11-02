@@ -15,9 +15,9 @@
 
 namespace winrt::FastCopy::implementation
 {
-    CopyDialogWindow::CopyDialogWindow() : AnimatedWindowSize{GetHwnd(*this)}
+    CopyDialogWindow::CopyDialogWindow() : AnimatedWindowSize{reinterpret_cast<HWND>(Hwnd())}
     {
-        CenterWindow(*this, m_currentSize);
+        CenterWindow(Window(), m_currentSize);
         ExtendsContentIntoTitleBar(true);
         Global::UIThread = DispatcherQueue();
 

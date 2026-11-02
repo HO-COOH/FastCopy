@@ -19,7 +19,7 @@ namespace winrt::FastCopy::implementation
 	WelcomeWindow::WelcomeWindow()
 	{
 		ExtendsContentIntoTitleBar(true);
-		CenterWindow(*this, winrt::Windows::Graphics::SizeInt32{
+		CenterWindow(Window(), winrt::Windows::Graphics::SizeInt32{
 			.Width = PackageConfig::GetDefaultLanguage() == L"zh-cn" ? 500 : 600,
 			.Height = 280
 		});
@@ -33,7 +33,7 @@ namespace winrt::FastCopy::implementation
 	{
 		Global::settingsWindow = make<SettingsWindow>();
 		Global::settingsWindow.Activate();
-		Global::windowEffectHelper.SetTarget(Global::settingsWindow);
+		Global::windowEffectHelper.SetTarget(Global::settingsWindow.Window());
 		Close();
 	}
 
@@ -58,7 +58,6 @@ namespace winrt::FastCopy::implementation
 	void WelcomeWindow::checkResult(winrt::FastCopy::RobocopyCheckResult value)
 	{
 		m_checkResult = value;
-		raisePropertyChange(L"CheckResult");
 	}
 
 	void WelcomeWindow::checkRobocopy()

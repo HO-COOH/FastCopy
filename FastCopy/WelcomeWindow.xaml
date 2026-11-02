@@ -17,7 +17,7 @@
 
 
     <Grid>
-        <essential:SwitchPresenter Value="{x:Bind CheckResult, Mode=OneWay}">
+        <essential:SwitchPresenter Value="{x:Bind CheckResult, Mode=OneTime}">
             <essential:Case>
                 <essential:Case.Value>
                     <local:RobocopyCheckResult>NotFound</local:RobocopyCheckResult>
@@ -73,11 +73,7 @@
                     Spacing="10">
 
                     <StackPanel.Resources>
-                        <essential:WindowCaptionButtonThemeWorkaround x:Name="CaptionButtonsWorkaround" Window="{x:Bind}" />
-                        <essential:NonMaximizableWindowWorkaround
-                            x:Name="NonMaximizableWindowWorkaround"
-                            IsMaximizable="False"
-                            Window="{x:Bind}" />
+                        <essential:WindowCaptionButtonThemeWorkaround x:Name="CaptionButtonsWorkaround" Window="{x:Bind Window}" />
                         <Style x:Key="AccentButtonStyleSupportAnimatedIcon" TargetType="Button">
                             <Setter Property="Foreground" Value="{ThemeResource AccentButtonForeground}" />
                             <Setter Property="Background" Value="{ThemeResource AccentButtonBackground}" />
@@ -226,6 +222,6 @@
 
 
 
-        <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind}" />
+        <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind Window}" />
     </Grid>
 </essential:WindowEx>

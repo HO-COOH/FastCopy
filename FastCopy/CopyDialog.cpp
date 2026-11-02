@@ -122,7 +122,7 @@ namespace winrt::FastCopy::implementation
 			}
 
 			winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"ShowGraph", false);
-			m_originalWindowSize = copyWindow->ActualSize();
+			m_originalWindowSize = { static_cast<int>(copyWindow->Width()), static_cast<int>(copyWindow->Height()) };
 			copyWindow->Resize({ (int)m_originalWindowSize.Width, (int)m_originalWindowSize.Height + 190 });
 			m_speedGraphLoaded = true;
 		}

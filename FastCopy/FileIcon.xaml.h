@@ -5,7 +5,7 @@
 
 namespace winrt::FastCopy::implementation
 {
-    struct FileIcon : FileIconT<FileIcon>, TemplateControlHelper<FileIcon>
+    struct FileIcon : FileIconT<FileIcon>, TemplateControlHelper<FileIcon, false, false>
     {
         FileIcon() = default;
 
