@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "RobocopyInjectDll.h"
+#include "KnownFolderPath.h"
 #include <filesystem>
 #include <array>
 
@@ -10,23 +11,23 @@ static auto GetCurrentExeFolder()
 	return std::filesystem::path{ buffer.data() }.parent_path();
 }
 
-static auto TempPath()
+static auto DllDestinationFolder()
 {
-	std::array<wchar_t, MAX_PATH + 1> buffer{};
-	winrt::check_bool(GetTempPathW(std::size(buffer), buffer.data()));
-	return buffer;
+	return std::filesystem::path{
+		KnwonFolderPath{ FOLDERID_LocalAppData, KF_FLAG_RETURN_FILTER_REDIRECTION_TARGET }.Get()
+	} / L"RobocopyEx";
 }
 
 std::wstring const& RobocopyInjectDll::Path()
 {
 	static auto result = []() {
 
-		auto tempPath = std::filesystem::path{ TempPath().data() } / L"RobocopyEx";
+		auto const dllDestFolder = DllDestinationFolder();
 
-		if (!std::filesystem::exists(tempPath))
-			std::filesystem::create_directories(tempPath);
+		if (!std::filesystem::exists(dllDestFolder))
+			std::filesystem::create_directories(dllDestFolder);
 
-		auto destPath = tempPath / c_dllName;
+		auto destPath = dllDestFolder / c_dllName;
 		auto const dllPath = GetCurrentExeFolder() / c_dllName;
 
 		bool shouldCopy = !std::filesystem::exists(destPath);
@@ -42,11 +43,20 @@ std::wstring const& RobocopyInjectDll::Path()
 
 		if (shouldCopy)
 		{
-			std::filesystem::copy_file(
-				dllPath, 
-				destPath, 
-				std::filesystem::copy_options::overwrite_existing
-			);
+			/*
+				When the app is installed to a non-system partition, Windows encrypts the package files.
+				CopyFile (used by std::filesystem::copy_file) then tries to keep the copy encrypted as well which then fails with ERROR_ENCRYPTION_FAILED.
+				COPY_FILE_ALLOW_DECRYPTED_DESTINATION lets the copy fall back to an unencrypted file instead.
+				See: https://github.com/HO-COOH/FastCopy/issues/69#issuecomment-6604071818
+			*/
+			winrt::check_bool(CopyFileExW(
+				dllPath.c_str(),
+				destPath.c_str(),
+				nullptr,
+				nullptr,
+				nullptr,
+				COPY_FILE_ALLOW_DECRYPTED_DESTINATION
+			));
 		}
 
 		return destPath.wstring();

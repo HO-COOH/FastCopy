@@ -347,6 +347,7 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind Window}" />
+            <essential:ModernWindowCaptionButtonToolTip Window="{x:Bind Window}" />
             <Grid x:Name="AppTitleBar" Height="32">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition x:Name="LeftPaddingColumn" Width="10" />
