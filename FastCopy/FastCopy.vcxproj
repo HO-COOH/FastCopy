@@ -292,6 +292,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     </ClInclude>
     <ClInclude Include="GdiplusInitializer.h" />
     <ClInclude Include="Global.h" />
+    <ClInclude Include="IconBase.hpp" />
     <ClInclude Include="ImageUtils.h" />
     <ClInclude Include="JobObject.h" />
     <ClInclude Include="KeyboardHookController.h" />

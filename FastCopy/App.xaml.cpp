@@ -101,7 +101,7 @@ namespace winrt::FastCopy::implementation
         else
         {
             winrt::FastCopy::SettingsWindow window;
-            Global::windowEffectHelper.SetTarget(window.Window());
+            Global::windowEffectHelper.SetTarget(window, winrt::get_self<SettingsWindow>(window)->RootPanel());
             window.Activate();
         }
     }
@@ -138,7 +138,7 @@ namespace winrt::FastCopy::implementation
         LOGI(L"App started, record file: {}", recordFile.data());
 
         winrt::FastCopy::CopyDialogWindow window;
-        Global::windowEffectHelper.SetTarget(window.Window());
+        Global::windowEffectHelper.SetTarget(window, winrt::get_self<CopyDialogWindow>(window)->RootPanel());
         Global::windowEffectHelper.SetListenThemeChange();
         window.Activate();
         auto const hwnd = reinterpret_cast<HWND>(window.Hwnd());
@@ -179,7 +179,7 @@ namespace winrt::FastCopy::implementation
         LOGI(L"App started (after delete confirmation), record file: {}", taskFile.GetPath().data());
         
         winrt::FastCopy::CopyDialogWindow window;
-        Global::windowEffectHelper.SetTarget(window.Window());
+        Global::windowEffectHelper.SetTarget(window, winrt::get_self<CopyDialogWindow>(window)->RootPanel());
         Global::windowEffectHelper.SetListenThemeChange();
         window.Activate();
         viewModel->Start();

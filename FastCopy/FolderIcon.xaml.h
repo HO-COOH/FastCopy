@@ -1,17 +1,16 @@
 #pragma once
 
 #include "FolderIcon.g.h"
+#include "IconBase.hpp"
 
 namespace winrt::FastCopy::implementation
 {
-    struct FolderIcon : FolderIconT<FolderIcon>
+    struct FolderIcon : FolderIconT<FolderIcon>, IconBase<FolderIcon>
     {
-        FolderIcon() = default;
-
-        winrt::hstring Path();
-        winrt::fire_and_forget Path(winrt::hstring const& value);
-
-        winrt::hstring m_path;
+        static auto getStorageItemFromPath(winrt::hstring const& path)
+        {
+            return winrt::Windows::Storage::StorageFolder::GetFolderFromPathAsync(path);
+        }
     };
 }
 

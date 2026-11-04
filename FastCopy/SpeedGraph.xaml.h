@@ -20,8 +20,6 @@ namespace winrt::FastCopy::implementation
 {
     struct SpeedGraph : SpeedGraphT<SpeedGraph>
     {
-        SpeedGraph() = default;
-
         void SetSpeed(double percent, uint64_t speed);
 
         void Pause();

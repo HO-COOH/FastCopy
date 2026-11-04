@@ -6,8 +6,6 @@ namespace winrt::FastCopy::implementation
 {
     struct TaskbarControl : TaskbarControlT<TaskbarControl>
     {
-        TaskbarControl() = default;
-
         double Value();
         void Value(double value);
 

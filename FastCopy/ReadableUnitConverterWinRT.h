@@ -4,7 +4,7 @@
 
 namespace winrt::FastCopy::implementation
 {
-    struct ReadableUnitConverterWinRT : ReadableUnitConverterWinRTT<ReadableUnitConverterWinRT>
+    struct ReadableUnitConverterWinRT
     {
         static winrt::hstring ConvertSize(uint64_t size);
         static winrt::hstring ConvertSpeed(double speed);

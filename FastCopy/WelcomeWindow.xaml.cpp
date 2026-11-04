@@ -18,7 +18,6 @@ namespace winrt::FastCopy::implementation
 {
 	WelcomeWindow::WelcomeWindow()
 	{
-		ExtendsContentIntoTitleBar(true);
 		CenterWindow(Window(), winrt::Windows::Graphics::SizeInt32{
 			.Width = PackageConfig::GetDefaultLanguage() == L"zh-cn" ? 500 : 600,
 			.Height = 280
@@ -32,8 +31,9 @@ namespace winrt::FastCopy::implementation
 	void WelcomeWindow::Button_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		Global::settingsWindow = make<SettingsWindow>();
+		
 		Global::settingsWindow.Activate();
-		Global::windowEffectHelper.SetTarget(Global::settingsWindow.Window());
+		Global::windowEffectHelper.SetTarget(Global::settingsWindow, winrt::get_self<SettingsWindow>(Global::settingsWindow)->RootPanel());
 		Close();
 	}
 

@@ -22,14 +22,14 @@
     <Page Include="ConfirmDeleteMultipleItemsWindow.xaml">
       <Filter>Views\ConfirmDeleteWindows</Filter>
     </Page>
-    <Page Include="FileIcon.xaml">
-      <Filter>Views\Controls</Filter>
-    </Page>
-    <Page Include="FolderIcon.xaml">
-      <Filter>Views\Controls</Filter>
-    </Page>
     <Page Include="SettingsWindow.xaml">
       <Filter>Views\SettingsWindow</Filter>
+    </Page>
+    <Page Include="FileIcon.xaml">
+      <Filter>Views\Controls\Icons</Filter>
+    </Page>
+    <Page Include="FolderIcon.xaml">
+      <Filter>Views\Controls\Icons</Filter>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -183,9 +183,6 @@
     <ClCompile Include="..\Public\PropertyDescription.cpp">
       <Filter>Utils\COM</Filter>
     </ClCompile>
-    <ClCompile Include="RecycleBinIcon.cpp">
-      <Filter>Views\Controls</Filter>
-    </ClCompile>
     <ClCompile Include="TextBlockClipAnimation.cpp">
       <Filter>Views\SettingsWindow</Filter>
     </ClCompile>
@@ -195,6 +192,9 @@
     </ClCompile>
     <ClCompile Include="..\Public\ModulePath.cpp" />
     <ClCompile Include="KeyboardHookController.cpp" />
+    <ClCompile Include="RecycleBinIcon.cpp">
+      <Filter>Views\Controls\Icons</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -369,9 +369,6 @@
     <ClInclude Include="..\Public\PropertyDescription.h">
       <Filter>Utils\COM</Filter>
     </ClInclude>
-    <ClInclude Include="RecycleBinIcon.h">
-      <Filter>Views\Controls</Filter>
-    </ClInclude>
     <ClInclude Include="CaptureThreadHandle.h">
       <Filter>Utils\Robocopy</Filter>
     </ClInclude>
@@ -391,6 +388,12 @@
     <ClInclude Include="..\Public\KeyboardHookSettings.h" />
     <ClInclude Include="..\Public\ModulePath.h" />
     <ClInclude Include="KeyboardHookController.h" />
+    <ClInclude Include="RecycleBinIcon.h">
+      <Filter>Views\Controls\Icons</Filter>
+    </ClInclude>
+    <ClInclude Include="IconBase.hpp">
+      <Filter>Views\Controls\Icons</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -655,6 +658,9 @@
     </Filter>
     <Filter Include="dlls">
       <UniqueIdentifier>{05a0df20-63ec-4e2b-8248-7cf62bb666e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Views\Controls\Icons">
+      <UniqueIdentifier>{a17ae3a2-40f7-4a19-8649-e0454130b45a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

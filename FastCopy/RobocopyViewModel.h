@@ -16,8 +16,6 @@ namespace winrt::FastCopy::implementation
 {
     struct RobocopyViewModel : RobocopyViewModelT<RobocopyViewModel>, PropertyChangeHelper<RobocopyViewModel>, ProcessIOUpdater<RobocopyViewModel>
     {
-        RobocopyViewModel() = default;
-
         void RecordFile(winrt::hstring value);
 
         winrt::Windows::Foundation::Uri DestinationUri();

@@ -18,7 +18,6 @@ namespace winrt::FastCopy::implementation
     CopyDialogWindow::CopyDialogWindow() : AnimatedWindowSize{reinterpret_cast<HWND>(Hwnd())}
     {
         CenterWindow(Window(), m_currentSize);
-        ExtendsContentIntoTitleBar(true);
         Global::UIThread = DispatcherQueue();
 
         ViewModel().DuplicateFiles().VectorChanged(

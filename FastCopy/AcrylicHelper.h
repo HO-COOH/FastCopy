@@ -5,15 +5,18 @@
 
 class WindowEffectHelper
 {
-	winrt::Microsoft::UI::Xaml::Window m_target;
+	winrt::WinUI3Package::WindowEx m_window{ nullptr };
+	winrt::Microsoft::UI::Xaml::Controls::Panel m_backgroundElement{ nullptr };
 	int cachedEffect{};
 	winrt::Microsoft::UI::Xaml::FrameworkElement::ActualThemeChanged_revoker m_themeChangedRevoker;
 	void init();
 	void UpdateBackgroundForActualTheme();
 public:
-	WindowEffectHelper(winrt::Microsoft::UI::Xaml::Window window = nullptr) : m_target{ window } { init(); }
+	void SetTarget(
+		winrt::WinUI3Package::WindowEx window,
+		winrt::Microsoft::UI::Xaml::Controls::Panel backgroundElement
+	);
 
-	void SetTarget(winrt::Microsoft::UI::Xaml::Window window);
 	void SetEffect(int value);
 	void SetTheme(winrt::Microsoft::UI::Xaml::ElementTheme theme);
 

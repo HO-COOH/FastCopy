@@ -2,17 +2,16 @@
 
 #include "FileIcon.g.h"
 #include <include/TemplateControlHelper.hpp>
+#include "IconBase.hpp"
 
 namespace winrt::FastCopy::implementation
 {
-    struct FileIcon : FileIconT<FileIcon>, TemplateControlHelper<FileIcon, false, false>
+	struct FileIcon : FileIconT<FileIcon>, TemplateControlHelper<FileIcon, false, false>, IconBase<FileIcon>
     {
-        FileIcon() = default;
-
-        winrt::hstring Path();
-        winrt::fire_and_forget Path(winrt::hstring const& value);
-
-        winrt::hstring m_path;
+        static auto getStorageItemFromPath(winrt::hstring const& path)
+        {
+            return winrt::Windows::Storage::StorageFile::GetFileFromPathAsync(path);
+        }
     };
 }
 

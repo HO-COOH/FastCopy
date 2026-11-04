@@ -16,8 +16,6 @@ namespace winrt::FastCopy::implementation
 
     struct FileMenu : FileMenuT<FileMenu>
     {
-        FileMenu() = default;
-
         winrt::FastCopy::FileInfoViewModel File();
         void File(winrt::FastCopy::FileInfoViewModel const& value);
 

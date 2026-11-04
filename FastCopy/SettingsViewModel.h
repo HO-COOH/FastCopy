@@ -8,8 +8,6 @@ namespace winrt::FastCopy::implementation
 {
     struct SettingsViewModel : SettingsViewModelT<SettingsViewModel>, MvvmHelper::PropertyChangeHelper<SettingsViewModel>
     {
-        SettingsViewModel() = default;
-
         bool Notify();
         void Notify(bool value);
 
