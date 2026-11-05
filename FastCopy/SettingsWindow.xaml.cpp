@@ -8,6 +8,7 @@
 #include <PackageConfig.h>
 #include "RenameUtils.h"
 #include "TextBlockClipAnimation.h"
+#include "FastcopySettingsSingleInstanceLock.h"
 #include <winrt/Windows.ApplicationModel.h>
 
 namespace winrt::FastCopy::implementation
@@ -21,6 +22,8 @@ namespace winrt::FastCopy::implementation
         TextBlockClipAnimation{}
             .SetImplicitAnimations(ConfirmDeleteWarningText())
             .SetImplicitAnimations(InvalidSuffixTip());
+
+        FastcopySettingsSingleInstanceLock::SetWindow(*this);
     }
 
     winrt::FastCopy::SettingsViewModel SettingsWindow::ViewModel()

@@ -40,3 +40,8 @@ void CenterWindow(HWND window, winrt::Windows::Graphics::SizeInt32 size);
 
 void ResizeWindowForDpi(HWND hwnd, winrt::Windows::Graphics::SizeInt32 size, UINT dpi);
 
+/**
+ * Bring window to the foreground, or at least above other windows if foreground rights are denied
+ */
+void BringToForeground(HWND hwnd);
+

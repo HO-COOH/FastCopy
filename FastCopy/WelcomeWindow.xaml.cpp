@@ -10,6 +10,7 @@
 #include <wil/win32_helpers.h>
 #include <filesystem>
 #include "TextBlockClipAnimation.h"
+#include "FastcopySettingsSingleInstanceLock.h"
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -26,6 +27,8 @@ namespace winrt::FastCopy::implementation
 
 		InitializeComponent();
 		TextBlockClipAnimation{}.SetImplicitAnimations(SubmitIssuesContent());
+
+		FastcopySettingsSingleInstanceLock::SetWindow(*this);
 	}
 
 	void WelcomeWindow::Button_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)

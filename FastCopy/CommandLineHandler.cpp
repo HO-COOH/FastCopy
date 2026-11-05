@@ -27,7 +27,10 @@ void CommandLineHandler::Run()
 	{
 		case AppLaunchMode::LaunchSettings:
 			if (winrt::FastCopy::implementation::App::HasAnotherInstance())
+			{
+				FastcopySettingsSingleInstanceLock::ActivateWindow();
 				return;
+			}
 
 			[[fallthrough]];
 		case AppLaunchMode::LaunchCopy:

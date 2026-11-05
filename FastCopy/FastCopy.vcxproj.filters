@@ -126,9 +126,6 @@
     <ClCompile Include="FastcopySettingsSingleInstanceLock.cpp">
       <Filter>Utils\Mutex</Filter>
     </ClCompile>
-    <ClCompile Include="MutexWrapper.cpp">
-      <Filter>Utils\Mutex</Filter>
-    </ClCompile>
     <ClCompile Include="StoryboardWrapper.cpp">
       <Filter>ViewHelper</Filter>
     </ClCompile>
@@ -272,9 +269,6 @@
       <Filter>App</Filter>
     </ClInclude>
     <ClInclude Include="FastcopySettingsSingleInstanceLock.h">
-      <Filter>Utils\Mutex</Filter>
-    </ClInclude>
-    <ClInclude Include="MutexWrapper.h">
       <Filter>Utils\Mutex</Filter>
     </ClInclude>
     <ClInclude Include="Same.h">

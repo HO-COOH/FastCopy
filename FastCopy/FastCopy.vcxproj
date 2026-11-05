@@ -297,7 +297,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <ClInclude Include="JobObject.h" />
     <ClInclude Include="KeyboardHookController.h" />
     <ClInclude Include="KnownFolderPath.h" />
-    <ClInclude Include="MutexWrapper.h" />
     <ClInclude Include="NewFile.h" />
     <ClInclude Include="Notification.h" />
     <ClInclude Include="Ntdll.h" />
@@ -471,7 +470,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <ClCompile Include="JobObject.cpp" />
     <ClCompile Include="KnownFolderPath.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MutexWrapper.cpp" />
     <ClCompile Include="NewFile.cpp" />
     <ClCompile Include="Notification.cpp" />
     <ClCompile Include="Ntdll.cpp" />

@@ -21,6 +21,7 @@
 #include "CommandLineHandler.h"
 #include "Settings.h"
 #include "KeyboardHookController.h"
+#include "WindowHelper.h"
 
 
 namespace winrt::FastCopy::implementation
@@ -106,9 +107,10 @@ namespace winrt::FastCopy::implementation
         }
     }
 
-    bool winrt::FastCopy::implementation::App::HasAnotherInstance()
+    bool App::HasAnotherInstance()
     {
-        return !FastcopySettingsSingleInstanceLock{ false }.TryLock();
+        FastcopySettingsSingleInstanceLock lock{ false };
+        return !lock || !lock.acquire(nullptr, 0);
     }
 
     void App::normalLaunch()
@@ -141,14 +143,7 @@ namespace winrt::FastCopy::implementation
         Global::windowEffectHelper.SetTarget(window, winrt::get_self<CopyDialogWindow>(window)->RootPanel());
         Global::windowEffectHelper.SetListenThemeChange();
         window.Activate();
-        auto const hwnd = reinterpret_cast<HWND>(window.Hwnd());
-        if (!SetForegroundWindow(hwnd))
-        {
-            //Denied - the ASFW grant was consumed by an intervening input event, or explorer was not the
-            //foreground process. Force z-order above explorer without requiring foreground rights.
-            SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW);
-            SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW);
-        }
+        BringToForeground(reinterpret_cast<HWND>(window.Hwnd()));
         viewModel->Start();
     }
 

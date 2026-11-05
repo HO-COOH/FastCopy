@@ -85,6 +85,17 @@ void ResizeWindowForDpi(HWND hwnd, winrt::Windows::Graphics::SizeInt32 size, UIN
     );
 }
 
+void BringToForeground(HWND hwnd)
+{
+    if (SetForegroundWindow(hwnd))
+        return;
+
+    //Denied - the ASFW grant was consumed by an intervening input event, or the launcher was not the
+    //foreground process. Force z-order above other windows without requiring foreground rights.
+    SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+    SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_SHOWWINDOW);
+}
+
 MONITORINFO MonitorInfo::GetFromPoint(POINT p)
 {
     MONITORINFO info
