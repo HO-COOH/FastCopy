@@ -11,32 +11,32 @@
 #include <filesystem>
 #include "TextBlockClipAnimation.h"
 #include "FastcopySettingsSingleInstanceLock.h"
+#include "WindowEffectHelper.h"
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace winrt::FastCopy::implementation
 {
-	WelcomeWindow::WelcomeWindow()
+	WelcomeWindow::WelcomeWindow(WindowEffectHelper& windowEffectHelper) : m_windowEffectHelper{ windowEffectHelper }
 	{
 		CenterWindow(Window(), winrt::Windows::Graphics::SizeInt32{
 			.Width = PackageConfig::GetDefaultLanguage() == L"zh-cn" ? 500 : 600,
 			.Height = 280
 		});
 		checkRobocopy();
-
-		InitializeComponent();
-		TextBlockClipAnimation{}.SetImplicitAnimations(SubmitIssuesContent());
-
 		FastcopySettingsSingleInstanceLock::SetWindow(*this);
+	}
+
+	void WelcomeWindow::InitializeComponent()
+	{
+		WelcomeWindowT::InitializeComponent();
+		TextBlockClipAnimation{}.SetImplicitAnimations(SubmitIssuesContent());
 	}
 
 	void WelcomeWindow::Button_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
-		Global::settingsWindow = make<SettingsWindow>();
-		
-		Global::settingsWindow.Activate();
-		Global::windowEffectHelper.SetTarget(Global::settingsWindow, winrt::get_self<SettingsWindow>(Global::settingsWindow)->RootPanel());
+		winrt::make_self<SettingsWindow>(m_windowEffectHelper)->Activate();
 		Close();
 	}
 

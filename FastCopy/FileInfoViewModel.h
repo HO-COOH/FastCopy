@@ -1,12 +1,12 @@
 ﻿#pragma once
 #include "FileInfoViewModel.g.h"
-#include "WinRTFileTime.h"
+#include "WinRTFileInfo.h"
 #include <include/PropertyChangeHelper.hpp>
 #include "ShellItem2.h"
 
 namespace winrt::FastCopy::implementation
 {
-    struct FileInfoViewModel : FileInfoViewModelT<FileInfoViewModel>, WinRTFileTime, MvvmHelper::PropertyChangeHelper<FileInfoViewModel>
+    struct FileInfoViewModel : FileInfoViewModelT<FileInfoViewModel>, WinRTFileInfo, MvvmHelper::PropertyChangeHelper<FileInfoViewModel>
     {
         FileInfoViewModel(winrt::hstring path, bool isSource);
 
@@ -14,8 +14,7 @@ namespace winrt::FastCopy::implementation
         winrt::hstring Filename();
 
         winrt::hstring Description();
-        
-        uint64_t Bytes();
+
         bool Selected() { return m_selected; }
         void Selected(bool value);
 

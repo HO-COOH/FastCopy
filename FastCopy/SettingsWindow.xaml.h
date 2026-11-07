@@ -2,11 +2,13 @@
 #include "SettingsWindow.g.h"
 #include <include/PropertyChangeHelper.hpp>
 
+class WindowEffectHelper;
+
 namespace winrt::FastCopy::implementation
 {
     struct SettingsWindow : SettingsWindowT<SettingsWindow>, MvvmHelper::PropertyChangeHelper<SettingsWindow>
     {
-        SettingsWindow();
+        SettingsWindow(WindowEffectHelper& windowEffectHelper);
 
         winrt::FastCopy::SettingsViewModel ViewModel();
         void ThemeSelectionComboBox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
@@ -21,13 +23,14 @@ namespace winrt::FastCopy::implementation
 		static winrt::hstring VersionString();
     private:
         void isRenameSuffixInvalid(bool value);
+		WindowEffectHelper& m_windowEffectHelper;
 		bool m_isRenameSuffixInvalid{ false };
     };
 }
 
 namespace winrt::FastCopy::factory_implementation
 {
-    struct SettingsWindow : SettingsWindowT<SettingsWindow, implementation::SettingsWindow>
-    {
-    };
+	struct SettingsWindow : SettingsWindowT<SettingsWindow, implementation::SettingsWindow>
+	{
+	};
 }

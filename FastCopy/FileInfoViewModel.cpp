@@ -19,7 +19,7 @@
 
 namespace winrt::FastCopy::implementation
 {
-	FileInfoViewModel::FileInfoViewModel(winrt::hstring path, bool isSource) : WinRTFileTime{ path }, m_path{ ToBackslash(path) }, m_isSource{ isSource }
+	FileInfoViewModel::FileInfoViewModel(winrt::hstring path, bool isSource) : WinRTFileInfo{ path }, m_path{ ToBackslash(path) }, m_isSource{ isSource }
 	{
 	}
 
@@ -35,11 +35,6 @@ namespace winrt::FastCopy::implementation
 
 		return m_shellItem.GetString(PKEY_ItemType).get();
 	}
-
-    uint64_t FileInfoViewModel::Bytes()
-    {
-		return std::filesystem::file_size(std::filesystem::path{ m_path.data() });
-    }
 
     void FileInfoViewModel::Selected(bool value)
     {

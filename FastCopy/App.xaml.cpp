@@ -64,6 +64,7 @@ namespace winrt::FastCopy::implementation
         try
         {
             KeyboardHookController::Start();
+			m_windowEffectHelper.emplace();
             CommandLineHandler::AppLaunchMode == AppLaunchMode::LaunchSettings ? launchSettings() : normalLaunch();
         }
         catch (winrt::hresult_error const& e)
@@ -95,15 +96,12 @@ namespace winrt::FastCopy::implementation
         Settings settings;
         if (settings.Get(Settings::IsFirstLaunch, true))
         {
-            winrt::FastCopy::WelcomeWindow window;
-            window.Activate();
+            winrt::make_self<WelcomeWindow>(*m_windowEffectHelper)->Activate();
             settings.Set(Settings::IsFirstLaunch, false);
         }
         else
         {
-            winrt::FastCopy::SettingsWindow window;
-            Global::windowEffectHelper.SetTarget(window, winrt::get_self<SettingsWindow>(window)->RootPanel());
-            window.Activate();
+            winrt::make_self<SettingsWindow>(*m_windowEffectHelper)->Activate();
         }
     }
 
@@ -140,8 +138,8 @@ namespace winrt::FastCopy::implementation
         LOGI(L"App started, record file: {}", recordFile.data());
 
         winrt::FastCopy::CopyDialogWindow window;
-        Global::windowEffectHelper.SetTarget(window, winrt::get_self<CopyDialogWindow>(window)->RootPanel());
-        Global::windowEffectHelper.SetListenThemeChange();
+        m_windowEffectHelper->SetTarget(window, winrt::get_self<CopyDialogWindow>(window)->RootPanel());
+        m_windowEffectHelper->SetListenThemeChange();
         window.Activate();
         BringToForeground(reinterpret_cast<HWND>(window.Hwnd()));
         viewModel->Start();
@@ -174,8 +172,8 @@ namespace winrt::FastCopy::implementation
         LOGI(L"App started (after delete confirmation), record file: {}", taskFile.GetPath().data());
         
         winrt::FastCopy::CopyDialogWindow window;
-        Global::windowEffectHelper.SetTarget(window, winrt::get_self<CopyDialogWindow>(window)->RootPanel());
-        Global::windowEffectHelper.SetListenThemeChange();
+        m_windowEffectHelper->SetTarget(window, winrt::get_self<CopyDialogWindow>(window)->RootPanel());
+        m_windowEffectHelper->SetListenThemeChange();
         window.Activate();
         viewModel->Start();
     }

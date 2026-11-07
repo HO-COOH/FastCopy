@@ -15,41 +15,42 @@
 
 namespace winrt::FastCopy::implementation
 {
-    CopyDialogWindow::CopyDialogWindow() : AnimatedWindowSize{reinterpret_cast<HWND>(Hwnd())}
+    CopyDialogWindow::CopyDialogWindow()
     {
-        CenterWindow(Window(), m_currentSize);
+        CenterWindow(Window(), NormalSize);
         Global::UIThread = DispatcherQueue();
 
+        //The view model outlives this window, so its handlers hold it weakly. A strong ref would keep it alive past XAML shutdown
         ViewModel().DuplicateFiles().VectorChanged(
-            [this](winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::FileCompareViewModel> original, auto&&)
+            { get_weak(), [this](winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::FileCompareViewModel> original, auto&&)
             {
                 auto const numElements = original.Size();
                 auto const clamped = std::clamp<uint32_t>(numElements, 0, std::size(Sizes) - 1);
 
-                if (m_currentSize == Sizes[clamped])
-                    return;
-
                 //set size cache and play window animation
-                playWindowAnimation(m_currentSize = Sizes[clamped]);
-            }
+                //playWindowAnimation(m_currentSize = Sizes[clamped]);
+            } }
         );
         ViewModel().Finished(
-            [this](winrt::Windows::Foundation::IInspectable const&, winrt::FastCopy::FinishState state)
+            [weak = get_weak()](winrt::Windows::Foundation::IInspectable const&, winrt::FastCopy::FinishState state)
             {
                 if (state != winrt::FastCopy::FinishState::Failed)
                     return;
 
                 //Some items failed: hide the progress dialog and show the (bound) error text instead
-                Global::UIThread.TryEnqueue([this]
+                //This is raised off the UI thread, and resolving there could run our destructor there, so wait until we're on it
+                Global::UIThread.TryEnqueue([weak]
                 {
-                    CopyDialog().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
-                    ErrorScrollViewer().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
-                    playWindowAnimation(Sizes[std::size(Sizes) - 1]);
+                    auto self = weak.get();
+                    if (!self)
+                        return;
+
+                    self->CopyDialog().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
+                    self->ErrorScrollViewer().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
+                    //self->playWindowAnimation(Sizes[std::size(Sizes) - 1]);
                 });
             }
         );
-
-        Global::copyWindow = *this;
     }
 
     winrt::FastCopy::RobocopyViewModel CopyDialogWindow::ViewModel()

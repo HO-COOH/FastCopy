@@ -4,6 +4,8 @@
 #include "Settings.h"
 #include <include/PropertyChangeHelper.hpp>
 
+class WindowEffectHelper;
+
 namespace winrt::FastCopy::implementation
 {
     struct SettingsViewModel : SettingsViewModelT<SettingsViewModel>, MvvmHelper::PropertyChangeHelper<SettingsViewModel>
@@ -36,6 +38,8 @@ namespace winrt::FastCopy::implementation
         void ConfirmDelete(bool value);
 
         static winrt::Microsoft::UI::Xaml::Visibility IsRenameTextBoxVisible(int renameBehavior);
+
+        WindowEffectHelper* WindowEffectHelperPtr{};
     private:
         Settings m_model;
     };

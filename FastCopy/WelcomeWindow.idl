@@ -11,8 +11,6 @@
     [default_interface]
     runtimeclass WelcomeWindow : WinUI3Package.WindowEx
     {
-        WelcomeWindow();
-
         RobocopyCheckResult CheckResult{ get; };
     }
 }

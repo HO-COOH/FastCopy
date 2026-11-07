@@ -5,8 +5,6 @@ namespace FastCopy
     [default_interface]
     runtimeclass SettingsWindow : WinUI3Package.WindowEx
     {
-        SettingsWindow();
-
         FastCopy.SettingsViewModel ViewModel{ get; };
         
         static Microsoft.UI.Xaml.Visibility NotToVisibility(Boolean value);

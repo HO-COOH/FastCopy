@@ -10,20 +10,24 @@
 #include "TextBlockClipAnimation.h"
 #include "FastcopySettingsSingleInstanceLock.h"
 #include <winrt/Windows.ApplicationModel.h>
+#include "WindowEffectHelper.h"
+#include "SettingsViewModel.h"
 
 namespace winrt::FastCopy::implementation
 {
-    SettingsWindow::SettingsWindow()
+	SettingsWindow::SettingsWindow(WindowEffectHelper& windowEffectHelper) : m_windowEffectHelper{ windowEffectHelper }
     {
         Height(PackageConfig::GetDefaultLanguage() == L"zh-cn" ? 550 : 580);
 
         InitializeComponent();
+        m_windowEffectHelper.SetTarget(*this, RootPanel());
 
         TextBlockClipAnimation{}
             .SetImplicitAnimations(ConfirmDeleteWarningText())
             .SetImplicitAnimations(InvalidSuffixTip());
 
         FastcopySettingsSingleInstanceLock::SetWindow(*this);
+		winrt::get_self<SettingsViewModel>(ViewModel())->WindowEffectHelperPtr = &m_windowEffectHelper;
     }
 
     winrt::FastCopy::SettingsViewModel SettingsWindow::ViewModel()

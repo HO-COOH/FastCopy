@@ -13,9 +13,12 @@
     mc:Ignorable="d">
 
     <essential:WindowEx.SystemBackdrop>
-        <MicaBackdrop />
+        <essential:MicaBackdropWithFallback>
+            <essential:MicaBackdropWithFallback.Fallback>
+                <essential:TenMicaBackdrop BindThemeTo="{x:Bind}" />
+            </essential:MicaBackdropWithFallback.Fallback>
+        </essential:MicaBackdropWithFallback>
     </essential:WindowEx.SystemBackdrop>
-
 
     <Grid>
         <essential:SwitchPresenter Value="{x:Bind CheckResult, Mode=OneTime}">

@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "AcrylicHelper.h"
+#include "WindowEffectHelper.h"
 #include <winrt/Windows.System.h>
 #include <windows.system.h>
 #include <DispatcherQueue.h>
@@ -9,12 +9,10 @@
 
 void WindowEffectHelper::init()
 {
-    if (!m_window)
-        return;
-
     auto settingsViewModel = ViewModelLocator::GetInstance().SettingsViewModel();
-    settingsViewModel.BackgroundSelection(settingsViewModel.BackgroundSelection());
-    settingsViewModel.ThemeSelection(settingsViewModel.ThemeSelection());
+    SetEffect(settingsViewModel.BackgroundSelection());
+    SetTheme(static_cast<winrt::Microsoft::UI::Xaml::ElementTheme>(settingsViewModel.ThemeSelection()));
+    SettingsChangeListener::GetInstance().BroadcastThemeChange();
 }
 
 void WindowEffectHelper::SetTarget(
@@ -24,6 +22,13 @@ void WindowEffectHelper::SetTarget(
     m_themeChangedRevoker.revoke();
     m_window = std::move(window);
     m_backgroundElement = std::move(backgroundElement);
+    // This helper outlives the window, so don't keep the window alive past its close
+    m_window.Closed([this](auto&&, auto&&)
+    {
+        m_themeChangedRevoker.revoke();
+        m_window = nullptr;
+        m_backgroundElement = nullptr;
+    });
     init();
 }
 
@@ -42,6 +47,9 @@ void WindowEffectHelper::SetEffect(int value)
 
     // Revoke previous ActualThemeChanged listener
     m_themeChangedRevoker.revoke();
+
+    if (!m_window)
+        return;
 
     switch (value)
     {
@@ -83,6 +91,9 @@ void WindowEffectHelper::SetEffect(int value)
 
 void WindowEffectHelper::SetTheme(winrt::Microsoft::UI::Xaml::ElementTheme theme)
 {
+    if (!m_window)
+        return;
+
     m_window.RequestedTheme(theme);
     if (cachedEffect == 2)
         UpdateBackgroundForActualTheme();

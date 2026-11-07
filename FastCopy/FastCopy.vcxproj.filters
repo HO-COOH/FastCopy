@@ -71,9 +71,6 @@
     <ClCompile Include="ViewModelLocator.cpp">
       <Filter>ViewModel</Filter>
     </ClCompile>
-    <ClCompile Include="AcrylicHelper.cpp">
-      <Filter>ViewHelper</Filter>
-    </ClCompile>
     <ClCompile Include="TaskFile.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
@@ -129,9 +126,6 @@
     <ClCompile Include="StoryboardWrapper.cpp">
       <Filter>ViewHelper</Filter>
     </ClCompile>
-    <ClCompile Include="AnimatedWindowSize.cpp">
-      <Filter>ViewHelper</Filter>
-    </ClCompile>
     <ClCompile Include="AnimatedValue.cpp">
       <Filter>ViewHelper</Filter>
     </ClCompile>
@@ -149,12 +143,6 @@
     </ClCompile>
     <ClCompile Include="RobocopyProcessStatus.cpp">
       <Filter>ViewModel\Robocopy</Filter>
-    </ClCompile>
-    <ClCompile Include="FileTime.cpp">
-      <Filter>Utils\FileTime</Filter>
-    </ClCompile>
-    <ClCompile Include="WinRTFileTime.cpp">
-      <Filter>Utils\FileTime</Filter>
     </ClCompile>
     <ClCompile Include="ProcessIoCounter.cpp">
       <Filter>Utils\ProcessIO</Filter>
@@ -192,14 +180,13 @@
     <ClCompile Include="RecycleBinIcon.cpp">
       <Filter>Views\Controls\Icons</Filter>
     </ClCompile>
+    <ClCompile Include="WindowEffectHelper.cpp" />
+    <ClCompile Include="WinRTFileInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="ViewModelLocator.h">
       <Filter>ViewModel</Filter>
-    </ClInclude>
-    <ClInclude Include="AcrylicHelper.h">
-      <Filter>ViewHelper</Filter>
     </ClInclude>
     <ClInclude Include="PropertyChangeHelper.hpp">
       <Filter>ViewHelper</Filter>
@@ -283,9 +270,6 @@
     <ClInclude Include="ExistingDir.h">
       <Filter>Utils\Robocopy\Output</Filter>
     </ClInclude>
-    <ClInclude Include="AnimatedWindowSize.h">
-      <Filter>ViewHelper</Filter>
-    </ClInclude>
     <ClInclude Include="StoryboardWrapper.h">
       <Filter>ViewHelper</Filter>
     </ClInclude>
@@ -313,12 +297,6 @@
     <ClInclude Include="resource1.h" />
     <ClInclude Include="Global.h">
       <Filter>Views</Filter>
-    </ClInclude>
-    <ClInclude Include="FileTime.h">
-      <Filter>Utils\FileTime</Filter>
-    </ClInclude>
-    <ClInclude Include="WinRTFileTime.h">
-      <Filter>Utils\FileTime</Filter>
     </ClInclude>
     <ClInclude Include="ProcessIoCounter.h">
       <Filter>Utils\ProcessIO</Filter>
@@ -388,6 +366,8 @@
     <ClInclude Include="IconBase.hpp">
       <Filter>Views\Controls\Icons</Filter>
     </ClInclude>
+    <ClInclude Include="WindowEffectHelper.h" />
+    <ClInclude Include="WinRTFileInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">

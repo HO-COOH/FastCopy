@@ -6,7 +6,6 @@
 
 #include "ViewModelLocator.h"
 #include <winrt/Windows.System.h>
-#include "Global.h"
 #include "SettingsChangeListener.h"
 #include "CopyDialogWindow.xaml.h"
 #pragma comment(lib, "gdiplus.lib")
@@ -32,8 +31,9 @@ namespace winrt::FastCopy::implementation
 
 	CopyDialog::CopyDialog()
 	{
+		//The view model and the listener outlive this dialog, so their handlers hold it weakly. A strong ref would keep it alive past XAML shutdown
 		ViewModel().DuplicateFiles().VectorChanged(
-			[this](winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::FileCompareViewModel> original, auto)
+			{ get_weak(), [this](winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::FileCompareViewModel> original, auto)
 			{
 				if (original.Size() == 0)
 				{
@@ -42,51 +42,61 @@ namespace winrt::FastCopy::implementation
 				}
 				else
 				{
-					DispatcherQueue().TryEnqueue([this] 
+					DispatcherQueue().TryEnqueue({ get_weak(), [this]
 					{
 						FindName(L"ContinueButton");
 						FindName(L"DuplicateFileItems");
 						FindName(L"DuplicateFileInfoGrid");
-					});
+					} });
 				}
-			}
+			} }
 		);
 		SettingsChangeListener::GetInstance().OnThemeChange(
-			[this](SettingsChangeListener::ThemeChangeEventArg e)
+			[weak = get_weak()](SettingsChangeListener::ThemeChangeEventArg e)
 			{
-				if (IsLoaded())
+				auto self = weak.get();
+				if (!self)
+					return;
+
+				if (self->IsLoaded())
 				{
-					applyTheme(e.theme);
+					self->applyTheme(e.theme);
 					return;
 				}
 
-				Loaded([this, theme = e.theme](auto&&...) 
+				//Capturing self here would make the dialog's own event keep it alive forever
+				self->Loaded([weak, theme = e.theme](auto&&...)
 				{
-					applyTheme(theme);
+					if (auto self = weak.get())
+						self->applyTheme(theme);
 				});
 			}
 		);
 		ViewModelLocator::GetInstance().RobocopyViewModel().DuplicateFiles().VectorChanged(
-			[this](winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::FileCompareViewModel> original, auto)
+			{ get_weak(), [this](winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::FileCompareViewModel> original, auto)
 			{
 				winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(
 					*this,
 					original.Size() == 0 ? L"HideDuplicateFiles" : L"ShowDuplicateFiles",
 					false
 				);
-			}
+			} }
 		);
 
-		InitializeComponent();
+	}
+
+	void CopyDialog::InitializeComponent()
+	{
+		CopyDialogT::InitializeComponent();
 		MenuFlyoutItemNoSubItemStyle = MyMenuFlyoutItemNoSubItemStyle();
 		MenuFlyoutItemHasSubItemStyle = MyMenuFlyoutItemHasSubItemStyle();
 		MenuFlyoutSubItemStyle = MyMenuFlyoutSubItemStyle();
 	}
 
-
 	void CopyDialog::ShowGraphButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
-		auto copyWindow = winrt::get_self<CopyDialogWindow>(Global::copyWindow);
+		auto const window = XamlRoot().Content().as<winrt::FastCopy::CopyDialogWindow>();
+		auto copyWindow = winrt::get_self<CopyDialogWindow>(window);
 		if (m_showSpeedGraph)
 		{
 			HideGraphAnimation().Completed([this](auto...) 
@@ -96,7 +106,7 @@ namespace winrt::FastCopy::implementation
 				});
 			HideGraphAnimation().Begin();
 			winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"HideGraph", false);
-			copyWindow->Resize(m_originalWindowSize);
+			copyWindow->WindowRestoreAnimation().Begin();
 			//ViewModel().PropertyChanged(m_speedUpdateRevoker);
 		}
 		else
@@ -113,17 +123,22 @@ namespace winrt::FastCopy::implementation
 				{ 
 					GraphAnimation().Begin(); 
 				});
-				m_speedUpdateRevoker = ViewModel().PropertyChanged([this](auto, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs e) {
-					if (e.PropertyName() == L"Speed")
-					{
-						SpeedGraph().SetSpeed(ViewModel().Percent() * 100.0, ViewModel().Speed());
-					}
+				//Other properties can be raised off the UI thread, and resolving there could run our destructor there. Speed is raised on the UI thread
+				m_speedUpdateRevoker = ViewModel().PropertyChanged([weak = get_weak()](auto, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs e) {
+					if (e.PropertyName() != L"Speed")
+						return;
+
+					auto self = weak.get();
+					if (!self)
+						return;
+
+					self->SpeedGraph().SetSpeed(self->ViewModel().Percent() * 100.0, self->ViewModel().Speed());
 				});
 			}
 
 			winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"ShowGraph", false);
-			m_originalWindowSize = { static_cast<int>(copyWindow->Width()), static_cast<int>(copyWindow->Height()) };
-			copyWindow->Resize({ (int)m_originalWindowSize.Width, (int)m_originalWindowSize.Height + 190 });
+			copyWindow->WindowHeightAnimation().To(copyWindow->NormalSize.Height + 190);
+			copyWindow->WindowHeightStoryboard().Begin();
 			m_speedGraphLoaded = true;
 		}
 		m_showSpeedGraph = !m_showSpeedGraph;

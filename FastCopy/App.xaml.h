@@ -8,10 +8,12 @@
 #include <winrt/Microsoft.Windows.AppLifecycle.h>
 #include "AppLaunchMode.h"
 #include "FastcopySettingsSingleInstanceLock.h"
-#include "RobocopyViewModel.h"
+#include "WindowEffectHelper.h"
 
 namespace winrt::FastCopy::implementation
 {
+	struct RobocopyViewModel;
+
     struct App : AppT<App>
     {
         App();
@@ -25,6 +27,7 @@ namespace winrt::FastCopy::implementation
         static bool HasAnotherInstance();
     private:
         std::optional<FastcopySettingsSingleInstanceLock> m_settingsLock;
+		std::optional<WindowEffectHelper> m_windowEffectHelper;
 
         /**
          * @brief Open the settings GUI.

@@ -8,6 +8,7 @@
 #include "RenameUtils.h"
 #include "KeyboardHookController.h"
 #include <wil/result_macros.h>
+#include "WindowEffectHelper.h"
 
 namespace winrt::FastCopy::implementation
 {
@@ -77,7 +78,8 @@ namespace winrt::FastCopy::implementation
 	void SettingsViewModel::ThemeSelection(int value)
 	{
 		m_model.Set(Settings::ThemeSelection, value);
-		Global::windowEffectHelper.SetTheme(static_cast<winrt::Microsoft::UI::Xaml::ElementTheme>(value));
+		if (WindowEffectHelperPtr)
+			WindowEffectHelperPtr->SetTheme(static_cast<winrt::Microsoft::UI::Xaml::ElementTheme>(value));
 		SettingsChangeListener::GetInstance().BroadcastThemeChange();
 	}
 	int SettingsViewModel::BackgroundSelection()
@@ -87,7 +89,8 @@ namespace winrt::FastCopy::implementation
 	void SettingsViewModel::BackgroundSelection(int value)
 	{
 		m_model.Set(Settings::BackgroundSelection, value);
-		Global::windowEffectHelper.SetEffect(value);
+		if (WindowEffectHelperPtr)
+			WindowEffectHelperPtr->SetEffect(value);
 		SettingsChangeListener::GetInstance().BroadcastThemeChange();
 	}
 	bool SettingsViewModel::DevMode()

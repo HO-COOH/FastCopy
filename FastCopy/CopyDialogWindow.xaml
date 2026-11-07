@@ -6,6 +6,7 @@
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:FastCopy"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="RootWindow"
     Closed="WindowEx_Closed"
     ExtendsContentIntoTitleBar="True"
     IsMaximizable="False"
@@ -21,6 +22,31 @@
                 State="{x:Bind ViewModel.State, Mode=OneWay}"
                 Window="{x:Bind Window}"
                 Value="{x:Bind ViewModel.Percent, Mode=OneWay}" />
+
+            <Storyboard x:Name="WindowHeightStoryboard">
+                <DoubleAnimation
+                    x:Name="WindowHeightAnimation"
+                    EnableDependentAnimation="True"
+                    Storyboard.TargetName="RootWindow"
+                    Storyboard.TargetProperty="Height"
+                    Duration="0:0:0.5">
+                    <DoubleAnimation.EasingFunction>
+                        <CircleEase EasingMode="EaseInOut" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+            </Storyboard>
+
+            <Storyboard x:Name="WindowRestoreAnimation">
+                <DoubleAnimation
+                    EnableDependentAnimation="True"
+                    Storyboard.TargetName="RootWindow"
+                    Storyboard.TargetProperty="Height"
+                    Duration="0:0:0.5">
+                    <DoubleAnimation.EasingFunction>
+                        <CircleEase EasingMode="EaseInOut" />
+                    </DoubleAnimation.EasingFunction>
+                </DoubleAnimation>
+            </Storyboard>
         </Grid.Resources>
         <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind Window}" />
         <essential:ModernWindowCaptionButtonToolTip Window="{x:Bind Window}" />
