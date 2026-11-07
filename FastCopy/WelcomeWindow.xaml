@@ -77,7 +77,6 @@
                     Spacing="10">
 
                     <StackPanel.Resources>
-                        <essential:WindowCaptionButtonThemeWorkaround x:Name="CaptionButtonsWorkaround" Window="{x:Bind Window}" />
                         <Style x:Key="AccentButtonStyleSupportAnimatedIcon" TargetType="Button">
                             <Setter Property="Foreground" Value="{ThemeResource AccentButtonForeground}" />
                             <Setter Property="Background" Value="{ThemeResource AccentButtonBackground}" />
@@ -222,8 +221,6 @@
                 </StackPanel>
             </essential:Case>
         </essential:SwitchPresenter>
-
-
 
         <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind Window}" />
         <essential:ModernWindowCaptionButtonToolTip Window="{x:Bind Window}" />

@@ -34,9 +34,6 @@
   </ItemGroup>
   <ItemGroup>
     <Midl Include="App.idl" />
-    <Midl Include="NumberToStringConverter.idl">
-      <Filter>Converter</Filter>
-    </Midl>
     <Midl Include="ICopyBase.idl">
       <Filter>ViewModel</Filter>
     </Midl>
@@ -58,11 +55,11 @@
     <Midl Include="TaskbarControl.idl">
       <Filter>Utils\SystemIntegration</Filter>
     </Midl>
-    <Midl Include="ReadableUnitConverterWinRT.idl">
-      <Filter>Views\Converters</Filter>
-    </Midl>
     <Midl Include="FileMenu.idl">
       <Filter>Views\Controls</Filter>
+    </Midl>
+    <Midl Include="ReadableUnitConverterWinRT.idl">
+      <Filter>Views</Filter>
     </Midl>
   </ItemGroup>
   <ItemGroup>
@@ -122,12 +119,6 @@
     </ClCompile>
     <ClCompile Include="FastcopySettingsSingleInstanceLock.cpp">
       <Filter>Utils\Mutex</Filter>
-    </ClCompile>
-    <ClCompile Include="StoryboardWrapper.cpp">
-      <Filter>ViewHelper</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimatedValue.cpp">
-      <Filter>ViewHelper</Filter>
     </ClCompile>
     <ClCompile Include="UIThreadWrapper.cpp">
       <Filter>ViewHelper</Filter>
@@ -269,12 +260,6 @@
     </ClInclude>
     <ClInclude Include="ExistingDir.h">
       <Filter>Utils\Robocopy\Output</Filter>
-    </ClInclude>
-    <ClInclude Include="StoryboardWrapper.h">
-      <Filter>ViewHelper</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimatedValue.h">
-      <Filter>ViewHelper</Filter>
     </ClInclude>
     <ClInclude Include="UIThreadWrapper.h">
       <Filter>ViewHelper</Filter>
@@ -572,9 +557,6 @@
     </Filter>
     <Filter Include="Utils\SystemIntegration">
       <UniqueIdentifier>{6c418ea5-1724-4cd6-8219-02b54163c2e7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Views\Converters">
-      <UniqueIdentifier>{9fc141b0-3d42-4510-9dff-5b85a5c7ccb8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Utils\Fallback">
       <UniqueIdentifier>{585c7294-37bb-485f-9f1d-e00173bde03e}</UniqueIdentifier>

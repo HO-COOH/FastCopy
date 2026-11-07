@@ -113,4 +113,12 @@ namespace winrt::FastCopy::implementation
 	{
 		return renameBehavior == 1 ? winrt::Microsoft::UI::Xaml::Visibility::Visible : winrt::Microsoft::UI::Xaml::Visibility::Collapsed;
 	}
+	double SettingsViewModel::RenameSuffixErrorOpacity(winrt::hstring const& suffix)
+	{
+		return Utils::IsRenameSuffixValid(suffix) ? 0.0 : 1.0;
+	}
+	winrt::Microsoft::UI::Xaml::Visibility SettingsViewModel::RenameSuffixErrorVisibility(winrt::hstring const& suffix)
+	{
+		return Utils::IsRenameSuffixValid(suffix) ? winrt::Microsoft::UI::Xaml::Visibility::Collapsed : winrt::Microsoft::UI::Xaml::Visibility::Visible;
+	}
 }

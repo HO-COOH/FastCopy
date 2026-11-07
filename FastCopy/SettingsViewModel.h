@@ -38,6 +38,8 @@ namespace winrt::FastCopy::implementation
         void ConfirmDelete(bool value);
 
         static winrt::Microsoft::UI::Xaml::Visibility IsRenameTextBoxVisible(int renameBehavior);
+        static double RenameSuffixErrorOpacity(winrt::hstring const& suffix);
+        static winrt::Microsoft::UI::Xaml::Visibility RenameSuffixErrorVisibility(winrt::hstring const& suffix);
 
         WindowEffectHelper* WindowEffectHelperPtr{};
     private:

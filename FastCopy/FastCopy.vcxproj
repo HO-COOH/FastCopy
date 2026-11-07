@@ -229,7 +229,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <ClInclude Include="..\Public\PropertyDescription.h" />
     <ClInclude Include="..\Public\ShellItem2.h" />
     <ClInclude Include="WindowEffectHelper.h" />
-    <ClInclude Include="AnimatedValue.h" />
     <ClInclude Include="AppLaunchMode.h" />
     <ClInclude Include="CaptureThreadHandle.h" />
     <ClInclude Include="CommandLine.h" />
@@ -298,10 +297,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <ClInclude Include="NewFile.h" />
     <ClInclude Include="Notification.h" />
     <ClInclude Include="Ntdll.h" />
-    <ClInclude Include="NumberToStringConverter.h">
-      <DependentUpon>NumberToStringConverter.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
     <ClInclude Include="OutputRegexParseBase.hpp" />
     <ClInclude Include="PathUtils.h" />
     <ClInclude Include="pch.h" />
@@ -350,7 +345,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="SpeedGraphData.h" />
-    <ClInclude Include="StoryboardWrapper.h" />
     <ClInclude Include="Taskbar.h" />
     <ClInclude Include="TaskbarControl.h">
       <DependentUpon>TaskbarControl.idl</DependentUpon>
@@ -411,7 +405,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <ClCompile Include="..\Public\PropertyDescription.cpp" />
     <ClCompile Include="..\Public\ShellItem2.cpp" />
     <ClCompile Include="WindowEffectHelper.cpp" />
-    <ClCompile Include="AnimatedValue.cpp" />
     <ClCompile Include="CommandLine.cpp" />
     <ClCompile Include="CommandLineHandler.cpp" />
     <ClCompile Include="ConfirmDeleteFileWindow.xaml.cpp">
@@ -469,10 +462,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <ClCompile Include="NewFile.cpp" />
     <ClCompile Include="Notification.cpp" />
     <ClCompile Include="Ntdll.cpp" />
-    <ClCompile Include="NumberToStringConverter.cpp">
-      <DependentUpon>NumberToStringConverter.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -512,7 +501,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="SpeedGraphData.cpp" />
-    <ClCompile Include="StoryboardWrapper.cpp" />
     <ClCompile Include="Taskbar.cpp" />
     <ClCompile Include="TaskbarControl.cpp">
       <DependentUpon>TaskbarControl.idl</DependentUpon>
@@ -576,9 +564,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ICopyBase.idl" />
-    <Midl Include="NumberToStringConverter.idl">
-      <SubType>Designer</SubType>
-    </Midl>
     <Midl Include="ReadableUnitConverterWinRT.idl">
       <SubType>Designer</SubType>
     </Midl>

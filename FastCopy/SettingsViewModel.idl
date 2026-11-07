@@ -17,5 +17,7 @@
         Boolean ConfirmDelete;
 
         static Microsoft.UI.Xaml.Visibility IsRenameTextBoxVisible(Int32 renameBehavior);
+        static Double RenameSuffixErrorOpacity(String suffix);
+        static Microsoft.UI.Xaml.Visibility RenameSuffixErrorVisibility(String suffix);
     }
 }

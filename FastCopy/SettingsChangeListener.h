@@ -25,7 +25,6 @@ public:
 
 	/**
 	 * @brief Send settings change message to all FastCopy window
-	 * 
 	 */
 	void BroadcastThemeChange();
 
