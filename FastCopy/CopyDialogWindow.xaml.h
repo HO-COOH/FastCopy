@@ -5,11 +5,15 @@
 
 #include "CopyDialogWindow.g.h"
 
+class WindowEffectHelper;
+
 namespace winrt::FastCopy::implementation
 {
     struct CopyDialogWindow : CopyDialogWindowT<CopyDialogWindow>
     {
-        CopyDialogWindow();
+        CopyDialogWindow(WindowEffectHelper& windowEffectHelper);
+
+        void InitializeComponent();
 
         constexpr static winrt::Windows::Graphics::SizeInt32 NormalSize{ 450, 120 };
         constexpr static winrt::Windows::Graphics::SizeInt32 Sizes[]
@@ -19,8 +23,27 @@ namespace winrt::FastCopy::implementation
             { 540, 595 }    //3+ duplicates
         };
 
+        static constexpr double PercentConvert(double value)
+        {
+            return value * 100.0;
+        }
+
+        void HyperlinkButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+        void ShowGraphButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+
         winrt::FastCopy::RobocopyViewModel ViewModel();
         void WindowEx_Closed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::WindowEventArgs const& args);
+
+
+		static inline winrt::Microsoft::UI::Xaml::Style MenuFlyoutItemNoSubItemStyle{ nullptr };
+        static inline winrt::Microsoft::UI::Xaml::Style MenuFlyoutItemHasSubItemStyle{ nullptr };
+        static inline winrt::Microsoft::UI::Xaml::Style MenuFlyoutSubItemStyle{ nullptr };
+        static winrt::hstring GetTextFromKeyboardAccelerators(winrt::Windows::Foundation::Collections::IVector<winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator> const& keys);
+
+
+    private:
+        bool m_showSpeedGraph = false;
+		WindowEffectHelper& m_windowEffectHelper;
     };
 }
 

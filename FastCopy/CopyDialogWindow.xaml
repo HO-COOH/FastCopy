@@ -14,54 +14,1550 @@
     IsResizable="False"
     mc:Ignorable="d">
 
-    <Grid x:Name="RootPanel">
-        <Grid.Resources>
-            <essential:ModernStandardWindowContextMenu x:Name="WindowContextMenu" Window="{x:Bind Window}" />
-            <local:TaskbarControl
-                x:Name="TaskbarControl"
-                State="{x:Bind ViewModel.State, Mode=OneWay}"
-                Window="{x:Bind Window}"
-                Value="{x:Bind ViewModel.Percent, Mode=OneWay}" />
+    <!--  VisualStateManager looks for the groups on the first child of the control it is given. That is the content of a UserControl, but WindowEx is a ContentControl whose first child is its ContentPresenter  -->
+    <UserControl x:Name="VisualStateRoot">
+        <Grid x:Name="RootPanel">
+            <Grid.Resources>
+                <ResourceDictionary>
+                    <ResourceDictionary.ThemeDictionaries>
+                        <ResourceDictionary x:Key="Default">
+                            <SolidColorBrush x:Key="DestinationTextBrush" Color="LightGreen" />
+                            <Color x:Key="DuplicateFilenameColor">#6ccb5f</Color>
+                            <Color x:Key="SeperatorLineColor">#d9d9d9</Color>
+                        </ResourceDictionary>
+                        <ResourceDictionary x:Key="Light">
+                            <SolidColorBrush x:Key="DestinationTextBrush" Color="DarkGreen" />
+                            <Color x:Key="DuplicateFilenameColor">#36652f</Color>
+                            <Color x:Key="SeperatorLineColor">#2f2f2f</Color>
+                        </ResourceDictionary>
+                    </ResourceDictionary.ThemeDictionaries>
 
-            <Storyboard x:Name="WindowHeightStoryboard">
-                <DoubleAnimation
-                    x:Name="WindowHeightAnimation"
-                    EnableDependentAnimation="True"
-                    Storyboard.TargetName="RootWindow"
-                    Storyboard.TargetProperty="Height"
-                    Duration="0:0:0.5">
-                    <DoubleAnimation.EasingFunction>
-                        <CircleEase EasingMode="EaseInOut" />
-                    </DoubleAnimation.EasingFunction>
-                </DoubleAnimation>
-            </Storyboard>
+                    <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
+                        <Setter Property="FontSize" Value="24" />
+                    </Style>
 
-            <Storyboard x:Name="WindowRestoreAnimation">
-                <DoubleAnimation
-                    EnableDependentAnimation="True"
-                    Storyboard.TargetName="RootWindow"
-                    Storyboard.TargetProperty="Height"
-                    Duration="0:0:0.5">
-                    <DoubleAnimation.EasingFunction>
-                        <CircleEase EasingMode="EaseInOut" />
-                    </DoubleAnimation.EasingFunction>
-                </DoubleAnimation>
-            </Storyboard>
-        </Grid.Resources>
-        <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind Window}" />
-        <essential:ModernWindowCaptionButtonToolTip Window="{x:Bind Window}" />
-        <local:CopyDialog x:Name="CopyDialog" />
+                    <Style x:Key="StatusTextStyle" TargetType="TextBlock">
+                        <Setter Property="FontSize" Value="11" />
+                        <Setter Property="Opacity" Value="0.8" />
+                    </Style>
 
-        <ScrollViewer x:Name="ErrorScrollViewer" Visibility="Collapsed">
-            <ContentPresenter>
+                    <Style x:Key="DuplicateFilenameTextStyle" TargetType="TextBlock">
+                        <Setter Property="FontSize" Value="14" />
+                    </Style>
+
+
+                    <x:Double x:Key="DuplicateFilenameBackgroundOpacity">0.15</x:Double>
+                    <x:Double x:Key="SeperatorLineOpacity">0.1</x:Double>
+
+                    <x:String x:Key="DownArrowGlyph">&#xE70D;</x:String>
+
+                    <DataTemplate x:Key="FileTooltipTemplate" x:DataType="local:ExtendedFileInfo">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                Margin="0,0,10,0"
+                                FontSize="10"
+                                FontWeight="SemiBold"
+                                Text="{x:Bind name}" />
+                            <TextBlock
+                                Grid.Column="1"
+                                FontSize="10"
+                                Text="{x:Bind value}" />
+                        </Grid>
+                    </DataTemplate>
+
+                    <Style x:Key="TimeLabelBorderStyle" TargetType="Border">
+                        <Setter Property="CornerRadius" Value="3" />
+                        <Setter Property="Padding" Value="3,0,3,2" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                    </Style>
+                    <Style x:Key="TimeLabelTextStyle" TargetType="TextBlock">
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="FontSize" Value="10" />
+                    </Style>
+
+                    <DataTemplate x:Key="FileInfoControlTemplate" x:DataType="local:FileInfoViewModel">
+                        <CheckBox
+                            Grid.Row="1"
+                            Margin="0,4,0,0"
+                            IsChecked="{x:Bind Selected, Mode=TwoWay}"
+                            IsRightTapEnabled="True"
+                            Style="{StaticResource ButtonCheckBoxStyle}">
+                            <CheckBox.Resources>
+                                <ResourceDictionary>
+                                    <ResourceDictionary.ThemeDictionaries>
+                                        <ResourceDictionary x:Key="Default">
+                                            <!--  Uncheck pointer over  -->
+                                            <StaticResource x:Key="CheckBoxBackgroundUncheckedPointerOver" ResourceKey="ButtonBackground" />
+                                            <StaticResource x:Key="CheckBoxBorderBrushUncheckedPointerOver" ResourceKey="ButtonBorderBrushPointerOver" />
+
+                                            <!--  Checked pointer over  -->
+                                            <StaticResource x:Key="CheckBoxBackgroundCheckedPointerOver" ResourceKey="ButtonBackground" />
+                                            <StaticResource x:Key="CheckBoxBorderBrushCheckedPointerOver" ResourceKey="ButtonBorderBrushPointerOver" />
+
+                                            <!--  Unchecked pressed  -->
+                                            <StaticResource x:Key="CheckBoxBackgroundUncheckedPressed" ResourceKey="ButtonBackgroundPressed" />
+                                            <StaticResource x:Key="CheckBoxBorderBrushUncheckedPressed" ResourceKey="ButtonBorderBrushPressed" />
+
+                                            <!--  Checked pressed  -->
+                                            <StaticResource x:Key="CheckBoxBackgroundCheckedPressed" ResourceKey="ButtonBackgroundPressed" />
+                                            <StaticResource x:Key="CheckBoxBorderBrushCheckedPressed" ResourceKey="ButtonBorderBrushPressed" />
+                                        </ResourceDictionary>
+
+                                        <ResourceDictionary x:Key="Light">
+                                            <!--  Uncheck pointer over  -->
+                                            <StaticResource x:Key="CheckBoxBackgroundUncheckedPointerOver" ResourceKey="ButtonBackground" />
+                                            <StaticResource x:Key="CheckBoxBorderBrushUncheckedPointerOver" ResourceKey="ButtonBorderBrushPointerOver" />
+
+                                            <!--  Checked pointer over  -->
+                                            <StaticResource x:Key="CheckBoxBackgroundCheckedPointerOver" ResourceKey="ButtonBackground" />
+                                            <StaticResource x:Key="CheckBoxBorderBrushCheckedPointerOver" ResourceKey="ButtonBorderBrushPointerOver" />
+
+                                            <!--  Unchecked pressed  -->
+                                            <StaticResource x:Key="CheckBoxBackgroundUncheckedPressed" ResourceKey="ButtonBackgroundPressed" />
+                                            <StaticResource x:Key="CheckBoxBorderBrushUncheckedPressed" ResourceKey="ButtonBorderBrushPressed" />
+
+                                            <!--  Checked pressed  -->
+                                            <StaticResource x:Key="CheckBoxBackgroundCheckedPressed" ResourceKey="ButtonBackgroundPressed" />
+                                            <StaticResource x:Key="CheckBoxBorderBrushCheckedPressed" ResourceKey="ButtonBorderBrushPressed" />
+                                        </ResourceDictionary>
+                                    </ResourceDictionary.ThemeDictionaries>
+                                </ResourceDictionary>
+                            </CheckBox.Resources>
+                            <CheckBox.ContextFlyout>
+                                <!--<MenuFlyout local:DataInjector.Data="{x:Bind}" Opening="MenuFlyout_Opening" />-->
+                                <local:FileMenu File="{x:Bind}" />
+                            </CheckBox.ContextFlyout>
+                            <StackPanel Orientation="Horizontal">
+                                <Image
+                                    Width="48"
+                                    Height="48"
+                                    Source="{x:Bind Bitmap}"
+                                    Stretch="Uniform">
+                                    <ToolTipService.ToolTip>
+                                        <ToolTip>
+                                            <ItemsControl ItemTemplate="{StaticResource FileTooltipTemplate}" ItemsSource="{x:Bind tooltipInfo}" />
+                                        </ToolTip>
+                                    </ToolTipService.ToolTip>
+                                </Image>
+                                <StackPanel Orientation="Vertical">
+                                    <local:TilesControl>
+                                        <StackPanel Orientation="Horizontal" Spacing="5">
+                                            <Border Background="#2cff006f" Style="{StaticResource TimeLabelBorderStyle}">
+                                                <TextBlock
+                                                    x:Uid="CreateTimeAbbreviation"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="10"
+                                                    Foreground="Red" />
+                                            </Border>
+                                            <TextBlock VerticalAlignment="Center" Text="{x:Bind local:ReadableUnitConverterWinRT.ConvertDateTime(CreateTime)}" />
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal" Spacing="5">
+                                            <Border Background="#2c00ff30" Style="{StaticResource TimeLabelBorderStyle}">
+                                                <TextBlock
+                                                    x:Uid="LastAccessTimeAbbreviation"
+                                                    Foreground="Green"
+                                                    Style="{StaticResource TimeLabelTextStyle}" />
+                                            </Border>
+                                            <TextBlock VerticalAlignment="Center" Text="{x:Bind local:ReadableUnitConverterWinRT.ConvertDateTime(LastAccessTime)}" />
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal" Spacing="5">
+                                            <Border Background="#2c0000ff" Style="{StaticResource TimeLabelBorderStyle}">
+                                                <TextBlock
+                                                    x:Uid="LastWriteTimeAbbreviation"
+                                                    Foreground="Blue"
+                                                    Style="{StaticResource TimeLabelTextStyle}" />
+                                            </Border>
+                                            <TextBlock VerticalAlignment="Center" Text="{x:Bind local:ReadableUnitConverterWinRT.ConvertDateTime(LastWriteTime)}" />
+                                        </StackPanel>
+                                    </local:TilesControl>
+
+                                    <TextBlock Text="{x:Bind local:ReadableUnitConverterWinRT.ConvertSize(Bytes)}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </CheckBox>
+                    </DataTemplate>
+
+                    <Style x:Key="ButtonCheckBoxStyle" TargetType="CheckBox">
+                        <Setter Property="Background" Value="{ThemeResource CheckBoxBackgroundUnchecked}" />
+                        <Setter Property="Foreground" Value="{ThemeResource CheckBoxForegroundUnchecked}" />
+                        <Setter Property="BorderBrush" Value="{ThemeResource CheckBoxBorderBrushUnchecked}" />
+                        <Setter Property="Padding" Value="{StaticResource CheckBoxPadding}" />
+                        <Setter Property="HorizontalAlignment" Value="Left" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="HorizontalContentAlignment" Value="Left" />
+                        <Setter Property="VerticalContentAlignment" Value="Top" />
+                        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+                        <Setter Property="MinWidth" Value="{StaticResource CheckBoxMinWidth}" />
+                        <Setter Property="MinHeight" Value="{StaticResource CheckBoxHeight}" />
+                        <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+                        <Setter Property="FocusVisualMargin" Value="{StaticResource CheckBoxFocusVisualMargin}" />
+                        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="CheckBox">
+                                    <Grid
+                                        x:Name="RootGrid"
+                                        Padding="4,0,4,4"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="{TemplateBinding CornerRadius}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.BackgroundTransition>
+                                            <BrushTransition />
+                                        </Grid.BackgroundTransition>
+                                        <Grid
+                                            Grid.Column="0"
+                                            Width="{StaticResource CheckBoxSize}"
+                                            Height="{StaticResource CheckBoxSize}"
+                                            VerticalAlignment="Center">
+                                            <Rectangle
+                                                x:Name="NormalRectangle"
+                                                Width="{StaticResource CheckBoxSize}"
+                                                Height="{StaticResource CheckBoxSize}"
+                                                Fill="{ThemeResource CheckBoxCheckBackgroundFillUnchecked}"
+                                                RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                                RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}"
+                                                Stroke="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}"
+                                                StrokeThickness="{StaticResource CheckBoxBorderThickness}"
+                                                UseLayoutRounding="False" />
+                                            <AnimatedIcon
+                                                xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
+                                                x:Name="CheckGlyph"
+                                                Margin="0,1,0,-1"
+                                                AnimatedIcon.State="NormalOff"
+                                                Foreground="{ThemeResource CheckBoxCheckGlyphForegroundUnchecked}">
+                                                <animatedvisuals:AnimatedAcceptVisualSource />
+                                                <AnimatedIcon.FallbackIconSource>
+                                                    <FontIconSource
+                                                        x:Name="DownLevelCheckGlyph"
+                                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                        FontSize="{StaticResource CheckBoxGlyphSize}"
+                                                        Glyph="{StaticResource CheckBoxCheckedGlyph}" />
+                                                </AnimatedIcon.FallbackIconSource>
+                                            </AnimatedIcon>
+
+                                        </Grid>
+                                        <ContentPresenter
+                                            x:Name="ContentPresenter"
+                                            Grid.Column="1"
+                                            Margin="{TemplateBinding Padding}"
+                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                            AutomationProperties.AccessibilityView="Raw"
+                                            Content="{TemplateBinding Content}"
+                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                                            Foreground="{TemplateBinding Foreground}"
+                                            TextWrapping="Wrap" />
+
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="CombinedStates">
+                                                <VisualState x:Name="UncheckedNormal" />
+                                                <VisualState x:Name="UncheckedPointerOver">
+
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxForegroundUncheckedPointerOver}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBackgroundUncheckedPointerOver}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBorderBrushUncheckedPointerOver}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle" Storyboard.TargetProperty="Stroke">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckBackgroundStrokeUncheckedPointerOver}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle" Storyboard.TargetProperty="Fill">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckBackgroundFillUncheckedPointerOver}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckGlyphForegroundUncheckedPointerOver}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                    <VisualState.Setters>
+                                                        <Setter Target="CheckGlyph.(controls:AnimatedIcon.State)" Value="PointerOverOff" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="UncheckedPressed">
+
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxForegroundUncheckedPressed}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBackgroundUncheckedPressed}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBorderBrushUncheckedPressed}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle" Storyboard.TargetProperty="Stroke">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckBackgroundStrokeUncheckedPressed}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle" Storyboard.TargetProperty="Fill">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckBackgroundFillUncheckedPressed}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckGlyphForegroundUncheckedPressed}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                    <VisualState.Setters>
+                                                        <Setter Target="CheckGlyph.(controls:AnimatedIcon.State)" Value="PressedOff" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="UncheckedDisabled">
+
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxForegroundUncheckedDisabled}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBackgroundUncheckedDisabled}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBorderBrushUncheckedDisabled}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle" Storyboard.TargetProperty="Stroke">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckBackgroundStrokeUncheckedDisabled}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle" Storyboard.TargetProperty="Fill">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckBackgroundFillUncheckedDisabled}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckGlyphForegroundUncheckedDisabled}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                    <VisualState.Setters>
+                                                        <!--  DisabledVisual Should be handled by the control, not the animated icon.  -->
+                                                        <Setter Target="CheckGlyph.(controls:AnimatedIcon.State)" Value="NormalOff" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="CheckedNormal">
+
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxForegroundChecked}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBackgroundChecked}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBorderBrushChecked}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle" Storyboard.TargetProperty="Stroke">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckBackgroundStrokeChecked}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle" Storyboard.TargetProperty="Fill">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckBackgroundFillChecked}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckGlyphForegroundChecked}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                    <VisualState.Setters>
+                                                        <Setter Target="CheckGlyph.(controls:AnimatedIcon.State)" Value="NormalOn" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="CheckedPointerOver">
+
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxForegroundCheckedPointerOver}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBackgroundCheckedPointerOver}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBorderBrushCheckedPointerOver}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle" Storyboard.TargetProperty="Stroke">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckBackgroundStrokeCheckedPointerOver}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle" Storyboard.TargetProperty="Fill">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckBackgroundFillCheckedPointerOver}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckGlyphForegroundCheckedPointerOver}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                    <VisualState.Setters>
+                                                        <Setter Target="CheckGlyph.(controls:AnimatedIcon.State)" Value="PointerOverOn" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="CheckedPressed">
+
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxForegroundCheckedPressed}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBackgroundCheckedPressed}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBorderBrushCheckedPressed}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle" Storyboard.TargetProperty="Stroke">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckBackgroundStrokeCheckedPressed}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle" Storyboard.TargetProperty="Fill">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckBackgroundFillCheckedPressed}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckGlyphForegroundCheckedPressed}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                    <VisualState.Setters>
+                                                        <Setter Target="CheckGlyph.(controls:AnimatedIcon.State)" Value="PressedOn" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="CheckedDisabled">
+
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxForegroundCheckedDisabled}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBackgroundCheckedDisabled}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBorderBrushCheckedDisabled}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle" Storyboard.TargetProperty="Stroke">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckBackgroundStrokeCheckedDisabled}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle" Storyboard.TargetProperty="Fill">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckBackgroundFillCheckedDisabled}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckGlyphForegroundCheckedDisabled}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                    <VisualState.Setters>
+                                                        <!--  DisabledVisual Should be handled by the control, not the animated icon.  -->
+                                                        <Setter Target="CheckGlyph.(controls:AnimatedIcon.State)" Value="NormalOn" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="IndeterminateNormal">
+
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxForegroundIndeterminate}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBackgroundIndeterminate}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBorderBrushIndeterminate}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle" Storyboard.TargetProperty="Stroke">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckBackgroundStrokeIndeterminate}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle" Storyboard.TargetProperty="Fill">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckBackgroundFillIndeterminate}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DownLevelCheckGlyph" Storyboard.TargetProperty="Glyph">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource CheckBoxIndeterminateGlyph}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckGlyphForegroundIndeterminate}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                    <VisualState.Setters>
+                                                        <Setter Target="CheckGlyph.(controls:AnimatedIcon.State)" Value="NormalIndeterminate" />
+                                                        <Setter Target="CheckGlyph.Margin" Value="0" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="IndeterminatePointerOver">
+
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxForegroundIndeterminatePointerOver}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBackgroundIndeterminatePointerOver}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBorderBrushIndeterminatePointerOver}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle" Storyboard.TargetProperty="Stroke">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckBackgroundStrokeIndeterminatePointerOver}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle" Storyboard.TargetProperty="Fill">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckBackgroundFillIndeterminatePointerOver}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DownLevelCheckGlyph" Storyboard.TargetProperty="Glyph">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource CheckBoxIndeterminateGlyph}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckGlyphForegroundIndeterminatePointerOver}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                    <VisualState.Setters>
+                                                        <Setter Target="CheckGlyph.(controls:AnimatedIcon.State)" Value="PointerOverIndeterminate" />
+                                                        <Setter Target="CheckGlyph.Margin" Value="0" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="IndeterminatePressed">
+
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxForegroundIndeterminatePressed}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBackgroundIndeterminatePressed}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBorderBrushIndeterminatePressed}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle" Storyboard.TargetProperty="Stroke">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckBackgroundStrokeIndeterminatePressed}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle" Storyboard.TargetProperty="Fill">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckBackgroundFillIndeterminatePressed}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DownLevelCheckGlyph" Storyboard.TargetProperty="Glyph">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource CheckBoxIndeterminateGlyph}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckGlyphForegroundIndeterminatePressed}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                    <VisualState.Setters>
+                                                        <Setter Target="CheckGlyph.(controls:AnimatedIcon.State)" Value="PressedIndeterminate" />
+                                                        <Setter Target="CheckGlyph.Margin" Value="0" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="IndeterminateDisabled">
+
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxForegroundIndeterminateDisabled}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBackgroundIndeterminateDisabled}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBorderBrushIndeterminateDisabled}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle" Storyboard.TargetProperty="Stroke">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckBackgroundStrokeIndeterminateDisabled}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NormalRectangle" Storyboard.TargetProperty="Fill">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckBackgroundFillIndeterminateDisabled}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DownLevelCheckGlyph" Storyboard.TargetProperty="Glyph">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource CheckBoxIndeterminateGlyph}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CheckGlyph" Storyboard.TargetProperty="Foreground">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxCheckGlyphForegroundIndeterminateDisabled}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                    <VisualState.Setters>
+                                                        <!--  DisabledVisual Should be handled by the control, not the animated icon.  -->
+                                                        <Setter Target="CheckGlyph.(controls:AnimatedIcon.State)" Value="NormalIndeterminate" />
+                                                        <Setter Target="CheckGlyph.Margin" Value="0" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                            </VisualStateGroup>
+
+                                        </VisualStateManager.VisualStateGroups>
+                                    </Grid>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <Style x:Key="KeyboardAcceleratorGridStyle" TargetType="Grid">
+                        <Setter Property="Margin" Value="24,0,0,0" />
+                        <Setter Property="Padding" Value="8,0" />
+                        <Setter Property="Background" Value="#BF333333" />
+                        <Setter Property="BorderBrush" Value="#BF222222" />
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="CornerRadius" Value="8" />
+                        <Setter Property="HorizontalAlignment" Value="Right" />
+                        <Setter Property="MinWidth" Value="28" />
+                    </Style>
+
+                    <Style x:Key="KeyboardAcceleratorTextStyle" TargetType="TextBlock">
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="FontSize" Value="10" />
+                        <Setter Property="Opacity" Value="0.7" />
+                        <Setter Property="HorizontalAlignment" Value="Center" />
+                    </Style>
+
+                    <Style x:Name="MyMenuFlyoutItemNoSubItemStyle" TargetType="MenuFlyoutItem">
+                        <Setter Property="Background" Value="{ThemeResource MenuFlyoutItemBackground}" />
+                        <Setter Property="BorderBrush" Value="{ThemeResource MenuFlyoutItemBackgroundBrush}" />
+                        <Setter Property="BorderThickness" Value="{ThemeResource MenuFlyoutItemBorderThickness}" />
+                        <Setter Property="Foreground" Value="{ThemeResource MenuFlyoutItemForeground}" />
+                        <Setter Property="Padding" Value="{StaticResource MenuFlyoutItemThemePadding}" />
+                        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                        <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+                        <Setter Property="KeyboardAcceleratorPlacementMode" Value="Hidden" />
+                        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="MenuFlyoutItem">
+                                    <Grid
+                                        x:Name="LayoutRoot"
+                                        Margin="{StaticResource MenuFlyoutItemMargin}"
+                                        Padding="{TemplateBinding Padding}"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="{TemplateBinding CornerRadius}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Viewbox
+                                            x:Name="IconRoot"
+                                            Width="16"
+                                            Height="16"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Visibility="Collapsed">
+                                            <ContentPresenter
+                                                x:Name="IconContent"
+                                                Content="{TemplateBinding Icon}"
+                                                Foreground="{TemplateBinding Foreground}" />
+
+                                        </Viewbox>
+                                        <TextBlock
+                                            x:Name="TextBlock"
+                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                            Foreground="{TemplateBinding Foreground}"
+                                            Text="{TemplateBinding Text}"
+                                            TextTrimming="{ThemeResource MenuFlyoutItemTextTrimming}" />
+
+                                        <Grid
+                                            x:Name="KeyboardAcceleratorGrid"
+                                            Grid.Column="1"
+                                            Style="{StaticResource KeyboardAcceleratorGridStyle}"
+                                            Visibility="Collapsed">
+                                            <TextBlock
+                                                x:Name="KeyboardAcceleratorTextBlock"
+                                                Style="{ThemeResource KeyboardAcceleratorTextStyle}"
+                                                Text="{x:Bind local:CopyDialogWindow.GetTextFromKeyboardAccelerators(KeyboardAccelerators)}" />
+                                        </Grid>
+
+
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="CommonStates">
+                                                <VisualState x:Name="Normal" />
+
+                                                <VisualState x:Name="PointerOver">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutItemBackgroundPointerOver}" />
+                                                        <Setter Target="TextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundPointerOver}" />
+                                                        <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundPointerOver}" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+
+                                                <VisualState x:Name="Pressed">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutItemBackgroundPressed}" />
+                                                        <Setter Target="TextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundPressed}" />
+                                                        <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundPressed}" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+
+                                                <VisualState x:Name="Disabled">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutItemBackgroundDisabled}" />
+                                                        <Setter Target="TextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundDisabled}" />
+                                                        <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundDisabled}" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+
+                                            </VisualStateGroup>
+                                            <VisualStateGroup x:Name="CheckPlaceholderStates">
+                                                <VisualState x:Name="NoPlaceholder" />
+                                                <VisualState x:Name="CheckPlaceholder">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="TextBlock.Margin" Value="{ThemeResource MenuFlyoutItemPlaceholderThemeThickness}" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="IconPlaceholder">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="TextBlock.Margin" Value="{ThemeResource MenuFlyoutItemPlaceholderThemeThickness}" />
+                                                        <Setter Target="IconRoot.Visibility" Value="Visible" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="CheckAndIconPlaceholder">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="TextBlock.Margin" Value="{ThemeResource MenuFlyoutItemDoublePlaceholderThemeThickness}" />
+                                                        <Setter Target="IconRoot.Margin" Value="{ThemeResource MenuFlyoutItemPlaceholderThemeThickness}" />
+                                                        <Setter Target="IconRoot.Visibility" Value="Visible" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+
+                                            </VisualStateGroup>
+                                            <!--
+                                                Narrow padding is only applied when flyout was invoked with pen, mouse or keyboard.
+                                                Default padding is applied for all other cases including touch.
+                                            -->
+                                            <VisualStateGroup x:Name="PaddingSizeStates">
+                                                <VisualState x:Name="DefaultPadding" />
+                                                <VisualState x:Name="NarrowPadding">
+
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Padding">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource MenuFlyoutItemThemePaddingNarrow}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                </VisualState>
+
+                                            </VisualStateGroup>
+                                            <VisualStateGroup x:Name="KeyboardAcceleratorTextVisibility">
+                                                <VisualState x:Name="KeyboardAcceleratorTextCollapsed" />
+                                                <VisualState x:Name="KeyboardAcceleratorTextVisible">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="KeyboardAcceleratorGrid.Visibility" Value="Visible" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+
+                                            </VisualStateGroup>
+
+                                        </VisualStateManager.VisualStateGroups>
+                                    </Grid>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <Style x:Name="MyMenuFlyoutItemHasSubItemStyle" TargetType="MenuFlyoutItem">
+                        <Setter Property="Background" Value="{ThemeResource MenuFlyoutItemBackground}" />
+                        <Setter Property="BorderBrush" Value="{ThemeResource MenuFlyoutItemBackgroundBrush}" />
+                        <Setter Property="BorderThickness" Value="{ThemeResource MenuFlyoutItemBorderThickness}" />
+                        <Setter Property="Foreground" Value="{ThemeResource MenuFlyoutItemForeground}" />
+                        <Setter Property="Padding" Value="{StaticResource MenuFlyoutItemThemePadding}" />
+                        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                        <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+                        <Setter Property="KeyboardAcceleratorPlacementMode" Value="Hidden" />
+                        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="MenuFlyoutItem">
+                                    <Grid
+                                        x:Name="LayoutRoot"
+                                        Margin="{StaticResource MenuFlyoutItemMargin}"
+                                        Padding="{TemplateBinding Padding}"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="{TemplateBinding CornerRadius}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="16" />
+                                        </Grid.ColumnDefinitions>
+                                        <Viewbox
+                                            x:Name="IconRoot"
+                                            Width="16"
+                                            Height="16"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Visibility="Collapsed">
+                                            <ContentPresenter
+                                                x:Name="IconContent"
+                                                Content="{TemplateBinding Icon}"
+                                                Foreground="{TemplateBinding Foreground}" />
+
+                                        </Viewbox>
+                                        <TextBlock
+                                            x:Name="TextBlock"
+                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                            Foreground="{TemplateBinding Foreground}"
+                                            Text="{TemplateBinding Text}"
+                                            TextTrimming="{ThemeResource MenuFlyoutItemTextTrimming}" />
+
+                                        <Grid
+                                            x:Name="KeyboardAcceleratorGrid"
+                                            Grid.Column="1"
+                                            Style="{StaticResource KeyboardAcceleratorGridStyle}"
+                                            Visibility="Collapsed">
+                                            <TextBlock
+                                                x:Name="KeyboardAcceleratorTextBlock"
+                                                Style="{ThemeResource KeyboardAcceleratorTextStyle}"
+                                                Text="{x:Bind local:CopyDialogWindow.GetTextFromKeyboardAccelerators(KeyboardAccelerators)}" />
+                                        </Grid>
+
+
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="CommonStates">
+                                                <VisualState x:Name="Normal" />
+
+                                                <VisualState x:Name="PointerOver">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutItemBackgroundPointerOver}" />
+                                                        <Setter Target="TextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundPointerOver}" />
+                                                        <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundPointerOver}" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+
+                                                <VisualState x:Name="Pressed">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutItemBackgroundPressed}" />
+                                                        <Setter Target="TextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundPressed}" />
+                                                        <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundPressed}" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+
+                                                <VisualState x:Name="Disabled">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutItemBackgroundDisabled}" />
+                                                        <Setter Target="TextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundDisabled}" />
+                                                        <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundDisabled}" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+
+                                            </VisualStateGroup>
+                                            <VisualStateGroup x:Name="CheckPlaceholderStates">
+                                                <VisualState x:Name="NoPlaceholder" />
+                                                <VisualState x:Name="CheckPlaceholder">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="TextBlock.Margin" Value="{ThemeResource MenuFlyoutItemPlaceholderThemeThickness}" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="IconPlaceholder">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="TextBlock.Margin" Value="{ThemeResource MenuFlyoutItemPlaceholderThemeThickness}" />
+                                                        <Setter Target="IconRoot.Visibility" Value="Visible" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="CheckAndIconPlaceholder">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="TextBlock.Margin" Value="{ThemeResource MenuFlyoutItemDoublePlaceholderThemeThickness}" />
+                                                        <Setter Target="IconRoot.Margin" Value="{ThemeResource MenuFlyoutItemPlaceholderThemeThickness}" />
+                                                        <Setter Target="IconRoot.Visibility" Value="Visible" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+
+                                            </VisualStateGroup>
+                                            <!--
+                                                Narrow padding is only applied when flyout was invoked with pen, mouse or keyboard.
+                                                Default padding is applied for all other cases including touch.
+                                            -->
+                                            <VisualStateGroup x:Name="PaddingSizeStates">
+                                                <VisualState x:Name="DefaultPadding" />
+                                                <VisualState x:Name="NarrowPadding">
+
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Padding">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource MenuFlyoutItemThemePaddingNarrow}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                </VisualState>
+
+                                            </VisualStateGroup>
+                                            <VisualStateGroup x:Name="KeyboardAcceleratorTextVisibility">
+                                                <VisualState x:Name="KeyboardAcceleratorTextCollapsed" />
+                                                <VisualState x:Name="KeyboardAcceleratorTextVisible">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="KeyboardAcceleratorGrid.Visibility" Value="Visible" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+
+                                            </VisualStateGroup>
+
+                                        </VisualStateManager.VisualStateGroups>
+                                    </Grid>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <Style x:Name="MyMenuFlyoutSubItemStyle" TargetType="MenuFlyoutSubItem">
+                        <Setter Property="Background" Value="{ThemeResource MenuFlyoutSubItemBackground}" />
+                        <Setter Property="BorderBrush" Value="{ThemeResource MenuFlyoutSubItemBackgroundBrush}" />
+                        <Setter Property="BorderThickness" Value="{ThemeResource MenuFlyoutSubItemBorderThickness}" />
+                        <Setter Property="Foreground" Value="{ThemeResource MenuFlyoutSubItemForeground}" />
+                        <Setter Property="Padding" Value="{StaticResource MenuFlyoutItemThemePadding}" />
+                        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                        <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+                        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="MenuFlyoutSubItem">
+                                    <Grid
+                                        x:Name="LayoutRoot"
+                                        Margin="{StaticResource MenuFlyoutItemMargin}"
+                                        Padding="{TemplateBinding Padding}"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="{TemplateBinding CornerRadius}">
+                                        <Grid>
+
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="16" />
+                                            </Grid.ColumnDefinitions>
+                                            <Viewbox
+                                                x:Name="IconRoot"
+                                                Grid.Column="0"
+                                                Width="16"
+                                                Height="16"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                Visibility="Collapsed">
+                                                <ContentPresenter
+                                                    x:Name="IconContent"
+                                                    Content="{TemplateBinding Icon}"
+                                                    Foreground="{TemplateBinding Foreground}" />
+                                            </Viewbox>
+                                            <TextBlock
+                                                x:Name="TextBlock"
+                                                Grid.Column="0"
+                                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                Foreground="{TemplateBinding Foreground}"
+                                                Text="{TemplateBinding Text}"
+                                                TextTrimming="{ThemeResource MenuFlyoutItemTextTrimming}" />
+
+                                            <Grid Grid.Column="1" Style="{StaticResource KeyboardAcceleratorGridStyle}">
+                                                <TextBlock Style="{StaticResource KeyboardAcceleratorTextStyle}" Text="{x:Bind local:CopyDialogWindow.GetTextFromKeyboardAccelerators(KeyboardAccelerators)}" />
+                                            </Grid>
+
+                                            <FontIcon
+                                                x:Name="SubItemChevron"
+                                                Grid.Column="2"
+                                                HorizontalAlignment="Right"
+                                                AutomationProperties.AccessibilityView="Raw"
+                                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                FontSize="12"
+                                                Foreground="{ThemeResource MenuFlyoutSubItemChevron}"
+                                                Glyph="&#xE974;"
+                                                MirroredWhenRightToLeft="True" />
+                                        </Grid>
+
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="CommonStates">
+                                                <VisualState x:Name="Normal" />
+
+                                                <VisualState x:Name="PointerOver">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutSubItemBackgroundPointerOver}" />
+                                                        <Setter Target="TextBlock.Foreground" Value="{ThemeResource MenuFlyoutSubItemForegroundPointerOver}" />
+                                                        <Setter Target="SubItemChevron.Foreground" Value="{ThemeResource MenuFlyoutSubItemChevronPointerOver}" />
+                                                        <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutSubItemForegroundPointerOver}" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+
+                                                <VisualState x:Name="Pressed">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutSubItemBackgroundPressed}" />
+                                                        <Setter Target="TextBlock.Foreground" Value="{ThemeResource MenuFlyoutSubItemForegroundPressed}" />
+                                                        <Setter Target="SubItemChevron.Foreground" Value="{ThemeResource MenuFlyoutSubItemChevronPressed}" />
+                                                        <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutSubItemForegroundPressed}" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="SubMenuOpened">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutSubItemBackgroundSubMenuOpened}" />
+                                                        <Setter Target="TextBlock.Foreground" Value="{ThemeResource MenuFlyoutSubItemForegroundSubMenuOpened}" />
+                                                        <Setter Target="SubItemChevron.Foreground" Value="{ThemeResource MenuFlyoutSubItemChevronSubMenuOpened}" />
+                                                        <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutSubItemForegroundSubMenuOpened}" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+
+                                                <VisualState x:Name="Disabled">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutSubItemBackgroundDisabled}" />
+                                                        <Setter Target="TextBlock.Foreground" Value="{ThemeResource MenuFlyoutSubItemForegroundDisabled}" />
+                                                        <Setter Target="SubItemChevron.Foreground" Value="{ThemeResource MenuFlyoutSubItemChevronDisabled}" />
+                                                        <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutSubItemForegroundDisabled}" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+
+                                            </VisualStateGroup>
+                                            <VisualStateGroup x:Name="CheckPlaceholderStates">
+                                                <VisualState x:Name="NoPlaceholder" />
+                                                <VisualState x:Name="CheckPlaceholder">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="TextBlock.Margin" Value="{ThemeResource MenuFlyoutItemPlaceholderThemeThickness}" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="IconPlaceholder">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="TextBlock.Margin" Value="{ThemeResource MenuFlyoutItemPlaceholderThemeThickness}" />
+                                                        <Setter Target="IconRoot.Visibility" Value="Visible" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="CheckAndIconPlaceholder">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="TextBlock.Margin" Value="{ThemeResource MenuFlyoutItemDoublePlaceholderThemeThickness}" />
+                                                        <Setter Target="IconRoot.Margin" Value="{ThemeResource MenuFlyoutItemPlaceholderThemeThickness}" />
+                                                        <Setter Target="IconRoot.Visibility" Value="Visible" />
+
+                                                    </VisualState.Setters>
+                                                </VisualState>
+
+                                            </VisualStateGroup>
+                                            <VisualStateGroup x:Name="PaddingSizeStates">
+                                                <VisualState x:Name="DefaultPadding" />
+                                                <VisualState x:Name="NarrowPadding">
+
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Padding">
+                                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource MenuFlyoutItemThemePaddingNarrow}" />
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                </VisualState>
+
+                                            </VisualStateGroup>
+
+                                        </VisualStateManager.VisualStateGroups>
+                                    </Grid>
+
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+
+                    <essential:ModernStandardWindowContextMenu x:Name="WindowContextMenu" Window="{x:Bind Window}" />
+                    <local:TaskbarControl
+                        x:Name="TaskbarControl"
+                        State="{x:Bind ViewModel.State, Mode=OneWay}"
+                        Window="{x:Bind Window}"
+                        Value="{x:Bind ViewModel.Percent, Mode=OneWay}" />
+                </ResourceDictionary>
+
+            </Grid.Resources>
+
+            <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind Window}" />
+            <essential:ModernWindowCaptionButtonToolTip Window="{x:Bind Window}" />
+            <Grid x:Name="CopyDialog" Margin="15,15,15,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
                 <TextBlock
-                    x:Name="ErrorText"
-                    Margin="16"
-                    IsTextSelectionEnabled="True"
-                    Text="{x:Bind ViewModel.ErrorText, Mode=OneWay}"
-                    TextWrapping="Wrap" />
-            </ContentPresenter>
-        </ScrollViewer>
-    </Grid>
+                    x:Name="PercentText"
+                    Style="{StaticResource HeaderTextStyle}"
+                    Text="{x:Bind local:ReadableUnitConverterWinRT.ConvertPercent(ViewModel.Percent), Mode=OneWay}" />
 
+                <TextBlock
+                    x:Name="SpeedText"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Style="{StaticResource StatusTextStyle}"
+                    Text="{x:Bind local:ReadableUnitConverterWinRT.ConvertSpeed(ViewModel.Speed), Mode=OneWay}" />
+
+
+                <StackPanel
+                    Grid.Row="1"
+                    Margin="0,0,0,0"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+                    <TextBlock Style="{StaticResource StatusTextStyle}">
+                        <Run Text="{x:Bind ViewModel.OperationString}" />
+                        <Run Text="{x:Bind ViewModel.FinishedItemCount, Mode=OneWay}" />
+                        /<Run x:Name="ItemCountText" Text="{x:Bind ViewModel.ItemCount, Mode=OneWay}" />
+                        <Run x:Uid="ItemsFromText" />
+                    </TextBlock>
+
+                    <TextBlock
+                        MaxWidth="280"
+                        Margin="3,0,0,0"
+                        Foreground="{ThemeResource DestinationTextBrush}"
+                        Style="{StaticResource StatusTextStyle}"
+                        Text="{x:Bind ViewModel.Source, Mode=OneWay}"
+                        TextTrimming="CharacterEllipsis" />
+
+                    <TextBlock
+                        x:Uid="ToText"
+                        Style="{StaticResource StatusTextStyle}"
+                        Visibility="{x:Bind essential:Convert.StringToVisibility(ViewModel.Destination), Mode=OneWay}" />
+                    <Button
+                        Margin="2,-3,0,0"
+                        Padding="2"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Click="HyperlinkButton_Click"
+                        Content="{x:Bind ViewModel.Destination, Mode=OneWay}"
+                        FontSize="11"
+                        Foreground="{ThemeResource DestinationTextBrush}"
+                        Visibility="{x:Bind essential:Convert.StringToVisibility(ViewModel.Destination), Mode=OneWay}" />
+
+                    <!--  file:// scheme is specifically blocked. See https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.hyperlinkbutton.navigateuri?view=windows-app-sdk-1.8  -->
+                    <!--<HyperlinkButton
+                    Margin="2,-3,0,0"
+                    Padding="2"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Content="{x:Bind ViewModel.Destination, Mode=OneWay}"
+                    FontSize="11"
+                    Foreground="LightGreen"
+                    NavigateUri="{x:Bind ViewModel.DestinationUri, Mode=OneWay}" />-->
+                </StackPanel>
+
+                <StackPanel
+                    Grid.Row="1"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+
+                    <Button
+                        x:Name="PauseButton"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        Click="{x:Bind ViewModel.TogglePause}">
+                        <Viewbox Width="15" Height="15">
+                            <essential:SwitchPresenter Value="{x:Bind ViewModel.State, Mode=OneWay}">
+                                <essential:Case>
+                                    <essential:Case.Value>
+                                        <local:TaskbarState>Paused</local:TaskbarState>
+                                    </essential:Case.Value>
+                                    <SymbolIcon Symbol="Play" />
+                                </essential:Case>
+                                <essential:Case IsDefault="True">
+                                    <essential:Case.Value>
+                                        <local:TaskbarState>Normal</local:TaskbarState>
+                                    </essential:Case.Value>
+                                    <SymbolIcon x:Name="PauseIcon" Symbol="Pause" />
+                                </essential:Case>
+                            </essential:SwitchPresenter>
+                        </Viewbox>
+                    </Button>
+
+                    <!--<Button
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Click="{x:Bind ViewModel.Cancel}"
+                    IsEnabled="False">
+                    <Viewbox Width="15" Height="15">
+                        <SymbolIcon Symbol="Cancel" />
+                    </Viewbox>
+                </Button>-->
+                </StackPanel>
+
+                <essential:ProgressBarEx
+                    x:Name="ProgressBar"
+                    Grid.Row="2"
+                    Height="5"
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Stretch"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BaseColor="#FF01BF00"
+                    CornerRadius="5"
+                    HighColor="#FF76FF5F"
+                    Percent="{x:Bind local:CopyDialogWindow.PercentConvert(ViewModel.Percent), Mode=OneWay}">
+                    <essential:ProgressBarEx.RenderTransform>
+                        <ScaleTransform x:Name="ProgressBarScaleX" ScaleX="0" />
+                    </essential:ProgressBarEx.RenderTransform>
+                    <essential:ProgressBarEx.Triggers>
+                        <EventTrigger>
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <DoubleAnimation
+                                        Storyboard.TargetName="ProgressBarScaleX"
+                                        Storyboard.TargetProperty="ScaleX"
+                                        From="0"
+                                        To="1"
+                                        Duration="0:0:0.5">
+                                        <DoubleAnimation.EasingFunction>
+                                            <ExponentialEase EasingMode="EaseOut" Exponent="4" />
+                                        </DoubleAnimation.EasingFunction>
+                                    </DoubleAnimation>
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </essential:ProgressBarEx.Triggers>
+                </essential:ProgressBarEx>
+
+                <!--  SpeedGraph area  -->
+                <Button
+                    x:Name="ShowGraphButton"
+                    Grid.Row="4"
+                    Padding="2"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Click="ShowGraphButton_Click"
+                    RenderTransformOrigin="0.5,0.5">
+                    <Button.RenderTransform>
+                        <RotateTransform x:Name="RotateArrow" />
+                    </Button.RenderTransform>
+                    <FontIcon
+                        FontSize="12"
+                        Glyph="{StaticResource DownArrowGlyph}"
+                        Opacity="0.7" />
+                </Button>
+                <local:SpeedGraph
+                    x:Name="SpeedGraph"
+                    Grid.Row="3"
+                    Height="170"
+                    Margin="0,20,0,3"
+                    x:Load="False"
+                    Opacity="0" />
+
+
+                <!--  -Red: BB0000  -->
+                <!--  Duplicate files area  -->
+                <Grid
+                    x:Name="DuplicateFileInfoGrid"
+                    Grid.Row="3"
+                    x:Load="False">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.ColumnSpan="2"
+                        Height="55"
+                        Padding="0,25,0,20"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        LineHeight="42">
+                        <Run x:Uid="DestinationFolderContains" />
+                        <Run Text="{x:Bind ViewModel.DuplicateFiles.Size, Mode=OneWay}" />
+                        <Run x:Uid="Duplicates" />
+                    </TextBlock>
+
+                    <Line
+                        Grid.Row="1"
+                        Grid.ColumnSpan="2"
+                        Margin="0,0,0,0"
+                        Opacity="{StaticResource SeperatorLineOpacity}"
+                        Stroke="{ThemeResource SeperatorLineColor}"
+                        X1="0"
+                        X2="500"
+                        Y1="0"
+                        Y2="0" />
+                    <CheckBox
+                        x:Uid="UseSourceCheckBox"
+                        Grid.Row="1"
+                        IsChecked="{x:Bind ViewModel.UseSource, Mode=TwoWay}"
+                        IsThreeState="True" />
+                    <CheckBox
+                        x:Uid="UseDestinationCheckBox"
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        IsChecked="{x:Bind ViewModel.UseDestination, Mode=TwoWay}"
+                        IsThreeState="True" />
+                    <Line
+                        Grid.Row="1"
+                        Grid.ColumnSpan="2"
+                        Margin="0,0,0,0"
+                        Opacity="{StaticResource SeperatorLineOpacity}"
+                        Stroke="{ThemeResource SeperatorLineColor}"
+                        X1="0"
+                        X2="500"
+                        Y1="45"
+                        Y2="45" />
+                </Grid>
+
+                <ScrollViewer Grid.Row="4" Margin="0,24,0,0">
+                    <ItemsRepeater
+                        x:Name="DuplicateFileItems"
+                        Grid.Row="4"
+                        x:Load="False"
+                        ItemsSource="{x:Bind ViewModel.DuplicateFiles}">
+                        <ItemsRepeater.Layout>
+                            <StackLayout Orientation="Vertical" />
+                        </ItemsRepeater.Layout>
+                        <ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="local:FileCompareViewModel">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel
+                                        Grid.ColumnSpan="2"
+                                        HorizontalAlignment="Left"
+                                        CornerRadius="3">
+                                        <StackPanel.Background>
+                                            <SolidColorBrush Opacity="{StaticResource DuplicateFilenameBackgroundOpacity}" Color="{ThemeResource DuplicateFilenameColor}" />
+                                        </StackPanel.Background>
+                                        <TextBlock
+                                            Padding="4"
+                                            VerticalAlignment="Center"
+                                            Foreground="{ThemeResource DuplicateFilenameColor}"
+                                            Text="{x:Bind File1.Filename}" />
+                                    </StackPanel>
+
+                                    <ContentControl
+                                        Grid.Row="1"
+                                        Grid.Column="0"
+                                        Content="{x:Bind File1}"
+                                        ContentTemplate="{StaticResource FileInfoControlTemplate}" />
+                                    <ContentControl
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        Content="{x:Bind File2}"
+                                        ContentTemplate="{StaticResource FileInfoControlTemplate}" />
+
+                                    <Line
+                                        Grid.Row="2"
+                                        Grid.ColumnSpan="2"
+                                        Margin="0,18,0,5"
+                                        Opacity="{StaticResource SeperatorLineOpacity}"
+                                        Stroke="{StaticResource SeperatorLineColor}"
+                                        X1="0"
+                                        X2="500" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsRepeater.ItemTemplate>
+                    </ItemsRepeater>
+                </ScrollViewer>
+
+                <Button
+                    x:Name="ContinueButton"
+                    x:Uid="ContinueButton"
+                    Grid.Row="5"
+                    Margin="0,8,-4,8"
+                    HorizontalAlignment="Right"
+                    x:Load="False"
+                    Click="{x:Bind ViewModel.ConfirmDuplicates}"
+                    Style="{StaticResource AccentButtonStyle}" />
+            </Grid>
+
+            <ScrollViewer x:Name="ErrorScrollViewer" Visibility="Collapsed">
+                <ContentPresenter>
+                    <TextBlock
+                        x:Name="ErrorText"
+                        Margin="16"
+                        IsTextSelectionEnabled="True"
+                        Text="{x:Bind ViewModel.ErrorText, Mode=OneWay}"
+                        TextWrapping="Wrap" />
+                </ContentPresenter>
+            </ScrollViewer>
+
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="SpeedGraphStates">
+                    <VisualState x:Name="HideGraph">
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="RotateArrow"
+                                Storyboard.TargetProperty="Angle"
+                                To="0"
+                                Duration="0:0:0.3" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="SpeedText"
+                                Storyboard.TargetProperty="Opacity"
+                                To="1"
+                                Duration="0:0:0.3" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="SpeedGraph"
+                                Storyboard.TargetProperty="Opacity"
+                                To="0"
+                                Duration="0:0:0.3">
+                                <DoubleAnimation.EasingFunction>
+                                    <CircleEase EasingMode="EaseInOut" />
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SpeedGraph" Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="Collapsed" />
+                            </ObjectAnimationUsingKeyFrames>
+                            <!--  No To: animates back to the window's own height  -->
+                            <DoubleAnimation
+                                EnableDependentAnimation="True"
+                                Storyboard.TargetName="RootWindow"
+                                Storyboard.TargetProperty="Height"
+                                Duration="0:0:0.5">
+                                <DoubleAnimation.EasingFunction>
+                                    <CircleEase EasingMode="EaseInOut" />
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                        </Storyboard>
+                    </VisualState>
+                    <VisualState x:Name="ShowGraph">
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="RotateArrow"
+                                Storyboard.TargetProperty="Angle"
+                                To="180"
+                                Duration="0:0:0.3" />
+                            <DoubleAnimation
+                                Storyboard.TargetName="SpeedText"
+                                Storyboard.TargetProperty="Opacity"
+                                To="0"
+                                Duration="0:0:0.3" />
+                            <!--  Targeting SpeedGraph realizes its x:Load  -->
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SpeedGraph" Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                            </ObjectAnimationUsingKeyFrames>
+                            <DoubleAnimation
+                                Storyboard.TargetName="SpeedGraph"
+                                Storyboard.TargetProperty="Opacity"
+                                To="1"
+                                Duration="0:0:0.3">
+                                <DoubleAnimation.EasingFunction>
+                                    <CircleEase EasingMode="EaseInOut" />
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                            <!--  CopyDialogWindow::NormalSize.Height + 190  -->
+                            <DoubleAnimation
+                                EnableDependentAnimation="True"
+                                Storyboard.TargetName="RootWindow"
+                                Storyboard.TargetProperty="Height"
+                                To="310"
+                                Duration="0:0:0.5">
+                                <DoubleAnimation.EasingFunction>
+                                    <CircleEase EasingMode="EaseInOut" />
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                        </Storyboard>
+                    </VisualState>
+                </VisualStateGroup>
+
+                <VisualStateGroup x:Name="DuplicateFilesStates">
+                    <VisualState x:Name="ShowDuplicateFiles">
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="ShowGraphButton"
+                                Storyboard.TargetProperty="Opacity"
+                                To="0"
+                                Duration="0:0:0.3" />
+                            <ObjectAnimationUsingKeyFrames
+                                BeginTime="0:0:0.3"
+                                Storyboard.TargetName="ShowGraphButton"
+                                Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                        <VisualState.Setters>
+                            <Setter Target="ShowGraphButton.IsEnabled" Value="False" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="HideDuplicateFiles">
+                        <Storyboard>
+                            <ObjectAnimationUsingKeyFrames
+                                BeginTime="0:0:0.0"
+                                Storyboard.TargetName="ShowGraphButton"
+                                Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                            </ObjectAnimationUsingKeyFrames>
+                            <DoubleAnimation
+                                Storyboard.TargetName="ShowGraphButton"
+                                Storyboard.TargetProperty="Opacity"
+                                To="1"
+                                Duration="0:0:0.3" />
+                        </Storyboard>
+                        <VisualState.Setters>
+                            <Setter Target="ShowGraphButton.IsEnabled" Value="True" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+
+                <VisualStateGroup x:Name="ProgressBarStates">
+                    <VisualState x:Name="NormalState" />
+                    <VisualState x:Name="ErrorState">
+                        <VisualState.StateTriggers>
+                            <essential:IsEqualStateTrigger Value="{x:Bind ViewModel.State, Mode=OneWay}">
+                                <essential:IsEqualStateTrigger.To>
+                                    <local:TaskbarState>Error</local:TaskbarState>
+                                </essential:IsEqualStateTrigger.To>
+                            </essential:IsEqualStateTrigger>
+                        </VisualState.StateTriggers>
+                        <VisualState.Setters>
+                            <Setter Target="ProgressBar.HighColor" Value="#FFFF5F5F" />
+                            <Setter Target="ProgressBar.BaseColor" Value="#FFBF0000" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="PausedState">
+                        <VisualState.StateTriggers>
+                            <essential:IsEqualStateTrigger Value="{x:Bind ViewModel.State, Mode=OneWay}">
+                                <essential:IsEqualStateTrigger.To>
+                                    <local:TaskbarState>Paused</local:TaskbarState>
+                                </essential:IsEqualStateTrigger.To>
+                            </essential:IsEqualStateTrigger>
+                        </VisualState.StateTriggers>
+                        <VisualState.Setters>
+                            <Setter Target="ProgressBar.HighColor" Value="#FFFFFF00" />
+                            <Setter Target="ProgressBar.BaseColor" Value="#B3FFFF00" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="IndeterminedState">
+                        <VisualState.StateTriggers>
+                            <essential:IsEqualStateTrigger Value="{x:Bind ViewModel.State, Mode=OneWay}">
+                                <essential:IsEqualStateTrigger.To>
+                                    <local:TaskbarState>Indeterminate</local:TaskbarState>
+                                </essential:IsEqualStateTrigger.To>
+                            </essential:IsEqualStateTrigger>
+                        </VisualState.StateTriggers>
+                        <VisualState.Setters>
+                            <!--  Value set in string resources  -->
+                            <Setter x:Uid="IndeterminedStateTextSetter" Target="PercentText.Text" />
+                            <Setter x:Uid="IndeterminedStateTextSetter" Target="ItemCountText.Text" />
+                            <Setter Target="PauseButton.IsEnabled" Value="False" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+
+            </VisualStateManager.VisualStateGroups>
+        </Grid>
+    </UserControl>
 </essential:WindowEx>

@@ -9,7 +9,7 @@
 #include <ShlObj_core.h>
 #include <wil/resource.h>
 #include "ImageUtils.h"
-#include "CopyDialog.h"
+#include "CopyDialogWindow.xaml.h"
 #include "PathUtils.h"
 
 static winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator getKeyboardAccelerator(std::wstring& menuText)
@@ -169,9 +169,9 @@ namespace winrt::FastCopy::implementation
 		for (auto& flyoutItem : items)
 		{
 			if (auto normalItem = flyoutItem.try_as<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem>(); normalItem && normalItem.KeyboardAccelerators().Size() != 0)
-				normalItem.Style(hasSubItem ? CopyDialog::MenuFlyoutItemHasSubItemStyle : CopyDialog::MenuFlyoutItemNoSubItemStyle);
+				normalItem.Style(hasSubItem ? CopyDialogWindow::MenuFlyoutItemHasSubItemStyle : CopyDialogWindow::MenuFlyoutItemNoSubItemStyle);
 			else if (auto subItem = flyoutItem.try_as<winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutSubItem>(); subItem && hasSubItem && subItem.KeyboardAccelerators().Size() != 0)
-				subItem.Style(CopyDialog::MenuFlyoutSubItemStyle);
+				subItem.Style(CopyDialogWindow::MenuFlyoutSubItemStyle);
 		}
 
 		return items;

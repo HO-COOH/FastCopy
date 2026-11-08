@@ -109,8 +109,6 @@ namespace winrt::FastCopy::implementation
 
         void onAllFinished();
 
-        winrt::hstring finishedOperationString();
-
         void suspendAllProcesses();
         void resumeAllProcesses();
 

@@ -248,10 +248,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <ClInclude Include="ConfirmWindowBase.h" />
     <ClInclude Include="Conflict.h" />
     <ClInclude Include="Console.h" />
-    <ClInclude Include="CopyDialog.h">
-      <DependentUpon>CopyDialog.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
     <ClInclude Include="CopyDialogWindow.xaml.h">
       <DependentUpon>CopyDialogWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -376,9 +372,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <Page Include="ConfirmDeleteMultipleItemsWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="CopyDialog.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="CopyDialogWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -420,10 +413,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Console.cpp" />
-    <ClCompile Include="CopyDialog.cpp">
-      <DependentUpon>CopyDialog.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
     <ClCompile Include="CopyDialogWindow.xaml.cpp">
       <DependentUpon>CopyDialogWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -536,10 +525,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     </Midl>
     <Midl Include="ConfirmDeleteMultipleItemsWindow.idl">
       <DependentUpon>ConfirmDeleteMultipleItemsWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Midl>
-    <Midl Include="CopyDialog.idl">
-      <DependentUpon>CopyDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="CopyDialogWindow.idl">

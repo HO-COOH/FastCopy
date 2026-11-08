@@ -26,21 +26,17 @@
 
 namespace winrt::FastCopy::implementation
 {
-    namespace
+    template<typename ImplementationType>
+    winrt::Windows::Foundation::IAsyncOperation<bool> ShowConfirmWindowAsync(ImplementationType* impl)
     {
-        template<typename ImplementationType>
-        winrt::Windows::Foundation::IAsyncOperation<bool> ShowConfirmWindowAsync(ImplementationType* impl)
-        {
-            winrt::handle completionEvent{ CreateEvent(nullptr, TRUE, FALSE, nullptr) };
-            
-            impl->Closed([event = completionEvent.get()](auto&&, auto&&) { SetEvent(event); });
-            impl->Activate();
-            
-            co_await winrt::resume_on_signal(completionEvent.get());
-            co_return impl->Result;
-        }
-    }
+        winrt::handle completionEvent{ CreateEvent(nullptr, TRUE, FALSE, nullptr) };
 
+        impl->Closed([event = completionEvent.get()](auto&&, auto&&) { SetEvent(event); });
+        impl->Activate();
+
+        co_await winrt::resume_on_signal(completionEvent.get());
+        co_return impl->Result;
+    }
     App::App()
     {
         InitializeComponent();
@@ -137,11 +133,7 @@ namespace winrt::FastCopy::implementation
 
         LOGI(L"App started, record file: {}", recordFile.data());
 
-        winrt::FastCopy::CopyDialogWindow window;
-        m_windowEffectHelper->SetTarget(window, winrt::get_self<CopyDialogWindow>(window)->RootPanel());
-        m_windowEffectHelper->SetListenThemeChange();
-        window.Activate();
-        BringToForeground(reinterpret_cast<HWND>(window.Hwnd()));
+		winrt::make_self<CopyDialogWindow>(*m_windowEffectHelper)->Activate();
         viewModel->Start();
     }
 
@@ -171,10 +163,7 @@ namespace winrt::FastCopy::implementation
 
         LOGI(L"App started (after delete confirmation), record file: {}", taskFile.GetPath().data());
         
-        winrt::FastCopy::CopyDialogWindow window;
-        m_windowEffectHelper->SetTarget(window, winrt::get_self<CopyDialogWindow>(window)->RootPanel());
-        m_windowEffectHelper->SetListenThemeChange();
-        window.Activate();
+        winrt::make_self<CopyDialogWindow>(*m_windowEffectHelper)->Activate();
         viewModel->Start();
     }
 }

@@ -691,16 +691,6 @@ namespace winrt::FastCopy::implementation
 		}
 	}
 
-	winrt::hstring RobocopyViewModel::finishedOperationString()
-	{
-		switch (m_recordFile->GetOperation())
-		{
-			case CopyOperation::Copy: return GetStringResource(L"Copied");
-			case CopyOperation::Move: return GetStringResource(L"Moved");
-			case CopyOperation::Delete: return GetStringResource(L"Deleted");
-		}
-	}
-
 	void RobocopyViewModel::raiseProgressChange()
 	{
 		constexpr auto k_ProgressUpdateInterval = std::chrono::milliseconds{ 100 };
