@@ -112,8 +112,7 @@ namespace winrt::FastCopy::implementation
         auto const destination = Command::Get().GetDestination();
         //destination could be empty if delete is invoked
         auto const recordFile = Command::Get().RecordFile();
-        auto viewModelRef = ViewModelLocator::GetInstance().RobocopyViewModel();
-        auto viewModel = winrt::get_self<winrt::FastCopy::implementation::RobocopyViewModel>(viewModelRef);
+        auto viewModel = ViewModelLocator::GetInstance().RobocopyViewModel();
 #ifndef _DEBUG
         if (recordFile.empty())
             return;

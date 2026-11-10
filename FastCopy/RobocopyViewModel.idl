@@ -8,8 +8,6 @@ namespace FastCopy
     [default_interface]
     runtimeclass RobocopyViewModel : ICopyBase
     {
-        RobocopyViewModel();
-        
         Windows.Foundation.Uri DestinationUri{ get; };
 
         /*Duplicate files*/

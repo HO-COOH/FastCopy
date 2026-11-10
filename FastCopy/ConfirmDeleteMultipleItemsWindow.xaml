@@ -8,6 +8,7 @@
     xmlns:local="using:FastCopy"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Uid="ConfirmDeleteMultipleItemsWindow"
+    Title="{essential:StringResource Name=ConfirmDeleteMultipleItemsWindowTitle}"
     mc:Ignorable="d">
 
     <Window.SystemBackdrop>

@@ -4,8 +4,6 @@
     [default_interface]
     runtimeclass SettingsViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
-        SettingsViewModel();
-
         Boolean Notify;
         Boolean KeyboardIntegration;
         Int32 RenameBehavior;

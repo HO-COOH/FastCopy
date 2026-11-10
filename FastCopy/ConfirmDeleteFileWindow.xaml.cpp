@@ -17,9 +17,7 @@ namespace winrt::FastCopy::implementation
 {
     ConfirmDeleteFileWindow::ConfirmDeleteFileWindow()
     {
-        Title(GetStringResource(L"ConfirmDeleteFileWindowTitle"));
-        
-        auto viewModel = winrt::get_self<RobocopyViewModel>(ViewModelLocator::GetInstance().RobocopyViewModel());
+        auto viewModel = ViewModelLocator::GetInstance().RobocopyViewModel();
         auto& taskFile = *viewModel->m_recordFile;
         m_path = std::filesystem::path{ *taskFile.begin() };
         m_fileInfo = winrt::FastCopy::FileInfoViewModel{ m_path.wstring(), false };

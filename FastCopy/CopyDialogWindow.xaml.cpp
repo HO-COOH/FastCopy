@@ -14,6 +14,7 @@
 #include <include/HwndHelper.hpp>
 #include <winrt/Windows.System.h>
 #include "WindowEffectHelper.h"
+#include "RobocopyViewModel.h"
 #pragma comment(lib, "gdiplus.lib")
 
 namespace winrt::FastCopy::implementation
@@ -28,13 +29,7 @@ namespace winrt::FastCopy::implementation
         ViewModel().DuplicateFiles().VectorChanged(
             { get_weak(), [this](winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::FileCompareViewModel> original, auto&&)
             {
-                auto const numElements = original.Size();
-                auto const clamped = std::clamp<uint32_t>(numElements, 0, std::size(Sizes) - 1);
-
-                //set size cache and play window animation
-                //playWindowAnimation(m_currentSize = Sizes[clamped]);
-
-				if (numElements == 0)
+				if (original.Size() == 0)
 				{
 					UnloadObject(DuplicateFileInfoGrid());
 					UnloadObject(ContinueButton());
@@ -49,11 +44,7 @@ namespace winrt::FastCopy::implementation
 					} });
 				}
 
-				winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(
-					VisualStateRoot(),
-					numElements == 0 ? L"HideDuplicateFiles" : L"ShowDuplicateFiles",
-					false
-				);
+				updateVisualStates();
             } }
         );
         ViewModel().Finished(
@@ -72,7 +63,8 @@ namespace winrt::FastCopy::implementation
 
                     self->CopyDialog().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
                     self->ErrorScrollViewer().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
-                    //self->playWindowAnimation(Sizes[std::size(Sizes) - 1]);
+                    self->m_failed = true;
+                    self->updateVisualStates();
                 });
             }
         );
@@ -108,7 +100,7 @@ namespace winrt::FastCopy::implementation
 
     winrt::FastCopy::RobocopyViewModel CopyDialogWindow::ViewModel()
     {
-        return ViewModelLocator::GetInstance().RobocopyViewModel();
+        return *ViewModelLocator::GetInstance().RobocopyViewModel();
     }
 
     void CopyDialogWindow::HyperlinkButton_Click(
@@ -121,12 +113,40 @@ namespace winrt::FastCopy::implementation
     void CopyDialogWindow::ShowGraphButton_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
     {
         m_showSpeedGraph = !m_showSpeedGraph;
-        winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(VisualStateRoot(), m_showSpeedGraph ? L"ShowGraph" : L"HideGraph", false);
+        updateVisualStates();
+    }
+
+    void CopyDialogWindow::updateVisualStates()
+    {
+        using winrt::Microsoft::UI::Xaml::VisualStateManager;
+
+        //Matching Sizes[]
+        constexpr wchar_t const* duplicateWindowSizeStates[]{ L"OneDuplicateWindowSize", L"TwoDuplicatesWindowSize", L"ManyDuplicatesWindowSize" };
+        static_assert(std::size(duplicateWindowSizeStates) == std::size(Sizes));
+
+        auto const duplicateCount = ViewModel().DuplicateFiles().Size();
+        auto const showGraph = m_showSpeedGraph && duplicateCount == 0;
+
+        VisualStateManager::GoToState(VisualStateRoot(), duplicateCount == 0 ? L"HideDuplicateFiles" : L"ShowDuplicateFiles", false);
+
+        //HideGraph targets SpeedGraph, which would realize its x:Load only to hide it
+        if (showGraph || SpeedGraph())
+            VisualStateManager::GoToState(VisualStateRoot(), showGraph ? L"ShowGraph" : L"HideGraph", false);
+
+		//window size states
+        VisualStateManager::GoToState(
+            VisualStateRoot(),
+            m_failed ? duplicateWindowSizeStates[std::size(Sizes) - 1] :
+                duplicateCount != 0 ? duplicateWindowSizeStates[(std::min<size_t>)(duplicateCount, std::size(Sizes)) - 1] :
+                showGraph ? L"GraphWindowSize" :
+                L"NormalWindowSize",
+            false
+        );
     }
 
     void CopyDialogWindow::WindowEx_Closed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::WindowEventArgs const& args)
     {
-        ViewModelLocator::GetInstance().RobocopyViewModel().Cancel();
+        ViewModelLocator::GetInstance().RobocopyViewModel()->Cancel();
     }
 
 

@@ -1421,16 +1421,6 @@
                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SpeedGraph" Storyboard.TargetProperty="Visibility">
                                 <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="Collapsed" />
                             </ObjectAnimationUsingKeyFrames>
-                            <!--  No To: animates back to the window's own height  -->
-                            <DoubleAnimation
-                                EnableDependentAnimation="True"
-                                Storyboard.TargetName="RootWindow"
-                                Storyboard.TargetProperty="Height"
-                                Duration="0:0:0.5">
-                                <DoubleAnimation.EasingFunction>
-                                    <CircleEase EasingMode="EaseInOut" />
-                                </DoubleAnimation.EasingFunction>
-                            </DoubleAnimation>
                         </Storyboard>
                     </VisualState>
                     <VisualState x:Name="ShowGraph">
@@ -1454,17 +1444,6 @@
                                 Storyboard.TargetProperty="Opacity"
                                 To="1"
                                 Duration="0:0:0.3">
-                                <DoubleAnimation.EasingFunction>
-                                    <CircleEase EasingMode="EaseInOut" />
-                                </DoubleAnimation.EasingFunction>
-                            </DoubleAnimation>
-                            <!--  CopyDialogWindow::NormalSize.Height + 190  -->
-                            <DoubleAnimation
-                                EnableDependentAnimation="True"
-                                Storyboard.TargetName="RootWindow"
-                                Storyboard.TargetProperty="Height"
-                                To="310"
-                                Duration="0:0:0.5">
                                 <DoubleAnimation.EasingFunction>
                                     <CircleEase EasingMode="EaseInOut" />
                                 </DoubleAnimation.EasingFunction>
@@ -1509,6 +1488,137 @@
                         <VisualState.Setters>
                             <Setter Target="ShowGraphButton.IsEnabled" Value="True" />
                         </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+
+                <!--
+                    The only group animating the window size, so states in other groups never fight over it. Chosen by CopyDialogWindow::updateVisualStates()
+                    Sizes are CopyDialogWindow::NormalSize and CopyDialogWindow::Sizes[], keep them in sync
+                -->
+                <VisualStateGroup x:Name="WindowSizeStates">
+                    <VisualState x:Name="NormalWindowSize">
+                        <Storyboard>
+                            <DoubleAnimation
+                                EnableDependentAnimation="True"
+                                Storyboard.TargetName="RootWindow"
+                                Storyboard.TargetProperty="Width"
+                                To="450"
+                                Duration="0:0:0.5">
+                                <DoubleAnimation.EasingFunction>
+                                    <CircleEase EasingMode="EaseInOut" />
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                            <DoubleAnimation
+                                EnableDependentAnimation="True"
+                                Storyboard.TargetName="RootWindow"
+                                Storyboard.TargetProperty="Height"
+                                To="120"
+                                Duration="0:0:0.5">
+                                <DoubleAnimation.EasingFunction>
+                                    <CircleEase EasingMode="EaseInOut" />
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                        </Storyboard>
+                    </VisualState>
+                    <!--  NormalSize.Height + 190 for the SpeedGraph  -->
+                    <VisualState x:Name="GraphWindowSize">
+                        <Storyboard>
+                            <DoubleAnimation
+                                EnableDependentAnimation="True"
+                                Storyboard.TargetName="RootWindow"
+                                Storyboard.TargetProperty="Width"
+                                To="450"
+                                Duration="0:0:0.5">
+                                <DoubleAnimation.EasingFunction>
+                                    <CircleEase EasingMode="EaseInOut" />
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                            <DoubleAnimation
+                                EnableDependentAnimation="True"
+                                Storyboard.TargetName="RootWindow"
+                                Storyboard.TargetProperty="Height"
+                                To="310"
+                                Duration="0:0:0.5">
+                                <DoubleAnimation.EasingFunction>
+                                    <CircleEase EasingMode="EaseInOut" />
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                        </Storyboard>
+                    </VisualState>
+                    <!--  Sizes[0]  -->
+                    <VisualState x:Name="OneDuplicateWindowSize">
+                        <Storyboard>
+                            <DoubleAnimation
+                                EnableDependentAnimation="True"
+                                Storyboard.TargetName="RootWindow"
+                                Storyboard.TargetProperty="Width"
+                                To="540"
+                                Duration="0:0:0.5">
+                                <DoubleAnimation.EasingFunction>
+                                    <CircleEase EasingMode="EaseInOut" />
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                            <DoubleAnimation
+                                EnableDependentAnimation="True"
+                                Storyboard.TargetName="RootWindow"
+                                Storyboard.TargetProperty="Height"
+                                To="400"
+                                Duration="0:0:0.5">
+                                <DoubleAnimation.EasingFunction>
+                                    <CircleEase EasingMode="EaseInOut" />
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                        </Storyboard>
+                    </VisualState>
+                    <!--  Sizes[1]  -->
+                    <VisualState x:Name="TwoDuplicatesWindowSize">
+                        <Storyboard>
+                            <DoubleAnimation
+                                EnableDependentAnimation="True"
+                                Storyboard.TargetName="RootWindow"
+                                Storyboard.TargetProperty="Width"
+                                To="540"
+                                Duration="0:0:0.5">
+                                <DoubleAnimation.EasingFunction>
+                                    <CircleEase EasingMode="EaseInOut" />
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                            <DoubleAnimation
+                                EnableDependentAnimation="True"
+                                Storyboard.TargetName="RootWindow"
+                                Storyboard.TargetProperty="Height"
+                                To="495"
+                                Duration="0:0:0.5">
+                                <DoubleAnimation.EasingFunction>
+                                    <CircleEase EasingMode="EaseInOut" />
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                        </Storyboard>
+                    </VisualState>
+                    <!--  Sizes[2], also used for the ErrorText  -->
+                    <VisualState x:Name="ManyDuplicatesWindowSize">
+                        <Storyboard>
+                            <DoubleAnimation
+                                EnableDependentAnimation="True"
+                                Storyboard.TargetName="RootWindow"
+                                Storyboard.TargetProperty="Width"
+                                To="540"
+                                Duration="0:0:0.5">
+                                <DoubleAnimation.EasingFunction>
+                                    <CircleEase EasingMode="EaseInOut" />
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                            <DoubleAnimation
+                                EnableDependentAnimation="True"
+                                Storyboard.TargetName="RootWindow"
+                                Storyboard.TargetProperty="Height"
+                                To="595"
+                                Duration="0:0:0.5">
+                                <DoubleAnimation.EasingFunction>
+                                    <CircleEase EasingMode="EaseInOut" />
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                        </Storyboard>
                     </VisualState>
                 </VisualStateGroup>
 

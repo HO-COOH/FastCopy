@@ -12,9 +12,7 @@ namespace winrt::FastCopy::implementation
 {
     ConfirmDeleteMultipleItemsWindow::ConfirmDeleteMultipleItemsWindow()
     {
-        Title(GetStringResource(L"ConfirmDeleteMultipleItemsWindowTitle"));
-        
-        auto viewModel = winrt::get_self<RobocopyViewModel>(ViewModelLocator::GetInstance().RobocopyViewModel());
+        auto viewModel = ViewModelLocator::GetInstance().RobocopyViewModel();
         auto& taskFile = *viewModel->m_recordFile;
         auto const itemCount = std::distance(taskFile.begin(), taskFile.end());
         m_itemCountText = winrt::to_hstring(itemCount);

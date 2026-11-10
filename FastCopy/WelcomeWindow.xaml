@@ -21,7 +21,7 @@
     </essential:WindowEx.SystemBackdrop>
 
     <Grid>
-        <essential:SwitchPresenter Value="{x:Bind CheckResult, Mode=OneTime}">
+        <essential:SwitchPresenter Value="{x:Bind CheckResult}">
             <essential:Case>
                 <essential:Case.Value>
                     <local:RobocopyCheckResult>NotFound</local:RobocopyCheckResult>

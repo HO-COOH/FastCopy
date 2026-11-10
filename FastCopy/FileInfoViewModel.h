@@ -22,8 +22,8 @@ namespace winrt::FastCopy::implementation
 
         winrt::Windows::Foundation::Collections::IVector<winrt::Windows::Foundation::IInspectable> tooltipInfo();
     private:
-        ShellItem2 m_shellItem;
         winrt::hstring m_path;
+        ShellItem2 m_shellItem;
         bool const m_isSource;
         bool m_selected = false;
     };

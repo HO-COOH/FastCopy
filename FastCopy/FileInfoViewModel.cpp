@@ -19,7 +19,11 @@
 
 namespace winrt::FastCopy::implementation
 {
-	FileInfoViewModel::FileInfoViewModel(winrt::hstring path, bool isSource) : WinRTFileInfo{ path }, m_path{ ToBackslash(path) }, m_isSource{ isSource }, m_shellItem{ m_path.data() }
+	FileInfoViewModel::FileInfoViewModel(winrt::hstring path, bool isSource) : 
+		WinRTFileInfo{ path },
+		m_path{ ToBackslash(path) }, 
+		m_shellItem{ m_path.data() },
+		m_isSource{ isSource }
 	{
 	}
 
@@ -39,7 +43,7 @@ namespace winrt::FastCopy::implementation
 		{ 
 			m_selected = value;
 			raisePropertyChange(L"Selected");
-			auto robocopyViewModelImpl = winrt::get_self<RobocopyViewModel>(ViewModelLocator::GetInstance().RobocopyViewModel());
+			auto robocopyViewModelImpl = ViewModelLocator::GetInstance().RobocopyViewModel();
 			value?
 				(
 					m_isSource? 
@@ -91,12 +95,10 @@ namespace winrt::FastCopy::implementation
 				auto value = m_shellItem.GetString(key);
 				if (!value)
 					continue;
-				m_tooltipInfo.push_back(winrt::box_value(winrt::FastCopy::ExtendedFileInfo
-					{ 
-						.name = PropertyDescription{key}.GetDisplayName().get(),
-						.value = value.get() 
-					}
-				));
+				m_tooltipInfo.push_back(winrt::box_value(winrt::FastCopy::ExtendedFileInfo{ 
+					.name = PropertyDescription{key}.GetDisplayName().get(),
+					.value = value.get() 
+				}));
 			}
 			catch(...){}
 		}

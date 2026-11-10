@@ -116,10 +116,3 @@ namespace winrt::FastCopy::implementation
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::FastCopy::FileCompareViewModel> m_duplicateFiles = winrt::single_threaded_observable_vector<winrt::FastCopy::FileCompareViewModel>();
     };
 }
-
-namespace winrt::FastCopy::factory_implementation
-{
-    struct RobocopyViewModel : RobocopyViewModelT<RobocopyViewModel, implementation::RobocopyViewModel>
-    {
-    };
-}

@@ -1,6 +1,5 @@
 ﻿#pragma once
 #include <winrt/Microsoft.UI.Composition.h>
-#include <winrt/Microsoft.UI.Xaml.Hosting.h>
 
 class TextBlockClipAnimation
 {
@@ -14,19 +13,5 @@ class TextBlockClipAnimation
 
     void createResourcesIfNeeded(winrt::Microsoft::UI::Composition::Visual const& elementVisual);
 public:
-    TextBlockClipAnimation& SetImplicitAnimations(auto const& element)
-    {
-        auto visual = winrt::Microsoft::UI::Xaml::Hosting::ElementCompositionPreview::GetElementVisual(element);
-        createResourcesIfNeeded(visual);
-
-        auto clip = m_compositor.CreateInsetClip();
-        visual.Clip(clip);
-        m_bindExpression.SetReferenceParameter(L"host", visual);
-        clip.StartAnimation(L"RightInset", m_bindExpression);
-
-        winrt::Microsoft::UI::Xaml::Hosting::ElementCompositionPreview::SetImplicitShowAnimation(element, m_clipRightInsetRevealAnimation);
-        winrt::Microsoft::UI::Xaml::Hosting::ElementCompositionPreview::SetImplicitHideAnimation(element, m_clipRightInsetHideAnimation);
-        
-        return *this;
-    }
+    TextBlockClipAnimation& SetImplicitAnimations(winrt::Microsoft::UI::Xaml::UIElement const& element);
 };

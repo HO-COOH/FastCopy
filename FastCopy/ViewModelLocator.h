@@ -1,17 +1,27 @@
 #pragma once
-#include "RobocopyViewModel.g.h"
-#include "SettingsViewModel.g.h"
 #include "SpeedGraphData.h"
 
-class ViewModelLocator
+namespace winrt::FastCopy
 {
-	winrt::FastCopy::RobocopyViewModel m_robocopyViewModel{ nullptr };
-	winrt::FastCopy::SettingsViewModel m_settingsViewModel{ nullptr };
+	struct RobocopyViewModel;
+	struct SettingsViewModel;
+
+	namespace implementation
+	{
+		struct RobocopyViewModel;
+		struct SettingsViewModel;
+	}
+}
+
+struct ViewModelLocator
+{
+	winrt::com_ptr<winrt::FastCopy::implementation::RobocopyViewModel> m_robocopyViewModel;
+	winrt::com_ptr<winrt::FastCopy::implementation::SettingsViewModel> m_settingsViewModel;
 	SpeedGraphData m_speedGraphData;
-public:
+
 	static ViewModelLocator& GetInstance();
-	winrt::FastCopy::RobocopyViewModel& RobocopyViewModel();
-	winrt::FastCopy::SettingsViewModel& SettingsViewModel();
+	winrt::FastCopy::implementation::RobocopyViewModel* RobocopyViewModel();
+	winrt::FastCopy::implementation::SettingsViewModel* SettingsViewModel();
 	SpeedGraphData& SpeedGraphData();
 };
 

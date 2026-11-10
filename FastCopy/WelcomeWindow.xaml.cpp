@@ -18,13 +18,12 @@
 
 namespace winrt::FastCopy::implementation
 {
-	WelcomeWindow::WelcomeWindow(WindowEffectHelper& windowEffectHelper) : m_windowEffectHelper{ windowEffectHelper }
+	WelcomeWindow::WelcomeWindow(WindowEffectHelper& windowEffectHelper) : m_windowEffectHelper{ windowEffectHelper }, m_checkResult{checkRobocopy()}
 	{
 		CenterWindow(Window(), winrt::Windows::Graphics::SizeInt32{
 			.Width = PackageConfig::GetDefaultLanguage() == L"zh-cn" ? 500 : 600,
 			.Height = 280
 		});
-		checkRobocopy();
 		FastcopySettingsSingleInstanceLock::SetWindow(*this);
 	}
 
@@ -45,40 +44,19 @@ namespace winrt::FastCopy::implementation
 		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		system("taskkill /F /IM explorer.exe & start explorer");
-		revealSubmitIssues();
-
-	}
-	winrt::FastCopy::RobocopyCheckResult WelcomeWindow::CheckResult()
-	{
-		return m_checkResult;
-	}
-
-	void WelcomeWindow::revealSubmitIssues()
-	{
 		SubmitIssuesContent().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
 	}
 
-	void WelcomeWindow::checkResult(winrt::FastCopy::RobocopyCheckResult value)
-	{
-		m_checkResult = value;
-	}
-
-	void WelcomeWindow::checkRobocopy()
+	winrt::FastCopy::RobocopyCheckResult WelcomeWindow::checkRobocopy()
 	{
 		//check if robocopy.exe exist in %systemroot%\System32
 		if (!std::filesystem::exists(wil::ExpandEnvironmentStringsW(LR"(%systemroot%\System32\robocopy.exe)").get()))
-		{
-			checkResult(winrt::FastCopy::RobocopyCheckResult::NotFound);
-			return;
-		}
+			return winrt::FastCopy::RobocopyCheckResult::NotFound;
 
 		//check if english resource exist in %systemroot%\System32\en-US\robocopy.exe.mui
 		if (!std::filesystem::exists(wil::ExpandEnvironmentStringsW(LR"(%systemroot%\System32\en-US\robocopy.exe.mui)").get()))
-		{
-			checkResult(winrt::FastCopy::RobocopyCheckResult::NoEnglishResource);
-			return;
-		}
+			return winrt::FastCopy::RobocopyCheckResult::NoEnglishResource;
 
-		checkResult(winrt::FastCopy::RobocopyCheckResult::Normal);
+		return winrt::FastCopy::RobocopyCheckResult::Normal;
 	}
 }

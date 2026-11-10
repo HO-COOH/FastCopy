@@ -14,13 +14,14 @@ namespace winrt::FastCopy::implementation
         void Button_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
         void KillExplorerButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 
-        winrt::FastCopy::RobocopyCheckResult CheckResult();
+        constexpr winrt::FastCopy::RobocopyCheckResult CheckResult() const
+        {
+            return m_checkResult;
+        }
     private:
         winrt::FastCopy::RobocopyCheckResult m_checkResult = winrt::FastCopy::RobocopyCheckResult::Checking;
 		WindowEffectHelper& m_windowEffectHelper;
 
-        void revealSubmitIssues();
-        void checkResult(winrt::FastCopy::RobocopyCheckResult value);
-        void checkRobocopy();
+        [[nodiscard]] static winrt::FastCopy::RobocopyCheckResult checkRobocopy();
     };
 }

@@ -10,7 +10,7 @@ ShellItem2::ShellItem2(wchar_t const* path) : m_ptr{ CreateItemFromParsingName<w
 wil::unique_cotaskmem_string ShellItem2::GetString(PROPERTYKEY key)
 {
 	wil::unique_cotaskmem_string pValue;
-	THROW_IF_FAILED(m_ptr->GetString(key, &pValue));
+	m_ptr->GetString(key, &pValue);
 	return pValue;
 }
 

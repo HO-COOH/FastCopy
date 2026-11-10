@@ -15,6 +15,7 @@ namespace winrt::FastCopy::implementation
 
         void InitializeComponent();
 
+        //The WindowSizeStates in CopyDialogWindow.xaml animate to these, keep them in sync
         constexpr static winrt::Windows::Graphics::SizeInt32 NormalSize{ 450, 120 };
         constexpr static winrt::Windows::Graphics::SizeInt32 Sizes[]
         {
@@ -43,7 +44,11 @@ namespace winrt::FastCopy::implementation
 
     private:
         bool m_showSpeedGraph = false;
+        bool m_failed = false;
 		WindowEffectHelper& m_windowEffectHelper;
+
+        //Picks the states of SpeedGraphStates, DuplicateFilesStates and WindowSizeStates together, as they depend on each other
+        void updateVisualStates();
     };
 }
 

@@ -5,13 +5,13 @@
 #include <DispatcherQueue.h>
 #include "SettingsChangeListener.h"
 #include "ViewModelLocator.h"
-
+#include "SettingsViewModel.h"
 
 void WindowEffectHelper::init()
 {
     auto settingsViewModel = ViewModelLocator::GetInstance().SettingsViewModel();
-    SetEffect(settingsViewModel.BackgroundSelection());
-    SetTheme(static_cast<winrt::Microsoft::UI::Xaml::ElementTheme>(settingsViewModel.ThemeSelection()));
+    SetEffect(settingsViewModel->BackgroundSelection());
+    SetTheme(static_cast<winrt::Microsoft::UI::Xaml::ElementTheme>(settingsViewModel->ThemeSelection()));
     SettingsChangeListener::GetInstance().BroadcastThemeChange();
 }
 

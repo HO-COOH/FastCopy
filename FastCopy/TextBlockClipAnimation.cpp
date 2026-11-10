@@ -1,4 +1,5 @@
 ﻿#include "pch.h"
+#include <winrt/Microsoft.UI.Xaml.Hosting.h>
 #include "TextBlockClipAnimation.h"
 
 void TextBlockClipAnimation::createResourcesIfNeeded(winrt::Microsoft::UI::Composition::Visual const& elementVisual)
@@ -21,4 +22,20 @@ void TextBlockClipAnimation::createResourcesIfNeeded(winrt::Microsoft::UI::Compo
     m_clipRightInsetHideAnimation.Target(L"RotationAxis.X");
 
     m_bindExpression = m_compositor.CreateExpressionAnimation(L"host.RotationAxis.X * host.Size.X");
+}
+
+TextBlockClipAnimation& TextBlockClipAnimation::SetImplicitAnimations(winrt::Microsoft::UI::Xaml::UIElement const& element)
+{
+    auto visual = winrt::Microsoft::UI::Xaml::Hosting::ElementCompositionPreview::GetElementVisual(element);
+    createResourcesIfNeeded(visual);
+
+    auto clip = m_compositor.CreateInsetClip();
+    visual.Clip(clip);
+    m_bindExpression.SetReferenceParameter(L"host", visual);
+    clip.StartAnimation(L"RightInset", m_bindExpression);
+
+    winrt::Microsoft::UI::Xaml::Hosting::ElementCompositionPreview::SetImplicitShowAnimation(element, m_clipRightInsetRevealAnimation);
+    winrt::Microsoft::UI::Xaml::Hosting::ElementCompositionPreview::SetImplicitHideAnimation(element, m_clipRightInsetHideAnimation);
+
+    return *this;
 }

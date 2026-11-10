@@ -246,7 +246,7 @@ namespace winrt::FastCopy::implementation
 							/*on different*/
 							[this, currentIndex, currentSource = **m_iter](Conflict&& conflict)
 							{
-								auto const currentItemSize = conflict.bytes;
+								//Robocopy skipped it, its bytes are counted by ConfirmDuplicates() once it is actually copied
 								Global::UIThread.TryEnqueue([this, conflict = std::move(conflict), currentDestinationFolder = m_perProcessStatus[currentIndex].m_currentDir.fullPath, currentSource = std::move(currentSource)] {
 									m_duplicateFiles.Append({
 										(std::filesystem::path{currentSource} / Utf8ToPath(conflict.name)).wstring(),
@@ -254,7 +254,6 @@ namespace winrt::FastCopy::implementation
 									});
 								});
 								m_hasDuplicates = true;
-								m_copiedBytes += currentItemSize;
 							},
 							/*onExistingDir*/
 							[this, currentIndex, currentSource = **m_iter](ExistingDir&& existingDir)
@@ -422,11 +421,15 @@ namespace winrt::FastCopy::implementation
 			auto const file1Selected = file1->Selected();
 			auto const file2Selected = file2->Selected();
 
+			//Added to m_copiedBytes only after this item is done below, but read now, as a move removes the source
+			//m_totalSize includes the source whatever is chosen, so keeping the destination counts as done too
+			std::error_code ec;
+			auto const sourceSize = std::filesystem::file_size(file1->Path().data(), ec);
+
 			if (file1Selected && file2Selected)
 			{
 				static std::wstring const suffix{ Settings{}.Get<winrt::hstring>(Settings::RenameSuffix, L" - Copy") };
 				//rename
-				;
 				Fallback::CopyAddSuffix(
 					file1->Path().data(),
 					std::filesystem::path{ file2->Path().data() },
@@ -456,6 +459,8 @@ namespace winrt::FastCopy::implementation
 				}
 			}
 			++m_finishedFiles;
+			if (!ec)
+				m_copiedBytes += sourceSize;
 			++*m_duplicateFileTaskIter;
 			raiseProgressChange();
 		}

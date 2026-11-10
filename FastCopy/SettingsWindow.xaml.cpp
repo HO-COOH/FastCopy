@@ -34,7 +34,7 @@ namespace winrt::FastCopy::implementation
 
     winrt::FastCopy::SettingsViewModel SettingsWindow::ViewModel()
     {
-        return ViewModelLocator::GetInstance().SettingsViewModel();
+        return *ViewModelLocator::GetInstance().SettingsViewModel();
     }
 
     void SettingsWindow::WindowEx_Activated(
@@ -46,8 +46,8 @@ namespace winrt::FastCopy::implementation
 
     winrt::hstring SettingsWindow::VersionString()
     {
-        auto version = winrt::Windows::ApplicationModel::Package::Current().Id().Version();
-        return winrt::hstring{ std::format(L"{}.{}.{}", version.Major, version.Minor, version.Build) };
+        auto const [major, minor, build, _] = winrt::Windows::ApplicationModel::Package::Current().Id().Version();
+        return winrt::hstring{ std::format(L"{}.{}.{}", major, minor, build) };
     }
 }
 
