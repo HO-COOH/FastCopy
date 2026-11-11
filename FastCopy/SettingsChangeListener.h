@@ -32,6 +32,7 @@ public:
 
 private:
 	constexpr static auto MessageWindowClassName = L"FastcopyMessageWindowClass";
+	//wParam: ThemeChangeEventArg::theme, lParam: ThemeChangeEventArg::effect
 	constexpr static auto WM_SETTINGSCHANGED = WM_USER + 10;
 	std::vector<std::function<void(ThemeChangeEventArg)>> m_themeChangeHandler;
 	HWND m_hwnd{};

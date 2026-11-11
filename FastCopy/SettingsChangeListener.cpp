@@ -17,15 +17,12 @@ void SettingsChangeListener::BroadcastThemeChange()
 		.theme = settings.Get<int>(Settings::ThemeSelection, 0),
 		.effect = settings.Get<int>(Settings::BackgroundSelection, 0)
 	};
+	//Post rather than send: the handlers set a backdrop, and TenMica calls out-of-process COM (IDesktopWallpaper),
+	//which fails with RPC_E_CANTCALLOUT_ININPUTSYNCCALL while handling a message sent from another process
 	do {
 		 findResult = FindWindowEx(HWND_MESSAGE, findResult, MessageWindowClassName, L"");
 		 if (findResult != NULL)
-		 {
-			 COPYDATASTRUCT data{};
-			 data.cbData = sizeof(data);
-			 data.lpData = reinterpret_cast<PVOID>(&arg);
-			 SendMessage(findResult, WM_COPYDATA, NULL, reinterpret_cast<LPARAM>(&data));
-		 }
+			 PostMessage(findResult, WM_SETTINGSCHANGED, static_cast<WPARAM>(arg.theme), static_cast<LPARAM>(arg.effect));
 	} while (findResult != NULL);
 }
 
@@ -47,13 +44,16 @@ void SettingsChangeListener::createWindow()
 	ws.lpszClassName = MessageWindowClassName;
 	ws.lpfnWndProc = +[](HWND hwnd, UINT message, WPARAM param, LPARAM lparam) -> LRESULT
 	{
-		if (message == WM_COPYDATA)
+		if (message == WM_SETTINGSCHANGED)
 		{
-			auto data = reinterpret_cast<COPYDATASTRUCT*>(lparam);
-			auto themeChangeEventArg = reinterpret_cast<ThemeChangeEventArg*>(data->lpData);
+			ThemeChangeEventArg const themeChangeEventArg
+			{
+				.theme = static_cast<int>(param),
+				.effect = static_cast<int>(lparam)
+			};
 			for (auto& handler : SettingsChangeListener::GetInstance().m_themeChangeHandler)
 			{
-				handler(*themeChangeEventArg);
+				handler(themeChangeEventArg);
 			}
 		}
 		return DefWindowProc(hwnd, message, param, lparam);
