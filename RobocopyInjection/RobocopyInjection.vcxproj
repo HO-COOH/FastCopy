@@ -212,6 +212,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Public\RobocopyInjectionHandshake.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
