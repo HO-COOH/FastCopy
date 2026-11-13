@@ -246,7 +246,7 @@
   <data name="ThemeSettingItem.Description" xml:space="preserve">
     <value>Zwischen hellem und dunklem Design umschalten</value>
   </data>
-  <data name="ThemeSettingItem.Title" xml:space="preserve">
+  <data name="ThemeSettingItem.Header" xml:space="preserve">
     <value>Design</value>
   </data>
   <data name="ToText.Text" xml:space="preserve">
@@ -313,10 +313,10 @@
     <value>Möchten Sie diese Datei wirklich löschen?</value>
   </data>
   <data name="ConfirmDeleteMultipleItemsRun1.Text" xml:space="preserve">
-    <value>Möchten Sie diese Elemente</value>
+    <value>Möchten Sie diese Elemente wirklich</value>
   </data>
   <data name="ConfirmDeleteMultipleItemsRun2.Text" xml:space="preserve">
-    <value>wirklich löschen?</value>
+    <value>löschen?</value>
   </data>
   <data name="ConfirmDeleteFolderTitleTextBlock.Text" xml:space="preserve">
     <value>Möchten Sie diesen Ordner wirklich löschen?</value>
