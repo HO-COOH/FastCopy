@@ -1,12 +1,11 @@
 #pragma once
 
 #include "FileIcon.g.h"
-#include <include/TemplateControlHelper.hpp>
 #include "IconBase.hpp"
 
 namespace winrt::FastCopy::implementation
 {
-	struct FileIcon : FileIconT<FileIcon>, TemplateControlHelper<FileIcon, false, false>, IconBase<FileIcon>
+	struct FileIcon : FileIconT<FileIcon>, IconBase<FileIcon>
     {
         static auto getStorageItemFromPath(winrt::hstring const& path)
         {
