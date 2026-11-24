@@ -10,8 +10,6 @@ namespace FastCopy
     [default_interface]
     runtimeclass FileInfoViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
-        FileInfoViewModel(String path, Boolean isSource);
-        
         String Path{ get; };
         String Filename{ get; };
 

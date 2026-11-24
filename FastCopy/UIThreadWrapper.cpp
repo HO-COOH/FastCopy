@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "UIThreadWrapper.h"
-#include <ppltasks.h>
 
 UIThreadWrapper& UIThreadWrapper::operator=(winrt::Microsoft::UI::Dispatching::DispatcherQueue const& queue)
 {

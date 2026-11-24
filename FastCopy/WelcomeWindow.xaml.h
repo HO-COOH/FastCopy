@@ -6,9 +6,11 @@ class WindowEffectHelper;
 
 namespace winrt::FastCopy::implementation
 {
+    struct SettingsViewModel;
+
     struct WelcomeWindow : WelcomeWindowT<WelcomeWindow>
     {
-		WelcomeWindow(WindowEffectHelper& windowEffectHelper);
+		WelcomeWindow(WindowEffectHelper& windowEffectHelper, SettingsViewModel& settingsViewModel);
         void InitializeComponent();
 
         void Button_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
@@ -21,7 +23,7 @@ namespace winrt::FastCopy::implementation
     private:
         winrt::FastCopy::RobocopyCheckResult m_checkResult = winrt::FastCopy::RobocopyCheckResult::Checking;
 		WindowEffectHelper& m_windowEffectHelper;
-
+		SettingsViewModel& m_settingsViewModel;
         [[nodiscard]] static winrt::FastCopy::RobocopyCheckResult checkRobocopy();
     };
 }

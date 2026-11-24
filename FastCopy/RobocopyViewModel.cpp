@@ -3,22 +3,21 @@
 #if __has_include("RobocopyViewModel.g.cpp")
 #include "RobocopyViewModel.g.cpp"
 #endif
-#include <ppltasks.h>
-#include <fstream>
 #include <filesystem>
+#include <unordered_map>
 #include "ReadableUnitConverter.h"
 #include "Global.h"
 #include "RobocopyArgs.h"
+#include "RobocopyProcess.h"
+#include "RobocopyProcessStatus.h"
 #include "Taskbar.h"
 #include "Notification.h"
 #include "Fallback.h"
 #include "ShellCopy.h"
 #include <winrt/Microsoft.Windows.ApplicationModel.Resources.h>
 #include "ResourceHelper.h"
-#include <pplawait.h>
-#include <numeric>
+#include "FileCompareViewModel.h"
 #include "FileInfoViewModel.h"
-#include "ViewModelLocator.h"
 #include "RenameUtils.h"
 #include "Settings.h"
 #include "EmptyFolder.h"
@@ -33,47 +32,36 @@ static int clampRobocopyMT()
 	return value;
 }
 
+template<typename Char>
+static constexpr std::basic_string_view<Char> extractFilename(std::basic_string_view<Char> path) noexcept
+{
+	constexpr Char separators[]{ Char{ '\\' }, Char{ '/' }, Char{ '\0' } };
+	while (!path.empty() && (path.back() == Char{ '\\' } || path.back() == Char{ '/' }))
+		path.remove_suffix(1);
+	auto const pos = path.find_last_of(separators);
+	return pos == std::basic_string_view<Char>::npos ? path : path.substr(pos + 1);
+}
+
 namespace winrt::FastCopy::implementation
 {
-	void RobocopyViewModel::RecordFile(winrt::hstring value)
+	RobocopyViewModel::RobocopyViewModel(winrt::hstring const& recordFile, winrt::hstring const& destination) : 
+		m_recordFile{recordFile},
+		m_destination{destination},
+		m_countItemTask{ countItemsAsync() }
 	{
-		if (value.empty())
-			return;
-
-		m_recordFile.emplace(value);
-		m_iter = m_recordFile->begin();
-		m_countItemTask = concurrency::create_task([this]
-		{
-			m_recordFile->ComputeCountAndSize();
-			m_totalSize = m_recordFile->GetTotalSize();
-			Global::UIThread.TryEnqueue([this] {
-				raisePropertyChange(L"ItemCount");
-			});
-		});
 	}
 
-	static auto backSlashToForwardSlash(std::wstring_view path)
+	RobocopyViewModel::~RobocopyViewModel() = default;
+
+	wil::task<TaskFile::TaskCount> RobocopyViewModel::countItemsAsync()
 	{
-		std::wstring transformed;
-		std::transform(path.begin(), path.end(), std::back_inserter(transformed), [](wchar_t c)
-		{
-			return c == L'\\' ? L'/' : c;
-		});
-		return transformed;
-	}
-	winrt::Windows::Foundation::Uri RobocopyViewModel::DestinationUri()
-	{
-		return winrt::Windows::Foundation::Uri{ 
-			std::format(L"file:///{}", backSlashToForwardSlash(m_destination))
-		};
+		co_await winrt::resume_background();
+		co_return m_recordFile.ComputeCountAndSize();
 	}
 
 	winrt::hstring RobocopyViewModel::OperationString()
 	{
-		if (!m_recordFile)
-			return L" ";
-
-		switch (m_recordFile->GetOperation())
+		switch (m_recordFile.GetOperation())
 		{
 			case CopyOperation::Copy: return ToCapital(GetStringResource(L"CopyOperation"));
 			case CopyOperation::Move: return ToCapital(GetStringResource(L"MoveOperation"));
@@ -83,16 +71,18 @@ namespace winrt::FastCopy::implementation
 	}
 	int RobocopyViewModel::ItemCount()
 	{
-		return m_recordFile.has_value() && m_countItemTask.is_done() ? m_recordFile->GetNumFiles() : 0;
+		return m_taskCount.totalFiles;
 	}
 	int RobocopyViewModel::FinishedItemCount()
 	{
-		return m_finishedFiles;
+		return m_finishedFiles.load(std::memory_order_relaxed);
 	}
 	winrt::hstring RobocopyViewModel::Source()
 	{
-		return winrt::hstring{ m_sourceForUI ? m_sourceForUI->filename().wstring() : L"---" };
+		std::lock_guard lock{ m_sourceMutex };
+		return m_source;
 	}
+
 	winrt::hstring RobocopyViewModel::Destination()
 	{
 		std::filesystem::path path{ std::wstring_view{m_destination }};
@@ -101,270 +91,618 @@ namespace winrt::FastCopy::implementation
 		else
 			return path.parent_path().wstring().data();
 	}
-			
-	void RobocopyViewModel::Destination(winrt::hstring value)
-	{
-		m_destination = value;
-		raisePropertyChange(L"Destination");
-	}
+
 	double RobocopyViewModel::Percent()
 	{
-		if (!m_recordFile.has_value() || !m_countItemTask.is_done())
-			return 0;
-
 		double percent{};
-		if (m_totalSize)
+		if (m_taskCount.totalBytes)
 		{
-			std::lock_guard lock{ m_processStatusMutex };
-			percent = (
-				static_cast<double>(m_copiedBytes) + 
-				std::accumulate(m_perProcessStatus.begin(), m_perProcessStatus.end(), 0ull, [](uint64_t sum, RobocopyProcessStatus const& status) {
-					return sum + status.m_copiedBytes;
-				})
-			) / m_totalSize;
+			percent = static_cast<double>(
+				m_copiedBytes.load(std::memory_order_relaxed) + m_processPool.GetInFlightCopiedBytes()
+			) / m_taskCount.totalBytes;
 		}
 		else if (auto const count = ItemCount())
 		{
 			//Sometimes all files are 0 bytes, we use file count as percent
-			percent = static_cast<double>(m_finishedFiles) / count;
+			percent = static_cast<double>(m_finishedFiles.load(std::memory_order_relaxed)) / count;
 		}
-		//else: nothing to count (e.g. a truly empty folder) - leave percent at 0 to avoid 0/0 = -nan
-		return percent;
+
+		return std::clamp(percent, 0.0, 1.0);
 	}
 
-	winrt::Windows::Foundation::IAsyncAction RobocopyViewModel::Start()
+	RobocopyViewModel::RobocopyWorkItem RobocopyViewModel::makeDirectoryWorkItem(std::filesystem::path const& sourcePath, int32_t itemFileCount)
 	{
-		if (!m_recordFile)
+		RobocopyWorkItem item;
+		item.displaySource = sourcePath;
+		item.itemFileCount = itemFileCount;
+
+		auto const operation = m_recordFile.GetOperation();
+		if (operation == CopyOperation::Delete)
+		{
+			std::filesystem::path targetDir = sourcePath;
+			targetDir.make_preferred();
+
+			item.sourceRootDir = EmptyFolder::GetOrCreate();
+			item.destRootDir = targetDir;
+			item.deleteDestRoot = true;
+
+			item.args.Source(item.sourceRootDir.wstring())
+				.Destination(targetDir.wstring())
+				.NJS()
+				.NJH()
+				.NP()
+				.BYTES()
+				.Unicode()
+				.NOCOPY()
+				.NODCOPY()
+				.MIR()
+				.R(0)
+				.W(0)
+				.MT(clampRobocopyMT());
+		}
+		else
+		{
+			auto const isMove = (operation == CopyOperation::Move);
+			std::filesystem::path finalSourcePath = sourcePath;
+			finalSourcePath.make_preferred();
+
+			std::filesystem::path finalDestinationPath = std::filesystem::path{ m_destination.data() } / finalSourcePath.filename();
+			finalDestinationPath.make_preferred();
+
+			static std::wstring const suffix{ Settings{}.Get<winrt::hstring>(Settings::RenameSuffix, L" - Copy") };
+			Utils::AddDestinationSuffixIfNeededForDirectory(finalSourcePath, finalDestinationPath, suffix);
+
+			item.sourceRootDir = finalSourcePath;
+			item.destRootDir = finalDestinationPath;
+
+			item.args.Source(finalSourcePath.wstring())
+				.Destination(finalDestinationPath.wstring())
+				.V()
+				.NJS()
+				.NJH()
+				.BYTES()
+				.Unicode()
+				.XC()
+				.XN()
+				.XO()
+				.R(0)
+				.W(0)
+				.MT(clampRobocopyMT())
+				.E();
+
+			if (isMove)
+				item.args.MOVE();
+		}
+
+		return item;
+	}
+
+	RobocopyViewModel::RobocopyWorkItem RobocopyViewModel::makeFileBatchWorkItem(
+		std::filesystem::path const& parentDir,
+		std::vector<std::wstring>&& fileNames,
+		bool useJobFile)
+	{
+		RobocopyWorkItem item;
+		item.displaySource = parentDir / fileNames.front();
+		item.itemFileCount = static_cast<int32_t>(fileNames.size());
+
+		auto const operation = m_recordFile.GetOperation();
+		if (operation == CopyOperation::Delete)
+		{
+			item.sourceRootDir = EmptyFolder::GetOrCreate();
+			item.destRootDir = parentDir;
+
+			item.args.Source(item.sourceRootDir.wstring())
+				.Destination(parentDir.wstring())
+				.NJS()
+				.NJH()
+				.NP()
+				.BYTES()
+				.Unicode()
+				.NOCOPY()
+				.NODCOPY()
+				.PURGE()
+				.R(0)
+				.W(0)
+				.MT(clampRobocopyMT());
+		}
+		else
+		{
+			auto const isMove = (operation == CopyOperation::Move);
+			std::filesystem::path finalDestinationPath{ m_destination.data() };
+			finalDestinationPath.make_preferred();
+
+			item.sourceRootDir = parentDir;
+			item.destRootDir = finalDestinationPath;
+
+			item.args.Source(parentDir.wstring())
+				.Destination(finalDestinationPath.wstring())
+				.V()
+				.NJS()
+				.NJH()
+				.BYTES()
+				.Unicode()
+				.XC()
+				.XN()
+				.XO()
+				.R(0)
+				.W(0)
+				.MT(clampRobocopyMT())
+				//robocopy for top-level files defaults to /DCOPY:DA which copies the source folder
+				//attribute to the destination folder (e.g. copying from a drive root hides the destination)
+				.DCOPY(L"DT");
+
+			// Use /MOV (files only) rather than /MOVE so moving all files out of parentDir never deletes parentDir itself
+			if (isMove)
+				item.args.MOV();
+		}
+
+		if (useJobFile)
+		{
+			item.jobFiles = std::move(fileNames);
+		}
+		else
+		{
+			std::array<std::wstring_view, 1> fileArg{ fileNames.front() };
+			item.args.File(fileArg);
+		}
+
+		return item;
+	}
+
+	std::vector<RobocopyViewModel::RobocopyWorkItem> RobocopyViewModel::buildWorkItems()
+	{
+		struct FileBatch
+		{
+			std::filesystem::path parentDir;
+			std::vector<std::wstring> fileNames;
+		};
+
+		auto const operation = m_recordFile.GetOperation();
+		std::filesystem::path destinationBase{ m_destination.data() };
+		if (!m_destination.empty())
+			destinationBase.make_preferred();
+
+		bool destOriginallyEmpty = false;
+		if (operation == CopyOperation::Copy || operation == CopyOperation::Move)
+		{
+			std::error_code ec;
+			destOriginallyEmpty = std::filesystem::is_empty(destinationBase, ec) && !ec;
+		}
+
+		std::vector<RobocopyWorkItem> workItems;
+		std::vector<FileBatch> fileBatches;
+		std::unordered_map<std::wstring, size_t> parentDirToBatchIndex;
+		std::vector<std::pair<std::wstring, std::wstring>> pendingDuplicates;
+
+		auto const itemCount = m_recordFile.GetItemCount();
+		for (size_t i = 0; i < itemCount; ++i)
+		{
+			if (!m_processPool.WaitIfPaused())
+				return {};
+
+			auto const& itemPathStr = m_recordFile.GetItemPath(i);
+			auto const isDirectory = m_recordFile.IsDirectory(i);
+			auto const itemFileCount = m_recordFile.GetNumFiles(i);
+
+			if (operation == CopyOperation::Move && ShellCopy::IsInSameDiskPartition(itemPathStr, m_destination))
+			{
+				updateCurrentSource(itemPathStr);
+				ShellCopy::Move(itemPathStr, m_destination);
+				destOriginallyEmpty = false;
+				m_finishedFiles.fetch_add(itemFileCount, std::memory_order_relaxed);
+				m_copiedBytes.fetch_add(m_recordFile.GetItemSize(i), std::memory_order_relaxed);
+				raiseProgressChange();
+				continue;
+			}
+
+			if (isDirectory)
+			{
+				workItems.push_back(makeDirectoryWorkItem(std::filesystem::path{ itemPathStr }, itemFileCount));
+				continue;
+			}
+
+			std::filesystem::path sourcePath{ itemPathStr };
+			auto fileName = sourcePath.filename().wstring();
+
+			if (operation == CopyOperation::Copy || operation == CopyOperation::Move)
+			{
+				std::error_code existsEc;
+				if (!destOriginallyEmpty && std::filesystem::exists(destinationBase / fileName, existsEc) && !existsEc)
+				{
+					pendingDuplicates.emplace_back(
+						itemPathStr,
+						(destinationBase / fileName).wstring()
+					);
+					m_hasDuplicates.store(true, std::memory_order_seq_cst);
+					continue;
+				}
+			}
+
+			std::filesystem::path parentDir = sourcePath.parent_path();
+			parentDir.make_preferred();
+
+			if (!RobocopyJobFile::CanUseInJobFile(fileName))
+			{
+				std::vector<std::wstring> singleFile;
+				singleFile.push_back(std::move(fileName));
+				workItems.push_back(makeFileBatchWorkItem(parentDir, std::move(singleFile), false));
+				continue;
+			}
+
+			std::wstring batchKey = parentDir.wstring();
+			if (!batchKey.empty())
+				CharUpperBuffW(batchKey.data(), static_cast<DWORD>(batchKey.size()));
+
+			auto [it, inserted] = parentDirToBatchIndex.try_emplace(std::move(batchKey), fileBatches.size());
+			if (inserted)
+			{
+				fileBatches.push_back(FileBatch{ .parentDir = std::move(parentDir), .fileNames = {} });
+			}
+			fileBatches[it->second].fileNames.push_back(std::move(fileName));
+		}
+
+		if (!pendingDuplicates.empty() && m_processPool.GetStatus() == ProcessStatus::Running)
+		{
+			Global::UIThread.TryEnqueue([this, duplicates = std::move(pendingDuplicates)]() mutable {
+				for (auto& [src, dst] : duplicates)
+				{
+					m_duplicateFiles.Append(winrt::make<FileCompareViewModel>(src, dst, *this));
+				}
+			});
+		}
+
+		for (auto& batch : fileBatches)
+		{
+			if (m_processPool.GetStatus() != ProcessStatus::Running)
+				return {};
+
+			bool const useJobFile = batch.fileNames.size() > 1;
+			workItems.push_back(makeFileBatchWorkItem(batch.parentDir, std::move(batch.fileNames), useJobFile));
+		}
+
+		return workItems;
+	}
+
+	void RobocopyViewModel::launchWorkItem(size_t currentIndex, RobocopyWorkItem&& item)
+	{
+		updateCurrentSource(item.displaySource.native());
+		raiseProgressChange();
+
+		auto& status = m_processPool[currentIndex];
+		status.m_sourceRootDir = std::move(item.sourceRootDir);
+		status.m_destRootDir = std::move(item.destRootDir);
+		status.m_itemFileCount = item.itemFileCount;
+		status.m_deleteDestRoot = item.deleteDestRoot;
+
+		auto failLaunch = [this, currentIndex](std::string_view message)
+		{
+			auto& status = m_processPool[currentIndex];
+			status.m_hasError = true;
+			status.m_jobFile.reset();
+			abortWithError(message);
+			(void)m_processPool.OnProcessFinished();
+		};
+
+		auto args = std::move(item.args);
+		if (!item.jobFiles.empty())
+		{
+			try
+			{
+				auto& jobFile = status.m_jobFile.emplace(item.jobFiles);
+				args.JOB(jobFile.PathView());
+			}
+			catch (winrt::hresult_error const& e)
+			{
+				failLaunch(std::format("Failed to create robocopy job file (0x{:08X}): {}", static_cast<uint32_t>(e.code()), winrt::to_string(e.message())));
+				return;
+			}
+		}
+
+		try
+		{
+			m_processPool.Launch(
+				currentIndex,
+				args,
+				overloaded
+				{
+					/*onInjectionFailed*/
+					[this, currentIndex](RobocopyProcess::InjectionFailed&& failure)
+					{
+						m_processPool[currentIndex].m_hasError = true;
+						abortWithError(failure.message);
+					},
+					/*onError*/
+					[this, currentIndex](Error&& error)
+					{
+						if (m_processPool.GetStatus() == ProcessStatus::Failed)
+							return;
+
+						//A robocopy ERROR (e.g. access denied). Mark this process failed, collect the message
+						//and turn the progress bar red. All errors are reported when the operation finishes.
+						m_processPool[currentIndex].m_hasError = true;
+						appendError(error.error);
+						Global::UIThread.TryEnqueue([this] {
+							if (m_state != TaskbarState::Failed)
+							{
+								m_state = TaskbarState::Error;
+								raisePropertyChange(L"State");
+							}
+						});
+					},
+					/*onProgress*/
+					[this, currentIndex](float progress)
+					{
+						auto& status = m_processPool[currentIndex];
+						status.m_copiedBytes.store(
+							static_cast<uint64_t>(status.m_currentFile.bytes * progress / 100.f),
+							std::memory_order_relaxed
+						);
+						raiseProgressChange();
+					},
+					/*onNewFile*/
+					[this, currentIndex](NewFile&& newFile)
+					{
+						auto& status = m_processPool[currentIndex];
+						if (status.m_currentFile == newFile)
+							return;
+
+						auto const hasPreviousFile = static_cast<bool>(status.m_currentFile);
+						auto const previousFileSize = status.m_copiedBytes.exchange(0, std::memory_order_relaxed);
+
+						updateCurrentSource(newFile.name);
+						status.m_currentFile = std::move(newFile);
+
+#if (defined DEBUG) || (defined _DEBUG)
+						status.DebugSize();
+#endif
+
+						if (hasPreviousFile)
+						{
+							++status.m_finishedFiles;
+							m_finishedFiles.fetch_add(1, std::memory_order_relaxed);
+							m_copiedBytes.fetch_add(previousFileSize, std::memory_order_relaxed);
+						}
+						raiseProgressChange();
+					},
+					/*onNewFolder*/
+					[this, currentIndex](NewDir&& newDir)
+					{
+						m_processPool[currentIndex].m_currentDir = std::move(newDir);
+					},
+					/*on same*/
+					[this, currentIndex](Same&& sameFile)
+					{
+						auto& status = m_processPool[currentIndex];
+						++status.m_finishedFiles;
+						m_finishedFiles.fetch_add(1, std::memory_order_relaxed);
+						m_copiedBytes.fetch_add(sameFile.bytes, std::memory_order_relaxed);
+						status.m_copiedBytes.store(0, std::memory_order_relaxed);
+						raiseProgressChange();
+					},
+					/*on different*/
+					[this, currentIndex](Conflict&& conflict)
+					{
+						//Robocopy skipped it, its bytes are counted by ConfirmDuplicates() once it is actually copied
+						auto const& status = m_processPool[currentIndex];
+						auto conflictPath = Utf8ToPath(conflict.name);
+						std::filesystem::path srcConflictPath;
+						std::filesystem::path dstConflictPath;
+						if (conflictPath.is_absolute())
+						{
+							srcConflictPath = conflictPath;
+							std::error_code relEc;
+							auto rel = std::filesystem::relative(conflictPath, status.m_sourceRootDir, relEc);
+							dstConflictPath = (!relEc && !rel.empty()) ? (status.m_destRootDir / rel) : (status.m_destRootDir / conflictPath.filename());
+						}
+						else
+						{
+							srcConflictPath = status.m_sourceRootDir / conflictPath;
+							auto const& currentDestDir = status.m_currentDir.fullPath;
+							dstConflictPath = (currentDestDir.empty() ? status.m_destRootDir : Utf8ToPath(currentDestDir)) / conflictPath;
+						}
+
+						Global::UIThread.TryEnqueue([this, srcStr = srcConflictPath.wstring(), dstStr = dstConflictPath.wstring()]() mutable {
+							m_duplicateFiles.Append(winrt::make<FileCompareViewModel>(srcStr, dstStr, *this));
+						});
+						m_hasDuplicates.store(true, std::memory_order_seq_cst);
+					},
+					/*onExistingDir*/
+					[this, currentIndex](ExistingDir&& existingDir)
+					{
+						auto& status = m_processPool[currentIndex];
+						status.m_currentDir.count = existingDir.count;
+
+						std::filesystem::path currentSubfolderPath = Utf8ToPath(existingDir.path);
+						std::error_code relEc;
+						std::filesystem::path relativePath = std::filesystem::relative(currentSubfolderPath, status.m_sourceRootDir, relEc);
+						std::filesystem::path destinationSubfolderPath = (!relEc && !relativePath.empty())
+							? (status.m_destRootDir / relativePath).lexically_normal()
+							: status.m_destRootDir;
+
+						status.m_currentDir.fullPath = winrt::to_string(destinationSubfolderPath.wstring());
+					},
+					/*onProcessExit*/
+					[this, currentIndex](RobocopyProcess::Exit)
+					{
+						auto& status = m_processPool[currentIndex];
+						status.m_jobFile.reset();
+
+						if (status.m_currentFile)
+						{
+							++status.m_finishedFiles;
+							m_finishedFiles.fetch_add(1, std::memory_order_relaxed);
+						}
+						m_copiedBytes.fetch_add(status.m_copiedBytes.exchange(0, std::memory_order_relaxed), std::memory_order_relaxed);
+
+						// After robocopy /MIR finishes, the folder is empty but still exists - delete it
+						if (status.m_deleteDestRoot &&
+							!status.m_hasError &&
+							m_processPool.GetStatus() == ProcessStatus::Running)
+						{
+							std::error_code ec;
+							std::filesystem::remove_all(status.m_destRootDir, ec);
+							++status.m_finishedFiles;
+							m_finishedFiles.fetch_add(1, std::memory_order_relaxed);
+						}
+
+						if (status.m_hasError && status.m_finishedFiles < status.m_itemFileCount)
+						{
+							auto const remaining = status.m_itemFileCount - status.m_finishedFiles;
+							status.m_finishedFiles += remaining;
+							m_finishedFiles.fetch_add(remaining, std::memory_order_relaxed);
+						}
+
+						if (m_processPool.OnProcessFinished())
+						{
+							completeRobocopyStage();
+						}
+					},
+					[this, currentIndex](ExtraDir&&)
+					{
+						//A sub-folder removed by robocopy /MIR, include it in finished files
+						++m_processPool[currentIndex].m_finishedFiles;
+						m_finishedFiles.fetch_add(1, std::memory_order_relaxed);
+						raiseProgressChange();
+					},
+					[this, currentIndex](ExtraFile&& deletedFile)
+					{
+						updateCurrentSource(deletedFile.name);
+						++m_processPool[currentIndex].m_finishedFiles;
+						m_finishedFiles.fetch_add(1, std::memory_order_relaxed);
+						m_copiedBytes.fetch_add(deletedFile.bytes, std::memory_order_relaxed);
+						raiseProgressChange();
+					}
+				}
+			);
+		}
+		catch (RobocopyProcess::InjectionFailed& e)
+		{
+			failLaunch(e.message);
+		}
+		catch (std::exception const& e)
+		{
+			failLaunch(std::format("Failed to start robocopy.exe: {}", e.what()));
+		}
+	}
+
+	void RobocopyViewModel::appendError(std::string_view error)
+	{
+		auto const wideError = winrt::to_hstring(error);
+		std::lock_guard lock{ m_errorsMutex };
+		if (m_errorText.empty())
+			m_errorText = L"The operation finished with the following errors:\n\n";
+		m_errorText += wideError;
+		m_errorText += L'\n';
+	}
+
+	void RobocopyViewModel::abortWithError(std::string_view message)
+	{
+		appendError(message);
+		m_processPool.Fail();
+
+		Global::UIThread.TryEnqueue([this] {
+			m_duplicateFiles.Clear();
+		});
+
+		onAllFinished();
+	}
+
+	void RobocopyViewModel::completeRobocopyStage()
+	{
+		auto const st = m_processPool.GetStatus();
+		if (st == ProcessStatus::Cancel || st == ProcessStatus::Failed)
+			return;
+
+		m_robocopyStageFinished.store(true, std::memory_order_seq_cst);
+		if (!m_hasDuplicates.load(std::memory_order_seq_cst) || m_duplicatesFinished.load(std::memory_order_seq_cst))
+		{
+			onAllFinished();
+			return;
+		}
+
+		onNormalRobocopyFinished();
+	}
+
+	winrt::fire_and_forget RobocopyViewModel::runCopyLoopAsync()
+	{
+		//Wait for counting+sizing to finish before iterating: this guarantees ItemCount() is the
+		//real total by the time any file is marked finished.
+		auto const taskCount = co_await std::move(m_countItemTask);
+		if (!Global::UIThread.m_queue || Global::UIThread.m_queue.HasThreadAccess())
+		{
+			m_taskCount = taskCount;
+			raisePropertyChange(L"ItemCount");
+			co_await winrt::resume_background();
+		}
+		else
+		{
+			Global::UIThread.TryEnqueue([this, taskCount] {
+				m_taskCount = taskCount;
+				raisePropertyChange(L"ItemCount");
+			});
+		}
+
+		auto workItems = buildWorkItems();
+		if (m_processPool.GetStatus() != ProcessStatus::Running)
 			co_return;
+
+		if (workItems.empty())
+		{
+			completeRobocopyStage();
+			co_return;
+		}
+
+		m_processPool.Preallocate(workItems.size());
+
+		for (size_t i = 0; i < workItems.size(); ++i)
+		{
+			if (!m_processPool.AcquireSlot())
+			{
+				m_processPool.CancelUnlaunched(workItems.size() - i);
+				co_return;
+			}
+
+			launchWorkItem(i, std::move(workItems[i]));
+		}
+	}
+
+	void RobocopyViewModel::Start()
+	{
 		ProcessIOUpdater::Start(std::chrono::milliseconds{ 100 }, Global::UIThread.m_queue);
-		m_status = Status::Running;
+		m_processPool.SetStatus(ProcessStatus::Running);
 		//Keep the machine awake for the whole operation. If the PC idle-sleeps mid-copy, on wake the
 		//overlapped pipe read from robocopy can be aborted, which stalls robocopy (its stdout stops
 		//being drained) while the UI stays responsive. ES_SYSTEM_REQUIRED only suppresses the idle
 		//timeout - a deliberate sleep by the user still works.
 		SetThreadExecutionState(ES_CONTINUOUS | ES_SYSTEM_REQUIRED);
-		concurrency::create_task([this]
-		{
-			//Wait for counting+sizing to finish before iterating: this guarantees ItemCount() is the
-			//real total by the time any file is marked finished, so m_finishedFiles >= ItemCount()
-			//cannot trigger a premature "all finished" while counting is still in flight.
-			m_countItemTask.get();
-			while (*m_iter != m_recordFile->end() && m_status == Status::Running)
-			{
-				Global::UIThread.TryEnqueue([this, value = **m_iter] {
-					m_sourceForUI.emplace(std::move(value));
-					raisePropertyChange(L"Source"); 
-				});
-				if (canUseShellCopy())
-				{
-					auto currentItemSize = TaskFile::GetSizeOfPath(**m_iter);
-					ShellCopy::Move(**m_iter, m_destination);
-					m_finishedFiles += m_recordFile->GetNumFiles(m_recordFile->IndexOf(*m_iter));
-					m_copiedBytes += currentItemSize;
-				}
-				else if (canUseRobocopy())
-				{
-					auto currentIndex = m_process.size();
-					auto const currentItemFileCount = m_recordFile->GetNumFiles(m_recordFile->IndexOf(*m_iter));
-					{
-						std::lock_guard lock{ m_processStatusMutex };
-						m_perProcessStatus.emplace_back();
-					}
-
-					// Capture whether this is a folder delete operation and the target path
-					std::filesystem::path folderToDeleteAfterRobocopy;
-					if (m_recordFile->GetOperation() == CopyOperation::Delete)
-					{
-						std::filesystem::path currentPath{ **m_iter };
-						std::error_code ec;
-						if (std::filesystem::is_directory(currentPath, ec) && !ec)
-							folderToDeleteAfterRobocopy = std::move(currentPath);
-					}
-
-					m_process.emplace_back(std::make_unique<RobocopyProcess>(getRobocopyArg(),
-						overloaded
-						{
-							/*onError*/
-							[this, currentIndex](Error&& error)
-							{
-								//A robocopy ERROR (e.g. access denied). Mark this process failed, collect the message
-								//and turn the progress bar red. All errors are reported when the operation finishes.
-								m_perProcessStatus[currentIndex].m_hasError = true;
-								m_errors.push_back(std::move(error.error));
-								Global::UIThread.TryEnqueue([this] {
-									m_state = TaskbarState::Error;
-									raisePropertyChange(L"State");
-								});
-							},
-							/*onProgress*/
-							[this, currentIndex](float progress)
-							{
-								m_perProcessStatus[currentIndex].m_copiedBytes = m_perProcessStatus[currentIndex].m_currentFile.bytes * progress / 100.f;
-								raiseProgressChange();
-							},
-							/*onNewFile*/
-							[this, currentIndex](NewFile&& newFile)
-							{
-								if (m_perProcessStatus[currentIndex].m_currentFile == newFile)
-									return;
-
-								//std::cout << "!!!New file: " << m_perProcessStatus[currentIndex].m_currentFile.name << " -> " << m_perProcessStatus[currentIndex].m_currentFile.bytes << '\n';
-
-								auto const hasPreviousFile = static_cast<bool>(m_perProcessStatus[currentIndex].m_currentFile);
-								auto const previousFileSize = std::exchange(m_perProcessStatus[currentIndex].m_copiedBytes, 0);
-
-								m_perProcessStatus[currentIndex].m_currentFile = std::move(newFile);
-
-#if (defined DEBUG) || (defined _DEBUG)
-								m_perProcessStatus[currentIndex].DebugSize();
-#endif
-
-								if (!hasPreviousFile)
-									return;
-
-								++m_finishedFiles;
-								m_copiedBytes += previousFileSize;
-								if (m_finishedFiles >= ItemCount())
-									onNormalRobocopyFinished();
-								raiseProgressChange();
-							},
-							/*onNewFolder*/
-							[this, currentIndex](NewDir&& newDir)
-							{
-								m_perProcessStatus[currentIndex].m_currentDir = std::move(newDir);
-							},
-							/*on same*/
-							[this, currentIndex](Same&& sameFile)
-							{
-								++m_finishedFiles;
-								m_copiedBytes += sameFile.bytes;
-								m_perProcessStatus[currentIndex].m_copiedBytes = 0;
-								if (m_finishedFiles >= ItemCount())
-									onNormalRobocopyFinished();
-								raiseProgressChange();
-							},
-							/*on different*/
-							[this, currentIndex, currentSource = **m_iter](Conflict&& conflict)
-							{
-								//Robocopy skipped it, its bytes are counted by ConfirmDuplicates() once it is actually copied
-								Global::UIThread.TryEnqueue([this, conflict = std::move(conflict), currentDestinationFolder = m_perProcessStatus[currentIndex].m_currentDir.fullPath, currentSource = std::move(currentSource)] {
-									m_duplicateFiles.Append({
-										(std::filesystem::path{currentSource} / Utf8ToPath(conflict.name)).wstring(),
-										(Utf8ToPath(currentDestinationFolder) / Utf8ToPath(conflict.name)).wstring()
-									});
-								});
-								m_hasDuplicates = true;
-							},
-							/*onExistingDir*/
-							[this, currentIndex, currentSource = **m_iter](ExistingDir&& existingDir)
-							{
-								m_perProcessStatus[currentIndex].m_currentDir.count = existingDir.count;
-
-								// Calculate the correct destination subfolder path using recorded source path
-								std::filesystem::path currentSubfolderPath = Utf8ToPath(existingDir.path);
-								std::filesystem::path destinationBasePath{ m_destination.data() };
-
-								// Get the relative path from recorded source to current subfolder
-								std::filesystem::path relativePath = std::filesystem::relative(currentSubfolderPath, std::filesystem::path{ currentSource }.parent_path());
-
-								// Calculate destination subfolder path: destination/relative_path
-								std::filesystem::path destinationSubfolderPath = destinationBasePath / relativePath;
-
-								m_perProcessStatus[currentIndex].m_currentDir.fullPath = winrt::to_string(destinationSubfolderPath.wstring());
-							},
-							/*onProcessExit*/
-							[this, currentIndex, currentItemFileCount, folderToDeleteAfterRobocopy = std::move(folderToDeleteAfterRobocopy)](RobocopyProcess::Exit)
-							{
-								if (m_perProcessStatus[currentIndex].m_hasError) m_finishedFiles += currentItemFileCount; /*item failed; count all its files so progress can complete*/ else if (m_perProcessStatus[currentIndex].m_currentFile)
-									++m_finishedFiles;
-								m_copiedBytes += std::exchange(m_perProcessStatus[currentIndex].m_copiedBytes, 0);
-								
-								// After robocopy /MIR finishes, the folder is empty but still exists - delete it
-								if (!folderToDeleteAfterRobocopy.empty())
-								{
-									std::error_code ec;
-									std::filesystem::remove_all(folderToDeleteAfterRobocopy, ec);
-									++m_finishedFiles;
-								}
-
-								if (m_finishedFiles >= ItemCount())
-									onNormalRobocopyFinished();
-							},
-							[this](ExtraDir&&)
-							{
-								//A sub-folder removed by robocopy /MIR, include it in finished files
-								++m_finishedFiles;
-								raiseProgressChange();
-							},
-							[this](ExtraFile&& deletedFile)
-							{
-								++m_finishedFiles;
-								m_copiedBytes += deletedFile.bytes;
-								raiseProgressChange();
-							}
-						}
-					));
-					
-				}
-				else
-				{
-					//use fallback
-					std::wstring_view destinationView{ m_destination };
-					Global::UIThread.TryEnqueue([this, value = **m_iter] {
-						m_duplicateFiles.Append({
-							value,
-							(std::filesystem::path{m_destination.data()} / std::filesystem::path{value}.filename()).wstring()
-						});
-					});
-					m_hasDuplicates = true;
-				}
-
-				raiseProgressChange();
-				++*m_iter;
-			}
-			if (m_hasConfirmed)
-				ConfirmDuplicates();
-			else if (m_status == Status::Running && !m_hasDuplicates && m_finishedFiles >= ItemCount())
-			{
-				//for shell copy to report finished
-				onAllFinished();
-			}
-		});
-		m_state = TaskbarState::Normal;
-		co_await wil::resume_foreground(Global::UIThread.m_queue);
+		runCopyLoopAsync();
+		if (m_processPool.GetStatus() == ProcessStatus::Running)
+			m_state = TaskbarState::Normal;
 		raisePropertyChange(L"State");
-	}
-	void RobocopyViewModel::suspendAllProcesses()
-	{
-		for (auto& process : m_process)
-			process->Suspend();
-	}
-	void RobocopyViewModel::resumeAllProcesses()
-	{
-		for (auto& process : m_process)
-			process->Resume();
 	}
 	void RobocopyViewModel::TogglePause()
 	{
-		if (m_status == Status::Running)
+		auto const currentStatus = m_processPool.GetStatus();
+		if (currentStatus == ProcessStatus::Cancel || currentStatus == ProcessStatus::Failed)
+			return;
+
+		if (currentStatus == ProcessStatus::Running)
 		{
-			m_status = Status::Pause;
+			m_processPool.Pause();
 			m_state = TaskbarState::Paused;
-			suspendAllProcesses();
 		}
 		else
 		{
-			m_status = Status::Running;
+			m_processPool.Resume();
 			m_state = TaskbarState::Normal;
-			resumeAllProcesses();
 		}
 		raisePropertyChange(L"State");
 	}
 	void RobocopyViewModel::Cancel()
 	{
-		m_status = Status::Cancel;
-		suspendAllProcesses();
-		SetThreadExecutionState(ES_CONTINUOUS); //cancelled - stop keeping the machine awake
+		if (m_processPool.Cancel())
+			SetThreadExecutionState(ES_CONTINUOUS); //cancelled - stop keeping the machine awake
 	}
 	void RobocopyViewModel::OnUpdateCopySpeed(ProcessIoCounter::IOCounterDiff diff)
 	{
@@ -404,7 +742,6 @@ namespace winrt::FastCopy::implementation
 
 	void RobocopyViewModel::ConfirmDuplicates()
 	{
-		m_hasConfirmed = true;
 		if (!m_duplicateFileTask.has_value())
 		{
 			m_duplicateFileTask.emplace();
@@ -413,7 +750,7 @@ namespace winrt::FastCopy::implementation
 			m_duplicateFileTaskIter = m_duplicateFileTask->begin();
 		}
 
-		while(m_duplicateFileTaskIter != m_duplicateFileTask->end() && m_status == Status::Running)
+		while(*m_duplicateFileTaskIter != m_duplicateFileTask->end() && m_processPool.GetStatus() == ProcessStatus::Running)
 		{
 			auto duplicate = **m_duplicateFileTaskIter;
 			auto file1 = winrt::get_self<FileInfoViewModel>(duplicate.File1());
@@ -434,7 +771,7 @@ namespace winrt::FastCopy::implementation
 					file1->Path().data(),
 					std::filesystem::path{ file2->Path().data() },
 					suffix,
-					m_recordFile->GetOperation() == CopyOperation::Move
+					m_recordFile.GetOperation() == CopyOperation::Move
 				);
 			}
 			else if (file1Selected)
@@ -458,171 +795,30 @@ namespace winrt::FastCopy::implementation
 					);
 				}
 			}
-			++m_finishedFiles;
+			m_finishedFiles.fetch_add(1, std::memory_order_relaxed);
 			if (!ec)
-				m_copiedBytes += sourceSize;
+				m_copiedBytes.fetch_add(sourceSize, std::memory_order_relaxed);
 			++*m_duplicateFileTaskIter;
 			raiseProgressChange();
 		}
 		if (*m_duplicateFileTaskIter == m_duplicateFileTask->end())
-			onAllFinished();
-	}
-
-	winrt::Windows::Foundation::IAsyncOperation<uint64_t> RobocopyViewModel::GetTotalSize()
-	{
-		co_return m_recordFile ? m_recordFile->GetTotalSize() : 0;
-	}
-
-	winrt::event_token RobocopyViewModel::Finished(winrt::Windows::Foundation::EventHandler<winrt::FastCopy::FinishState> const& handler)
-	{
-		return m_finishEvent.add(handler);
-	}
-	void RobocopyViewModel::Finished(winrt::event_token const& token) noexcept
-	{
-		m_finishEvent.remove(token);
-	}
-	RobocopyArgsBuilder RobocopyViewModel::getRobocopyArg()
-	{
-		RobocopyArgsBuilder args;
-
-		switch (m_recordFile->GetOperation())
 		{
-			case CopyOperation::Move: [[fallthrough]];
-			case CopyOperation::Copy:
-			{
-				std::filesystem::path sourcePath{ **m_iter };
-				std::filesystem::path destinationBase{ m_destination.data() };
-				auto const isFolder = std::filesystem::is_directory(sourcePath);
-				auto const isMove = m_recordFile->GetOperation() == CopyOperation::Move;
-
-				// Determine source and destination paths based on whether we're copying a file or directory
-				std::filesystem::path finalSourcePath;
-				std::filesystem::path finalDestinationPath;
-
-				if (isFolder)
-				{
-					// For directories: source is the directory itself, destination includes the directory name
-					finalSourcePath = std::move(sourcePath);
-					finalDestinationPath = std::move(destinationBase) / finalSourcePath.filename();
-
-					// Handle duplicate directory names by adding suffix if needed
-					static std::wstring const suffix{ Settings{}.Get<winrt::hstring>(Settings::RenameSuffix, L" - Copy") };
-					Utils::AddDestinationSuffixIfNeededForDirectory(finalSourcePath, finalDestinationPath, suffix);
-				}
-				else
-				{
-					// For files: source is the parent directory, destination is the target directory
-					finalSourcePath = sourcePath.parent_path();
-					finalDestinationPath = std::move(destinationBase);
-				}
-
-				// Configure common robocopy arguments
-				args.Source(finalSourcePath.wstring())
-					.Destination(finalDestinationPath.wstring())
-					.V(true)           // Verbose output
-					.NJS(true)         // No job summary
-					.NJH(true)         // No job header
-					.BYTES(true)       // Print sizes as bytes
-					.Unicode(true)     // Output as Unicode
-					.XC(true)          // Exclude changed files
-					.XN(true)          // Exclude newer files
-					.XO(true)          // Exclude older files
-					.R(0)              // Do not retry on failed copies
-					.W(0)              // No wait time between (non-existent) retries
-					.MT(clampRobocopyMT());
-
-				// Configure operation-specific arguments
-				if (isMove)
-					args.MOVE(true);
-
-				if (isFolder)
-					args.E(true);
-				else
-				{
-					// Specify the single file to copy
-					auto fileName = sourcePath.filename().wstring();
-					std::array<std::wstring_view, 1> fileArg{ fileName };
-					args.File(fileArg);
-
-					//robocopy for a single-file default to /DCOPY:DA
-					//which copies the source folder atrribute to the destination folder
-					//so copying a file under drive root makes the destination disappear
-					args.DCOPY(L"DT");
-				}
-
-				break;
-			}
-			case CopyOperation::Delete:
-			{
-				std::filesystem::path targetPath{ **m_iter };
-				auto const isDirectory = std::filesystem::is_directory(targetPath);
-
-				if (isDirectory)
-				{
-					// For folders, use /MIR with empty source to delete the directory contents
-					args.Source(EmptyFolder::GetOrCreate().c_str())
-						.Destination(**m_iter)
-						.NJS(true)
-						.NJH(true)
-						.BYTES(true)
-						.Unicode(true)
-						.MIR(true)
-						.R(0)              // Do not retry on failed deletes
-						.W(0)
-						.MT(clampRobocopyMT());
-				}
-				else
-				{
-					// For files, use /PURGE with the parent directory and specific file pattern
-					auto parentPath = targetPath.parent_path();
-					auto fileName = targetPath.filename().wstring();
-					std::array<std::wstring_view, 1> fileArg{ fileName };
-
-					args.Source(EmptyFolder::GetOrCreate().c_str())
-						.Destination(parentPath.wstring())
-						.File(fileArg)
-						.NJS(true)
-						.NJH(true)
-						.BYTES(true)
-						.Unicode(true)
-						.PURGE(true)
-						.R(0)              // Do not retry on failed deletes
-						.W(0)
-						.MT(clampRobocopyMT());
-				}
-				break;
-			}
+			m_duplicatesFinished.store(true, std::memory_order_seq_cst);
+			if (m_robocopyStageFinished.load(std::memory_order_seq_cst))
+				onAllFinished();
 		}
-		
-
-		return args;
-	}
-
-	bool RobocopyViewModel::canUseRobocopy() const
-	{
-		std::filesystem::path sourcePath{ **m_iter };
-		std::filesystem::path destinationPath{ m_destination.data() };
-		auto const fileName = sourcePath.filename().wstring();
-
-		//If source is dirctory, robocopy can be used even with duplicated names
-		if (std::filesystem::is_directory(sourcePath))
-			return true;
-
-		return
-			!std::filesystem::exists(destinationPath / fileName);   //destination does not contain the same file name
-	}
-	bool RobocopyViewModel::canUseShellCopy() const
-	{
-		return m_recordFile->GetOperation() == CopyOperation::Move &&
-			ShellCopy::IsInSameDiskPartition(**m_iter, m_destination);
 	}
 
 	void RobocopyViewModel::onNormalRobocopyFinished()
 	{
-		if (m_hasDuplicates)
+		if (m_hasDuplicates.load(std::memory_order_acquire))
 		{
-			m_state = TaskbarState::Paused;
-			raisePropertyChange(L"State");
+			Global::UIThread.TryEnqueue([this] {
+				m_state = TaskbarState::Paused;
+				raisePropertyChange(L"State");
+				raisePropertyChange(L"Percent");
+				raisePropertyChange(L"FinishedItemCount");
+			});
 		}
 		else
 		{
@@ -634,32 +830,30 @@ namespace winrt::FastCopy::implementation
 	void RobocopyViewModel::onAllFinished()
 	{
 		if (m_allFinished.exchange(true))
-			return; //already finished; m_finishedFiles can cross ItemCount() from more than one callback
+			return; //already finished
 
 		//Clear the keep-awake requirement so the machine can idle-sleep again. It was set on the UI
 		//thread in Start(), and an ES_CONTINUOUS requirement is tied to the setting thread, so clear it
 		//on the UI thread too (onAllFinished often runs on the io-callback thread).
 		Global::UIThread.TryEnqueue([] { SetThreadExecutionState(ES_CONTINUOUS); });
 
-		if (!m_errors.empty())
+		bool hasErrors{};
+		{
+			std::lock_guard lock{ m_errorsMutex };
+			hasErrors = !m_errorText.empty();
+		}
+
+		if (hasErrors)
 		{
 			//The operation finished but some items failed. Publish the joined error text (shown by CopyDialogWindow's ErrorText) and mark the operation failed.
-			std::wstring message = L"The operation finished with the following errors:\n\n";
-			for (auto const& error : m_errors)
-			{
-				message += winrt::to_hstring(error).c_str();
-				message += L"\n";
-			}
-			m_errorText = winrt::hstring{ message };
-			m_state = TaskbarState::Error;
+			m_processPool.SetStatus(ProcessStatus::Failed);
 
 			Global::UIThread.TryEnqueue([this] {
-				raisePropertyChange(L"State");
+				m_state = TaskbarState::Failed;
 				raisePropertyChange(L"ErrorText");
+				raisePropertyChange(L"State");
 			});
 
-			std::filesystem::remove(m_recordFile->GetPath().data());
-			m_finishEvent(*this, FinishState::Failed);
 			Stop();
 			auto formatString = GetStringResource(L"CopyFailedNotificationFormatString");
 			Notification::SendFailed(
@@ -672,18 +866,18 @@ namespace winrt::FastCopy::implementation
 		auto formatString = GetStringResource(L"CopyFinishNotificationFormatString");
 		auto operationString = OperationString();
 		auto operationStringData = operationString.data();
+		auto const finishedFilesCount = m_finishedFiles.load(std::memory_order_relaxed);
 		Notification::SendSuccess(
-			std::vformat(std::wstring_view{formatString}, std::make_wformat_args(operationStringData, m_finishedFiles, m_destination)).data(),
+			std::vformat(std::wstring_view{formatString}, std::make_wformat_args(operationStringData, finishedFilesCount, m_destination)).data(),
 			m_destination
 		);
-		std::filesystem::remove(m_recordFile->GetPath().data());
-		m_finishEvent(*this, FinishState::Success);
 		Stop();
 
 		//Force one final progress update: raiseProgressChange() is throttled, so the last per-file
 		//notification may have been dropped and the bar would stay short of 100%. Enqueued before the
 		//exit below, so it is dispatched first.
 		Global::UIThread.TryEnqueue([this] {
+			raisePropertyChange(L"Source");
 			raisePropertyChange(L"Percent");
 			raisePropertyChange(L"FinishedItemCount");
 		});
@@ -696,6 +890,20 @@ namespace winrt::FastCopy::implementation
 		}
 	}
 
+	void RobocopyViewModel::updateCurrentSource(std::wstring_view path)
+	{
+		winrt::hstring source{ extractFilename(path) };
+		std::lock_guard lock{ m_sourceMutex };
+		m_source = std::move(source);
+	}
+
+	void RobocopyViewModel::updateCurrentSource(std::string_view utf8Path)
+	{
+		auto source = winrt::to_hstring(extractFilename(utf8Path));
+		std::lock_guard lock{ m_sourceMutex };
+		m_source = std::move(source);
+	}
+
 	void RobocopyViewModel::raiseProgressChange()
 	{
 		constexpr auto k_ProgressUpdateInterval = std::chrono::milliseconds{ 100 };
@@ -706,6 +914,7 @@ namespace winrt::FastCopy::implementation
 
 		Global::UIThread.TryEnqueue([this] 
 		{ 
+			raisePropertyChange(L"Source");
 			raisePropertyChange(L"Percent");
 			raisePropertyChange(L"FinishedItemCount");
 		});
@@ -718,6 +927,7 @@ namespace winrt::FastCopy::implementation
 
 	winrt::hstring RobocopyViewModel::ErrorText()
 	{
-		return m_errorText;
+		std::lock_guard lock{ m_errorsMutex };
+		return winrt::hstring{ m_errorText };
 	}
 }

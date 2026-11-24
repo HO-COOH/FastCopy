@@ -4,14 +4,17 @@
 #include <windows.system.h>
 #include <DispatcherQueue.h>
 #include "SettingsChangeListener.h"
-#include "ViewModelLocator.h"
 #include "SettingsViewModel.h"
+
+WindowEffectHelper::WindowEffectHelper(winrt::FastCopy::implementation::SettingsViewModel& settingsViewModel) :
+    m_settingsViewModel{ settingsViewModel }
+{
+}
 
 void WindowEffectHelper::init()
 {
-    auto settingsViewModel = ViewModelLocator::GetInstance().SettingsViewModel();
-    SetEffect(settingsViewModel->BackgroundSelection());
-    SetTheme(static_cast<winrt::Microsoft::UI::Xaml::ElementTheme>(settingsViewModel->ThemeSelection()));
+    SetEffect(m_settingsViewModel.BackgroundSelection());
+    SetTheme(static_cast<winrt::Microsoft::UI::Xaml::ElementTheme>(m_settingsViewModel.ThemeSelection()));
     SettingsChangeListener::GetInstance().BroadcastThemeChange();
 }
 
@@ -22,7 +25,6 @@ void WindowEffectHelper::SetTarget(
     m_themeChangedRevoker.revoke();
     m_window = std::move(window);
     m_backgroundElement = std::move(backgroundElement);
-    // This helper outlives the window, so don't keep the window alive past its close
     m_window.Closed([this](auto&&, auto&&)
     {
         m_themeChangedRevoker.revoke();

@@ -6,7 +6,8 @@ namespace FastCopy
         Indeterminate,
         Normal,
         Error,
-        Paused
+        Paused,
+        Failed
     };
 
     [bindable]

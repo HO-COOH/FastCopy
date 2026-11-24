@@ -1,16 +1,54 @@
 ﻿#include "pch.h"
 #include "RobocopyProcess.h"
 #include "RobocopyArgs.h"
-#include "RobocopyInjectDll.h"
-#include <wil/resource.h>
 #include "Ntdll.h"
 #include "KnownFolderPath.h"
+#if __has_include("boost/process/v1/child.hpp")
+#include <boost/process/v1.hpp>
+#include <boost/process/v1/windows.hpp>
+#else
+#include <boost/process.hpp>
+#include <boost/process/windows.hpp>
+#endif
+#include <boost/asio/executor_work_guard.hpp>
+#include <filesystem>
+#include <format>
+#include <thread>
+#include "ProcessInjectHandler.hpp"
 
-static bool hasEnglishResource()
+RobocopyProcess::RobocopyProcess(RobocopyArgsBuilder const& builder)
+	: pipeOut{ ioContext() }
+	, m_child
+	{
+#if __has_include("boost/process/v1/child.hpp")
+		boost::process::v1::cmd(robocopyPath() + L" " + builder.Build()),
+		boost::process::v1::std_out > pipeOut,
+		boost::process::v1::windows::create_no_window,
+#else
+		boost::process::cmd(robocopyPath() + L" " + builder.Build()),
+		boost::process::std_out > pipeOut,
+		boost::process::windows::create_no_window,
+#endif
+		ProcessInjectHandler{}
+	}
 {
-	auto path = boost::process::v1::search_path("robocopy.exe").parent_path() / L"en-US" / "robocopy.exe.mui";
-	boost::system::error_code ec;
-	return boost::filesystem::exists(path, ec) && !ec;
+}
+
+boost::asio::io_context& RobocopyProcess::ioContext()
+{
+	struct SharedIoContext
+	{
+		boost::asio::io_context ios;
+		boost::asio::executor_work_guard<boost::asio::io_context::executor_type> work{ boost::asio::make_work_guard(ios) };
+
+		SharedIoContext()
+		{
+			std::thread{ [this] { ios.run(); } }.detach();
+		}
+	};
+
+	static SharedIoContext context;
+	return context.ios;
 }
 
 std::wstring const& RobocopyProcess::robocopyPath()
@@ -19,23 +57,27 @@ std::wstring const& RobocopyProcess::robocopyPath()
 	return path;
 }
 
-void RobocopyProcess::runContext()
+std::string RobocopyProcess::describeInjectionExitCode(DWORD exitCode)
 {
-	static bool v = [] {
-		std::thread
-		{
-			[] 
-			{
-				ios.run();
-			}
-		}.detach();
-		return true;
-	}();
+	switch (static_cast<RobocopyInjectionHandshake::InjectionStatus>(exitCode))
+	{
+		case RobocopyInjectionHandshake::InjectionStatus::ForceEnglishFailed:
+			return "Robocopy injection failed: unable to set English UI language in robocopy.exe.";
+		case RobocopyInjectionHandshake::InjectionStatus::HookWfopenFailed:
+			return "Robocopy injection failed: unable to install Unicode job-file (_wfopen) hook in robocopy.exe.";
+		case RobocopyInjectionHandshake::InjectionStatus::SetConsoleUtf8Failed:
+			return "Robocopy injection failed: unable to configure UTF-8 output in robocopy.exe.";
+		default:
+			return std::format(
+				"Robocopy injection failed: RobocopyInjection.dll did not initialize (exit code 0x{:08X}). It may have been blocked by antivirus software.",
+				exitCode
+			);
+	}
 }
 
-std::regex& RobocopyProcess::progressRegex()
+std::regex const& RobocopyProcess::progressRegex()
 {
-	static std::regex Progress{ "^[0-9]+[.]?[0-9]*%" };
+	static std::regex const Progress{ "^[0-9]+[.]?[0-9]*%" };
 	return Progress;
 }
 
@@ -45,59 +87,24 @@ JobObject& RobocopyProcess::JobObjectInstance()
 	return s_instance;
 }
 
-void RobocopyProcess::injectProcess()
+HANDLE RobocopyProcess::Handle() const
 {
-	static bool hasEnglishResourceCached = hasEnglishResource();
-	if (!hasEnglishResourceCached)
-	{
-		MessageBox(
-			NULL,
-			L"robocopy.exe does not have English resources. RobocopyEx will not work properly. Please check your Windows installation.",
-			L"RoboCopyEx",
-			MB_ICONERROR
-		);
-		throw InjectionFailed{};
-	}
+	return m_child.native_handle();
+}
 
-	auto& path = RobocopyInjectDll::Path();
-	std::wcout << L"Injecting dll: " << path << L'\n';
-	
-	auto hProcess = m_child.native_handle();
-	auto hThread = m_hThread.get();
+void RobocopyProcess::Terminate() noexcept
+{
+	if (!m_child.valid())
+		return;
 
-	auto pathSize = (path.size() + 1) * sizeof(wchar_t);
-
-	LPVOID remoteMem = winrt::check_pointer(VirtualAllocEx(
-		hProcess,
-		NULL,
-		pathSize,
-		MEM_COMMIT,
-		PAGE_READWRITE
-	));
-
-	// WRITE DLL PATH
-	winrt::check_bool(WriteProcessMemory(hProcess, remoteMem, path.c_str(), pathSize, NULL));
-
-	// INJECT THE DLL (QueueUserAPC)
-	// We use QueueUserAPC instead of CreateRemoteThread because the process is suspended.
-	// CreateRemoteThread can deadlock if the loader lock is held or not initialized.
-	// The APC will execute when the main thread resumes and initializes.
-	auto loadLibraryAddr = RobocopyInjectDll::LoadLibraryAddr();
-	if (loadLibraryAddr)
-	{
-		winrt::check_bool(QueueUserAPC(
-			reinterpret_cast<PAPCFUNC>(loadLibraryAddr),
-			hThread,
-			reinterpret_cast<ULONG_PTR>(remoteMem)
-		));
-	}
-	ResumeThread(hThread);
+	std::error_code ec;
+	m_child.terminate(ec);
 }
 
 void RobocopyProcess::Suspend() const
 {
-	//boost::process sets handle to INVALID_HANDLE_VALUE after wait()
-	//before passing to NtSuspendProcess, it must be checked, otherwise main process freeze
+	// boost::process sets handle to INVALID_HANDLE_VALUE after wait()
+	// before passing to NtSuspendProcess, it must be checked, otherwise main process freeze
 	if (m_child.valid())
 		NtDll::NtSuspendProcess(Handle());
 }
@@ -106,11 +113,4 @@ void RobocopyProcess::Resume() const
 {
 	if (m_child.valid())
 		NtDll::NtResumeProcess(Handle());
-}
-
-void RobocopyProcess::WaitForExit()
-{
-	ios.run();
-	m_child.wait();
-	std::cout << "Child exit with code: " << m_child.native_exit_code() << '\n';
 }

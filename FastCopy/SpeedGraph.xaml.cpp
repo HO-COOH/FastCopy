@@ -6,8 +6,9 @@
 #if __has_include("SpeedGraph.g.cpp")
 #include "SpeedGraph.g.cpp"
 #endif
-#include <winrt/Microsoft.UI.Xaml.Media.Animation.h>
-#include <format>
+#include <winrt/Windows.UI.h>
+#include <winrt/Microsoft.Graphics.Canvas.h>
+#include <winrt/Microsoft.Graphics.Canvas.UI.Xaml.h>
 #include "ReadableUnitConverter.h"
 
 using namespace winrt;
@@ -23,7 +24,33 @@ namespace winrt::FastCopy::implementation
         return m_graphData.Points();
 	}
 
-    void SpeedGraph::SetSpeed(double percent, uint64_t speed)
+    void SpeedGraph::Speed(double value)
+    {
+        m_speed = value;
+        setSpeed(m_percent * 100.0, static_cast<uint64_t>(value));
+    }
+
+    void SpeedGraph::State(FastCopy::TaskbarState value)
+    {
+        m_state = value;
+        switch (value)
+        {
+            case FastCopy::TaskbarState::Paused:
+                winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"Pause", false);
+                break;
+            case FastCopy::TaskbarState::Error:
+            case FastCopy::TaskbarState::Failed:
+                winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"Error", false);
+                break;
+            case FastCopy::TaskbarState::Normal:
+                winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"Normal", false);
+                break;
+            default:
+                break;
+        }
+    }
+
+    void SpeedGraph::setSpeed(double percent, uint64_t speed)
     {
 		auto const [newScaleRatio, needAnimation] = m_graphData.SetSpeed(percent, speed);
         
@@ -51,39 +78,13 @@ namespace winrt::FastCopy::implementation
         ScaleDown().Begin();
     }
 
-    void SpeedGraph::makeAnimation(float y)
-    {
-        winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard speedLineAndTextAnimation;
-
-        winrt::Microsoft::UI::Xaml::Media::Animation::DoubleAnimation lineTranslate;
-        winrt::Microsoft::UI::Xaml::Media::Animation::DoubleAnimation textTranslate;
-
-        winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTarget(lineTranslate, LineTranslate());
-        winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTargetProperty(lineTranslate, L"Y");
-        winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTarget(textTranslate, TextTranslate());
-        winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTargetProperty(textTranslate, L"Y");
-
-        lineTranslate.Duration(speedLineAndTextAnimationDuration);
-        textTranslate.Duration(speedLineAndTextAnimationDuration);
-
-        winrt::Microsoft::UI::Xaml::Media::Animation::ExponentialEase ease;
-        ease.Exponent(7);
-        ease.EasingMode(winrt::Microsoft::UI::Xaml::Media::Animation::EasingMode::EaseOut);
-        lineTranslate.EasingFunction(ease);
-        textTranslate.EasingFunction(ease);
-
-
-        lineTranslate.To(y);
-        textTranslate.To(y);
-        speedLineAndTextAnimation.Children().ReplaceAll({ lineTranslate, textTranslate });
-        speedLineAndTextAnimation.Begin();
-    }
-
     void SpeedGraph::makeAnimation()
     {
         auto const p = m_graphData.GetLastPoint();
         auto const y = m_graphData.Height() - ((m_graphData.Height() - p.Y) * m_graphData.GetRatio());
-        makeAnimation(y);
+        LineTranslateAnimation().To(y);
+        TextTranslateAnimation().To(y);
+        SpeedLineAndTextAnimation().Begin();
     }
 
     void SpeedGraph::CanvasControl_Draw(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl const& sender, winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasDrawEventArgs const& args)
@@ -108,16 +109,6 @@ namespace winrt::FastCopy::implementation
     void SpeedGraph::CanvasControl_ActualThemeChanged(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const&)
     {
 		sender.as<winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl>().Invalidate();
-    }
-
-    void SpeedGraph::Pause()
-    {
-        winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"Pause", false);
-    }
-
-    void SpeedGraph::Error()
-    {
-        winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"Error", false);
     }
 
     void winrt::FastCopy::implementation::SpeedGraph::UserControl_SizeChanged(

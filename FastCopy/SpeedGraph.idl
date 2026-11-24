@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation and Contributors.
 // Licensed under the MIT License.
 
+import "TaskbarControl.idl";
+
 namespace FastCopy
 {
     [default_interface]
@@ -8,11 +10,10 @@ namespace FastCopy
     {
         SpeedGraph();
 
-        void SetSpeed(Double percent, UInt64 speed);
+        Double Percent;
+        Double Speed;
+        TaskbarState State;
 
-        void Pause();
-        void Error();
-        
         Microsoft.UI.Xaml.Media.PointCollection Points{ get; };
     }
 }

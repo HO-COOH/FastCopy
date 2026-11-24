@@ -6,9 +6,11 @@
 
 namespace winrt::FastCopy::implementation
 {
+    struct RobocopyViewModel;
+
     struct FileInfoViewModel : FileInfoViewModelT<FileInfoViewModel>, WinRTFileInfo, MvvmHelper::PropertyChangeHelper<FileInfoViewModel>
     {
-        FileInfoViewModel(winrt::hstring path, bool isSource);
+        FileInfoViewModel(std::wstring_view path, bool isSource, RobocopyViewModel& robocopyViewModel);
 
         winrt::hstring Path() { return m_path; }
         winrt::hstring Filename();
@@ -26,12 +28,13 @@ namespace winrt::FastCopy::implementation
         ShellItem2 m_shellItem;
         bool const m_isSource;
         bool m_selected = false;
+        RobocopyViewModel& m_robocopyViewModel;
     };
 }
 
-namespace winrt::FastCopy::factory_implementation
-{
-    struct FileInfoViewModel : FileInfoViewModelT<FileInfoViewModel, implementation::FileInfoViewModel>
-    {
-    };
-}
+//namespace winrt::FastCopy::factory_implementation
+//{
+//    struct FileInfoViewModel : FileInfoViewModelT<FileInfoViewModel, implementation::FileInfoViewModel>
+//    {
+//    };
+//}

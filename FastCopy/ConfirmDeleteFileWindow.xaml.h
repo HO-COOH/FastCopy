@@ -6,9 +6,13 @@
 
 namespace winrt::FastCopy::implementation
 {
+    struct FileInfoViewModel;
+    struct RobocopyViewModel;
+
     struct ConfirmDeleteFileWindow : ConfirmDeleteFileWindowT<ConfirmDeleteFileWindow>, ConfirmWindowBase<ConfirmDeleteFileWindow>
     {
-        ConfirmDeleteFileWindow();
+        ConfirmDeleteFileWindow(RobocopyViewModel& viewModel);
+        ~ConfirmDeleteFileWindow();
 
         winrt::hstring FilePath();
         
@@ -21,10 +25,9 @@ namespace winrt::FastCopy::implementation
         constexpr static winrt::Windows::Graphics::SizeInt32 Size{ 545, 222 };
     private:
         std::filesystem::path m_path;
-        winrt::FastCopy::FileInfoViewModel m_fileInfo{ nullptr };
+        winrt::com_ptr<FileInfoViewModel> m_fileInfo;
     };
 }
-
 namespace winrt::FastCopy::factory_implementation
 {
     struct ConfirmDeleteFileWindow : ConfirmDeleteFileWindowT<ConfirmDeleteFileWindow, implementation::ConfirmDeleteFileWindow>

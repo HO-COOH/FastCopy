@@ -62,9 +62,6 @@
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
-    <ClCompile Include="ViewModelLocator.cpp">
-      <Filter>ViewModel</Filter>
-    </ClCompile>
     <ClCompile Include="TaskFile.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
@@ -83,9 +80,6 @@
     <ClCompile Include="Notification.cpp">
       <Filter>Utils\SystemIntegration</Filter>
     </ClCompile>
-    <ClCompile Include="FileWrapper.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
     <ClCompile Include="Fallback.cpp">
       <Filter>Utils\Fallback</Filter>
     </ClCompile>
@@ -96,9 +90,6 @@
       <Filter>Utils\ShellCopy</Filter>
     </ClCompile>
     <ClCompile Include="ResourceHelper.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="Global.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="Console.cpp">
@@ -141,6 +132,9 @@
     <ClCompile Include="RobocopyInjectDll.cpp">
       <Filter>Utils\Robocopy</Filter>
     </ClCompile>
+    <ClCompile Include="RobocopyJobFile.cpp">
+      <Filter>Utils\Robocopy</Filter>
+    </ClCompile>
     <ClCompile Include="RenameUtils.cpp">
       <Filter>Utils\RenameUtils</Filter>
     </ClCompile>
@@ -170,12 +164,15 @@
     </ClCompile>
     <ClCompile Include="WindowEffectHelper.cpp" />
     <ClCompile Include="WinRTFileInfo.cpp" />
+    <ClCompile Include="ProcessInjectHandler.cpp">
+      <Filter>Utils\Robocopy</Filter>
+    </ClCompile>
+    <ClCompile Include="RobocopyProcessPool.cpp">
+      <Filter>ViewModel\Robocopy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="ViewModelLocator.h">
-      <Filter>ViewModel</Filter>
-    </ClInclude>
     <ClInclude Include="PropertyChangeHelper.hpp">
       <Filter>ViewHelper</Filter>
     </ClInclude>
@@ -200,9 +197,6 @@
     </ClInclude>
     <ClInclude Include="Notification.h">
       <Filter>Utils\SystemIntegration</Filter>
-    </ClInclude>
-    <ClInclude Include="FileWrapper.h">
-      <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="Fallback.h">
       <Filter>Utils\Fallback</Filter>
@@ -293,7 +287,7 @@
       <Filter>Utils\ImageUtils</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PackageConfig.h" />
-    <ClInclude Include="CreateSuspend.h">
+    <ClInclude Include="..\Public\RobocopyInjectionHandshake.h">
       <Filter>Utils\Robocopy</Filter>
     </ClInclude>
     <ClInclude Include="RobocopyInjectDll.h">
@@ -323,9 +317,6 @@
     <ClInclude Include="..\Public\PropertyDescription.h">
       <Filter>Utils\COM</Filter>
     </ClInclude>
-    <ClInclude Include="CaptureThreadHandle.h">
-      <Filter>Utils\Robocopy</Filter>
-    </ClInclude>
     <ClInclude Include="TextBlockClipAnimation.h">
       <Filter>Views\SettingsWindow</Filter>
     </ClInclude>
@@ -350,6 +341,15 @@
     </ClInclude>
     <ClInclude Include="WindowEffectHelper.h" />
     <ClInclude Include="WinRTFileInfo.h" />
+    <ClInclude Include="ProcessInjectHandler.hpp">
+      <Filter>Utils\Robocopy</Filter>
+    </ClInclude>
+    <ClInclude Include="MatchLineBreak.hpp">
+      <Filter>Utils\Robocopy\Output</Filter>
+    </ClInclude>
+    <ClInclude Include="RobocopyProcessPool.h">
+      <Filter>ViewModel\Robocopy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">

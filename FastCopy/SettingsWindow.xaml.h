@@ -6,9 +6,11 @@ class WindowEffectHelper;
 
 namespace winrt::FastCopy::implementation
 {
+    struct SettingsViewModel;
+
     struct SettingsWindow : SettingsWindowT<SettingsWindow>, MvvmHelper::PropertyChangeHelper<SettingsWindow>
     {
-        SettingsWindow(WindowEffectHelper& windowEffectHelper);
+        SettingsWindow(WindowEffectHelper& windowEffectHelper, SettingsViewModel& viewModel);
         void InitializeComponent();
         winrt::FastCopy::SettingsViewModel ViewModel();
         void WindowEx_Activated(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::WindowActivatedEventArgs const& args);
@@ -16,6 +18,7 @@ namespace winrt::FastCopy::implementation
 		static winrt::hstring VersionString();
     private:
 		WindowEffectHelper& m_windowEffectHelper;
+		SettingsViewModel& m_viewModel;
     };
 }
 

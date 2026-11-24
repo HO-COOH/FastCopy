@@ -1,10 +1,5 @@
 namespace FastCopy
 {
-	enum FinishState
-	{
-		Success,
-		Failed
-	};
 
 	interface ICopyBase requires Microsoft.UI.Xaml.Data.INotifyPropertyChanged
 	{
@@ -20,6 +15,5 @@ namespace FastCopy
 		void Cancel();
 
 		Double Speed{ get; };
-		event Windows.Foundation.EventHandler<FinishState> Finished;
 	}
 }

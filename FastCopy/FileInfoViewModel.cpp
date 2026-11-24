@@ -11,19 +11,19 @@
 #include <atlbase.h>
 #include <ShlObj_core.h>
 #include <wil/com.h>
-#include "ViewModelLocator.h"
-#include "RobocopyViewModel.h"
 #include "PathUtils.h"
 #include "ShellItem2.h"
 #include "PropertyDescription.h"
+#include "RobocopyViewModel.h"
 
 namespace winrt::FastCopy::implementation
 {
-	FileInfoViewModel::FileInfoViewModel(winrt::hstring path, bool isSource) : 
+	FileInfoViewModel::FileInfoViewModel(std::wstring_view path, bool isSource, RobocopyViewModel& robocopyViewModel) :
 		WinRTFileInfo{ path },
 		m_path{ ToBackslash(path) }, 
 		m_shellItem{ m_path.data() },
-		m_isSource{ isSource }
+		m_isSource{ isSource },
+		m_robocopyViewModel{ robocopyViewModel }
 	{
 	}
 
@@ -43,17 +43,16 @@ namespace winrt::FastCopy::implementation
 		{ 
 			m_selected = value;
 			raisePropertyChange(L"Selected");
-			auto robocopyViewModelImpl = ViewModelLocator::GetInstance().RobocopyViewModel();
 			value?
 				(
 					m_isSource? 
-						robocopyViewModelImpl->AddSource() :
-						robocopyViewModelImpl->AddDestination()
+						m_robocopyViewModel.AddSource() :
+						m_robocopyViewModel.AddDestination()
 				) :
 				(
 					m_isSource?
-						robocopyViewModelImpl->RemoveSource() :
-						robocopyViewModelImpl->RemoveDestination()
+						m_robocopyViewModel.RemoveSource() :
+						m_robocopyViewModel.RemoveDestination()
 				);
 		}
     }

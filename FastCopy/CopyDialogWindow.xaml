@@ -129,7 +129,6 @@
                                 </ResourceDictionary>
                             </CheckBox.Resources>
                             <CheckBox.ContextFlyout>
-                                <!--<MenuFlyout local:DataInjector.Data="{x:Bind}" Opening="MenuFlyout_Opening" />-->
                                 <local:FileMenu File="{x:Bind}" />
                             </CheckBox.ContextFlyout>
                             <StackPanel Orientation="Horizontal">
@@ -1248,7 +1247,10 @@
                     Height="170"
                     Margin="0,20,0,3"
                     x:Load="False"
-                    Opacity="0" />
+                    Opacity="0"
+                    Percent="{x:Bind ViewModel.Percent, Mode=OneWay}"
+                    Speed="{x:Bind ViewModel.Speed, Mode=OneWay}"
+                    State="{x:Bind ViewModel.State, Mode=OneWay}" />
 
 
                 <!--  -Red: BB0000  -->
@@ -1597,6 +1599,13 @@
                     </VisualState>
                     <!--  Sizes[2], also used for the ErrorText  -->
                     <VisualState x:Name="ManyDuplicatesWindowSize">
+                        <VisualState.StateTriggers>
+                            <essential:IsEqualStateTrigger Value="{x:Bind ViewModel.State, Mode=OneWay}">
+                                <essential:IsEqualStateTrigger.To>
+                                    <local:TaskbarState>Failed</local:TaskbarState>
+                                </essential:IsEqualStateTrigger.To>
+                            </essential:IsEqualStateTrigger>
+                        </VisualState.StateTriggers>
                         <Storyboard>
                             <DoubleAnimation
                                 EnableDependentAnimation="True"
@@ -1663,6 +1672,22 @@
                             <Setter x:Uid="IndeterminedStateTextSetter" Target="PercentText.Text" />
                             <Setter x:Uid="IndeterminedStateTextSetter" Target="ItemCountText.Text" />
                             <Setter Target="PauseButton.IsEnabled" Value="False" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+
+                <VisualStateGroup x:Name="FinishStates">
+                    <VisualState x:Name="FailedState">
+                        <VisualState.StateTriggers>
+                            <essential:IsEqualStateTrigger Value="{x:Bind ViewModel.State, Mode=OneWay}">
+                                <essential:IsEqualStateTrigger.To>
+                                    <local:TaskbarState>Failed</local:TaskbarState>
+                                </essential:IsEqualStateTrigger.To>
+                            </essential:IsEqualStateTrigger>
+                        </VisualState.StateTriggers>
+                        <VisualState.Setters>
+                            <Setter Target="CopyDialog.Visibility" Value="Collapsed" />
+                            <Setter Target="ErrorScrollViewer.Visibility" Value="Visible" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>

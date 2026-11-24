@@ -5,21 +5,16 @@
 
 namespace winrt::FastCopy::implementation
 {
+    struct RobocopyViewModel;
+
     struct ConfirmDeleteMultipleItemsWindow : ConfirmDeleteMultipleItemsWindowT<ConfirmDeleteMultipleItemsWindow>, ConfirmWindowBase<ConfirmDeleteMultipleItemsWindow>
     {
-        ConfirmDeleteMultipleItemsWindow();
+        ConfirmDeleteMultipleItemsWindow(RobocopyViewModel& viewModel);
 
         winrt::hstring ItemCountText();
         
         constexpr static winrt::Windows::Graphics::SizeInt32 Size{ 545, 152 };
     private:
         winrt::hstring m_itemCountText;
-    };
-}
-
-namespace winrt::FastCopy::factory_implementation
-{
-    struct ConfirmDeleteMultipleItemsWindow : ConfirmDeleteMultipleItemsWindowT<ConfirmDeleteMultipleItemsWindow, implementation::ConfirmDeleteMultipleItemsWindow>
-    {
     };
 }

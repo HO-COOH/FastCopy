@@ -13,10 +13,12 @@
 namespace winrt::FastCopy::implementation
 {
 	struct RobocopyViewModel;
+    struct SettingsViewModel;
 
     struct App : AppT<App>
     {
         App();
+        ~App();
 
         void OnLaunched(Microsoft::UI::Xaml::LaunchActivatedEventArgs const&);
 
@@ -28,7 +30,8 @@ namespace winrt::FastCopy::implementation
     private:
         std::optional<FastcopySettingsSingleInstanceLock> m_settingsLock;
 		std::optional<WindowEffectHelper> m_windowEffectHelper;
-
+        winrt::com_ptr<winrt::FastCopy::implementation::RobocopyViewModel> m_robocopyViewModel;
+        winrt::com_ptr<winrt::FastCopy::implementation::SettingsViewModel> m_settingsViewModel;
         /**
          * @brief Open the settings GUI.
          */
@@ -43,6 +46,6 @@ namespace winrt::FastCopy::implementation
         * @brief Shows the appropriate confirm delete window based on item count and type.
         * @param viewModel Pointer to the RobocopyViewModel implementation
         */
-        winrt::fire_and_forget showConfirmDeleteWindowIfNeeded(RobocopyViewModel* viewModel);
+        winrt::fire_and_forget showConfirmDeleteWindowIfNeeded();
     };
 }

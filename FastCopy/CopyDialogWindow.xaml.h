@@ -9,9 +9,11 @@ class WindowEffectHelper;
 
 namespace winrt::FastCopy::implementation
 {
+    struct RobocopyViewModel;
+
     struct CopyDialogWindow : CopyDialogWindowT<CopyDialogWindow>
     {
-        CopyDialogWindow(WindowEffectHelper& windowEffectHelper);
+        CopyDialogWindow(WindowEffectHelper& windowEffectHelper, RobocopyViewModel& viewModel);
 
         void InitializeComponent();
 
@@ -44,9 +46,8 @@ namespace winrt::FastCopy::implementation
 
     private:
         bool m_showSpeedGraph = false;
-        bool m_failed = false;
 		WindowEffectHelper& m_windowEffectHelper;
-
+		RobocopyViewModel& m_viewModel;
         //Picks the states of SpeedGraphStates, DuplicateFilesStates and WindowSizeStates together, as they depend on each other
         void updateVisualStates();
     };

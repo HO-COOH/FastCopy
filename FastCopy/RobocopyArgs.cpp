@@ -2,51 +2,64 @@
 #include "RobocopyArgs.h"
 #include <iostream>
 
-RobocopyArgsBuilder::RobocopyArgsBuilder(StringView source, StringView destination, StringView builtArg) : 
-	m_arg{std::format(LR"("{}" "{}" {})", source, destination, builtArg)},
-	m_sourceSet{ true }
+static void appendEscapedBraces(std::wstring& out, std::wstring_view str)
 {
+	for (wchar_t const ch : str)
+	{
+		out.push_back(ch);
+		if (ch == L'{' || ch == L'}')
+			out.push_back(ch);
+	}
+}
+
+static auto sanitizeQuotedDirArg(std::wstring_view dir, bool escapeBraces)
+{
+	// robocopy uses CommandLineToArgvW rules where a trailing backslash right before a closing quote
+	// (such as a drive root "E:\") escapes the quote unless doubled ("E:\\") or stripped.
+	std::wstring result;
+	result.reserve(dir.size() + 2);
+	if (escapeBraces)
+		appendEscapedBraces(result, dir);
+	else
+		result.append(dir);
+
+	if (dir.ends_with(L'\\'))
+		result.push_back(L'\\');
+	return result;
 }
 
 std::wstring const& RobocopyArgsBuilder::Build() const
 {
-	std::cout << "robocopy " << winrt::to_string(m_arg) << '\n';
+	std::wcout << L"robocopy " << m_arg << L'\n';
+	assert(m_sourceSet && m_destinationSet);
 	return m_arg;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::Source(StringView value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::Source(std::wstring_view value)
 {
-	if (m_destinationSet)
-	{
-		m_arg = std::vformat(m_arg, std::make_wformat_args(value));
-	}
-	else
-	{
-		m_arg = std::vformat(m_arg, std::make_wformat_args(value, L"{}"));
-	}
+	auto const sanitized = sanitizeQuotedDirArg(value, !m_destinationSet);
+	m_arg = m_destinationSet
+		? std::vformat(m_arg, std::make_wformat_args(sanitized))
+		: std::vformat(m_arg, std::make_wformat_args(sanitized, L"{}"));
 	m_sourceSet = true;
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::Destination(StringView value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::Destination(std::wstring_view value)
 {
-	if (m_sourceSet)
-	{
-		m_arg = std::vformat(m_arg, std::make_wformat_args(value));
-	}
-	else
-	{
-		m_arg = std::vformat(m_arg, std::make_wformat_args(L"{}", value));
-	}
+	auto const sanitized = sanitizeQuotedDirArg(value, !m_sourceSet);
+	m_arg = m_sourceSet
+		? std::vformat(m_arg, std::make_wformat_args(sanitized))
+		: std::vformat(m_arg, std::make_wformat_args(L"{}", sanitized));
 	m_destinationSet = true;
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::File(std::span<StringView> value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::File(std::span<std::wstring_view> value)
 {
-	constexpr auto isQuoted = [](StringView filePath)
+	constexpr auto isQuoted = [](std::wstring_view filePath)
 	{
-		return filePath.front() == L'\"' && filePath.back() == L'\"';
+		return filePath.size() >= 2 && filePath.front() == L'\"' && filePath.back() == L'\"';
 	};
 	for (auto file : value)
 	{
@@ -55,14 +68,15 @@ RobocopyArgsBuilder& RobocopyArgsBuilder::File(std::span<StringView> value)
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::S(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::S()
 {
-	return addOrRemoveFlag(L"/S ", value);
+	m_arg += L"/S ";
+	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::E(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::E()
 {
-	addOrRemoveFlag(L"/E ", value);
+	m_arg += L"/E ";
 	return *this;
 }
 
@@ -72,125 +86,125 @@ RobocopyArgsBuilder& RobocopyArgsBuilder::LEV(int n)
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::Z(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::Z()
 {
-	addOrRemoveFlag(L"/Z ", value);
+	m_arg += L"/Z ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::B(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::B()
 {
-	addOrRemoveFlag(L"/B ", value);
+	m_arg += L"/B ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::ZB(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::ZB()
 {
-	addOrRemoveFlag(L"/ZB ", value);
+	m_arg += L"/ZB ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::J(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::J()
 {
-	addOrRemoveFlag(L"/J ", value);
+	m_arg += L"/J ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::EFSRAW(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::EFSRAW()
 {
-	addOrRemoveFlag(L"/EFSRAW ", value);
+	m_arg += L"/EFSRAW ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::COPY(StringView copyflags)
+RobocopyArgsBuilder& RobocopyArgsBuilder::COPY(std::wstring_view copyflags)
 {
-	for (auto c : copyflags)
+	for ([[maybe_unused]] auto c : copyflags)
 		assert(c == L'D' || c == L'A' || c == L'T' || c == L'S' || c == L'O' || c == L'U');
 	m_arg += std::format(L"/COPY:{} ", copyflags);
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::SEC(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::SEC()
 {
-	addOrRemoveFlag(L"/SEC ", value);
+	m_arg += L"/SEC ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::COPYALL(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::COPYALL()
 {
-	addOrRemoveFlag(L"/COPYALL ", value);
+	m_arg += L"/COPYALL ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::NOCOPY(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::NOCOPY()
 {
-	addOrRemoveFlag(L"/NOCOPY ", value);
+	m_arg += L"/NOCOPY ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::SECFIX(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::SECFIX()
 {
-	addOrRemoveFlag(L"/SECFIX ", value);
+	m_arg += L"/SECFIX ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::TIMFIX(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::TIMFIX()
 {
-	addOrRemoveFlag(L"/TIMFIX ", value);
+	m_arg += L"/TIMFIX ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::PURGE(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::PURGE()
 {
-	addOrRemoveFlag(L"/PURGE ", value);
+	m_arg += L"/PURGE ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::MIR(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::MIR()
 {
-	addOrRemoveFlag(L"/MIR ", value);
+	m_arg += L"/MIR ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::MOV(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::MOV()
 {
-	addOrRemoveFlag(L"/MOV ", value);
+	m_arg += L"/MOV ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::MOVE(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::MOVE()
 {
-	addOrRemoveFlag(L"/MOVE ", value);
+	m_arg += L"/MOVE ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::A_plus(StringView value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::A_plus(std::wstring_view value)
 {
 	m_arg += std::format(L"/A+:{} ", value);
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::A_minus(StringView value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::A_minus(std::wstring_view value)
 {
-	m_arg += std::format(L"/A-:{}", value);
+	m_arg += std::format(L"/A-:{} ", value);
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::CREATE(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::CREATE()
 {
-	addOrRemoveFlag(L"/CREATE ", value);
+	m_arg += L"/CREATE ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::FAT(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::FAT()
 {
-	addOrRemoveFlag(L"/FAT ", value);
+	m_arg += L"/FAT ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::_256(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::_256()
 {
-	addOrRemoveFlag(L"/256 ", value);
+	m_arg += L"/256 ";
 	return *this;
 }
 
@@ -202,7 +216,7 @@ RobocopyArgsBuilder& RobocopyArgsBuilder::MON(int value)
 
 RobocopyArgsBuilder& RobocopyArgsBuilder::MOT(int value)
 {
-	m_arg += std::format(L"/MOT:{}", value);
+	m_arg += std::format(L"/MOT:{} ", value);
 	return *this;
 }
 
@@ -212,9 +226,9 @@ RobocopyArgsBuilder& RobocopyArgsBuilder::RH(int hh1, int mm1, int hh2, int mm2)
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::PF(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::PF()
 {
-	addOrRemoveFlag(L"/PF ", value);
+	m_arg += L"/PF ";
 	return *this;
 }
 
@@ -224,9 +238,9 @@ RobocopyArgsBuilder& RobocopyArgsBuilder::IPG(int ms)
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::SL(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::SL()
 {
-	addOrRemoveFlag(L"/SL ", value);
+	m_arg += L"/SL ";
 	return *this;
 }
 
@@ -235,51 +249,52 @@ RobocopyArgsBuilder& RobocopyArgsBuilder::MT(int n)
 	m_arg += std::format(L"/MT:{} ", n);
 	return *this;
 }
-RobocopyArgsBuilder& RobocopyArgsBuilder::DCOPY(StringView copyFlags)
+
+RobocopyArgsBuilder& RobocopyArgsBuilder::DCOPY(std::wstring_view copyFlags)
 {
-	for (auto c : copyFlags)
+	for ([[maybe_unused]] auto c : copyFlags)
 		assert(c == L'D' || c == L'A' || c == L'T');
 	m_arg += std::format(L"/DCOPY:{} ", copyFlags);
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::NODCOPY(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::NODCOPY()
 {
-	addOrRemoveFlag(L"/NODCOPY ", value);
+	m_arg += L"/NODCOPY ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::NOOFFLOAD(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::NOOFFLOAD()
 {
-	addOrRemoveFlag(L"/NOOFFLOAD ", value);
+	m_arg += L"/NOOFFLOAD ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::A(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::A()
 {
-	addOrRemoveFlag(L"/A ", value);
+	m_arg += L"/A ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::M(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::M()
 {
-	addOrRemoveFlag(L"/M ", value);
+	m_arg += L"/M ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::IA(StringView value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::IA(std::wstring_view value)
 {
 	m_arg += std::format(L"/IA:{} ", value);
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::XA(StringView value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::XA(std::wstring_view value)
 {
 	m_arg += std::format(L"/XA:{} ", value);
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::XF(std::span<StringView> file)
+RobocopyArgsBuilder& RobocopyArgsBuilder::XF(std::span<std::wstring_view> file)
 {
 	if (file.empty())
 		return *this;
@@ -290,7 +305,7 @@ RobocopyArgsBuilder& RobocopyArgsBuilder::XF(std::span<StringView> file)
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::XD(std::span<StringView> dirs)
+RobocopyArgsBuilder& RobocopyArgsBuilder::XD(std::span<std::wstring_view> dirs)
 {
 	if (dirs.empty())
 		return *this;
@@ -301,45 +316,45 @@ RobocopyArgsBuilder& RobocopyArgsBuilder::XD(std::span<StringView> dirs)
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::XC(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::XC()
 {
-	addOrRemoveFlag(L"/XC ", value);
+	m_arg += L"/XC ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::XN(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::XN()
 {
-	addOrRemoveFlag(L"/XN ", value);
+	m_arg += L"/XN ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::XO(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::XO()
 {
-	addOrRemoveFlag(L"/XO ", value);
+	m_arg += L"/XO ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::XX(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::XX()
 {
-	addOrRemoveFlag(L"/XX ", value);
+	m_arg += L"/XX ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::XL(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::XL()
 {
-	addOrRemoveFlag(L"/XL ", value);
+	m_arg += L"/XL ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::IS(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::IS()
 {
-	addOrRemoveFlag(L"/IS ", value);
+	m_arg += L"/IS ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::IT(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::IT()
 {
-	addOrRemoveFlag(L"/IT ", value);
+	m_arg += L"/IT ";
 	return *this;
 }
 
@@ -379,33 +394,33 @@ RobocopyArgsBuilder& RobocopyArgsBuilder::MINLAD(size_t days)
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::XJ(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::XJ()
 {
-	addOrRemoveFlag(L"/XJ ", value);
+	m_arg += L"/XJ ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::FFT(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::FFT()
 {
-	addOrRemoveFlag(L"/FFT ", value);
+	m_arg += L"/FFT ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::DST(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::DST()
 {
-	addOrRemoveFlag(L"/DST ", value);
+	m_arg += L"/DST ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::XJD(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::XJD()
 {
-	addOrRemoveFlag(L"/XJD ", value);
+	m_arg += L"/XJD ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::XJF(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::XJF()
 {
-	addOrRemoveFlag(L"/XJF ", value);
+	m_arg += L"/XJF ";
 	return *this;
 }
 
@@ -421,170 +436,178 @@ RobocopyArgsBuilder& RobocopyArgsBuilder::W(size_t seconds)
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::REG(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::REG()
 {
-	addOrRemoveFlag(L"/REG ", value);
+	m_arg += L"/REG ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::TBD(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::TBD()
 {
-	addOrRemoveFlag(L"/TBD ", value);
+	m_arg += L"/TBD ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::L(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::L()
 {
-	addOrRemoveFlag(L"/L ", value);
+	m_arg += L"/L ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::X(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::X()
 {
-	addOrRemoveFlag(L"/X ", value);
+	m_arg += L"/X ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::V(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::V()
 {
-	addOrRemoveFlag(L"/V ", value);
+	m_arg += L"/V ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::TS(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::TS()
 {
-	addOrRemoveFlag(L"/TS ", value);
+	m_arg += L"/TS ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::FP(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::FP()
 {
-	addOrRemoveFlag(L"/FP ", value);
+	m_arg += L"/FP ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::BYTES(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::BYTES()
 {
-	addOrRemoveFlag(L"/BYTES ", value);
+	m_arg += L"/BYTES ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::NS(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::NS()
 {
-	addOrRemoveFlag(L"/NS ", value);
+	m_arg += L"/NS ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::NC(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::NC()
 {
-	addOrRemoveFlag(L"/NC ", value);
+	m_arg += L"/NC ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::NFL(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::NFL()
 {
-	addOrRemoveFlag(L"/NFL ", value);
+	m_arg += L"/NFL ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::NDL(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::NDL()
 {
-	addOrRemoveFlag(L"/NDL ", value);
+	m_arg += L"/NDL ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::NP(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::NP()
 {
-	addOrRemoveFlag(L"/NP ", value);
+	m_arg += L"/NP ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::ETA(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::ETA()
 {
-	addOrRemoveFlag(L"/ETA ", value);
+	m_arg += L"/ETA ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::LOG(StringView file)
+RobocopyArgsBuilder& RobocopyArgsBuilder::LOG(std::wstring_view file)
 {
 	m_arg += std::format(L"/LOG:{} ", file);
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::LOG_plus(StringView file)
+RobocopyArgsBuilder& RobocopyArgsBuilder::LOG_plus(std::wstring_view file)
 {
 	m_arg += std::format(L"/LOG+:{} ", file);
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::UNILOG(StringView file)
+RobocopyArgsBuilder& RobocopyArgsBuilder::UNILOG(std::wstring_view file)
 {
 	m_arg += std::format(L"/UNILOG:{} ", file);
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::UNILOG_Plus(StringView file)
+RobocopyArgsBuilder& RobocopyArgsBuilder::UNILOG_Plus(std::wstring_view file)
 {
 	m_arg += std::format(L"/UNILOG+:{} ", file);
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::TEE(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::TEE()
 {
-	addOrRemoveFlag(L"/TEE ", value);
+	m_arg += L"/TEE ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::NJH(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::NJH()
 {
-	addOrRemoveFlag(L"/NJH ", value);
+	m_arg += L"/NJH ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::NJS(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::NJS()
 {
-	addOrRemoveFlag(L"/NJS ", value);
+	m_arg += L"/NJS ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::Unicode(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::Unicode()
 {
-	addOrRemoveFlag(L"/UNICODE ", value);
+	m_arg += L"/UNICODE ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::JOB(StringView jobName)
+RobocopyArgsBuilder& RobocopyArgsBuilder::JOB(std::wstring_view jobName)
 {
-	m_arg += std::format(L"/JOB:{} ", jobName);
+	constexpr auto isQuoted = [](std::wstring_view path)
+	{
+		return path.size() >= 2 && path.front() == L'\"' && path.back() == L'\"';
+	};
+	m_arg += isQuoted(jobName) ? std::format(L"/JOB:{} ", jobName) : std::format(LR"(/JOB:"{}" )", jobName);
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::SAVE(StringView jobName)
+RobocopyArgsBuilder& RobocopyArgsBuilder::SAVE(std::wstring_view jobName)
 {
-	m_arg += std::format(L"/SAVE:{} ", jobName);
+	constexpr auto isQuoted = [](std::wstring_view path)
+	{
+		return path.size() >= 2 && path.front() == L'\"' && path.back() == L'\"';
+	};
+	m_arg += isQuoted(jobName) ? std::format(L"/SAVE:{} ", jobName) : std::format(LR"(/SAVE:"{}" )", jobName);
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::QUIT(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::QUIT()
 {
-	addOrRemoveFlag(L"/QUIT ", value);
+	m_arg += L"/QUIT ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::NOSD(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::NOSD()
 {
-	addOrRemoveFlag(L"/NOSD ", value);
+	m_arg += L"/NOSD ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::NODD(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::NODD()
 {
-	addOrRemoveFlag(L"/NODD ", value);
+	m_arg += L"/NODD ";
 	return *this;
 }
 
-RobocopyArgsBuilder& RobocopyArgsBuilder::IF(bool value)
+RobocopyArgsBuilder& RobocopyArgsBuilder::IF()
 {
-	addOrRemoveFlag(L"/IF ", value);
+	m_arg += L"/IF ";
 	return *this;
 }

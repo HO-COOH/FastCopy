@@ -18,7 +18,10 @@
 
 namespace winrt::FastCopy::implementation
 {
-	WelcomeWindow::WelcomeWindow(WindowEffectHelper& windowEffectHelper) : m_windowEffectHelper{ windowEffectHelper }, m_checkResult{checkRobocopy()}
+	WelcomeWindow::WelcomeWindow(WindowEffectHelper& windowEffectHelper, SettingsViewModel& settingsViewModel) : 
+		m_windowEffectHelper{ windowEffectHelper }, 
+		m_checkResult{checkRobocopy()},
+		m_settingsViewModel{ settingsViewModel }
 	{
 		CenterWindow(Window(), winrt::Windows::Graphics::SizeInt32{
 			.Width = PackageConfig::GetDefaultLanguage() == L"zh-cn" ? 500 : 600,
@@ -35,7 +38,7 @@ namespace winrt::FastCopy::implementation
 
 	void WelcomeWindow::Button_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
-		winrt::make_self<SettingsWindow>(m_windowEffectHelper)->Activate();
+		winrt::make_self<SettingsWindow>(m_windowEffectHelper, m_settingsViewModel)->Activate();
 		Close();
 	}
 

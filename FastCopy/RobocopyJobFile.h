@@ -1,13 +1,21 @@
 #pragma once
+#include <filesystem>
+#include <span>
+#include <string>
+#include <string_view>
 
 class RobocopyJobFile
 {
+	std::filesystem::path m_path;
 public:
-	//TODO: Implement parsing and serializing to a .rcj file
+	explicit RobocopyJobFile(std::span<std::wstring const> includeFiles);
+	~RobocopyJobFile();
 
-	////Source Directory (drive:\path or \\server\share\path)
-	//RobocopyJobFile& Source(StringView value);
+	RobocopyJobFile(RobocopyJobFile const&) = delete;
+	RobocopyJobFile(RobocopyJobFile&&) noexcept = delete;
+	RobocopyJobFile& operator=(RobocopyJobFile const&) = delete;
+	RobocopyJobFile& operator=(RobocopyJobFile&&) noexcept = delete;
 
-	////Destination Dir  (drive:\path or \\server\share\path).
-	//RobocopyJobFile& Destination(StringView value);
+	[[nodiscard]] std::wstring_view PathView() const noexcept;
+	[[nodiscard]] static bool CanUseInJobFile(std::wstring_view fileName) noexcept;
 };

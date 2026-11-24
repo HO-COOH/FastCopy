@@ -14,7 +14,8 @@ constexpr static auto toWin32TaskbarState(winrt::FastCopy::TaskbarState state)
 		case winrt::FastCopy::TaskbarState::NoProgress: return TBPF_NOPROGRESS;
 		case winrt::FastCopy::TaskbarState::Indeterminate: return TBPF_INDETERMINATE;
 		case winrt::FastCopy::TaskbarState::Normal: return TBPF_NORMAL;
-		case winrt::FastCopy::TaskbarState::Error: return TBPF_ERROR;
+		case winrt::FastCopy::TaskbarState::Error:
+		case winrt::FastCopy::TaskbarState::Failed: return TBPF_ERROR;
 		case winrt::FastCopy::TaskbarState::Paused: return TBPF_PAUSED;
 	}
 }

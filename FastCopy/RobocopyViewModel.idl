@@ -8,7 +8,7 @@ namespace FastCopy
     [default_interface]
     runtimeclass RobocopyViewModel : ICopyBase
     {
-        Windows.Foundation.Uri DestinationUri{ get; };
+        //Windows.Foundation.Uri DestinationUri{ get; };
 
         /*Duplicate files*/
         Windows.Foundation.Collections.IObservableVector<FastCopy.FileCompareViewModel> DuplicateFiles{ get; };
@@ -18,7 +18,6 @@ namespace FastCopy
         //Confirm duplicate list
         void ConfirmDuplicates();
 
-        Windows.Foundation.IAsyncOperation<UInt64> GetTotalSize();
         TaskbarState State{ get; };
 
         String ErrorText{ get; };

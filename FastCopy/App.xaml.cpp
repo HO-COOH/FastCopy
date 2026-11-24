@@ -10,7 +10,6 @@
 #include "ConfirmDeleteFileWindow.xaml.h"
 #include "ConfirmDeleteFolderWindow.xaml.h"
 #include "ConfirmDeleteMultipleItemsWindow.xaml.h"
-#include "ViewModelLocator.h"
 #include <winrt/Windows.ApplicationModel.DataTransfer.h>
 #include "CommandLine.h"
 #include "DebugLogger.h"
@@ -18,8 +17,8 @@
 #include <filesystem>
 #include "Global.h"
 #include "RobocopyViewModel.h"
+#include "SettingsViewModel.h"
 #include "CommandLineHandler.h"
-#include "Settings.h"
 #include "KeyboardHookController.h"
 #include "WindowHelper.h"
 
@@ -55,12 +54,15 @@ namespace winrt::FastCopy::implementation
 #endif
     }
 
+    App::~App() = default;
+
     void App::OnLaunched(winrt::Microsoft::UI::Xaml::LaunchActivatedEventArgs const&)
     {
         try
         {
             KeyboardHookController::Start();
-			m_windowEffectHelper.emplace();
+            m_settingsViewModel = winrt::make_self<SettingsViewModel>();
+            m_windowEffectHelper.emplace(*m_settingsViewModel);
             CommandLineHandler::AppLaunchMode == AppLaunchMode::LaunchSettings ? launchSettings() : normalLaunch();
         }
         catch (winrt::hresult_error const& e)
@@ -92,12 +94,12 @@ namespace winrt::FastCopy::implementation
         Settings settings;
         if (settings.Get(Settings::IsFirstLaunch, true))
         {
-            winrt::make_self<WelcomeWindow>(*m_windowEffectHelper)->Activate();
+            winrt::make_self<WelcomeWindow>(*m_windowEffectHelper, *m_settingsViewModel)->Activate();
             settings.Set(Settings::IsFirstLaunch, false);
         }
         else
         {
-            winrt::make_self<SettingsWindow>(*m_windowEffectHelper)->Activate();
+            winrt::make_self<SettingsWindow>(*m_windowEffectHelper, *m_settingsViewModel)->Activate();
         }
     }
 
@@ -111,58 +113,55 @@ namespace winrt::FastCopy::implementation
     {
         auto const destination = Command::Get().GetDestination();
         //destination could be empty if delete is invoked
-        auto const recordFile = Command::Get().RecordFile();
-        auto viewModel = ViewModelLocator::GetInstance().RobocopyViewModel();
+        winrt::hstring recordFile{ Command::Get().RecordFile() };
+        m_robocopyViewModel = winrt::make_self<RobocopyViewModel>(recordFile, destination);
 #ifndef _DEBUG
         if (recordFile.empty())
             return;
 #endif // !_DEBUG
 
 
-        viewModel->Destination(destination);
-        viewModel->RecordFile(winrt::hstring{ recordFile });
-
         Settings settings;
         bool const shouldConfirm = settings.Get(Settings::ConfirmDelete, true) || settings.Get(Settings::IsFirstConfirm, true);
-        if (viewModel->m_recordFile->GetOperation() == CopyOperation::Delete && shouldConfirm)
+        if (m_robocopyViewModel->m_recordFile.GetOperation() == CopyOperation::Delete && shouldConfirm)
         {
-            showConfirmDeleteWindowIfNeeded(viewModel);
+            showConfirmDeleteWindowIfNeeded();
             return;
         }
 
         LOGI(L"App started, record file: {}", recordFile.data());
 
-		winrt::make_self<CopyDialogWindow>(*m_windowEffectHelper)->Activate();
-        viewModel->Start();
+		winrt::make_self<CopyDialogWindow>(*m_windowEffectHelper, *m_robocopyViewModel)->Activate();
+        m_robocopyViewModel->Start();
     }
 
-    winrt::fire_and_forget App::showConfirmDeleteWindowIfNeeded(RobocopyViewModel* viewModel)
+    winrt::fire_and_forget App::showConfirmDeleteWindowIfNeeded()
     {
-        auto& taskFile = *viewModel->m_recordFile;
-        auto const itemCount = std::distance(taskFile.begin(), taskFile.end());
+        auto& taskFile = m_robocopyViewModel->m_recordFile;
+        auto const itemCount = taskFile.GetItemCount();
         
         if (itemCount == 0)
             co_return;
 
         if (itemCount > 1)
         {
-            if (!co_await ShowConfirmWindowAsync(winrt::make_self<ConfirmDeleteMultipleItemsWindow>().get()))
+            if (!co_await ShowConfirmWindowAsync(winrt::make_self<ConfirmDeleteMultipleItemsWindow>(*m_robocopyViewModel).get()))
                 co_return;
         }
-        else if (std::filesystem::is_directory(*taskFile.begin()))
+        else if (std::filesystem::is_directory(taskFile.GetItemPath(0)))
         {
-            if (!co_await ShowConfirmWindowAsync(winrt::make_self<ConfirmDeleteFolderWindow>().get()))
+            if (!co_await ShowConfirmWindowAsync(winrt::make_self<ConfirmDeleteFolderWindow>(*m_robocopyViewModel).get()))
                 co_return;
         }
         else
         {
-            if (!co_await ShowConfirmWindowAsync(winrt::make_self<ConfirmDeleteFileWindow>().get()))
+            if (!co_await ShowConfirmWindowAsync(winrt::make_self<ConfirmDeleteFileWindow>(*m_robocopyViewModel).get()))
                 co_return;
         }
 
-        LOGI(L"App started (after delete confirmation), record file: {}", taskFile.GetPath().data());
+        LOGI(L"App started (after delete confirmation), record file: {}", taskFile.GetPath());
         
-        winrt::make_self<CopyDialogWindow>(*m_windowEffectHelper)->Activate();
-        viewModel->Start();
+        winrt::make_self<CopyDialogWindow>(*m_windowEffectHelper, *m_robocopyViewModel)->Activate();
+        m_robocopyViewModel->Start();
     }
 }

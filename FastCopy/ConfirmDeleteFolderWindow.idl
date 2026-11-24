@@ -3,8 +3,6 @@ namespace FastCopy
     [default_interface]
     runtimeclass ConfirmDeleteFolderWindow : Microsoft.UI.Xaml.Window
     {
-        ConfirmDeleteFolderWindow();
-        
         String FolderName{ get; };
         String FolderPath{ get; };
         Windows.Foundation.DateTime DateCreated{ get; };

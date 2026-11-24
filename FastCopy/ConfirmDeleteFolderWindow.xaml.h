@@ -5,9 +5,11 @@
 
 namespace winrt::FastCopy::implementation
 {
+    struct RobocopyViewModel;
+
     struct ConfirmDeleteFolderWindow : ConfirmDeleteFolderWindowT<ConfirmDeleteFolderWindow>, ConfirmWindowBase<ConfirmDeleteFolderWindow>
     {
-        ConfirmDeleteFolderWindow();
+        ConfirmDeleteFolderWindow(RobocopyViewModel& viewModel);
 
         winrt::hstring FolderName();
         winrt::hstring FolderPath();
@@ -18,12 +20,5 @@ namespace winrt::FastCopy::implementation
         winrt::hstring m_folderName;
         winrt::hstring m_folderPath;
         winrt::Windows::Foundation::DateTime m_dateCreated;
-    };
-}
-
-namespace winrt::FastCopy::factory_implementation
-{
-    struct ConfirmDeleteFolderWindow : ConfirmDeleteFolderWindowT<ConfirmDeleteFolderWindow, implementation::ConfirmDeleteFolderWindow>
-    {
     };
 }

@@ -26,6 +26,7 @@
         </LinearGradientBrush>
 
         <Duration x:Key="ScaleDuration">0:0:0.3</Duration>
+        <Duration x:Key="SpeedLineAnimationDuration">0:0:0.3</Duration>
         <Duration x:Key="ColorAnimationDuration">0:0:0.3</Duration>
 
         <Storyboard x:Name="ScaleDown">
@@ -36,6 +37,27 @@
                 Duration="{StaticResource ScaleDuration}">
                 <DoubleAnimation.EasingFunction>
                     <ExponentialEase EasingMode="EaseInOut" Exponent="6" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Name="SpeedLineAndTextAnimation">
+            <DoubleAnimation
+                x:Name="LineTranslateAnimation"
+                Storyboard.TargetName="LineTranslate"
+                Storyboard.TargetProperty="Y"
+                Duration="{StaticResource SpeedLineAnimationDuration}">
+                <DoubleAnimation.EasingFunction>
+                    <ExponentialEase EasingMode="EaseOut" Exponent="7" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation
+                x:Name="TextTranslateAnimation"
+                Storyboard.TargetName="TextTranslate"
+                Storyboard.TargetProperty="Y"
+                Duration="{StaticResource SpeedLineAnimationDuration}">
+                <DoubleAnimation.EasingFunction>
+                    <ExponentialEase EasingMode="EaseOut" Exponent="7" />
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
         </Storyboard>

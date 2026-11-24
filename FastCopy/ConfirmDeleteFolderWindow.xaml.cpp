@@ -5,18 +5,16 @@
 #endif
 
 #include "ResourceHelper.h"
-#include "ViewModelLocator.h"
 #include "RobocopyViewModel.h"
 #include <filesystem>
 #include "PathUtils.h"
 
 namespace winrt::FastCopy::implementation
 {
-    ConfirmDeleteFolderWindow::ConfirmDeleteFolderWindow()
+    ConfirmDeleteFolderWindow::ConfirmDeleteFolderWindow(RobocopyViewModel& viewModel)
     {
-        auto viewModel = ViewModelLocator::GetInstance().RobocopyViewModel();
-        auto& taskFile = *viewModel->m_recordFile;
-        std::filesystem::path folderPath{ *taskFile.begin() };
+        auto& taskFile = viewModel.m_recordFile;
+        std::filesystem::path folderPath{ taskFile.GetItemPath(0) };
         m_folderPath = winrt::hstring{ ToBackslash(folderPath.wstring()) };
         m_folderName = winrt::hstring{ folderPath.filename().wstring() };
         

@@ -1,159 +1,103 @@
 ﻿#pragma once
 #include <string>
-#include <vector>
+#include <string_view>
 #include <span>
-#include <boost/algorithm/string.hpp>
-/**
- * @brief Representing a command line switch.
- * @details When the flag is specified, output {name}. Otherwise outputs nothing
- */
-struct Flag
-{
-	std::wstring_view name;
-	bool value{ false };
-
-	constexpr operator std::wstring() const
-	{
-		return value ? std::format(L"{} ", name) : L"";
-	}
-};
-
-/**
- * @brief Representing a command line variable.
- * @details When the variable is specified, output {name}:{value}
- */
-template<typename ValueType>
-struct Variable
-{
-	std::wstring_view name;
-	std::optional<ValueType> value;
-
-	operator std::wstring() const
-	{
-		return value.has_value() ? std::format(L"{}:{} ", name, *value) : L"";
-	}
-};
-
 
 class RobocopyArgsBuilder
 {
 	std::wstring m_arg = LR"("{}" "{}" )";
 	bool m_sourceSet = false;
 	bool m_destinationSet = false;
-
-
 public:
-	using StringView = std::wstring_view;
-
 	constexpr static int MT_Min = 1;
 	constexpr static int MT_Max = 128;
 
-	constexpr RobocopyArgsBuilder& addOrRemoveFlag(StringView name, bool value)
-	{
-		if (value)
-			m_arg += name;
-		else
-			boost::algorithm::erase_all(m_arg, name);
-		return *this;
-	}
-
-	enum class CopyFlags
-	{
-		D = 'D',
-		A = 'A',
-		T = 'T',
-		S = 'S',
-		O = 'O',
-		U = 'U'
-	};
 	RobocopyArgsBuilder() = default;
-
-	RobocopyArgsBuilder(StringView source, StringView destination, StringView builtArg);
 
 	std::wstring const& Build() const;
 
 	//Source Directory (drive:\path or \\server\share\path)
-	RobocopyArgsBuilder& Source(StringView value);
+	RobocopyArgsBuilder& Source(std::wstring_view value);
 
 	//Destination Dir  (drive:\path or \\server\share\path).
-	RobocopyArgsBuilder& Destination(StringView value);
+	RobocopyArgsBuilder& Destination(std::wstring_view value);
 
 	//File(s) to copy  (names/wildcards: default is "*.*").
-	RobocopyArgsBuilder& File(std::span<StringView> value);
+	RobocopyArgsBuilder& File(std::span<std::wstring_view> value);
 
 #pragma region CopyOptions
 	//copy Subdirectories, but not empty ones.
-	RobocopyArgsBuilder& S(bool value);
+	RobocopyArgsBuilder& S();
 
 	//copy subdirectories, including Empty ones.
-	RobocopyArgsBuilder& E(bool value);
+	RobocopyArgsBuilder& E();
 
 	//only copy the top n LEVels of the source directory tree
 	RobocopyArgsBuilder& LEV(int n);
 
 	//copy files in restartable mode.
-	RobocopyArgsBuilder& Z(bool value);
+	RobocopyArgsBuilder& Z();
 
 	//copy files in Backup mode.
-	RobocopyArgsBuilder& B(bool value);
+	RobocopyArgsBuilder& B();
 
 	//use restartable mode; if access denied use Backup mode.
-	RobocopyArgsBuilder& ZB(bool value);
+	RobocopyArgsBuilder& ZB();
 
 	//copy using unbuffered I/O (recommended for large files).
-	RobocopyArgsBuilder& J(bool value);
+	RobocopyArgsBuilder& J();
 
 	//copy all encrypted files in EFS RAW mode.
-	RobocopyArgsBuilder& EFSRAW(bool value);
+	RobocopyArgsBuilder& EFSRAW();
 
 	/*
 	* what to COPY for files (default is /COPY:DAT).
                        (copyflags : D=Data, A=Attributes, T=Timestamps).
                        (S=Security=NTFS ACLs, O=Owner info, U=aUditing info).
 	*/
-	RobocopyArgsBuilder& COPY(StringView copyflags);
+	RobocopyArgsBuilder& COPY(std::wstring_view copyflags);
 
 	//copy files with SECurity (equivalent to /COPY:DATS).
-	RobocopyArgsBuilder& SEC(bool value);
+	RobocopyArgsBuilder& SEC();
 
 	//COPY ALL file info (equivalent to /COPY:DATSOU).
-	RobocopyArgsBuilder& COPYALL(bool value);
+	RobocopyArgsBuilder& COPYALL();
 
 	//COPY NO file info (useful with /PURGE).
-	RobocopyArgsBuilder& NOCOPY(bool value);
+	RobocopyArgsBuilder& NOCOPY();
 
 	//FIX file SECurity on all files, even skipped files.
-	RobocopyArgsBuilder& SECFIX(bool value);
+	RobocopyArgsBuilder& SECFIX();
 
 	//FIX file TIMes on all files, even skipped files.
-	RobocopyArgsBuilder& TIMFIX(bool value);
+	RobocopyArgsBuilder& TIMFIX();
 
 	//delete dest files/dirs that no longer exist in source.
-	RobocopyArgsBuilder& PURGE(bool value);
+	RobocopyArgsBuilder& PURGE();
 
 	//MIRror a directory tree (equivalent to /E plus /PURGE).
-	RobocopyArgsBuilder& MIR(bool value);
+	RobocopyArgsBuilder& MIR();
 
 	//MOVe files (delete from source after copying).
-	RobocopyArgsBuilder& MOV(bool value);
+	RobocopyArgsBuilder& MOV();
 
 	//MOVE files AND dirs (delete from source after copying).
-	RobocopyArgsBuilder& MOVE(bool value);
+	RobocopyArgsBuilder& MOVE();
 
 	//add the given Attributes to copied files.
-	RobocopyArgsBuilder& A_plus(StringView value);
+	RobocopyArgsBuilder& A_plus(std::wstring_view value);
 
 	//remove the given Attributes from copied files.
-	RobocopyArgsBuilder& A_minus(StringView value);
+	RobocopyArgsBuilder& A_minus(std::wstring_view value);
 
 	//CREATE directory tree and zero-length files only.
-	RobocopyArgsBuilder& CREATE(bool value);
+	RobocopyArgsBuilder& CREATE();
 
 	//create destination files using 8.3 FAT file names only.
-	RobocopyArgsBuilder& FAT(bool value);
+	RobocopyArgsBuilder& FAT();
 
 	//turn off very long path (> 256 characters) support.
-	RobocopyArgsBuilder& _256(bool value);
+	RobocopyArgsBuilder& _256();
 
 	//MONitor source; run again when more than n changes seen.
 	RobocopyArgsBuilder& MON(int value);
@@ -165,13 +109,13 @@ public:
 	RobocopyArgsBuilder& RH(int hh1, int mm1, int hh2, int mm2);
 
 	//check run hours on a Per File (not per pass) basis.
-	RobocopyArgsBuilder& PF(bool value);
+	RobocopyArgsBuilder& PF();
 
 	//Inter-Packet Gap (ms), to free bandwidth on slow lines.
 	RobocopyArgsBuilder& IPG(int ms);
 
 	//copy symbolic links versus the target.
-	RobocopyArgsBuilder& SL(bool value);
+	RobocopyArgsBuilder& SL();
 
 	/*
 		Do multi-threaded copies with n threads (default 8).
@@ -182,53 +126,54 @@ public:
 	RobocopyArgsBuilder& MT(int n);
 
 	//what to COPY for directories (default is /DCOPY:DA). (copyflags : D = Data, A = Attributes, T = Timestamps).
-	RobocopyArgsBuilder& DCOPY(StringView copyFlags);
+	RobocopyArgsBuilder& DCOPY(std::wstring_view copyFlags);
 
 	//COPY NO directory info (by default /DCOPY:DA is done).
-	RobocopyArgsBuilder& NODCOPY(bool value);
+	RobocopyArgsBuilder& NODCOPY();
 
 	//copy files without using the Windows Copy Offload mechanism
-	RobocopyArgsBuilder& NOOFFLOAD(bool value);
-	
+	RobocopyArgsBuilder& NOOFFLOAD();
+#pragma endregion
+
 #pragma region FileSelectionOptions
 	//copy only files with the Archive attribute set.
-	RobocopyArgsBuilder& A(bool value);
+	RobocopyArgsBuilder& A();
 
 	//copy only files with the Archive attribute and reset it.
-	RobocopyArgsBuilder& M(bool value);
+	RobocopyArgsBuilder& M();
 
 	//Include only files with any of the given Attributes set.
-	RobocopyArgsBuilder& IA(StringView value);
+	RobocopyArgsBuilder& IA(std::wstring_view value);
 
 	//eXclude files with any of the given Attributes set.
-	RobocopyArgsBuilder& XA(StringView value);
+	RobocopyArgsBuilder& XA(std::wstring_view value);
 
 	//eXclude Files matching given names/paths/wildcards.
-	RobocopyArgsBuilder& XF(std::span<StringView> file);
+	RobocopyArgsBuilder& XF(std::span<std::wstring_view> file);
 
 	//eXclude Directories matching given names/paths.
-	RobocopyArgsBuilder& XD(std::span<StringView> dirs);
+	RobocopyArgsBuilder& XD(std::span<std::wstring_view> dirs);
 
 	//eXclude Changed files.
-	RobocopyArgsBuilder& XC(bool value);
+	RobocopyArgsBuilder& XC();
 
 	//eXclude Newer files.
-	RobocopyArgsBuilder& XN(bool value);
+	RobocopyArgsBuilder& XN();
 
 	//eXclude Older files.
-	RobocopyArgsBuilder& XO(bool value);
+	RobocopyArgsBuilder& XO();
 
 	//eXclude eXtra files and directories.
-	RobocopyArgsBuilder& XX(bool value);
+	RobocopyArgsBuilder& XX();
 
 	//eXclude Lonely files and directories.
-	RobocopyArgsBuilder& XL(bool value);
+	RobocopyArgsBuilder& XL();
 
 	//Include Same files.
-	RobocopyArgsBuilder& IS(bool value);
+	RobocopyArgsBuilder& IS();
 
 	//Include Tweaked files.
-	RobocopyArgsBuilder& IT(bool value);
+	RobocopyArgsBuilder& IT();
 
 	//MAXimum file size - exclude files bigger than n bytes.
 	RobocopyArgsBuilder& MAX(size_t bytes);
@@ -249,19 +194,19 @@ public:
 	RobocopyArgsBuilder& MINLAD(size_t days);
 
 	//eXclude Junction points and symbolic links. (normally included by default).
-	RobocopyArgsBuilder& XJ(bool value);
+	RobocopyArgsBuilder& XJ();
 
 	//assume FAT File Times (2-second granularity).
-	RobocopyArgsBuilder& FFT(bool value);
+	RobocopyArgsBuilder& FFT();
 
 	//compensate for one-hour DST time differences.
-	RobocopyArgsBuilder& DST(bool value);
+	RobocopyArgsBuilder& DST();
 
 	//eXclude Junction points and symbolic links for Directories.
-	RobocopyArgsBuilder& XJD(bool value);
+	RobocopyArgsBuilder& XJD();
 
 	//eXclude symbolic links for Files.
-	RobocopyArgsBuilder& XJF(bool value);
+	RobocopyArgsBuilder& XJF();
 #pragma endregion
 
 #pragma region RetryOptions
@@ -272,93 +217,93 @@ public:
 	RobocopyArgsBuilder& W(size_t seconds);
 
 	//Save /R:n and /W:n in the Registry as default settings.
-	RobocopyArgsBuilder& REG(bool value);
+	RobocopyArgsBuilder& REG();
 
 	//wait for sharenames To Be Defined (retry error 67).
-	RobocopyArgsBuilder& TBD(bool value);
+	RobocopyArgsBuilder& TBD();
 #pragma endregion
 
 #pragma region LoggingOptions
 
 	//List only - don't copy, timestamp or delete any files.
-	RobocopyArgsBuilder& L(bool value);
+	RobocopyArgsBuilder& L();
 
 	//report all eXtra files, not just those selected.
-	RobocopyArgsBuilder& X(bool value);
+	RobocopyArgsBuilder& X();
 
 	//produce Verbose output, showing skipped files.
-	RobocopyArgsBuilder& V(bool value);
+	RobocopyArgsBuilder& V();
 
 	//include source file Time Stamps in the output.
-	RobocopyArgsBuilder& TS(bool value);
+	RobocopyArgsBuilder& TS();
 
 	//include Full Pathname of files in the output.
-	RobocopyArgsBuilder& FP(bool value);
+	RobocopyArgsBuilder& FP();
 
 	//Print sizes as bytes.
-	RobocopyArgsBuilder& BYTES(bool value);
+	RobocopyArgsBuilder& BYTES();
 
 	//No Size - don't log file sizes.
-	RobocopyArgsBuilder& NS(bool value);
+	RobocopyArgsBuilder& NS();
 
 	//No Class - don't log file classes.
-	RobocopyArgsBuilder& NC(bool value);
+	RobocopyArgsBuilder& NC();
 
 	//No File List - don't log file names.
-	RobocopyArgsBuilder& NFL(bool value);
+	RobocopyArgsBuilder& NFL();
 
 	//No Directory List - don't log directory names.
-	RobocopyArgsBuilder& NDL(bool value);
+	RobocopyArgsBuilder& NDL();
 
 	//No Progress - don't display percentage copied.
-	RobocopyArgsBuilder& NP(bool value);
+	RobocopyArgsBuilder& NP();
 
 	//show Estimated Time of Arrival of copied files.
-	RobocopyArgsBuilder& ETA(bool value);
+	RobocopyArgsBuilder& ETA();
 
 	//output status to LOG file (overwrite existing log).
-	RobocopyArgsBuilder& LOG(StringView file);
+	RobocopyArgsBuilder& LOG(std::wstring_view file);
 
 	//output status to LOG file (append to existing log).
-	RobocopyArgsBuilder& LOG_plus(StringView file);
+	RobocopyArgsBuilder& LOG_plus(std::wstring_view file);
 
 	//output status to LOG file as UNICODE (overwrite existing log).
-	RobocopyArgsBuilder& UNILOG(StringView file);
+	RobocopyArgsBuilder& UNILOG(std::wstring_view file);
 
 	//output status to LOG file as UNICODE (append to existing log).
-	RobocopyArgsBuilder& UNILOG_Plus(StringView file);
+	RobocopyArgsBuilder& UNILOG_Plus(std::wstring_view file);
 
 	//output to console window, as well as the log file.
-	RobocopyArgsBuilder& TEE(bool value);
+	RobocopyArgsBuilder& TEE();
 
 	//No Job Header.
-	RobocopyArgsBuilder& NJH(bool value);
+	RobocopyArgsBuilder& NJH();
 
 	//No Job Summary.
-	RobocopyArgsBuilder& NJS(bool value);
+	RobocopyArgsBuilder& NJS();
 
 	//output status as UNICODE.
-	RobocopyArgsBuilder& Unicode(bool value);
+	RobocopyArgsBuilder& Unicode();
 #pragma endregion
 	
 #pragma region JobOptions
 
 	//take parameters from the named JOB file.
-	RobocopyArgsBuilder& JOB(StringView jobName);
+	RobocopyArgsBuilder& JOB(std::wstring_view jobName);
 
 	//SAVE parameters to the named job file
-	RobocopyArgsBuilder& SAVE(StringView jobName);
+	RobocopyArgsBuilder& SAVE(std::wstring_view jobName);
 
 	//QUIT after processing command line (to view parameters).
-	RobocopyArgsBuilder& QUIT(bool value);
+	RobocopyArgsBuilder& QUIT();
 
 	//NO Source Directory is specified.
-	RobocopyArgsBuilder& NOSD(bool value);
+	RobocopyArgsBuilder& NOSD();
 
 	//NO Destination Directory is specified
-	RobocopyArgsBuilder& NODD(bool value);
+	RobocopyArgsBuilder& NODD();
 
 	//Include the following Files.
-	RobocopyArgsBuilder& IF(bool value);
+	RobocopyArgsBuilder& IF();
 #pragma endregion
 };

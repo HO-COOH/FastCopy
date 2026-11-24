@@ -224,13 +224,16 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\PackageConfig.h" />
+    <ClInclude Include="..\Public\RobocopyInjectionHandshake.h" />
     <ClInclude Include="..\Public\KeyboardHookSettings.h" />
     <ClInclude Include="..\Public\ModulePath.h" />
     <ClInclude Include="..\Public\PropertyDescription.h" />
     <ClInclude Include="..\Public\ShellItem2.h" />
+    <ClInclude Include="MatchLineBreak.hpp" />
+    <ClInclude Include="ProcessInjectHandler.hpp" />
+    <ClInclude Include="RobocopyProcessPool.h" />
     <ClInclude Include="WindowEffectHelper.h" />
     <ClInclude Include="AppLaunchMode.h" />
-    <ClInclude Include="CaptureThreadHandle.h" />
     <ClInclude Include="CommandLine.h" />
     <ClInclude Include="CommandLineHandler.h" />
     <ClInclude Include="ConfirmDeleteFileWindow.xaml.h">
@@ -252,7 +255,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
       <DependentUpon>CopyDialogWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="CreateSuspend.h" />
     <ClInclude Include="DebugFileSize.h" />
     <ClInclude Include="DebugLogger.h" />
     <ClInclude Include="EmptyFolder.h" />
@@ -278,7 +280,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
       <DependentUpon>FileMenu.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="FileWrapper.h" />
     <ClInclude Include="FolderIcon.xaml.h">
       <DependentUpon>FolderIcon.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -353,7 +354,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="UIThreadWrapper.h" />
-    <ClInclude Include="ViewModelLocator.h" />
     <ClInclude Include="WelcomeWindow.xaml.h">
       <DependentUpon>WelcomeWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -397,6 +397,8 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     </ClCompile>
     <ClCompile Include="..\Public\PropertyDescription.cpp" />
     <ClCompile Include="..\Public\ShellItem2.cpp" />
+    <ClCompile Include="ProcessInjectHandler.cpp" />
+    <ClCompile Include="RobocopyProcessPool.cpp" />
     <ClCompile Include="WindowEffectHelper.cpp" />
     <ClCompile Include="CommandLine.cpp" />
     <ClCompile Include="CommandLineHandler.cpp" />
@@ -438,12 +440,10 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
       <DependentUpon>FileMenu.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="FileWrapper.cpp" />
     <ClCompile Include="FolderIcon.xaml.cpp">
       <DependentUpon>FolderIcon.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="Global.cpp" />
     <ClCompile Include="ImageUtils.cpp" />
     <ClCompile Include="JobObject.cpp" />
     <ClCompile Include="KnownFolderPath.cpp" />
@@ -469,6 +469,7 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
     <ClCompile Include="ResourceHelper.cpp" />
     <ClCompile Include="RobocopyArgs.cpp" />
     <ClCompile Include="RobocopyInjectDll.cpp" />
+    <ClCompile Include="RobocopyJobFile.cpp" />
     <ClCompile Include="RobocopyProcess.cpp" />
     <ClCompile Include="RobocopyProcessStatus.cpp" />
     <ClCompile Include="RobocopyViewModel.cpp">
@@ -502,7 +503,6 @@ xcopy "$(SolutionDir)$(Platform)\$(Configuration)\FastCopy\RobocopyInjection.dll
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="UIThreadWrapper.cpp" />
-    <ClCompile Include="ViewModelLocator.cpp" />
     <ClCompile Include="WelcomeWindow.xaml.cpp">
       <DependentUpon>WelcomeWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

@@ -4,7 +4,6 @@
 #include "SettingsWindow.g.cpp"
 #endif
 
-#include "ViewModelLocator.h"
 #include <PackageConfig.h>
 #include "TextBlockClipAnimation.h"
 #include "FastcopySettingsSingleInstanceLock.h"
@@ -14,7 +13,9 @@
 
 namespace winrt::FastCopy::implementation
 {
-	SettingsWindow::SettingsWindow(WindowEffectHelper& windowEffectHelper) : m_windowEffectHelper{ windowEffectHelper }
+	SettingsWindow::SettingsWindow(WindowEffectHelper& windowEffectHelper, SettingsViewModel& viewModel) : 
+        m_windowEffectHelper{ windowEffectHelper },
+		m_viewModel{ viewModel }
     {
         Height(PackageConfig::GetDefaultLanguage() == L"zh-cn" ? 550 : 580);
     }
@@ -34,7 +35,7 @@ namespace winrt::FastCopy::implementation
 
     winrt::FastCopy::SettingsViewModel SettingsWindow::ViewModel()
     {
-        return *ViewModelLocator::GetInstance().SettingsViewModel();
+        return m_viewModel;
     }
 
     void SettingsWindow::WindowEx_Activated(

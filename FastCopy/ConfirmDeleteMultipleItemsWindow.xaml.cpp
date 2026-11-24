@@ -5,17 +5,14 @@
 #endif
 
 #include "ResourceHelper.h"
-#include "ViewModelLocator.h"
 #include "RobocopyViewModel.h"
 
 namespace winrt::FastCopy::implementation
 {
-    ConfirmDeleteMultipleItemsWindow::ConfirmDeleteMultipleItemsWindow()
+    ConfirmDeleteMultipleItemsWindow::ConfirmDeleteMultipleItemsWindow(RobocopyViewModel& viewModel)
     {
-        auto viewModel = ViewModelLocator::GetInstance().RobocopyViewModel();
-        auto& taskFile = *viewModel->m_recordFile;
-        auto const itemCount = std::distance(taskFile.begin(), taskFile.end());
-        m_itemCountText = winrt::to_hstring(itemCount);
+        auto& taskFile = viewModel.m_recordFile;
+        m_itemCountText = winrt::to_hstring(taskFile.GetItemCount());
     }
 
     winrt::hstring ConfirmDeleteMultipleItemsWindow::ItemCountText()
